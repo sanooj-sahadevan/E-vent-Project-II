@@ -37,7 +37,7 @@ const LoginForm: React.FC = () => {
         localStorage.setItem("user", JSON.stringify(result.user));
         toast.success("Login Successful!");
 
-        router.push("/");
+        router.push("/adminDashboard");
       } else {
         toast.error("Invalid login credentials. Please try again.");
 
@@ -75,7 +75,7 @@ const LoginForm: React.FC = () => {
           />
         </div>
         <div className="flex flex-col items-center justify-center w-3/5 px-10 space-y-8 bg-white">
-          <h2 className="text-4xl font-bold text-gray-800">Log In</h2>
+          <h2 className="text-4xl font-bold text-gray-800"> Admin Log In</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-3/4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -121,7 +121,7 @@ const LoginForm: React.FC = () => {
               Log In
             </button>
           </form>
-          <div className="text-gray-500">
+          {/* <div className="text-gray-500">
             Don't have an account?{" "}
             <a href="/signup" className="font-medium text-blue-500 hover:text-blue-700">
               Sign Up
@@ -132,7 +132,7 @@ const LoginForm: React.FC = () => {
             <a href="#" className="font-medium text-blue-500 hover:text-blue-700">
               Reset Password
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
 

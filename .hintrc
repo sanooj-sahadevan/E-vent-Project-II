@@ -12,6 +12,7 @@
           "scrollbar-width"
         ]
       }
-    ]
+    ],
+    "button-type": "off"
   }
 }
