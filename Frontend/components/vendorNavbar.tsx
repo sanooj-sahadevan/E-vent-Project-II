@@ -12,8 +12,8 @@ const Navbar: React.FC = () => {
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("user");
+    const token = localStorage.getItem("vendorToken");
+    const userData = localStorage.getItem("vendor");
 
     if (token && userData) {
       setIsAuthorized(true);
@@ -24,9 +24,9 @@ const Navbar: React.FC = () => {
 
   const handleLogoutClick = () => {
     toast.success("Logout Successfully");
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    deleteCookie("token");
+    localStorage.removeItem("vendor");
+    localStorage.removeItem("vendorToken");
+    deleteCookie("vendorToken");
     setIsAuthorized(false);
     router.push("/"); // Redirect to the home page or login page
   };

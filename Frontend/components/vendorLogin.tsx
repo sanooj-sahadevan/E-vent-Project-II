@@ -1,13 +1,16 @@
-/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @next/next/no-html-link-for-pages */
 /* eslint-disable react/no-unescaped-entities */
-'use client'
-import { LoginAPI } from "@/services/adminAPI";
+/* eslint-disable @next/next/no-img-element */
+"use client";
+
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+// import Head from "next/head";
+// import Link from "next/link";
+// import Navbar from "@/components/NavBar";
+import { LoginAPI } from "@/services/vendorAPI";
 import { toast, ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-
-
+import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 
 type LoginFormInputs = {
@@ -16,7 +19,7 @@ type LoginFormInputs = {
   keepMeSignedIn: boolean;
 };
 
-const LoginForm: React.FC = () => {
+const VendorLoginForm: React.FC = () => {
   const router = useRouter();
   const {
     register,
@@ -26,26 +29,29 @@ const LoginForm: React.FC = () => {
 
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
-      console.log('1');
-      
       const result = await LoginAPI(data);
       console.log("LoginAPI result:", result); // Debugging line
 
-      if (result && result.admin && result.adminToken) {
-        localStorage.setItem("adminToken", result.adminToken);
-        localStorage.setItem("admin", JSON.stringify(result.admin));
+      // if (result && !result.vendor.adminVerified) {
+      //   router.push("/vendor/approval");
+      // } else 
+      if (result && result.vendor && result.vendorToken) {
+        console.log(result.vendor.adminVerified);
+
+        localStorage.setItem("vendorToken", result.vendorToken);
+        localStorage.setItem("vendor", JSON.stringify(result.vendor));
 
         toast.success("Login Successful!");
-          router.replace("/admin/dashboard");
+        router.push("/vendordashboard");
       } else {
         toast.error("Invalid login credentials. Please try again.");
       }
+
+     
     } catch (err) {
-      // console.error('LoginAPI error:', err); // Debugging line
       toast.error("An error occurred during login. Please try again.");
     }
   };
-
   return (
 
     <>
@@ -71,7 +77,7 @@ const LoginForm: React.FC = () => {
           />
         </div>
         <div className="flex flex-col items-center justify-center w-3/5 px-10 space-y-8 bg-white">
-          <h2 className="text-4xl font-bold text-gray-800"> Admin Log In</h2>
+          <h2 className="text-4xl font-bold text-gray-800">Vendor Log In</h2>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-3/4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -100,11 +106,11 @@ const LoginForm: React.FC = () => {
                 id="password"
                 {...register("password", {
                   required: true,
-                  // pattern: {
-                  //   value:
-                  //     /^(?=(?:.*[a-zA-Z]){3,})(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*()_+~`|}{[\]:;?><,./-]).{8,}$/,
-                  //   message: "Password must be at least 6 characters",
-                  // },
+                //   pattern: {
+                //     value:
+                //       /^(?=(?:.*[a-zA-Z]){3,})(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*()_+~`|}{[\]:;?><,./-]).{8,}$/,
+                //     message: "Password must be at least 6 characters",
+                //   },
                 })} // Register the input
                 className="block w-full mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
@@ -117,18 +123,19 @@ const LoginForm: React.FC = () => {
               Log In
             </button>
           </form>
-          {/* <div className="text-gray-500">
+          <div className="text-gray-500">
             Don't have an account?{" "}
-            <a href="/signup" className="font-medium text-blue-500 hover:text-blue-700">
+            <a href="/vendorSignup" className="font-medium text-blue-500 hover:text-blue-700">
               Sign Up
             </a>
           </div>
-          <div className="text-gray-500">
+          {/* <div className="text-gray-500">
             Forgot your password?{" "}
             <a href="#" className="font-medium text-blue-500 hover:text-blue-700">
               Reset Password
             </a>
           </div> */}
+
         </div>
       </div>
 
@@ -137,4 +144,4 @@ const LoginForm: React.FC = () => {
   );
 }
 
-export default LoginForm;
+export default VendorLoginForm;

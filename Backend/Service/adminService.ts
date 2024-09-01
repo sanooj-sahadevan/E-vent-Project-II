@@ -13,11 +13,11 @@ export const loginUser = async (
     password: string
 ): Promise<{ adminToken: string; admin: string } | null> => {
 
-    if (process.env.Admin_email !== email) {
+    if ('sanu007@gmail.com' !== email) {
         // throw errorHandler(404, "User not found");
         throw error
     }
-    if (process.env.Admin_pass !== password) {
+    if ('Babygirl@123' !== password) {
         // throw errorHandler(401, "Wrong credentials");
         throw error
     }

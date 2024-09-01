@@ -79,9 +79,12 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
+    
     const { email, password } = req.body;
+    console.log(req.body);
+    
     const { vendor, vendorToken } = await loginVendor(email, password);
-    if (vendor.adminVerified) {
+    if (vendor) {
       res.cookie("vendorToken", vendorToken);
       res.status(200).json({ vendor, vendorToken });
     } else {

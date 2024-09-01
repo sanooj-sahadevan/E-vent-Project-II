@@ -5,7 +5,7 @@ import { LoginAPI } from "@/services/userApi";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 
 
 import { useRouter } from "next/navigation";
@@ -131,6 +131,12 @@ const LoginForm: React.FC = () => {
             Forgot your password?{" "}
             <a href="#" className="font-medium text-blue-500 hover:text-blue-700">
               Reset Password
+            </a>
+          </div>
+          <div className="text-gray-500">
+            Are you a vendor?{" "}
+            <a href="/vendorLogin" className="font-medium text-blue-500 hover:text-blue-700">
+              Log In here
             </a>
           </div>
         </div>

@@ -1,15 +1,15 @@
 /* eslint-disable @next/next/no-img-element */
-'use client'
-import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { SignUpAPI } from "@/services/userApi";
-import { useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+"use client";
 
+import { SignUpAPI } from "@/services/vendorAPI";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { toast, ToastContainer } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
 
 type Inputs = {
-  username: string;
+  vendorname: string;
   phone: string;
   email: string;
   password: string;
@@ -17,46 +17,41 @@ type Inputs = {
 };
 
 const SignupForm: React.FC = () => {
-  const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    formState: { errors },
-  } = useForm<Inputs>();
-
-  const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { username, phone, email, password } = data;
-    console.log(data.username + 'dataaaaaa');
-
-
-    const reqBody = {
-      username,
-      phone,
-      email,
-      password,
-    };
-
-    const reqHeader = {
-      "Content-Type": "application/json",
-    };
-
-    try {
-      const result = await SignUpAPI(reqBody, reqHeader);
-      console.log("SignUpAPI result:"+ result);
-
-      if (result.error) {
-        toast.error(result.message);
-      } else if (result) {
-        toast.success("OTP sent, please check your mail.");
-        router.push(`/otp?email=${email}`);
+    const router = useRouter();
+    const {
+      register,
+      handleSubmit,
+      getValues,
+      formState: { errors },
+    } = useForm<Inputs>();
+  
+    const onSubmit: SubmitHandler<Inputs> = async (data) => {
+      const { vendorname, phone, email, password } = data;
+  
+      const reqBody = new FormData();
+      reqBody.append("vendorname", vendorname || "");
+      reqBody.append("phone", phone);
+      reqBody.append("email", email);
+      reqBody.append("password", password);
+  
+      const reqHeader = {
+        "Content-Type": "application/json",
+      };
+  
+      try {
+        const result = await SignUpAPI(reqBody, reqHeader);
+        console.log("SignUpAPI result:", result); // Debugging line
+  
+        if (result.error) {
+          toast.error(result.message);
+        } else if (result) {
+          toast.success("OTP sent, please check your mail.");
+          router.push(`/vendorOTP?email=${email}`);
+        }
+      } catch (err: any) {
+        toast.error("Invalid credentials !");
       }
-    } catch (err) {
-      toast.error("An error occurred during signup. Please try again.");
-      console.error('SignUpAPI error:', err);
-    }
-  };
-
+    };
   return (
 
 <>
@@ -84,16 +79,16 @@ const SignupForm: React.FC = () => {
         <h2 className="text-4xl font-bold text-gray-800">Sign Up</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-3/4">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="vendorname" className="block text-sm font-medium text-gray-700">
               Name
             </label>
             <input
               type="text"
-              id="username"
+              id="vendorname"
               className="block w-full mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              {...register("username", { required: "Name is required" })}
+              {...register("vendorname", { required: "Name is required" })}
             />
-            {errors.username && <p className="text-red-500">{errors.username.message}</p>}
+            {errors.vendorname && <p className="text-red-500">{errors.vendorname.message}</p>}
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -163,12 +158,12 @@ const SignupForm: React.FC = () => {
             Login
           </a>
         </div>
-        <div className="text-gray-500">
+        {/* <div className="text-gray-500">
           Are you a vendor?{" "}
           <a href="#" className="font-medium text-blue-500 hover:text-blue-700">
             Sign up here
           </a>
-        </div>
+        </div> */}
       </div>
     </div>
 </>

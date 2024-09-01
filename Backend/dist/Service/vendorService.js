@@ -41,7 +41,8 @@ export const loginVendor = async (email, password) => {
     // if (!isPasswordValid) {
     //   throw new Error("Invalid Email/Password");
     // }
-    const vendorToken = jwt.sign({ vendorId: vendor._id }, process.env.JWT_SECRET_KEY, {
+    console.log('jwt');
+    const vendorToken = jwt.sign({ vendorId: vendor._id }, 'sanoojsanooj', {
         expiresIn: "1h",
     });
     return { vendor, vendorToken };
