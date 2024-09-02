@@ -42,7 +42,7 @@ export const loginVendor = async (email, password) => {
     //   throw new Error("Invalid Email/Password");
     // }
     console.log('jwt');
-    const vendorToken = jwt.sign({ vendorId: vendor._id }, 'sanoojsanooj', {
+    const vendorToken = jwt.sign({ vendorId: vendor._id }, process.env.JWT_KEY, {
         expiresIn: "1h",
     });
     return { vendor, vendorToken };

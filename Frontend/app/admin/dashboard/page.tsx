@@ -3,6 +3,8 @@
 import React from "react";
 import Layout from "@/components/Admin/layout";
 import Topbar from "@/components/AdminTopbar";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const Dashboard: React.FC = () => {
   return (

@@ -32,7 +32,6 @@ export const createUser = async (user: User) => {
 export const findUserByEmail = async (email: string) => {
     console.log('repositary  email');
     const result = await UserModel.findOne({email});
-    console.log(result+'reeeeeeeeeeeesult');
     
     return result;
     // return await UserModel.findOne({ email })

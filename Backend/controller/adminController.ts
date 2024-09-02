@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import {
-//   getAllUnapprovalCompany,
   loginUser,
-//   updateApproval,
 } from "../Service/adminService.js"
 
 

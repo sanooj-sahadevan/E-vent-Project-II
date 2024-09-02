@@ -14,6 +14,6 @@ router.post("/verifyOtp", verifyOtp);
 
 router.post("/login", login);
 
-router.post("/googleLogin", googleLoginHandler); // googleLoginHandler
+router.post("/googleLogin", googleLoginHandler); 
 
 export default router;

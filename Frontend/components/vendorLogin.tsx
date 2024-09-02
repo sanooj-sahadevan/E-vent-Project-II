@@ -12,6 +12,9 @@ import { LoginAPI } from "@/services/vendorAPI";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import img from '../public/3.jpg.jpg'
+
 
 type LoginFormInputs = {
   email: string;
@@ -42,7 +45,8 @@ const VendorLoginForm: React.FC = () => {
         localStorage.setItem("vendor", JSON.stringify(result.vendor));
 
         toast.success("Login Successful!");
-        router.push("/vendordashboard");
+        window.location.href = "/vendordashboard"; // Replace "/" with your desired path
+        // router.push("/vendordashboard");
       } else {
         toast.error("Invalid login credentials. Please try again.");
       }
@@ -69,10 +73,10 @@ const VendorLoginForm: React.FC = () => {
 
 
       <div className="flex min-h-screen bg-gray-100">
-        <div className="w-1/2">
-          <img
-            src="https://media.istockphoto.com/id/1495018397/photo/splendid-view-of-an-outdoor-wedding-premises.jpg?s=2048x2048&w=is&k=20&c=WgMmtbGBe6ZEPoUpJQhdjJmX4QR1sBfqsc9bAXRSMo0="
-            alt="Log in"
+      <div className="w-1/2">
+          <Image
+            src={img}
+            alt="Sign up"
             className="object-cover w-full h-full"
           />
         </div>

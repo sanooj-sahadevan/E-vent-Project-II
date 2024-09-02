@@ -2,14 +2,16 @@
 // Routes Logic
 
 // User Routes
-const protectedRoutes = new Set(["/trips"]);
+// const protectedRoutes = new Set(["/trips"]);
 const changeToHomeRoutes = new Set(["/login", "/signup"]);
 
-export function isProtectedRoute(pathname: string): boolean {
-  return protectedRoutes.has(pathname);
-}
+// export function isProtectedRoute(pathname: string): boolean {
+//   return protectedRoutes.has(pathname);
+// }
 
 export function toBeRedirectedRoutes(pathname: string): boolean {
+  console.log(pathname+'pathnaaaame');
+  
   return changeToHomeRoutes.has(pathname);
 }
 
@@ -27,7 +29,7 @@ export function toBeRedirectedAdminRoutes(pathname: string): boolean {
 
 // Vendor Routes
 const protectedVendorRoutes = new Set(["/vendordashboard"]);
-const changeToVendorRoutes = new Set(["/vendorSignup"]);
+const changeToVendorRoutes = new Set(["/vendorSignup","/vendorLogin"]);
 
 export function isProtectedVendorRoute(pathname: string): boolean {
   return protectedVendorRoutes.has(pathname);

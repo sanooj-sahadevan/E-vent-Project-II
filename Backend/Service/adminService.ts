@@ -1,23 +1,20 @@
 import jwt from "jsonwebtoken";
 import {
-    // findUserByEmailAdmin,
-    // getAllUnapprovalFromDB,
-    // updateVendorFromDB,
+  
 } from "../Repository/adminRepo";
 import { error } from "console";
-// import { Admin } from "../domain/admin";
-// import { errorHandler } from "../uilts/errorHandler"; // Assuming errorHandler is a utility function
+
 
 export const loginUser = async (
     email: string,
     password: string
 ): Promise<{ adminToken: string; admin: string } | null> => {
 
-    if ('sanu007@gmail.com' !== email) {
+    if (process.env.ADMIN_EMAIL !== email) {
         // throw errorHandler(404, "User not found");
         throw error
     }
-    if ('Babygirl@123' !== password) {
+    if (process.env.ADMIN_PASS !== password) {
         // throw errorHandler(401, "Wrong credentials");
         throw error
     }
@@ -26,7 +23,7 @@ export const loginUser = async (
         {
             AdminEmail: email,
         },
-        'sanoojsanooj' as string,
+        process.env.JWT_KEY as string,
         { expiresIn: "1h" }
     );
 

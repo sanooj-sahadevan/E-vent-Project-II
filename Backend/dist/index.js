@@ -5,10 +5,12 @@ import userRoutes from './routes/userRoutes.js';
 import vendorRoutes from './routes/vendorRoutes.js';
 import adminRoutes from './routes/adminRoutes.js'; // Corrected import for admin routes
 import cookieParser from "cookie-parser";
+import dotenv from 'dotenv';
 const app = express();
 const PORT = 5000;
 // Connect to MongoDB
 connectToMongoDB();
+dotenv.config();
 // Middleware setup
 app.use(cors({
     origin: "http://localhost:3000",

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import { createUser, findUserByEmail, updateUser, } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
@@ -13,8 +14,8 @@ export const registerUser = async (user) => {
                 return existingUser;
             }
         }
-        // const hashedPassword = await bcrypt.hash(user.password, 10);
-        // user.password = hashedPassword;
+        const hashedPassword = await bcrypt.hash(user.password, 10);
+        user.password = hashedPassword;
         return await createUser(user);
     }
     catch (error) {
@@ -29,20 +30,14 @@ export const loginUser = async (email, password) => {
     if (!user) {
         throw new Error("Invalid Email/Password");
     }
-    // const isPasswordValid = await bcrypt.compare(password, user.password);
-    // if (!isPasswordValid) {
-    //   throw new Error("Invalid Email/Password");
-    // }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        throw new Error("Invalid Email/Password");
+    }
     console.log('jwt');
-    const token = jwt.sign({ userId: user._id }, 'sanoojsanooj', {
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_KEY, {
         expiresIn: "1h",
     });
-    // const secret: string | undefined = process.env.JWT_SECRET;
-    // if (!secret) throw new Error("JWT Secret not found");
-    // const data = { user, role: "travelie-user" };
-    // const token = jwt.sign(data, secret, {
-    //   expiresIn: "1h",
-    // });
     return { user, token };
 };
 export const verifyAndSaveUser = async (email, otp) => {
@@ -59,7 +54,7 @@ export const googleLogin = async ({ email, profileImagePath, username, phone, })
     try {
         const existingUser = await findUserByEmail(email);
         if (existingUser) {
-            const token = jwt.sign({ userId: existingUser._id }, process.env.JWT_SECRET_KEY, { expiresIn: "1h" });
+            const token = jwt.sign({ userId: existingUser._id }, 'sanoojsanooj', { expiresIn: "1h" });
             return { user: existingUser, token };
         }
         else {

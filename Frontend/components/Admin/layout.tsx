@@ -40,11 +40,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <li className="px-6 py-3">
               <Link
                 href="/admin/dashboard"
-                className={`rounded-lg block text-xl p-3 font-semibold ${
-                  isActive("/admin/dashboard")
+                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/dashboard")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Dashboard
               </Link>
@@ -52,11 +51,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <li className="px-5 py-3">
               <Link
                 href="/admin/dashboard"
-                className={`rounded-lg block text-xl p-3 font-semibold ${
-                  isActive("/admin/approval")
+                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/approval")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Users
               </Link>
@@ -64,11 +62,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <li className="px-6 py-3">
               <Link
                 href="/admin/users"
-                className={`rounded-lg block text-xl p-3 font-semibold  ${
-                  isActive("/admin/transaction")
+                className={`rounded-lg block text-xl p-3 font-semibold  ${isActive("/admin/transaction")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Vendor
               </Link>
@@ -76,11 +73,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <li className="px-6 py-3">
               <Link
                 href="/admin/vendor"
-                className={`rounded-lg block text-xl p-3 font-semibold ${
-                  isActive("/admin/users")
+                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/users")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Sales Report
               </Link>
@@ -88,25 +84,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <li className="px-6 py-3">
               <Link
                 href="/admin/alesreport"
-                className={`rounded-lg block text-xl p-3 font-semibold ${
-                  isActive("/admin/company")
+                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/company")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Transaction
               </Link>
             </li>
-           
+
             <li className="px-6 py-3 mt-12">
               <button
                 type="button"
                 onClick={handleLogoutClick}
-                className={`rounded-lg block text-xl p-3 font-semibold ${
-                  isActive("/admin/logout")
+                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/logout")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
-                }`}
+                  }`}
               >
                 Logout
               </button>

@@ -10,9 +10,9 @@ export default function Home() {
     <div>
       <Navbar />
       <UserMain />
-      <Dashboard/>
-      <Footer/>
-    
+      <Dashboard />
+      <Footer />
+
 
     </div>
   );

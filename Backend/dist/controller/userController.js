@@ -1,4 +1,4 @@
-import { googleLogin, loginUser, registerUser, verifyAndSaveUser, } from "../Service/userService.js";
+import { loginUser, googleLogin, registerUser, verifyAndSaveUser, } from "../Service/userService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findUserByEmail } from "../Repository/userReop.js";
@@ -32,7 +32,6 @@ export const register = async (req, res) => {
 };
 export const login = async (req, res) => {
     try {
-        console.log('vannn');
         const { email, password } = req.body;
         const { user, token } = await loginUser(email, password);
         console.log({ user, token });
@@ -46,7 +45,6 @@ export const login = async (req, res) => {
 };
 export const verifyOtp = async (req, res) => {
     try {
-        console.log('vann');
         const { email, otp } = req.body;
         console.log(email, otp);
         const user = await findUserByEmail(email);

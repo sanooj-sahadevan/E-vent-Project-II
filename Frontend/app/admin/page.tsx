@@ -5,7 +5,7 @@ import { LoginAPI } from "@/services/adminAPI";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.css";
 
 
 import { useRouter } from "next/navigation";
@@ -36,6 +36,8 @@ const LoginForm: React.FC = () => {
         localStorage.setItem("admin", JSON.stringify(result.admin));
 
         toast.success("Login Successful!");
+        window.location.href = "/admin/dashboard"; // Replace "/" with your desired path
+
           router.replace("/admin/dashboard");
       } else {
         toast.error("Invalid login credentials. Please try again.");

@@ -35,15 +35,6 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 
 
 
-
-
-
-
-
-
-
-
-
 // Login API
 export const LoginAPI = async (reqBody: any) => {
   console.log('logggg');

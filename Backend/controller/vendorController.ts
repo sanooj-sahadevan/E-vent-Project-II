@@ -18,9 +18,7 @@ export const register = async (req: Request, res: Response) => {
   try {
     const { vendorname, email, phone, password } = req.body;
 
-    // Assign default values to the missing properties
-    // const categories = req.body.categories || "defaultCategory";
-    // const reviews = req.body.reviews || "No reviews";
+   
 
     const proceedWithRegistration = async () => {
       try {

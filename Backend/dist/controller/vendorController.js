@@ -8,9 +8,6 @@ import { findVendorByEmail } from "../Repository/vendorRepo.js";
 export const register = async (req, res) => {
     try {
         const { vendorname, email, phone, password } = req.body;
-        // Assign default values to the missing properties
-        // const categories = req.body.categories || "defaultCategory";
-        // const reviews = req.body.reviews || "No reviews";
         const proceedWithRegistration = async () => {
             try {
                 const otp = otpGenerator();

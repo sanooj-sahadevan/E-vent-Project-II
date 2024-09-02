@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {googleLogin,loginUser,registerUser,verifyAndSaveUser,} from "../Service/userService.js";
+import {loginUser,googleLogin,registerUser,verifyAndSaveUser,} from "../Service/userService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findUserByEmail } from "../Repository/userReop.js";
@@ -43,7 +43,6 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    console.log('vannn');
 
     const { email, password } = req.body;
     const { user, token } = await loginUser(email, password);
@@ -61,7 +60,6 @@ export const login = async (req: Request, res: Response) => {
 
 export const verifyOtp = async (req: Request, res: Response) => {
   try {
-    console.log('vann');
     
     const { email, otp } = req.body;
     console.log(email, otp);

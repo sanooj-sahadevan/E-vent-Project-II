@@ -1,8 +1,4 @@
-import { 
-//   getAllUnapprovalCompany,
-loginUser,
-//   updateApproval,
- } from "../Service/adminService.js";
+import { loginUser, } from "../Service/adminService.js";
 export const adminlogin = async (req, res, next) => {
     const { email, password } = req.body;
     console.log(req.body);

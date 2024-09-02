@@ -57,7 +57,7 @@ export const registerVendor = async (vendor: Vendor) => {
     const vendorToken = jwt.sign(
       { vendorId: vendor._id },
      
-      'sanoojsanooj',
+      process.env.JWT_KEY!   ,
       {
         expiresIn: "1h",
       }
