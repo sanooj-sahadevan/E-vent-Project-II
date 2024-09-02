@@ -1,4 +1,4 @@
-import { loginUser, googleLogin, registerUser, verifyAndSaveUser, } from "../Service/userService.js";
+import { loginUser, googleLogin, registerUser, verifyAndSaveUser, checkEmail } from "../Service/userService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findUserByEmail } from "../Repository/userReop.js";
@@ -88,3 +88,35 @@ export const googleLoginHandler = async (req, res) => {
         res.status(500).json({ error: "Failed to process Google login" });
     }
 };
+export const forgottenPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const { user } = await checkEmail(email);
+        console.log('oooooooooooooooooooooooo');
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const otp = otpGenerator();
+        console.log(`Generated OTP: ${otp}`); // This will log the OTP to the console
+        // await registerUser({ email, otp, username: "", password: "" });
+        await sendEmail(email, otp);
+        res.status(200).json({ message: 'OTP sent successfully', otp });
+    }
+    catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+// export const forgottenverifyOtp = async (req: Request, res: Response) => {
+//   try {
+//     const { otp } = await checkotp; // Call checkEmail with just the email
+//     console.log(user);
+//     console.log("vann vann");
+//     if (!user) {
+//       return res.status(404).json({ error: 'User not found' }); // Handle case where user is not found
+//     }
+//     // You can generate a token or perform further actions here
+//     res.status(200).json({ user });
+//   } catch (error: any) {
+//     res.status(400).json({ error: error.message });
+//   }
+// }

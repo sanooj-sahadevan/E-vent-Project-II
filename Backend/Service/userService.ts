@@ -8,6 +8,7 @@ import {
   findUserByEmail,
   updateUser,
 } from "../Repository/userReop.js";
+import { otpGenerator } from "../utils/otpGenerator.js";
 
 export const registerUser = async (user: User) => {
   try {
@@ -58,6 +59,23 @@ export const loginUser = async (email: string, password: string) => {
 
   return { user, token };
 };
+
+
+export const checkEmail = async (email: string) => {
+  const user = await findUserByEmail(email);
+
+  if (!user) {
+    throw new Error('User not found'); // Error handling if the user is not found
+  }
+
+  
+
+  return { user };
+};
+
+
+
+
 
 
 

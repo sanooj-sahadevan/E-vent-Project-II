@@ -40,6 +40,13 @@ export const loginUser = async (email, password) => {
     });
     return { user, token };
 };
+export const checkEmail = async (email) => {
+    const user = await findUserByEmail(email);
+    if (!user) {
+        throw new Error('User not found'); // Error handling if the user is not found
+    }
+    return { user };
+};
 export const verifyAndSaveUser = async (email, otp) => {
     const user = await findUserByEmail(email);
     if (user && user.otp === otp) {

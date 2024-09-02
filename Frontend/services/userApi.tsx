@@ -64,3 +64,25 @@ export const GoogleLoginAPI = async (reqBody: any) => {
   const response = await axios.post(`${SERVER_URL}/googleLogin`, reqBody, {withCredentials: true});
   return response.data
 };
+
+export const ForgotenAPI = async (reqBody: any) => {
+  console.log('logggg');
+  
+  // return await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
+  const response =  await axios.post(`${SERVER_URL}/forgottenpassword`, reqBody, {withCredentials: true});
+  console.log('vann');
+  
+  console.log(response.data,'dataaaaa');
+  
+  return response.data;
+
+}
+
+export const forgottenverifyOtp = async (data: any) => {
+  console.log('poi');
+  
+let otp =  await api.post("/forgottenverifyOtp", data);
+console.log(otp);
+return otp
+
+};
