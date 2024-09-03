@@ -3,7 +3,7 @@ import {
     googleLoginHandler,
      login,
       register,
-       verifyOtp,forgottenPassword } from "../controller/userController.js";
+       verifyOtp,forgottenPassword,updatePassword } from "../controller/userController.js";
 
 
 const router = express.Router();
@@ -18,5 +18,5 @@ router.post("/googleLogin", googleLoginHandler);
 
 router.post('/forgottenpassword',forgottenPassword)
 
-
+router.post('/updatePassword',updatePassword)
 export default router;

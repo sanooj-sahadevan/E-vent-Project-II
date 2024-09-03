@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, findUserByEmail, updateUser, } from "../Repository/userReop.js";
+import { createUser, findUserByEmail, updateUser, findUserByEmailupdate } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -84,4 +84,10 @@ export const googleLogin = async ({ email, profileImagePath, username, phone, })
         console.error("Error during Google login:", error);
         throw new Error("Failed to handle Google login");
     }
+};
+export const update = async (email, password) => {
+    console.log('Service: Calling repository to update password');
+    // Call the repository function to update the password
+    const user = await findUserByEmailupdate(email, password);
+    return user; // Return the updated user
 };

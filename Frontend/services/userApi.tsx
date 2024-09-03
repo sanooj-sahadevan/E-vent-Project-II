@@ -86,3 +86,13 @@ console.log(otp);
 return otp
 
 };
+
+
+export const updatePassword = async (data: any) => {
+  console.log('poi');
+  
+let response =  await api.post("/updatePassword", data);
+console.log(response);
+return response
+
+};

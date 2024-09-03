@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { loginUser, googleLogin, registerUser, verifyAndSaveUser, checkEmail} from "../Service/userService.js";
+import { loginUser, googleLogin, registerUser, verifyAndSaveUser, update,checkEmail} from "../Service/userService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findUserByEmail } from "../Repository/userReop.js";
@@ -125,28 +125,30 @@ console.log('oooooooooooooooooooooooo');
     // await registerUser({ email, otp, username: "", password: "" });
     await sendEmail(email, otp);
 
-    res.status(200).json({ message: 'OTP sent successfully' ,otp});
+    res.status(200).json({ message: 'OTP sent successfully' ,otp,email});
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
 };
 
 
-// export const forgottenverifyOtp = async (req: Request, res: Response) => {
-//   try {
-//     const { otp } = await checkotp; // Call checkEmail with just the email
-//     console.log(user);
-//     console.log("vann vann");
-    
-    
-//     if (!user) {
-//       return res.status(404).json({ error: 'User not found' }); // Handle case where user is not found
-//     }
 
-//     // You can generate a token or perform further actions here
 
-//     res.status(200).json({ user });
-//   } catch (error: any) {
-//     res.status(400).json({ error: error.message });
-//   }
-// }
+export const updatePassword = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body; // Get email and password from the request body
+console.log(email, password+'main content ithil ind');
+
+    // Update the user's password
+    const user = await update(email, password);
+
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    // Respond with the updated user data
+    res.status(200).json({ message: "Password updated successfully", user });
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};

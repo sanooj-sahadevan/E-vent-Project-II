@@ -74,7 +74,7 @@ const SignupForm: React.FC = () => {
         pauseOnHover
       />
 
-      <div className="flex min-h-screen bg-gray-100">
+<div className="flex min-h-screen bg-white-100 p-8">
         {/* <div className="w-1/2">
           <img
             src="https://media.istockphoto.com/id/1495018397/photo/splendid-view-of-an-outdoor-wedding-premises.jpg?s=2048x2048&w=is&k=20&c=WgMmtbGBe6ZEPoUpJQhdjJmX4QR1sBfqsc9bAXRSMo0="

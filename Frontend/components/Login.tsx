@@ -102,7 +102,7 @@ const LoginForm: React.FC = () => {
       />
 
 
-      <div className="flex min-h-screen bg-gray-100">
+<div className="flex min-h-screen bg-white-100 p-8">
         {/* <div className="w-1/2">
           <img
             src="https://media.istockphoto.com/id/1495018397/photo/splendid-view-of-an-outdoor-wedding-premises.jpg?s=2048x2048&w=is&k=20&c=WgMmtbGBe6ZEPoUpJQhdjJmX4QR1sBfqsc9bAXRSMo0="
@@ -110,7 +110,7 @@ const LoginForm: React.FC = () => {
             className="object-cover w-full h-full"
           />
         </div> */}
-<div className="w-1/2">
+        <div className="w-1/2">
           <Image
             src={img}
             alt="Sign up"
@@ -186,7 +186,7 @@ const LoginForm: React.FC = () => {
             </a>
           </div>
           <div className="text-gray-500">
-         forgot your passowrd?{" "}
+            forgot your passowrd?{" "}
             <a href="/forgottenPassword" className="font-medium text-blue-500 hover:text-blue-700">
               click here
             </a>

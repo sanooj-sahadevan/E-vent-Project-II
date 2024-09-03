@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import {
   createUser,
   findUserByEmail,
-  updateUser,
+  updateUser,findUserByEmailupdate
 } from "../Repository/userReop.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 
@@ -137,4 +137,13 @@ export const googleLogin = async ({
     console.error("Error during Google login:", error);
     throw new Error("Failed to handle Google login");
   }
+};
+
+export const update = async (email: string, password: string) => {
+  console.log('Service: Calling repository to update password');
+  
+  // Call the repository function to update the password
+  const user = await findUserByEmailupdate(email, password);
+  
+  return user; // Return the updated user
 };

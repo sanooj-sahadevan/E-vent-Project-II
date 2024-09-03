@@ -1,5 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { User } from "../models/userModel.js";
+import bcrypt from "bcrypt";
+
 
 // Extending the User interface with mongoose Document
 interface UserModel extends User, Document {
@@ -39,4 +41,32 @@ export const findUserByEmail = async (email: string) => {
 
 export const updateUser = async (email: string, update: Partial<User>) => {
     return UserModel.findOneAndUpdate({ email }, update, { new: true });
+};
+
+
+
+
+export const findUserByEmailupdate = async (email: string, password: string) => {
+    console.log('Repository: Updating user password');
+    
+    // Find the user by email
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+        throw new Error("User not found");
+    }
+
+    // Safely log the user's email (after the null check)
+    console.log(user.email);
+
+    // Hash the new password before saving it
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user's password
+    user.password = hashedPassword;
+    
+    // Save the updated user back to the database
+    await user.save();
+
+    return user; // Return the updated user
 };
