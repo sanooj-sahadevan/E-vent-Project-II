@@ -28,11 +28,11 @@ const Navbar: React.FC = () => {
     localStorage.removeItem("token");
     deleteCookie("token");
     setIsAuthorized(false);
-    router.push("/"); // Redirect to the home page or login page
+    router.push("/");
   };
 
   return (
-    <nav className="bg-black py-4 px-8 flex justify-between items-center">
+    <nav className="bg-black py-4 px-8 flex justify-between items-center fixed top-0 w-full z-10">
       {/* Logo Section */}
       <div className="text-white font-bold">
         <Link href="/">E-vent</Link>
@@ -81,7 +81,7 @@ const Navbar: React.FC = () => {
         <svg
           onClick={() => router.push("/profile")}
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 cursor-pointer" // Added cursor-pointer for better UX
+          className="h-6 w-6 cursor-pointer"
           fill="none"
           viewBox="0 0 24 24"
           stroke="white"
@@ -94,7 +94,6 @@ const Navbar: React.FC = () => {
           />
         </svg>
 
-
         {/* Logout or Login */}
         {isAuthorized ? (
           <span onClick={handleLogoutClick} className="p-2 text-white cursor-pointer">
@@ -105,9 +104,9 @@ const Navbar: React.FC = () => {
             <span className="text-white">Login</span>
           </Link>
         )}
-
       </div>
     </nav>
+
   );
 };
 

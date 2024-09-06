@@ -2,6 +2,7 @@ import { loginUser, googleLogin, registerUser, verifyAndSaveUser, update, checkE
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findUserByEmail } from "../Repository/userReop.js";
+import { HttpStatus } from "../utils/httpStatus.js";
 export const register = async (req, res) => {
     try {
         console.log('controller');
@@ -18,16 +19,16 @@ export const register = async (req, res) => {
                     password, otp
                 });
                 await sendEmail(email, otp);
-                res.status(200).json("OTP sent to email");
+                res.status(HttpStatus.OK).json("OTP sent to email");
             }
             catch (error) {
-                res.status(400).json({ error: `Registration failed: ${error.message}` });
+                res.status(HttpStatus.BAD_REQUEST).json({ error: `Registration failed: ${error.message}` });
             }
         };
         await proceedWithRegistration();
     }
     catch (error) {
-        res.status(400).json({ error: `Error: ${error.message}` });
+        res.status(HttpStatus.BAD_REQUEST).json({ error: `Error: ${error.message}` });
     }
 };
 export const login = async (req, res) => {
@@ -37,10 +38,10 @@ export const login = async (req, res) => {
         console.log({ user, token });
         res.cookie("token", token);
         // console.log('Cookie set:', req.cookies['token']);
-        res.status(200).json({ user, token });
+        res.status(HttpStatus.OK).json({ user, token });
     }
     catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
     }
 };
 export const verifyOtp = async (req, res) => {
@@ -50,20 +51,20 @@ export const verifyOtp = async (req, res) => {
         const user = await findUserByEmail(email);
         console.log(user);
         if (!user) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(HttpStatus.NOT_FOUND).json({ error: "User not found" });
         }
         console.log(user.otp, otp);
         if (user.otp === otp) {
             await verifyAndSaveUser(email, otp);
-            res.status(200).json("User registered successfully");
+            res.status(HttpStatus.OK).json("User registered successfully");
         }
         else {
-            res.status(400).json({ error: "Invalid OTP" });
+            res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
         }
     }
     catch (error) {
         console.log(error.message);
-        res.status(400).json({ error: error.message });
+        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
     }
 };
 export const googleLoginHandler = async (req, res) => {
@@ -77,33 +78,32 @@ export const googleLoginHandler = async (req, res) => {
         })
             .then((loginResult) => {
             res.cookie("token", loginResult.token);
-            res.status(200).json(loginResult);
+            res.status(HttpStatus.OK).json(loginResult);
         })
             .catch((error) => {
-            res.status(500).json({ error: "Failed to handle Google login" });
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "Failed to handle Google login" });
         });
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Failed to process Google login" });
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "Failed to process Google login" });
     }
 };
 export const forgottenPassword = async (req, res) => {
     try {
         const { email } = req.body;
         const { user } = await checkEmail(email);
-        console.log('oooooooooooooooooooooooo');
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(HttpStatus.NOT_FOUND).json({ error: 'User not found' });
         }
         const otp = otpGenerator();
         console.log(`Generated OTP: ${otp}`); // This will log the OTP to the console
         // await registerUser({ email, otp, username: "", password: "" });
         await sendEmail(email, otp);
-        res.status(200).json({ message: 'OTP sent successfully', otp, email });
+        res.status(HttpStatus.OK).json({ message: 'OTP sent successfully', otp, email });
     }
     catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
     }
 };
 export const updatePassword = async (req, res) => {
@@ -113,12 +113,12 @@ export const updatePassword = async (req, res) => {
         // Update the user's password
         const user = await update(email, password);
         if (!user) {
-            return res.status(400).json({ error: "User not found" });
+            return res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
         }
         // Respond with the updated user data
-        res.status(200).json({ message: "Password updated successfully", user });
+        res.status(HttpStatus.OK).json({ message: "Password updated successfully", user });
     }
     catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
     }
 };

@@ -20,19 +20,19 @@ export const findUserByEmailAdmin = async (
   return admin ? admin : null;
 };
 
-export const getAllUnapprovalFromDB = async () => {
-  return await VendorModel.find({ adminVerified: false }).sort({
-    createdAt: -1,
-  });
-};
+// export const getAllUnapprovalFromDB = async () => {
+//   return await VendorModel.find({ adminVerified: false }).sort({
+//     createdAt: -1,
+//   });
+// };
 
-export const updateVendorFromDB = async (id: string) => {
-  return await VendorModel.findOneAndUpdate(
-    { _id: id }, 
-    { $set: { adminVerified: true } }, 
-    {
-      returnOriginal: false, 
-      upsert: false, 
-    }
-  );
-};
+// export const updateVendorFromDB = async (id: string) => {
+//   return await VendorModel.findOneAndUpdate(
+//     { _id: id },
+//     { $set: { adminVerified: true } },
+//     {
+//       returnOriginal: false,
+//       upsert: false,
+//     }
+//   );
+// };

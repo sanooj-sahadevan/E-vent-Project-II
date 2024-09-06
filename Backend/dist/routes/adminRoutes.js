@@ -1,7 +1,7 @@
-import express from "express";
-import { adminlogin, } from "../controller/adminController.js";
-// import adminJwtMiddleware from "../MiddleWare/adminJWT";
+import express from 'express';
+import { AdminController } from '../controller/adminController.js';
 const router = express.Router();
+const adminController = new AdminController();
 // Login route for admin
-router.post("/login", adminlogin);
+router.post('/login', (req, res, next) => adminController.adminLogin(req, res, next));
 export default router;

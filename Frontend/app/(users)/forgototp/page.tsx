@@ -8,7 +8,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 interface OTPFormInputs {
   otp: number;
-  email:string
+  email: string
 }
 
 const OTPPage: React.FC = () => {
@@ -20,25 +20,25 @@ const OTPPage: React.FC = () => {
   const searchParams = useSearchParams();
   const otpFromUrl = searchParams?.get("otp"); // Retrieve the OTP from the URL query params
   const email = searchParams?.get("email"); // Retrieve the email from the URL query params
-console.log(email,'emailllllllllllllllllllllllllll');
+  console.log(email, 'emailllllllllllllllllllllllllll');
 
   // Handle OTP submission
   const handleOtpSubmit: SubmitHandler<OTPFormInputs> = async (data) => {
     const { otp } = data;
 
-  try {
-    if (otp.toString() === otpFromUrl) {
-      // OTP matches
-      toast.success("OTP verification successful, please reset your password.");
-      router.push(`/updatePassword?email=${email}`);
-    } else {
-      // OTP does not match
-      toast.error("Invalid OTP. Please try again.");
+    try {
+      if (otp.toString() === otpFromUrl) {
+        // OTP matches
+        toast.success("OTP verification successful, please reset your password.");
+        router.push(`/updatePassword?email=${email}`);
+      } else {
+        // OTP does not match
+        toast.error("Invalid OTP. Please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred during OTP verification. Please try again.");
     }
-  } catch (error) {
-    console.error(error);
-    toast.error("An error occurred during OTP verification. Please try again.");
-  }
   };
 
   // Handle Resend OTP click
@@ -75,8 +75,8 @@ console.log(email,'emailllllllllllllllllllllllllll');
         draggable
         pauseOnHover
       />
-<div className="flex min-h-screen bg-white-100 p-8">
-<div className="w-1/2">
+      <div className="flex min-h-screen bg-white-100 p-8">
+        <div className="w-1/2">
           <img
             src="https://media.istockphoto.com/id/1495018397/photo/splendid-view-of-an-outdoor-wedding-premises.jpg?s=2048x2048&w=is&k=20&c=WgMmtbGBe6ZEPoUpJQhdjJmX4QR1sBfqsc9bAXRSMo0="
             alt="Log in"
@@ -127,7 +127,7 @@ console.log(email,'emailllllllllllllllllllllllllll');
               <button
                 onClick={handleResendOtp}
                 className="inline-flex items-center justify-center w-full px-4 py-2 text-base font-medium text-white bg-buttonBg border border-transparent rounded-md hover:bg-buttonBgH focus:outline-none focus:ring-2 focus:ring-buttonBg focus:ring-offset-2"
-                >
+              >
                 Resend OTP
               </button>
             )}

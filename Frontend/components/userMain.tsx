@@ -5,7 +5,7 @@ const Home = () => {
     return (
         <div className="container mx-auto">
             {/* Header Image */}
-            <div className="relative w-full h-[80vh]">
+            <div className="relative w-full h-[80vh]   ">
                 <Image
                     src={headerImage}
                     alt="Header Image"
