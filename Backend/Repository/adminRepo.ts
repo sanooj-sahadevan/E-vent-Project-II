@@ -5,6 +5,7 @@ import { VendorModel } from "./vendorRepo";
 
 // Define the Mongoose schema for the User
 const AdminSchema: Schema<Admin> = new Schema({
+  
   adminName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },

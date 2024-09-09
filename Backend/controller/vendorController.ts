@@ -1,5 +1,5 @@
 
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   loginVendor,
   registerVendor,
@@ -14,7 +14,7 @@ import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
 
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const { vendorname, email, phone, password } = req.body;
 
@@ -47,12 +47,11 @@ export const register = async (req: Request, res: Response) => {
 
     proceedWithRegistration();
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
-  }
+    next(error);   }
 };
 
 
-export const verifyOtp = async (req: Request, res: Response) => {
+export const verifyOtp =  async (req: Request, res: Response,next:NextFunction) => {
   try {
     const { email, otp } = req.body;
     console.log(email, otp);
@@ -71,11 +70,10 @@ export const verifyOtp = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Invalid OTP" });
     }
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
-  }
+    next(error);   }
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login =  async (req: Request, res: Response,next:NextFunction) => {
   try {
     
     const { email, password } = req.body;
@@ -89,6 +87,6 @@ export const login = async (req: Request, res: Response) => {
       res.status(200).json({ vendor });
     }
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    next(error);   
   }
 };

@@ -18,12 +18,18 @@ export const createUser = async (user) => {
     const newUser = new UserModel(user);
     return newUser.save();
 };
-export const findUserByEmail = async (email) => {
-    console.log('repositary  email');
-    const result = await UserModel.findOne({ email });
-    return result;
-    // return await UserModel.findOne({ email })
-};
+export class UserRepository {
+    async findUserByEmail(email) {
+        try {
+            const result = await UserModel.findOne({ email });
+            return result;
+        }
+        catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+}
 export const updateUser = async (email, update) => {
     return UserModel.findOneAndUpdate({ email }, update, { new: true });
 };
