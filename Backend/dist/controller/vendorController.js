@@ -1,11 +1,9 @@
-import { loginVendor, registerVendor, 
-//   uploadImage,
-//   uploadTrip,
-verifyAndSaveVendor, } from "../Service/vendorService.js";
+import { loginVendor, registerVendor, verifyAndSaveVendor, } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
-
+import { HttpStatus } from "../utils/httpStatus.js";
+export const register = async (req, res, next) => {
     try {
         const { vendorname, email, phone, password } = req.body;
         const proceedWithRegistration = async () => {
@@ -18,22 +16,18 @@ import { findVendorByEmail } from "../Repository/vendorRepo.js";
                     email,
                     password,
                     otp,
-                    // categories,
-                    // reviews,
                 });
                 await sendEmail(email, otp);
                 res.status(HttpStatus.OK).json("OTP sent to email");
             }
             catch (error) {
-                res
-                    .status(400)
-                    .json({ error: "Registration failed: " + error.message });
+                res.status(HttpStatus.BAD_REQUEST).json({ error: "Registration failed: " + error.message });
             }
         };
-        proceedWithRegistration();
+        await proceedWithRegistration(); // Added `await` to handle the async function properly
     }
     catch (error) {
-
+        next(error); // Forward the error to the error-handling middleware
     }
 };
 export const verifyOtp = async (req, res, next) => {
@@ -43,18 +37,19 @@ export const verifyOtp = async (req, res, next) => {
         const vendor = await findVendorByEmail(email);
         console.log(vendor);
         if (!vendor) {
-            return res.status(HttpStatus.BAD_REQUEST).json({ error: "vendor not found" });
+            res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
+            return; // Stop further execution after sending the response
         }
         if (vendor.otp === otp) {
             await verifyAndSaveVendor(email, otp);
-            res.status(HttpStatus.OK).json("vendor registered successfully");
+            res.status(HttpStatus.OK).json("Vendor registered successfully");
         }
         else {
             res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
         }
     }
     catch (error) {
-
+        next(error); // Pass the error to the error-handling middleware
     }
 };
 export const login = async (req, res, next) => {
@@ -63,14 +58,14 @@ export const login = async (req, res, next) => {
         console.log(req.body);
         const { vendor, vendorToken } = await loginVendor(email, password);
         if (vendor) {
-            res.cookie("vendorToken", vendorToken);
+            res.cookie("vendorToken", vendorToken, { httpOnly: true });
             res.status(HttpStatus.OK).json({ vendor, vendorToken });
         }
         else {
-            res.status(HttpStatus.OK).json({ vendor });
+            res.status(HttpStatus.UNAUTHORIZED).json({ error: "Invalid email or password" }); // Respond with error if vendor not found
         }
     }
     catch (error) {
-
+        res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message }); // Corrected error message syntax
     }
 };

@@ -6,8 +6,9 @@ import {LoginService,
       update,
       // checkEmail
     } from "../Service/userService.js";
-import { otpGenerator } from "../utils/otpGenerator.js";
-import { sendEmail } from "../utils/sendEmail.js";
+// import { otpGenerator } from "../utils/otpGenerator.js";
+// import { sendEmail } from "../utils/sendEmail.js";
+import {HttpStatus} from '../utils/httpStatus.js'
 
 
 // export const register = async (req: Request, res: Response,next:NextFunction) => {
@@ -43,6 +44,8 @@ import { sendEmail } from "../utils/sendEmail.js";
 // };
 
 
+
+
 export class LoginController {
   private loginService: LoginService;
 
@@ -56,9 +59,14 @@ export class LoginController {
       const { user, token } = await this.loginService.loginUser(email, password);
       console.log({ user, token });
 
-
+      res.cookie("token", token);
+      res.status(200).json({ user, token });
+    } catch (error: any) {
+      next(error);
+    }
   }
 }
+
 
 
 
@@ -98,21 +106,24 @@ export class LoginController {
 
 
 
-
-export const updatePassword =  async (req: Request, res: Response,next:NextFunction) => {
+export const updatePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { email, password } = req.body; // Get email and password from the request body
-console.log(email, password+'main content ithil ind');
+    const { email, password } = req.body;
+    console.log(email, password + ' main content ithil ind');
 
     // Update the user's password
     const user = await update(email, password);
 
     if (!user) {
-      return res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
+      res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
+      return;  // Exit the function after sending the response
     }
 
     // Respond with the updated user data
     res.status(HttpStatus.OK).json({ message: "Password updated successfully", user });
   } catch (error: any) {
-
+    next(error); // Pass the error to the error-handling middleware
+  }
 };
+
+
