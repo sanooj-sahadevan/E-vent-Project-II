@@ -2,7 +2,7 @@
 
 import React from "react";
 import Layout from "@/components/Admin/layout";
-import Topbar from "@/components/AdminTopbar";
+import Topbar from "@/components/adminTopbar";
 import "react-toastify/dist/ReactToastify.css";
 
 

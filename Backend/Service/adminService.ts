@@ -1,31 +1,28 @@
-import jwt from "jsonwebtoken";
-import {
-  
-} from "../Repository/adminRepo";
-import { error } from "console";
+import jwt from 'jsonwebtoken';
 
-
-export const loginUser = async (
+export class AdminService {
+  async loginUser(
     email: string,
     password: string
-): Promise<{ adminToken: string; admin: string } | null> => {
+  ): Promise<{ adminToken: string; admin: string } | null> {
+    try {
+      if (process.env.ADMIN_EMAIL !== email) {
+        throw new Error("User not found");
+      }
 
-    if (process.env.ADMIN_EMAIL !== email) {
-        // throw errorHandler(404, "User not found");
-        throw error
-    }
-    if (process.env.ADMIN_PASS !== password) {
-        // throw errorHandler(401, "Wrong credentials");
-        throw error
-    }
+      if (process.env.ADMIN_PASS !== password) {
+        throw new Error("Wrong credentials");
+      }
 
-    const adminToken = jwt.sign(
-        {
-            AdminEmail: email,
-        },
+      const adminToken = jwt.sign(
+        { AdminEmail: email },
         process.env.JWT_KEY as string,
-        { expiresIn: "1h" }
-    );
+        { expiresIn: '1h' }
+      );
 
-    return { adminToken, admin: email };
-};
+      return { adminToken, admin: email };
+    } catch (error:any) {
+      throw new Error(error.message || "Login failed");
+    }
+  }
+}

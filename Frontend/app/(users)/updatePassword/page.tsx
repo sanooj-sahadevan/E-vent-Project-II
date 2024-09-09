@@ -13,34 +13,34 @@ import img from '@/public/4.jpg.jpg'
 type Inputs = {
     password: string;
     confirmPassword: string;
-  };
-  
-  const UpdatePasswordForm: React.FC = () => {
+};
+
+const UpdatePasswordForm: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const email = searchParams?.get("email"); // Extract the email from the query parameters
-  console.log(email+'eeeeeeeeeeeeeeeeeee');
-  
+    console.log(email + 'eeeeeeeeeeeeeeeeeee');
+
     const { register, handleSubmit, getValues, formState: { errors } } = useForm<Inputs>();
-  
+
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
-      const { password } = data;
-  
-      const reqBody = {
-        email, // Include the email in the request body
-        password,
-      };
-  
-      try {
-        const result = await updatePassword(reqBody); // Assuming updatePassword is an API call to update the password
-        console.log("updatePassword result:", result);
-  
-        toast.success("Password updated successfully.");
-        router.push(`/login`);
-      } catch (err) {
-        console.error('updatePassword error:', err);
-        toast.error("An error occurred during password update. Please try again.");
-      }
+        const { password } = data;
+
+        const reqBody = {
+            email, // Include the email in the request body
+            password,
+        };
+
+        try {
+            const result = await updatePassword(reqBody); // Assuming updatePassword is an API call to update the password
+            console.log("updatePassword result:", result);
+
+            toast.success("Password updated successfully.");
+            router.push(`/login`);
+        } catch (err) {
+            console.error('updatePassword error:', err);
+            toast.error("An error occurred during password update. Please try again.");
+        }
     };
 
     return (
@@ -57,7 +57,7 @@ type Inputs = {
                 pauseOnHover
             />
 
-<div className="flex min-h-screen bg-white-100 p-8">
+            <div className="flex min-h-screen bg-white-100 p-8">
                 <div className="w-1/2">
                     <Image
                         src={img}
@@ -105,7 +105,7 @@ type Inputs = {
                         <button
                             type="submit"
                             className="inline-flex items-center justify-center w-full px-4 py-2 text-base font-medium text-white bg-buttonBg border border-transparent rounded-md hover:bg-buttonBgH focus:outline-none focus:ring-2 focus:ring-buttonBg focus:ring-offset-2"
-                            >
+                        >
                             Update Password
                         </button>
                     </form>

@@ -12,6 +12,7 @@ import {
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
+import { HttpStatus } from "../utils/httpStatus.js";
 
 
 export const register = async (req: Request, res: Response,next:NextFunction) => {
@@ -37,7 +38,7 @@ export const register = async (req: Request, res: Response,next:NextFunction) =>
 
         await sendEmail(email, otp);
 
-        res.status(200).json("OTP sent to email");
+        res.status(HttpStatus.OK).json("OTP sent to email");
       } catch (error: any) {
         res
           .status(400)
@@ -47,7 +48,7 @@ export const register = async (req: Request, res: Response,next:NextFunction) =>
 
     proceedWithRegistration();
   } catch (error: any) {
-    next(error);   }
+
 };
 
 
@@ -60,17 +61,17 @@ export const verifyOtp =  async (req: Request, res: Response,next:NextFunction) 
     console.log(vendor);
 
     if (!vendor) {
-      return res.status(404).json({ error: "vendor not found" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: "vendor not found" });
     }
 
     if (vendor.otp === otp) {
       await verifyAndSaveVendor(email, otp);
-      res.status(200).json("vendor registered successfully");
+      res.status(HttpStatus.OK).json("vendor registered successfully");
     } else {
-      res.status(400).json({ error: "Invalid OTP" });
+      res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
     }
   } catch (error: any) {
-    next(error);   }
+
 };
 
 export const login =  async (req: Request, res: Response,next:NextFunction) => {
@@ -82,11 +83,11 @@ export const login =  async (req: Request, res: Response,next:NextFunction) => {
     const { vendor, vendorToken } = await loginVendor(email, password);
     if (vendor) {
       res.cookie("vendorToken", vendorToken);
-      res.status(200).json({ vendor, vendorToken });
+      res.status(HttpStatus.OK).json({ vendor, vendorToken });
     } else {
-      res.status(200).json({ vendor });
+      res.status(HttpStatus.OK).json({ vendor });
     }
   } catch (error: any) {
-    next(error);   
+
   }
 };
