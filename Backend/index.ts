@@ -25,6 +25,8 @@ const __dirname = dirname(__filename);
 // Connect to MongoDB
 connectToMongoDB();
 
+
+
 // Middleware setup
 app.use(
   cors({

@@ -1,5 +1,5 @@
 
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import {
   loginVendor,
   registerVendor,
@@ -15,7 +15,7 @@ import { findVendorByEmail } from "../Repository/vendorRepo.js";
 import { HttpStatus } from "../utils/httpStatus.js";
 
 
-export const register = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const { vendorname, email, phone, password } = req.body;
 
@@ -48,12 +48,11 @@ export const register = async (req: Request, res: Response) => {
 
     proceedWithRegistration();
   } catch (error: any) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
-  }
+
 };
 
 
-export const verifyOtp = async (req: Request, res: Response) => {
+export const verifyOtp =  async (req: Request, res: Response,next:NextFunction) => {
   try {
     const { email, otp } = req.body;
     console.log(email, otp);
@@ -72,11 +71,10 @@ export const verifyOtp = async (req: Request, res: Response) => {
       res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
     }
   } catch (error: any) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
-  }
+
 };
 
-export const login = async (req: Request, res: Response) => {
+export const login =  async (req: Request, res: Response,next:NextFunction) => {
   try {
     
     const { email, password } = req.body;
@@ -90,6 +88,6 @@ export const login = async (req: Request, res: Response) => {
       res.status(HttpStatus.OK).json({ vendor });
     }
   } catch (error: any) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+
   }
 };

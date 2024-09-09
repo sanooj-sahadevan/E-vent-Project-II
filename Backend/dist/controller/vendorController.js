@@ -5,8 +5,7 @@ verifyAndSaveVendor, } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
-import { HttpStatus } from "../utils/httpStatus.js";
-export const register = async (req, res) => {
+
     try {
         const { vendorname, email, phone, password } = req.body;
         const proceedWithRegistration = async () => {
@@ -34,10 +33,10 @@ export const register = async (req, res) => {
         proceedWithRegistration();
     }
     catch (error) {
-        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+
     }
 };
-export const verifyOtp = async (req, res) => {
+export const verifyOtp = async (req, res, next) => {
     try {
         const { email, otp } = req.body;
         console.log(email, otp);
@@ -55,10 +54,10 @@ export const verifyOtp = async (req, res) => {
         }
     }
     catch (error) {
-        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+
     }
 };
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         console.log(req.body);
@@ -72,6 +71,6 @@ export const login = async (req, res) => {
         }
     }
     catch (error) {
-        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+
     }
 };
