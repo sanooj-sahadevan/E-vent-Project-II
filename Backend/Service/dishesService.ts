@@ -1,14 +1,9 @@
 import { DishesModel } from "../models/dishesModel";
-import { IDishes } from "../models/dishesModel"; // Interface for Dishes
 
 export class DishesService {
-  public async uploadDishes(
-    vendorId: string,
-    data: any,
-    // imageUrl: string | undefined
-  ): Promise<IDishes | null> {
+  public async uploadDishes(vendorId: string, data: any, imageUrl: string | undefined): Promise<any> {
     try {
-      const dishData: Partial<IDishes> = {
+      const dishData = {
         vendorId,
         dishName: data.dishName,
         description: data.description,
@@ -17,7 +12,7 @@ export class DishesService {
         price: parseFloat(data.price),
         category: data.category,
         status: data.status,
-        // images: imageUrl ? [imageUrl] : [],
+        images: imageUrl ? [imageUrl] : [],
       };
 
       const newDish = new DishesModel(dishData);
