@@ -6,8 +6,8 @@ import bcrypt from "bcrypt";
 import {
   createUser,
   UserRepository,
-  updateUser,findUserByEmailupdate
-} from "../Repository/userReop.js";
+  updateUser,findUserByEmailupdate,
+  VendorRepository} from "../Repository/userReop.js";
 
 // export const registerUser = async (user: User) => {
 //   try {
@@ -154,3 +154,26 @@ export const update = async (email: string, password: string) => {
   
   return user; // Return the updated user
 };
+
+
+// vendorService.ts
+
+export class VendorService {
+    private vendorRepository: VendorRepository;
+
+    constructor() {
+        this.vendorRepository = new VendorRepository();
+    }
+
+    // Fetch all vendors
+    public async getAllVendors(): Promise<any[]> {
+        try {
+            return await this.vendorRepository.getAllVendors();
+        } catch (error) {
+            throw new Error('Error fetching vendors');
+        }
+    }
+}
+
+
+

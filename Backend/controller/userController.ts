@@ -1,14 +1,17 @@
 import { NextFunction, Request, Response } from "express";
-import {LoginService,
+import {
+  LoginService,
+  VendorService,
   //  googleLogin,
-    // registerUser,
-    //  verifyAndSaveUser,
-      update,
-      // checkEmail
-    } from "../Service/userService.js";
+  // registerUser,
+  //  verifyAndSaveUser,
+  update,
+  // checkEmail
+} from "../Service/userService.js";
 // import { otpGenerator } from "../utils/otpGenerator.js";
 // import { sendEmail } from "../utils/sendEmail.js";
-import {HttpStatus} from '../utils/httpStatus.js'
+import { HttpStatus } from '../utils/httpStatus.js'
+
 
 
 // export const register = async (req: Request, res: Response,next:NextFunction) => {
@@ -127,3 +130,23 @@ export const updatePassword = async (req: Request, res: Response, next: NextFunc
 };
 
 
+
+
+
+export class VendorController {
+    private vendorService: VendorService;
+
+    constructor() {
+        this.vendorService = new VendorService(); // Instantiate service in the constructor
+    }
+
+    // Fetch all vendors
+    public async getAllVendors(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const vendors = await this.vendorService.getAllVendors(); // Call the service method
+            res.status(200).json(vendors); // Return vendors
+        } catch (error) {
+            next(error); // Handle error
+        }
+    }
+}

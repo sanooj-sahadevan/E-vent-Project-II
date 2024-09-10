@@ -50,3 +50,11 @@ export const findVendorByEmailAndPassword = async (
 };
 
 
+
+export const vendorAddressFromDB = async () => {
+  try {
+    return await VendorModel.find().sort({ createdAt: -1 }); // Fetch sorted addresses
+  } catch (error) {
+    throw new Error('Database query failed'); // Error message for DB failure
+  }
+};
