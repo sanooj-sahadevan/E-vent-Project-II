@@ -13,6 +13,7 @@
         ]
       }
     ],
-    "button-type": "off"
+    "button-type": "off",
+    "axe/forms": "off"
   }
 }

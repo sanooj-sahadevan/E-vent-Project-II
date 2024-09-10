@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 
 'use client';
 
@@ -24,7 +25,7 @@ const Home: React.FC = () => {
 
     const handleShowMore = () => setShowMore(!showMore);
 
-  
+
 
     const categories = [
         { name: 'Platinum', description: 'Premium services with a personalized touch...', color: 'bg-indigo-100' },
@@ -66,10 +67,10 @@ const Home: React.FC = () => {
                     </div>
                 </div>
                 <div className="flex justify-between p-6 bg-gray-50">
-                    <button  onClick={()=> router.push('/vendorBookingDetails')} className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600">
+                    <button onClick={() => router.push('/vendorBookingDetails')} className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600">
                         Booking Details
                     </button>
-                    <button  className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600">
+                    <button className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600">
                         Edit Profile
                     </button>
                 </div>
@@ -121,72 +122,80 @@ const Home: React.FC = () => {
             </div>
 
             {/* Food Items Section */}
+
+
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">
                 <h2 className="text-2xl font-bold mb-6 flex items-center">
                     <span className="mr-2">🍲</span> Food Items
                     <a href="/vendorAddDishes">
-                        <FaPlus
-                            className="text-green-500 cursor-pointer"
-                        />
+                        <FaPlus className="text-green-500 cursor-pointer" />
                     </a>
-
                 </h2>
-                <div className="bg-white shadow-lg rounded-lg p-6">
-                    {foodItems.map((food, index) => (
-                        <div key={index} className="flex items-center justify-between border-b border-gray-200 py-4">
-                            <div className="flex items-center">
-                                <img
-                                    src={food.image}
-                                    alt={food.name}
-                                    className="w-16 h-16 object-cover rounded-full mr-4"
-                                />
-                                <div>
-                                    <h3 className="font-bold text-lg">{food.name}</h3>
-                                    <p className="text-sm text-gray-600">{food.description}</p>
+                <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto">
+                    {foodItems.length > 0 ? (
+                        foodItems.map((food, index) => (
+                            <div key={index} className="flex items-center justify-between border-b border-gray-200 py-4">
+                                <div className="flex items-center">
+                                    <img
+                                        src={food.image}
+                                        alt={food.name}
+                                        className="w-16 h-16 object-cover rounded-full mr-4"
+                                    />
+                                    <div>
+                                        <h3 className="font-bold text-lg">{food.name}</h3>
+                                        <p className="text-sm text-gray-600">{food.description}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    <FaEdit className="text-gray-500 cursor-pointer" />
+                                    <FaTrashAlt className="text-gray-500 cursor-pointer" />
                                 </div>
                             </div>
-                            <div className="flex items-center space-x-4">
-                                <FaEdit className="text-gray-500 cursor-pointer" />
-                                <FaTrashAlt className="text-gray-500 cursor-pointer" />
-                            </div>
-                        </div>
-                    ))}
+                        ))
+                    ) : (
+                        <p className="text-gray-500 text-center">No food items available.</p>
+                    )}
                 </div>
             </div>
+
+
+
 
             {/* Auditoriums Section */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">
                 <h2 className="text-2xl font-bold mb-6 flex items-center">
                     <span className="mr-2">🏛️</span> Auditoriums
                     <a href="/vendorAddAuditoriums">
-                        <FaPlus
-                            className="text-green-500 cursor-pointer"
-                        />
+                        <FaPlus className="text-green-500 cursor-pointer" />
                     </a>
-
                 </h2>
-                <div className="bg-white shadow-lg rounded-lg p-6">
-                    {foodItems.map((food, index) => (
-                        <div key={index} className="flex items-center justify-between border-b border-gray-200 py-4">
-                            <div className="flex items-center">
-                                <img
-                                    src={food.image}
-                                    alt={food.name}
-                                    className="w-16 h-16 object-cover rounded-full mr-4"
-                                />
-                                <div>
-                                    <h3 className="font-bold text-lg">{food.name}</h3>
-                                    <p className="text-sm text-gray-600">{food.description}</p>
+                <div className="bg-white shadow-lg rounded-lg p-6 h-80 overflow-y-auto"> {/* Fixed height and scrollable */}
+                    {foodItems.length > 0 ? (
+                        foodItems.map((food, index) => (
+                            <div key={index} className="flex items-center justify-between border-b border-gray-200 py-4">
+                                <div className="flex items-center">
+                                    <img
+                                        src={food.image}
+                                        alt={food.name}
+                                        className="w-16 h-16 object-cover rounded-full mr-4"
+                                    />
+                                    <div>
+                                        <h3 className="font-bold text-lg">{food.name}</h3>
+                                        <p className="text-sm text-gray-600">{food.description}</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center space-x-4">
+                                    <FaEdit className="text-gray-500 cursor-pointer" />
+                                    <FaTrashAlt className="text-gray-500 cursor-pointer" />
                                 </div>
                             </div>
-                            <div className="flex items-center space-x-4">
-                                <FaEdit className="text-gray-500 cursor-pointer" />
-                                <FaTrashAlt className="text-gray-500 cursor-pointer" />
-                            </div>
-                        </div>
-                    ))}
+                        ))
+                    ) : (
+                        <p className="text-gray-500 text-center">No items available</p>
+                    )}
                 </div>
             </div>
+
         </div>
 
     )

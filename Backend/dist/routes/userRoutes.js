@@ -14,7 +14,10 @@
 // export default router;
 import { Router } from "express";
 import { LoginController } from "../controller/userController.js";
+import { DishesService } from "../Service/dishesService.js";
 const router = Router();
 const loginController = new LoginController();
+const dishesService = new DishesService();
 router.post("/login", loginController.login.bind(loginController));
+// dishes routes
 export default router;

@@ -37,11 +37,24 @@ export const verifyOtp = async (data: any) => {
 };
 
 
-// export const addTripAPI = async (data: any) => {
-//   return await axios.post(`${SERVER_URL_vendor}/addTrip`, data, {withCredentials: true});
-// }
+export const addDishAPI = async (data: any) => {
+  try {
+    console.log('addDishApi');
+    return await axios.post(`${SERVER_URL_vendor}/addDishes`, data, {withCredentials: true});
+  } catch (error) {
+    console.error('error');
+    
+  }
+}
 
-// export const getAllTripsAPI = async () => {
-//   const response =  await axios.get(`${SERVER_URL_vendor}/trips`, {withCredentials: true});
-//   return response.data;
-// }
+
+
+export const addAuditoriumAPI = async (data: any) => {
+  try {
+    console.log('addAuditorium');
+    return await axios.post(`${SERVER_URL_vendor}/addAuditorium`, data, {withCredentials: true});
+  } catch (error) {
+    console.error('error');
+    
+  }
+}
