@@ -10,7 +10,6 @@
 
 import mongoose, { Schema, Document } from "mongoose";
 
-// Dishes interface extending Document from Mongoose
 export interface IDishes extends Document {
   vendorId: string;
   dishName: string;

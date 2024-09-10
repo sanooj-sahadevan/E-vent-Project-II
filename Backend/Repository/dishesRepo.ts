@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IDishes, DishesModel } from "../models/dishesModel";
+import { IDishes, DishesModel } from "../models/dishesModel.js";
 
 // Function to create a dish and save it to the database
 export const CreatingDishes = async (DishesData: {

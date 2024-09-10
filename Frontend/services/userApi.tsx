@@ -14,7 +14,7 @@ type RequestHeaders = Record<string, string>;
 // SignUp API
 export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
   console.log('signup api');
-  
+
   return await commonAPI("POST", `${SERVER_URL}/signup`, reqBody, reqHeader);
 };
 
@@ -22,7 +22,7 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 
 // export const LoginAPI = async (reqBody: any) => {
 //   console.log('LoginAPI - Request Body:', reqBody);
-  
+
 //   try {
 //     const response = await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
 //     console.log('LoginAPI - Success:', response);
@@ -38,61 +38,75 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 // Login API
 export const LoginAPI = async (reqBody: any) => {
   console.log('logggg');
-  
+
   // return await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
-  const response =  await axios.post(`${SERVER_URL}/login`, reqBody, {withCredentials: true});
+  const response = await axios.post(`${SERVER_URL}/login`, reqBody, { withCredentials: true });
   console.log(response.data);
-  
+
   return response.data;
 };
 
 // verfy otp Api
 export const verifyOtp = async (data: any) => {
   console.log('poi');
-  
-let otp =  await api.post("/verifyOtp", data);
-console.log(otp);
-return otp
+
+  let otp = await api.post("/verifyOtp", data);
+  console.log(otp);
+  return otp
 
 };
 
 // Google Api
 export const GoogleLoginAPI = async (reqBody: any) => {
   console.log(reqBody);
-  
+
   // return await commonAPI("POST", `${SERVER_URL}/googleLogin`, reqBody);
-  const response = await axios.post(`${SERVER_URL}/googleLogin`, reqBody, {withCredentials: true});
+  const response = await axios.post(`${SERVER_URL}/googleLogin`, reqBody, { withCredentials: true });
   return response.data
 };
 
 export const ForgotenAPI = async (reqBody: any) => {
   console.log('logggg');
-  
+
   // return await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
-  const response =  await axios.post(`${SERVER_URL}/forgottenpassword`, reqBody, {withCredentials: true});
+  const response = await axios.post(`${SERVER_URL}/forgottenpassword`, reqBody, { withCredentials: true });
   console.log('vann');
-  
-  console.log(response.data,'dataaaaa');
-  
+
+  console.log(response.data, 'dataaaaa');
+
   return response.data;
 
 }
 
 export const forgottenverifyOtp = async (data: any) => {
   console.log('poi');
-  
-let otp =  await api.post("/forgottenverifyOtp", data);
-console.log(otp);
-return otp
+
+  let otp = await api.post("/forgottenverifyOtp", data);
+  console.log(otp);
+  return otp
 
 };
 
 
 export const updatePassword = async (data: any) => {
   console.log('poi');
-  
-let response =  await api.post("/updatePassword", data);
-console.log(response);
-return response
+
+  let response = await api.post("/updatePassword", data);
+  console.log(response);
+  return response
+
+};
+
+
+export const allVendorAPI = async () => {
+  try {
+    console.log('sucess front end ');
+    
+    const response = await axios.get(`${SERVER_URL}/vendorlist`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+
+  }
 
 };

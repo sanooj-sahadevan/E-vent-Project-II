@@ -1,7 +1,8 @@
-import { DishesModel } from "../models/dishesModel";
+import { DishesModel, IDishes } from "../models/dishesModel.js";
+
 
 export class DishesService {
-  public async uploadDishes(vendorId: string, data: any, imageUrl: string | undefined): Promise<any> {
+  public async uploadDishes(vendorId: string, data: any, imageUrl?: string): Promise<IDishes | null> {
     try {
       const dishData = {
         vendorId,
