@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
+import { VendorModel } from "./vendorRepo.js";
 // Define the Mongoose schema for the User
 const UserSchema = new Schema({
     username: { type: String, required: true },
@@ -50,3 +51,10 @@ export const findUserByEmailupdate = async (email, password) => {
     await user.save();
     return user; // Return the updated user
 };
+export class VendorRepository {
+    // Fetch all vendors from the database
+    async getAllVendors() {
+        return await VendorModel.find().sort({ createdAt: -1 }); // Fetch vendors sorted by creation date
+    }
+}
+// Function to find a user by ID

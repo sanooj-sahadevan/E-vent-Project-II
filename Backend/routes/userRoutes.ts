@@ -23,19 +23,27 @@
 
 
 import { Router } from "express";
-import { LoginController } from "../controller/userController.js";
-import { DishesService } from "../Service/dishesService.js";
+import {  LoginController } from "../controller/userController.js";
+import { VendorController } from "../controller/userController.js"; // Import the controller
+
 
 const router = Router();
 const loginController = new LoginController();
-const dishesService = new DishesService();
+const vendorController = new VendorController(); // Instantiate the controller
+
 
 router.post("/login", loginController.login.bind(loginController));
 
 
 
-// dishes routes
+router.get("/vendors", vendorController.getAllVendors.bind(vendorController)); // Bind the controller method to the route
+
 
 
 export default router;
+
+
+// dishes routes
+
+
 

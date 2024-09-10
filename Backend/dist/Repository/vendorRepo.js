@@ -30,3 +30,11 @@ export const updateVendor = async (email, update) => {
 export const findVendorByEmailAndPassword = async (email, password) => {
     return VendorModel.findOne({ email, password });
 };
+export const vendorAddressFromDB = async () => {
+    try {
+        return await VendorModel.find().sort({ createdAt: -1 }); // Fetch sorted addresses
+    }
+    catch (error) {
+        throw new Error('Database query failed'); // Error message for DB failure
+    }
+};

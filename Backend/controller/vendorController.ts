@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   loginVendor,
   registerVendor,
-  verifyAndSaveVendor,
+  verifyAndSaveVendor,vendorAddress
 } from "../Service/vendorService.js";
 
 import { otpGenerator } from "../utils/otpGenerator.js";
@@ -25,6 +25,10 @@ export const register = async (req: Request, res: Response, next: NextFunction):
           email,
           password,
           otp,
+          reviews: "",
+          address: "",
+          district: "",
+          state: ""
         });
 
         await sendEmail(email, otp);
@@ -81,5 +85,21 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     }
   } catch (error: any) {
     res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message }); // Corrected error message syntax
+  }
+};
+
+
+
+export const fetchAddress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log("vann ta");
+    
+    const vendorAddresses = await vendorAddress(); 
+    console.log(vendorAddresses);
+    
+    // Get addresses from service
+    res.status(200).json(vendorAddresses); // Send response
+  } catch (error) {
+    next(error); // Pass error to the next middleware (error handler)
   }
 };

@@ -1,6 +1,11 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { User } from "../models/userModel.js";
+import { Vendor,
+  
+} from "../models/vendorModel.js";
+
 import bcrypt from "bcrypt";
+import { VendorModel } from "./vendorRepo.js";
 
 
 // Extending the User interface with mongoose Document
@@ -76,3 +81,14 @@ export const findUserByEmailupdate = async (email: string, password: string) => 
 
     return user; // Return the updated user
 };
+
+
+
+export class VendorRepository {
+    // Fetch all vendors from the database
+    public async getAllVendors() {
+        return await VendorModel.find().sort({ createdAt: -1 }); // Fetch vendors sorted by creation date
+    }
+}
+
+// Function to find a user by ID

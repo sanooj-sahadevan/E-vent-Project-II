@@ -1,4 +1,4 @@
-import { loginVendor, registerVendor, verifyAndSaveVendor, } from "../Service/vendorService.js";
+import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
@@ -16,6 +16,10 @@ export const register = async (req, res, next) => {
                     email,
                     password,
                     otp,
+                    reviews: "",
+                    address: "",
+                    district: "",
+                    state: ""
                 });
                 await sendEmail(email, otp);
                 res.status(HttpStatus.OK).json("OTP sent to email");
@@ -67,5 +71,17 @@ export const login = async (req, res, next) => {
     }
     catch (error) {
         res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message }); // Corrected error message syntax
+    }
+};
+export const fetchAddress = async (req, res, next) => {
+    try {
+        console.log("vann ta");
+        const vendorAddresses = await vendorAddress();
+        console.log(vendorAddresses);
+        // Get addresses from service
+        res.status(200).json(vendorAddresses); // Send response
+    }
+    catch (error) {
+        next(error); // Pass error to the next middleware (error handler)
     }
 };

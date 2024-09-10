@@ -5,7 +5,10 @@ export interface Vendor {
     password: string;
     profileImage?: string;
     // categories: string;
-    // reviews: string;
+    address: string,
+    district: string,
+    state: string,
+    reviews: string;
     otp?: string;
     otpVerified?: boolean;
     adminVerified?: boolean;

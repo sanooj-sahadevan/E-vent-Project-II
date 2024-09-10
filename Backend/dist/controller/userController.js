@@ -1,4 +1,4 @@
-import { LoginService, 
+import { LoginService, VendorService, 
 //  googleLogin,
 // registerUser,
 //  verifyAndSaveUser,
@@ -87,3 +87,19 @@ export const updatePassword = async (req, res, next) => {
         next(error); // Pass the error to the error-handling middleware
     }
 };
+export class VendorController {
+    vendorService;
+    constructor() {
+        this.vendorService = new VendorService(); // Instantiate service in the constructor
+    }
+    // Fetch all vendors
+    async getAllVendors(req, res, next) {
+        try {
+            const vendors = await this.vendorService.getAllVendors(); // Call the service method
+            res.status(200).json(vendors); // Return vendors
+        }
+        catch (error) {
+            next(error); // Handle error
+        }
+    }
+}

@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { UserRepository, findUserByEmailupdate } from "../Repository/userReop.js";
+import { UserRepository, findUserByEmailupdate, VendorRepository } from "../Repository/userReop.js";
 // export const registerUser = async (user: User) => {
 //   try {
 //     console.log('service');
@@ -111,3 +111,19 @@ export const update = async (email, password) => {
     const user = await findUserByEmailupdate(email, password);
     return user; // Return the updated user
 };
+// vendorService.ts
+export class VendorService {
+    vendorRepository;
+    constructor() {
+        this.vendorRepository = new VendorRepository();
+    }
+    // Fetch all vendors
+    async getAllVendors() {
+        try {
+            return await this.vendorRepository.getAllVendors();
+        }
+        catch (error) {
+            throw new Error('Error fetching vendors');
+        }
+    }
+}

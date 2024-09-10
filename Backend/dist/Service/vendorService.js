@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { createVendor, findVendorByEmail, updateVendor, } from "../Repository/vendorRepo.js";
+import { createVendor, findVendorByEmail, updateVendor, vendorAddressFromDB } from "../Repository/vendorRepo.js";
 export const registerVendor = async (vendor) => {
     try {
         const existingVendor = await findVendorByEmail(vendor.email);
@@ -46,4 +46,12 @@ export const loginVendor = async (email, password) => {
         expiresIn: "1h",
     });
     return { vendor, vendorToken };
+};
+export const vendorAddress = async () => {
+    try {
+        return await vendorAddressFromDB(); // Fetch from the repository
+    }
+    catch (error) {
+        throw new Error('Failed to fetch vendor addresses'); // Throw error to controller
+    }
 };

@@ -101,8 +101,9 @@ export const updatePassword = async (data: any) => {
 export const allVendorAPI = async () => {
   try {
     console.log('sucess front end ');
-    
-    const response = await axios.get(`${SERVER_URL}/vendorlist`);
+
+    const response = await axios.get(`${SERVER_URL}/vendors`);
+    console.log(response.data,'basdhbqhbd')
     return response.data;
   } catch (error) {
     console.error(error);
