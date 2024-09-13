@@ -34,10 +34,13 @@ const SignupForm: React.FC = () => {
 
     const reqBody = {
       username,
-      phone,
+      phone: Number(phone), // Explicitly convert phone to a number
       email,
       password,
     };
+
+    console.log(reqBody,'phine see');
+    
 
     const reqHeader = {
       "Content-Type": "application/json",
@@ -128,7 +131,7 @@ const SignupForm: React.FC = () => {
                 Phone Number
               </label>
               <input
-                type="tel"
+                type="number"
                 id="phone"
                 className="block w-full mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 {...register("phone", {

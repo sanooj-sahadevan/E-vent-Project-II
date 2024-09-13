@@ -1,4 +1,5 @@
 export interface Vendor {
+    [x: string]: any;
     vendorname: string;
     phone: number;
     email: string;

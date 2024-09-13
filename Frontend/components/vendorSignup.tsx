@@ -68,7 +68,7 @@ const SignupForm: React.FC = () => {
         pauseOnHover
       />
 
-<div className="flex min-h-screen bg-white-100 p-8">
+      <div className="flex min-h-screen bg-white-100 p-8">
         <div className="w-1/2">
           <Image
             src={img}
@@ -94,7 +94,7 @@ const SignupForm: React.FC = () => {
                     message:
                       "Username can only contain letters, numbers, periods, and underscores. It must start with a letter.",
                   },
-                })}              />
+                })} />
               {errors.vendorname && <p className="text-red-500">{errors.vendorname.message}</p>}
             </div>
             <div>
@@ -117,16 +117,17 @@ const SignupForm: React.FC = () => {
                 type="tel"
                 id="phone"
                 className="block w-full mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                {...register("password", {
-                  required: "Password is required", pattern: {
-                    value:
-                      /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&*()_+~`|}{[\]:;?><,./-]).{8,}$/,
-                    message: "Password must be at least 6 characters",
+                {...register("phone", {
+                  required: "Phone number is required",
+                  pattern: {
+                    value: /^[0-9]{10}$/, // Adjust this regex based on your phone number format requirements
+                    message: "Phone number must be 10 digits",
                   },
                 })}
               />
-              {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+              {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
             </div>
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password

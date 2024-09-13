@@ -59,10 +59,10 @@ export class LoginService {
     }
 
     console.log('jwt');
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_KEY!, {
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
       expiresIn: "1h",
     });
-
+``
     return { user, token };
   }
 }

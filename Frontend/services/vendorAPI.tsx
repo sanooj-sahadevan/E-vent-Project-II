@@ -70,6 +70,29 @@ export const vendorDetails = async (): Promise<AxiosResponse<any>> => {
 }
 
 
-// export const vendorDetails = (): Promise<AxiosResponse<any>> => {
-//   return await axios.get(`${SERVER_URL_vendor}/getAddress`);
-// };
+
+export const editDetails = async (vendorData: any) => {
+  try {
+    console.log('Editing vendor details');
+    // Use PUT or POST depending on the API
+    return await axios.put(`${SERVER_URL_vendor}/editVendor`, vendorData);
+  } catch (error) {
+    console.error('Error updating vendor details:', error);
+    throw error;
+  }
+};
+
+export const VendorEdit = async (vendorData: any) => {
+
+  try {
+    console.log('Editing vendor details -------------------------------');
+    // Use PUT or POST depending on the API
+    return await axios.patch(`${SERVER_URL_vendor}/editVendorDetails`, vendorData);
+
+  } catch (error) {
+    console.error('Error updating vendor details:', error);
+    throw error;
+  }
+
+
+}

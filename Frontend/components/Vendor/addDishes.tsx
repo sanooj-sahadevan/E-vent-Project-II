@@ -62,7 +62,7 @@ const AddDishes = () => {
         formData.append("types", data.types);
         formData.append("category", data.category);
         formData.append("status", data.status);
-console.log(formData);
+        console.log(formData);
 
         // if (data.images) {
         //     data.images.forEach((image) => {
