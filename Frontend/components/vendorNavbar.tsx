@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
 const Navbar: React.FC = () => {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
@@ -28,7 +29,7 @@ const Navbar: React.FC = () => {
     localStorage.removeItem("vendorToken");
     deleteCookie("vendorToken");
     setIsAuthorized(false);
-    router.push("/"); // Redirect to the home page or login page
+    router.push("/");
   };
 
   return (
@@ -96,7 +97,7 @@ const Navbar: React.FC = () => {
         {/* Logout or Login */}
         {isAuthorized ? (
           <span onClick={handleLogoutClick} className="p-2 text-white cursor-pointer">
-            <svg
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
               fill="none"
@@ -109,11 +110,11 @@ const Navbar: React.FC = () => {
                 strokeWidth={2}
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 002 2h6a2 2 0 002-2v-7a2 2 0 00-2-2h-6a2 2 0 00-2 2v1"
               />
-            </svg>
+            </svg> */} <p>Log out</p>
           </span>
         ) : (
           <Link href="/login">
-            <svg
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
               fill="none"
@@ -126,7 +127,8 @@ const Navbar: React.FC = () => {
                 strokeLinejoin="round"
                 d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v2a.5.5 0 01-.5.5H5a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h6a.5.5 0 01.5.5z"
               />
-            </svg>
+            </svg> */}
+            <p>Login</p>
           </Link>
         )}
       </div>

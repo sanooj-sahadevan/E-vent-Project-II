@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import {
     createVendor,
     findVendorByEmail,
-    updateVendor,vendorAddressFromDB
+    updateVendor,vendorAddressFromDB,vendorEditFromDB
   } from "../Repository/vendorRepo.js";
 
 export const registerVendor = async (vendor: Vendor) => {
@@ -57,7 +57,7 @@ export const registerVendor = async (vendor: Vendor) => {
     const vendorToken = jwt.sign(
       { vendorId: vendor._id },
      
-      process.env.JWT_KEY!   ,
+      process.env.JWT_SECRET!   ,
       {
         expiresIn: "1h",
       }
@@ -72,3 +72,15 @@ export const registerVendor = async (vendor: Vendor) => {
       throw new Error('Failed to fetch vendor addresses'); // Throw error to controller
     }
   };
+
+  
+  export const editVendor = async (vendorDetails: Vendor) => {
+    try {
+      console.log('1');
+      
+      return await vendorEditFromDB(vendorDetails); // Call the repository to update or insert vendor
+    } catch (error) {
+      throw new Error('Failed to update vendor details');
+    }
+  };
+  

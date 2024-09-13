@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { createVendor, findVendorByEmail, updateVendor, vendorAddressFromDB } from "../Repository/vendorRepo.js";
+import { createVendor, findVendorByEmail, updateVendor, vendorAddressFromDB, vendorEditFromDB } from "../Repository/vendorRepo.js";
 export const registerVendor = async (vendor) => {
     try {
         const existingVendor = await findVendorByEmail(vendor.email);
@@ -42,7 +42,7 @@ export const loginVendor = async (email, password) => {
     //   throw new Error("Invalid Email/Password");
     // }
     console.log('jwt');
-    const vendorToken = jwt.sign({ vendorId: vendor._id }, process.env.JWT_KEY, {
+    const vendorToken = jwt.sign({ vendorId: vendor._id }, process.env.JWT_SECRET, {
         expiresIn: "1h",
     });
     return { vendor, vendorToken };
@@ -53,5 +53,14 @@ export const vendorAddress = async () => {
     }
     catch (error) {
         throw new Error('Failed to fetch vendor addresses'); // Throw error to controller
+    }
+};
+export const editVendor = async (vendorDetails) => {
+    try {
+        console.log('1');
+        return await vendorEditFromDB(vendorDetails); // Call the repository to update or insert vendor
+    }
+    catch (error) {
+        throw new Error('Failed to update vendor details');
     }
 };

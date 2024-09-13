@@ -1,37 +1,44 @@
-import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress } from "../Service/vendorService.js";
+import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, editVendor } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
 import { HttpStatus } from "../utils/httpStatus.js";
+// Controller for vendor registration
+// Controller for vendor registration
 export const register = async (req, res, next) => {
     try {
         const { vendorname, email, phone, password } = req.body;
+        console.log(req.body, '');
+        // Proceed with registration logic
         const proceedWithRegistration = async () => {
             try {
-                const otp = otpGenerator();
-                console.log(otp);
+                const otp = otpGenerator(); // Generate OTP for the vendor
+                console.log('Generated OTP:', otp);
+                // Register the vendor with the required and optional fields
                 await registerVendor({
                     vendorname,
                     phone,
                     email,
                     password,
-                    otp,
-                    reviews: "",
-                    address: "",
-                    district: "",
-                    state: ""
+                    otp, // Required OTP
+                    reviews: "", // Default empty string
+                    address: "", // Default empty address
+                    district: "", // Default empty district
+                    state: "" // Default empty state
                 });
+                // Send OTP to vendor's email
                 await sendEmail(email, otp);
                 res.status(HttpStatus.OK).json("OTP sent to email");
             }
             catch (error) {
+                console.error('Error during registration:', error.message);
                 res.status(HttpStatus.BAD_REQUEST).json({ error: "Registration failed: " + error.message });
             }
         };
-        await proceedWithRegistration(); // Added `await` to handle the async function properly
+        await proceedWithRegistration(); // Properly handle the async function
     }
     catch (error) {
-        next(error); // Forward the error to the error-handling middleware
+        next(error); // Forward any unexpected errors to the error-handling middleware
     }
 };
 export const verifyOtp = async (req, res, next) => {
@@ -83,5 +90,18 @@ export const fetchAddress = async (req, res, next) => {
     }
     catch (error) {
         next(error); // Pass error to the next middleware (error handler)
+    }
+};
+;
+// Edit vendor details
+export const editVendorDetails = async (req, res, next) => {
+    try {
+        console.log('controller');
+        const vendorDetails = req.body; // Get vendor details from the request body
+        const updatedVendor = await editVendor(vendorDetails); // Call the service to update vendor details
+        res.status(200).json(updatedVendor); // Send response with the updated vendor
+    }
+    catch (error) {
+        next(error); // Pass error to the error handler middleware
     }
 };
