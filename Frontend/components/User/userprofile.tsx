@@ -14,7 +14,7 @@ const TopNavBar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/booking-details" className="flex flex-col items-center text-gray-600 hover:text-pink-500">
+          <Link href="/profile/booking-details" className="flex flex-col items-center text-gray-600 hover:text-pink-500">
             <FaLock size={24} />
             <span>Booking Details</span>
           </Link>

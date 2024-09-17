@@ -16,13 +16,19 @@
 
 
 export interface User {
+    reviews: any;
+    district: any;
+    _id: any;
+    save(): unknown;
     username: string;
     phone?: number;
     email: string;
     password: string;
     profileImage?: string;
     otp?: string;
-    otpVerified?: boolean; 
+    otpVerified?: boolean;
+    address: string;
+    state: string;
+    pincode: number;
 }
-
 

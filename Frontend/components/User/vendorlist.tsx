@@ -6,9 +6,8 @@ import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
 interface Vendor {
+    _id: string; // Ensure this is a string to match the MongoDB ObjectId type
     image: string | undefined;
     vendorname: string;
     state: string;
@@ -16,7 +15,7 @@ interface Vendor {
 }
 
 const VendorsPage: React.FC = () => {
-    const router = useRouter(); // Correctly call useRouter here
+    const router = useRouter();
     const [vendor, setVendor] = useState<Vendor[]>([]);
 
     useEffect(() => {
@@ -75,7 +74,7 @@ const VendorsPage: React.FC = () => {
                                 <span className="ml-1 text-sm text-gray-600">{vendor.rating}</span>
                             </div>
                             <button
-                                onClick={() => router.push('/vendorProfile')}
+                                onClick={() => router.push(`/vendorProfile?vendorId=${vendor._id}`)}
                                 className="mt-4 w-full bg-black text-white py-2 rounded-md"
                             >
                                 Find Vendors
