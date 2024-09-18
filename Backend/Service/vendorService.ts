@@ -3,8 +3,11 @@ import jwt from "jsonwebtoken";
 import {
     createVendor,
     findVendorByEmail,
-    updateVendor,vendorAddressFromDB,vendorEditFromDB
+    findVendorByIdInDb,
+    updateVendor,vendorAddressFromDB,vendorEditFromDB,
   } from "../Repository/vendorRepo.js";
+import { uploadToS3Bucket } from "../middleware/fileUpload.js";
+import { IMulterFile } from "../utils/type";
 
 export const registerVendor = async (vendor: Vendor) => {
     try {
@@ -74,13 +77,47 @@ export const registerVendor = async (vendor: Vendor) => {
   };
 
   
-  export const editVendor = async (vendorDetails: Vendor) => {
+  export const editVendor = async (vendorDetails: Vendor, imageUrl: string | undefined) => {
     try {
-      console.log('1');
+      console.log('service');
       
-      return await vendorEditFromDB(vendorDetails); // Call the repository to update or insert vendor
+      // Pass both vendor details and image URL to the repository
+      return await vendorEditFromDB(vendorDetails, imageUrl);
     } catch (error) {
       throw new Error('Failed to update vendor details');
     }
   };
   
+  
+//   import { IMulterFile } from '../utils/type';
+// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
+// import { IMulterFile } from '../utils/type';
+// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
+
+export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
+  try {
+    const uploadedUrl = await uploadToS3Bucket([imageFile], imageFile); // Pass both the array and file
+    return uploadedUrl;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+
+
+
+
+
+
+export const findVendorById = async (vendorId: string) => {
+  try {
+    console.log('controller 2');
+
+    const vendor = await findVendorByIdInDb(vendorId);
+    return vendor;
+  } catch (error) {
+    throw new Error(`Error finding vendor: ${error}`);
+  }
+};
+
+

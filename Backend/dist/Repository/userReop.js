@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcrypt";
 import { VendorModel } from "./vendorRepo.js";
 // Define the Mongoose schema for the User
 const UserSchema = new Schema({
@@ -20,16 +21,24 @@ const UserModel = mongoose.model("User", UserSchema);
 export default UserModel;
 // Function to create a new user
 export const createUser = async (user) => {
-    console.log('repo');
-    const newUser = new UserModel(user);
-    return newUser.save();
+    try {
+        console.log('repo');
+        const newUser = new UserModel(user);
+        return newUser.save();
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const findUserByEmail = async (email) => {
     return UserModel.findOne({ email });
 };
-export const updateUser = async (email, update) => {
-    return UserModel.findOneAndUpdate({ email }, update, { new: true });
+export const findUserById = async (userId) => {
+    return UserModel.findById(userId);
 };
+// export const updateUser = async (email: string, update: Partial<User>) => {
+//   return UserModel.findOneAndUpdate({ email }, update, { new: true });
+// };
 export const userEditFromDB = async (userDetails) => {
     try {
         // Find the user by email
@@ -79,21 +88,21 @@ export const userEditFromDB = async (userDetails) => {
 //     throw new Error('Failed to update user details');
 //   }
 // };
-// export const updateUser = async (email: string, update: Partial<User>) => {
-//   return UserModel.findOneAndUpdate({ email }, update, { new: true });
-// };
-// export const findUserByEmailupdate = async (email: string, password: string) => {
-//   console.log('Repository: Updating user password');
-//   const user = await UserModel.findOne({ email });
-//   if (!user) {
-//     throw new Error("User not found");
-//   }
-//   console.log(user.email);
-//   const hashedPassword = await bcrypt.hash(password, 10);
-//   user.password = hashedPassword;
-//   await user.save();
-//   return user; // Return the updated user
-// };
+export const updateUser = async (email, update) => {
+    return UserModel.findOneAndUpdate({ email }, update, { new: true });
+};
+export const findUserByEmailupdate = async (email, password) => {
+    console.log('Repository: Updating user password');
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+        throw new Error("User not found");
+    }
+    console.log(user.email);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+    return user; // Return the updated user
+};
 // import { VendorModel } from '../model/VendorModel.js'; // Import your Mongoose model
 export class VendorRepository {
     // Fetch all vendors from the database

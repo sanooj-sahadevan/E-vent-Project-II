@@ -6,12 +6,14 @@ import Footer from '@/components/footer'
 const page = () => {
   return (
     <div>
-      <Navbar/>
-      <UserMain/>
-      <VendorList/>
-      <Footer/>
+      <Navbar />
+      <UserMain />
+      <VendorList />
+      <Footer />
     </div>
   )
 }
 
 export default page
+
+

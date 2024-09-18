@@ -2,10 +2,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { vendorDetails } from '@/services/vendorAPI'; // Ensure vendorAPI is correctly imported
-import 'react-toastify/dist/ReactToastify.css';
-import { FaEdit, FaPlus, FaTrashAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import { FaEdit, FaPlus, FaTrashAlt } from 'react-icons/fa';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Define interfaces for data
 interface Photo {
@@ -19,6 +18,7 @@ interface VendorData {
     state?: string;
     phone: number;
     rating: string;
+    profileImage?: string;
 }
 
 interface Category {
@@ -42,16 +42,11 @@ interface Auditorium {
 const Home: React.FC = () => {
     const router = useRouter();
 
+    // State hooks for various sections
     const [photos, setPhotos] = useState<Photo[]>([
         { src: 'https://picsum.photos/200/300', alt: 'Photo 1' },
         { src: 'https://picsum.photos/200/300', alt: 'Photo 2' },
         { src: 'https://picsum.photos/200/300', alt: 'Photo 3' },
-        { src: 'https://picsum.photos/200/300', alt: 'Photo 4' },
-        { src: 'https://picsum.photos/200/300', alt: 'Photo 5' },
-        { src: 'https://picsum.photos/200/300', alt: 'Photo 6' },
-        { src: 'https://picsum.photos/200/300', alt: 'Photo 7' },
-        { src: 'https://picsum.photos/200/300', alt: 'Photo 8' },
-        { src: 'https://picsum.photos/200/300', alt: 'Photo 9' },
     ]);
 
     const [categories, setCategories] = useState<Category[]>([
@@ -74,13 +69,13 @@ const Home: React.FC = () => {
     const [vendorData, setVendorData] = useState<VendorData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     const handleShowMore = () => setShowMore(!showMore);
 
     useEffect(() => {
         // Fetch vendor profile from local storage on component mount
         const storedUserProfile = localStorage.getItem('vendor');
-
         if (storedUserProfile) {
             try {
                 const vendor = JSON.parse(storedUserProfile);
@@ -98,15 +93,10 @@ const Home: React.FC = () => {
 
     const handleEditProfile = () => {
         if (vendorData) {
-            console.log(vendorData);
-
-            // Encode the vendor data
             const query = encodeURIComponent(JSON.stringify(vendorData)); // Properly encode the data for the URL
             router.push(`/vendorEditProfile?query=${query}`);
         }
     };
-
-
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>{error}</p>;
@@ -115,6 +105,22 @@ const Home: React.FC = () => {
         <div className="container mx-auto px-4 py-8">
             {/* Vendor Card */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">
+                <div className="flex items-center justify-center mb-6">
+                    {/* Profile Picture */}
+                    {vendorData?.profileImage || imagePreview ? (
+                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
+                            <img
+                                src={imagePreview || vendorData.profileImage!}
+                                alt="Vendor"
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    ) : (
+                        <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                            No Image
+                        </div>
+                    )}
+                </div>
                 <div className="md:flex justify-between p-6">
                     <div>
                         <h2 className="text-xl font-semibold text-gray-800">
@@ -152,28 +158,6 @@ const Home: React.FC = () => {
                     </button>
                 </div>
             </div>
-
-            {/* Rest of the component (Photos, Categories, Food Items, Auditoriums) */}
-            {/* Code remains the same */}
-
-            {/* Categories Section */}
-            {/* <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12 p-8">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold">Categories</h2>
-                    <FaPlus className="text-green-500 cursor-pointer" />
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-                    {categories.map((category, index) => (
-                        <div key={index} className={`${category.color} p-6 rounded-lg shadow-lg`}>
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-xl font-bold">{category.name}</h3>
-                                <FaEdit className="text-gray-500" />
-                            </div>
-                            <p className="text-gray-700">{category.description}</p>
-                        </div>
-                    ))}
-                </div>
-            </div> */}
 
             {/* Food Items Section */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">
@@ -240,12 +224,11 @@ const Home: React.FC = () => {
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500 text-center">No auditoriums available</p>
+                        <p className="text-gray-500 text-center">No auditoriums available.</p>
                     )}
                 </div>
             </div>
         </div>
-
     );
 };
 

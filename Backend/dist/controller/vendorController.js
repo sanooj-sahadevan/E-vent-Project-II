@@ -1,4 +1,4 @@
-import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, editVendor } from "../Service/vendorService.js";
+import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadImage, editVendor, findVendorById } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
@@ -86,7 +86,7 @@ export const fetchAddress = async (req, res, next) => {
         const vendorAddresses = await vendorAddress();
         console.log(vendorAddresses);
         // Get addresses from service
-        res.status(200).json(vendorAddresses); // Send response
+        res.status(HttpStatus.OK).json(vendorAddresses); // Send response
     }
     catch (error) {
         next(error); // Pass error to the next middleware (error handler)
@@ -94,14 +94,38 @@ export const fetchAddress = async (req, res, next) => {
 };
 ;
 // Edit vendor details
+// import { editVendor } from '../services/vendorService'; // Adjust the import path as needed
 export const editVendorDetails = async (req, res, next) => {
     try {
         console.log('controller');
-        const vendorDetails = req.body; // Get vendor details from the request body
-        const updatedVendor = await editVendor(vendorDetails); // Call the service to update vendor details
-        res.status(200).json(updatedVendor); // Send response with the updated vendor
+        const vendorDetails = req.body;
+        const file = req.file; // Single file upload
+        let imageUrl;
+        if (file) {
+            imageUrl = await uploadImage(file); // Upload image and get the URL
+        }
+        // Pass both vendor details and image URL to the service
+        const updatedVendor = await editVendor(vendorDetails, imageUrl);
+        res.status(200).json({ ...updatedVendor, imageUrl }); // Include imageUrl if available
     }
     catch (error) {
         next(error); // Pass error to the error handler middleware
+    }
+};
+;
+export const fetchVendorDetails = async (req, res, next) => {
+    try {
+        console.log('controller');
+        const { vendorId } = req.params; // Extract vendorId from request params
+        const vendor = await findVendorById(vendorId); // Fetch vendor details
+        if (!vendor) {
+            res.status(404).json({ message: "Vendor not found" });
+        }
+        else {
+            res.status(200).json(vendor); // Return vendor details
+        }
+    }
+    catch (error) {
+        next(error); // Pass error to error handler middleware
     }
 };

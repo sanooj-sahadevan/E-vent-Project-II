@@ -96,3 +96,16 @@ export const VendorEdit = async (vendorData: any) => {
 
 
 }
+
+export const fetchvendor = async (vendorId: string) => {
+  try {
+    console.log('rdyyyyy');
+    
+      const res = await axios.get(`${SERVER_URL_vendor}/fetchVendorDetails/${vendorId}`);
+      console.log(res);
+      return res;
+  } catch (error) {
+    console.error(error);
+    
+  }
+};

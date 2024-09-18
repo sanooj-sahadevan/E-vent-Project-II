@@ -1,11 +1,15 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { FaEdit } from 'react-icons/fa'; // Edit icon
-import { VendorEdit } from "@/services/vendorAPI";
+import { VendorEdit } from '@/services/vendorAPI';
 import { toast } from 'react-toastify'; // Assuming you're using toast for notifications
+import router from 'next/router';
 
 interface Vendor {
+  image?: string;
   rating: string;
   vendorname: string;
   phone: number;
@@ -22,56 +26,70 @@ const EditVendor: React.FC = () => {
   const [vendorDetails, setVendorDetails] = useState<Vendor | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null); // Image state
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // Image preview state
 
-  // Fetch the query string and parse it
   useEffect(() => {
     const vendorDetailsString = searchParams.get('query');
-    console.log("Raw query string from URL:", vendorDetailsString);
+    console.log('Raw query string from URL:', vendorDetailsString);
 
     if (vendorDetailsString) {
       try {
         const decodedString = decodeURIComponent(vendorDetailsString);
         const parsedVendor = JSON.parse(decodedString) as Vendor;
         setVendorDetails(parsedVendor);
-        console.log("Parsed vendor details:", parsedVendor);
+        console.log('Parsed vendor details:', parsedVendor);
       } catch (error) {
-        console.error("Failed to parse vendor details from query:", error);
+        console.error('Failed to parse vendor details from query:', error);
       }
     }
     setIsLoading(false);
   }, [searchParams]);
 
+  // Function to handle image change
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const router = useRouter();
+
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file)); // Create a temporary image URL
+    }
+  };
+
   // Function to save vendor details
   const saveVendorDetails = async () => {
     if (!vendorDetails) return;
 
-    const reqBody = {
-      rating: vendorDetails.rating,
-      vendorname: vendorDetails.vendorname,
-      phone: vendorDetails.phone,
-      email: vendorDetails.email,
-      profileImage: vendorDetails.profileImage,
-      address: vendorDetails.address,
-      district: vendorDetails.district,
-      state: vendorDetails.state,
-      reviews: vendorDetails.reviews,
-    };
+    const formData = new FormData();
+    formData.append('rating', vendorDetails.rating);
+    formData.append('vendorname', vendorDetails.vendorname);
+    formData.append('phone', vendorDetails.phone.toString());
+    formData.append('email', vendorDetails.email);
+    formData.append('address', vendorDetails.address);
+    formData.append('district', vendorDetails.district);
+    formData.append('state', vendorDetails.state);
+    formData.append('reviews', vendorDetails.reviews);
+
+    if (selectedImage) {
+      formData.append('image', selectedImage); // Use 'image' to match the field name
+    }
+
+    console.log('selected images', selectedImage);
 
     try {
-      const result = await VendorEdit(reqBody);
+      const result = await VendorEdit(formData); // Adjust the API call to handle form data
       console.log('main content', result.data);
-    
       if (result) {
-        // Update localStorage with result.data
-        localStorage.setItem("vendor", JSON.stringify(result.data));
-    
-        toast.success("Vendor details updated successfully.");
+        localStorage.setItem('vendor', JSON.stringify(result.data));
+        toast.success('Vendor details updated successfully.');
       }
     } catch (err) {
-      toast.error("An error occurred while saving vendor details. Please try again.");
+      toast.error('An error occurred while saving vendor details. Please try again.');
+      router.push(`/vendordashboard`);
+
       console.error('EditVendor API error:', err);
     }
-    
   };
 
   const handleEditToggle = () => {
@@ -87,8 +105,29 @@ const EditVendor: React.FC = () => {
   }
 
   return (
-    <div className="max-w-xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mt-12">
+    <form onSubmit={async (e) => {
+      e.preventDefault();
+      await saveVendorDetails();
+      setIsEditing(false);
+    }} className="max-w-xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mt-12">
       <div className="p-6">
+      <div className="flex items-center justify-center mb-6">
+        {/* Profile Picture */}
+        {vendorDetails?.profileImage || imagePreview ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
+            <img
+              src={imagePreview || vendorDetails.profileImage}
+              alt="Vendor"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+            No Image
+          </div>
+        )}
+      </div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
           {isEditing ? (
             <input
@@ -102,7 +141,7 @@ const EditVendor: React.FC = () => {
               }
             />
           ) : (
-            vendorDetails?.vendorname || 'N/A'
+            vendorDetails.vendorname || 'N/A'
           )}
         </h2>
 
@@ -122,7 +161,7 @@ const EditVendor: React.FC = () => {
                 }
               />
             ) : (
-              <p className="text-gray-600">{vendorDetails?.email || 'N/A'}</p>
+              <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
             )}
           </div>
 
@@ -141,7 +180,7 @@ const EditVendor: React.FC = () => {
                 }
               />
             ) : (
-              <p className="text-gray-600">{vendorDetails?.phone || 'N/A'}</p>
+              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
             )}
           </div>
 
@@ -160,7 +199,7 @@ const EditVendor: React.FC = () => {
                 }
               />
             ) : (
-              <p className="text-gray-600">{vendorDetails?.state || 'N/A'}</p>
+              <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
             )}
           </div>
 
@@ -179,7 +218,7 @@ const EditVendor: React.FC = () => {
                 }
               />
             ) : (
-              <p className="text-gray-600">{vendorDetails?.district || 'N/A'}</p>
+              <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
             )}
           </div>
 
@@ -198,7 +237,7 @@ const EditVendor: React.FC = () => {
                 }
               />
             ) : (
-              <p className="text-gray-600">{vendorDetails?.address || 'N/A'}</p>
+              <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
             )}
           </div>
 
@@ -216,7 +255,40 @@ const EditVendor: React.FC = () => {
                 }
               />
             ) : (
-              <p className="text-gray-600">{vendorDetails?.reviews || 'N/A'}</p>
+              <p className="text-gray-600">{vendorDetails.reviews || 'N/A'}</p>
+            )}
+          </div>
+
+          {/* Image Upload */}
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-gray-700">Upload Image</label>
+            {isEditing ? (
+              <>
+                <input
+                  type="file"
+                  name='image'
+                  className="border border-gray-300 rounded p-2 w-full"
+                  onChange={handleImageChange}
+                  accept="image/*" // Ensure only image files are selected
+                />
+                {imagePreview && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={imagePreview}
+                    alt="Selected"
+                    className="mt-4 w-32 h-32 object-cover rounded"
+                  />
+                )}
+              </>
+            ) : vendorDetails?.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={vendorDetails.image}
+                alt="Vendor"
+                className="mt-4 w-32 h-32 object-cover rounded"
+              />
+            ) : (
+              <p className="text-gray-600">No image uploaded</p>
             )}
           </div>
         </div>
@@ -234,6 +306,7 @@ const EditVendor: React.FC = () => {
         {/* Edit and Save Buttons */}
         <div className="flex justify-end mt-6">
           <button
+            type="button"
             onClick={handleEditToggle}
             className="bg-gray-200 p-2 rounded-full hover:bg-gray-300 mr-2"
           >
@@ -242,10 +315,7 @@ const EditVendor: React.FC = () => {
 
           {isEditing && (
             <button
-              onClick={async () => {
-                await saveVendorDetails(); // Save vendor details
-                setIsEditing(false); // Exit edit mode after saving
-              }}
+              type="submit"
               className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
             >
               Save
@@ -253,7 +323,7 @@ const EditVendor: React.FC = () => {
           )}
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 

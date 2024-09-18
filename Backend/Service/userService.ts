@@ -7,7 +7,7 @@ import {
   createUser,
   userEditFromDB, 
    updateUser,
-  // findUserByEmailupdate,
+  findUserByEmailupdate,
   VendorRepository,
   findUserByEmail
 } from "../Repository/userReop.js";
@@ -95,17 +95,14 @@ export const loginUser = async (email: string, password: string) => {
 // }
 
 
-// // export const checkEmail = async (email: string) => {
-// //   const user = await findUserByEmail(email);
+export const checkEmail = async (email: string) => {
+  const user = await findUserByEmail(email);
 
-// //   if (!user) {
-// //     throw new Error('User not found'); // Error handling if the user is not found
-// //   }
-
-  
-
-// //   return { user };
-// // };
+  if (!user) {
+    throw new Error('User not found'); // Error handling if the user is not found
+  }
+  return { user };
+};
 
 
 
@@ -173,14 +170,14 @@ export const verifyAndSaveUser = async (email: string, otp: string) => {
 // //   }
 // // };
 
-// export const update = async (email: string, password: string) => {
-//   console.log('Service: Calling repository to update password');
+export const update = async (email: string, password: string) => {
+  console.log('Service: Calling repository to update password');
   
-//   // Call the repository function to update the password
-//   const user = await findUserByEmailupdate(email, password);
+  // Call the repository function to update the password
+  const user = await findUserByEmailupdate(email, password);
   
-//   return user; // Return the updated user
-// };
+  return user; // Return the updated user
+};
 
 
 
@@ -205,7 +202,6 @@ export const getAllVendors = async (): Promise<any[]> => {
 
 export const editUser = async (userDetails: User) => { // Changed vendorDetails to userDetails
   try {
-    console.log('1');
     return await userEditFromDB(userDetails); // Pass userDetails instead of vendorDetails
   } catch (error) {
     throw new Error('Failed to update user details');

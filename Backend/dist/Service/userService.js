@@ -1,8 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, 
-// findUserByEmailupdate,
-VendorRepository, findUserByEmail } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, VendorRepository, findUserByEmail } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -69,13 +67,13 @@ export const loginUser = async (email, password) => {
 //     return { user, token };
 //   }
 // }
-// // export const checkEmail = async (email: string) => {
-// //   const user = await findUserByEmail(email);
-// //   if (!user) {
-// //     throw new Error('User not found'); // Error handling if the user is not found
-// //   }
-// //   return { user };
-// // };
+export const checkEmail = async (email) => {
+    const user = await findUserByEmail(email);
+    if (!user) {
+        throw new Error('User not found'); // Error handling if the user is not found
+    }
+    return { user };
+};
 export const verifyAndSaveUser = async (email, otp) => {
     const user = await findUserByEmail(email);
     if (user && user.otp === otp) {
@@ -130,12 +128,12 @@ export const verifyAndSaveUser = async (email, otp) => {
 // //     throw new Error("Failed to handle Google login");
 // //   }
 // // };
-// export const update = async (email: string, password: string) => {
-//   console.log('Service: Calling repository to update password');
-//   // Call the repository function to update the password
-//   const user = await findUserByEmailupdate(email, password);
-//   return user; // Return the updated user
-// };
+export const update = async (email, password) => {
+    console.log('Service: Calling repository to update password');
+    // Call the repository function to update the password
+    const user = await findUserByEmailupdate(email, password);
+    return user; // Return the updated user
+};
 const vendorRepository = new VendorRepository(); // Instantiate repository
 export const getAllVendors = async () => {
     try {
@@ -148,7 +146,6 @@ export const getAllVendors = async () => {
 // // import { UserRepository } from '../Repository/userRepo.js'; // Import the repository
 export const editUser = async (userDetails) => {
     try {
-        console.log('1');
         return await userEditFromDB(userDetails); // Pass userDetails instead of vendorDetails
     }
     catch (error) {

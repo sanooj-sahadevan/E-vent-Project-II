@@ -1,13 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import {
   // LoginService,
-  getAllVendors,  //  googleLogin,
+  getAllVendors,
+      // googleLogin,
   registerUser,
    verifyAndSaveUser,
-  // update,
+  update,
   // UserService
   loginUser,
-  editUser
+  editUser,
+  checkEmail
 } from "../Service/userService.js";
 import {
   findUserByEmail,
@@ -69,9 +71,9 @@ export const login = async (req: Request, res: Response) => {
 
     res.cookie("token", token);
     // console.log('Cookie set:', req.cookies['token']);
-    res.status(200).json({ user, token });
+    res.status(HttpStatus.OK).json({ user, token });
   } catch (error: any) {
-    res.status(400).json({ error: error.message });
+    res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
   }
 };
 
@@ -112,15 +114,15 @@ export const verifyOtp = async (req: Request, res: Response) => {
     const user = await findUserByEmail(email);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
     }
     console.log(user.otp, otp);
 
     if (user.otp === otp) {
       await verifyAndSaveUser(email, otp);
-      res.status(200).json("User registered successfully");
+      res.status(HttpStatus.OK).json("User registered successfully");
     } else {
-      res.status(400).json({ error: "Invalid OTP" });
+      res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
     }
   } catch (error: any) {
     next(Error);
@@ -137,7 +139,7 @@ export const vendorList = async (req: Request, res: Response, next: NextFunction
   try {
     console.log('list');
     const vendors = await getAllVendors(); 
-    res.status(200).json(vendors);
+    res.status(HttpStatus.OK).json(vendors);
   } catch (error) {
     next(error); 
   }
@@ -146,47 +148,50 @@ export const vendorList = async (req: Request, res: Response, next: NextFunction
 
 
 
-// // export const forgottenPassword = async (req: Request, res: Response,next:NextFunction) => {
-// //   try {
-// //     const { email } = req.body; 
-// //     const { user } = await checkEmail(email); 
-// // console.log('oooooooooooooooooooooooo');
+export const forgottenPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body; 
+    const { user } = await checkEmail(email); 
+console.log('oooooooooooooooooooooooo');
 
-// //     if (!user) {
-// //       return res.status(404).json({ error: 'User not found' });
-// //     }
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const otp = otpGenerator(); 
+console.log('oooooooooooooooooooooooo');
+    // await registerUser({ email, otp, username: "", password: "" });
+    await sendEmail(email, otp);
+
+    res.status(200).json({ message: 'OTP sent successfully' ,otp,email});
+    res.status(HttpStatus.OK).json({ message: 'OTP sent successfully' ,otp,email});
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+    res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+  }
+};
 
 
 
-// //     // await registerUser({ email, otp, username: "", password: "" });
-// //     await sendEmail(email, otp);
+export const updatePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+    console.log(email, password + ' main content ithil ind');
 
-// //     res.status(200).json({ message: 'OTP sent successfully' ,otp,email});
-// //   } catch (error: any) {
-// //     next(error);   }
-// // };
+    // Update the user's password
+    const user = await update(email, password);
 
+    if (!user) {
+      res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
+      return;  // Exit the function after sending the response
+    }
 
-
-// export const updatePassword = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { email, password } = req.body;
-//     console.log(email, password + ' main content ithil ind');
-
-//     // Update the user's password
-//     const user = await update(email, password);
-
-//     if (!user) {
-//       res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
-//       return;  // Exit the function after sending the response
-//     }
-
-//     // Respond with the updated user data
-//     res.status(HttpStatus.OK).json({ message: "Password updated successfully", user });
-//   } catch (error: any) {
-//     next(error); // Pass the error to the error-handling middleware
-//   }
-// };
+    // Respond with the updated user data
+    res.status(HttpStatus.OK).json({ message: "Password updated successfully", user });
+  } catch (error: any) {
+    next(error); // Pass the error to the error-handling middleware
+  }
+};
 
 
 
@@ -240,17 +245,18 @@ export const vendorList = async (req: Request, res: Response, next: NextFunction
 
 export const editUserDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    console.log('1');
+    
     console.log('Controller: Edit User Details');
-    const userDetails = req.body; // Log incoming request data to ensure it's all there
+    const userDetails = req.body; 
     console.log('Request Body:', userDetails);
 
-    // Call the service function to edit the user with the full user data
     const updatedUser = await editUser(userDetails);
     
-    res.status(200).json(updatedUser); // Send back updated user data
+    res.status(HttpStatus.OK).json(updatedUser); 
   } catch (error) {
     console.error('Error in editUserDetails controller:', error);
-    res.status(500).json({ error: 'Internal Server Error' }); // Send an error response
+    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' }); // Send an error response
     next(error); // Forward error to the error handler
   }
 };

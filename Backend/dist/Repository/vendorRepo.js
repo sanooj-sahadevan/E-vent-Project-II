@@ -1,5 +1,6 @@
 // import mongoose, { Schema, Document } from "mongoose";
 import mongoose, { Schema } from "mongoose";
+import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 const VendorSchema = new Schema({
     vendorname: { type: String, required: true },
     phone: { type: Number, required: true },
@@ -42,7 +43,7 @@ export const vendorAddressFromDB = async () => {
         throw new Error('Database query failed'); // Error message for DB failure
     }
 };
-export const vendorEditFromDB = async (vendorDetails) => {
+export const vendorEditFromDB = async (vendorDetails, imageUrl) => {
     try {
         // Find the vendor by email
         const existingVendor = await VendorModel.findOne({ email: vendorDetails.email });
@@ -50,11 +51,14 @@ export const vendorEditFromDB = async (vendorDetails) => {
             // Update vendor details
             existingVendor.vendorname = vendorDetails.vendorname;
             existingVendor.phone = vendorDetails.phone;
-            existingVendor.profileImage = vendorDetails.profileImage;
             existingVendor.address = vendorDetails.address;
             existingVendor.district = vendorDetails.district;
             existingVendor.state = vendorDetails.state;
             existingVendor.reviews = vendorDetails.reviews;
+            // Update profile image if a new one is uploaded
+            if (imageUrl) {
+                existingVendor.profileImage = imageUrl;
+            }
             // Only update password if provided
             if (vendorDetails.password) {
                 existingVendor.password = vendorDetails.password;
@@ -65,7 +69,10 @@ export const vendorEditFromDB = async (vendorDetails) => {
         }
         else {
             // If vendor doesn't exist, create a new one
-            const newVendor = new VendorModel(vendorDetails);
+            const newVendor = new VendorModel({
+                ...vendorDetails,
+                profileImage: imageUrl || vendorDetails.profileImage // Set the imageUrl if available, otherwise keep the existing one
+            });
             await newVendor.save();
             return newVendor;
         }
@@ -74,4 +81,16 @@ export const vendorEditFromDB = async (vendorDetails) => {
         console.error('Error updating vendor:', error);
         throw new Error('Database operation failed');
     }
+};
+export const uploadImage = async function (imageFile) {
+    try {
+        return await uploadToS3Bucket(imageFile);
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+};
+export const findVendorByIdInDb = async (vendorId) => {
+    console.log('controller 3');
+    return await VendorModel.findById(vendorId); // Find vendor by ID in the database
 };
