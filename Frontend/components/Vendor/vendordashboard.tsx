@@ -76,6 +76,8 @@ const Home: React.FC = () => {
     useEffect(() => {
         // Fetch vendor profile from local storage on component mount
         const storedUserProfile = localStorage.getItem('vendor');
+        console.log('lakala',storedUserProfile);
+        
         if (storedUserProfile) {
             try {
                 const vendor = JSON.parse(storedUserProfile);
@@ -104,60 +106,65 @@ const Home: React.FC = () => {
     return (
         <div className="container mx-auto px-4 py-8">
             {/* Vendor Card */}
-            <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">
-                <div className="flex items-center justify-center mb-6">
-                    {/* Profile Picture */}
-                    {vendorData?.profileImage || imagePreview ? (
-                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
-                            <img
-                                src={imagePreview || vendorData.profileImage!}
-                                alt="Vendor"
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                    ) : (
-                        <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
-                            No Image
-                        </div>
-                    )}
-                </div>
-                <div className="md:flex justify-between p-6">
-                    <div>
-                        <h2 className="text-xl font-semibold text-gray-800">
-                            {vendorData?.vendorname || 'Loading...'}
-                        </h2>
-                        <p className="mt-2 text-gray-600">
-                            {vendorData?.email || 'N/A'}
-                            <br />
-                            {vendorData?.phone || 'N/A'}
-                            <br />
-                            {vendorData?.state || 'N/A'}
-                        </p>
+            {vendorData ? (
+                <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">
+                    <div className="flex items-center justify-center mb-6">
+                        {/* Profile Picture */}
+                        {vendorData.profileImage || imagePreview ? (
+                            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
+                                <img
+                                    src={imagePreview || vendorData.profileImage!}
+                                    alt="Vendor"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                        ) : (
+                            <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+                                No Image
+                            </div>
+                        )}
                     </div>
-                    <div className="flex flex-col items-end">
-                        <div className="bg-green-500 text-white rounded-full px-4 py-1 text-sm">
-                            {vendorData?.rating || '4.7'}
+                    <div className="md:flex justify-between p-6">
+                        <div>
+                            <h2 className="text-xl font-semibold text-gray-800">
+                                {vendorData.vendorname || 'Loading...'}
+                            </h2>
+                            <p className="mt-2 text-gray-600">
+                                {vendorData.email || 'N/A'}
+                                <br />
+                                {vendorData.phone || 'N/A'}
+                                <br />
+                                {vendorData.state || 'N/A'}
+                            </p>
                         </div>
-                        <a href="#" className="text-sm text-green-600 mt-2">
-                            View Reviews
-                        </a>
+                        <div className="flex flex-col items-end">
+                            <div className="bg-green-500 text-white rounded-full px-4 py-1 text-sm">
+                                {vendorData.rating || '4.7'}
+                            </div>
+                            <a href="#" className="text-sm text-green-600 mt-2">
+                                View Reviews
+                            </a>
+                        </div>
+                    </div>
+                    <div className="flex justify-between p-6 bg-gray-50">
+                        <button
+                            onClick={() => router.push('/vendorBookingDetails')}
+                            className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
+                        >
+                            Booking Details
+                        </button>
+                        <button
+                            onClick={handleEditProfile}
+                            className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
+                        >
+                            Edit Profile
+                        </button>
                     </div>
                 </div>
-                <div className="flex justify-between p-6 bg-gray-50">
-                    <button
-                        onClick={() => router.push('/vendorBookingDetails')}
-                        className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
-                    >
-                        Booking Details
-                    </button>
-                    <button
-                        onClick={handleEditProfile}
-                        className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
-                    >
-                        Edit Profile
-                    </button>
-                </div>
-            </div>
+            ) : (
+                <p>Loading vendor data...</p> // Fallback content if vendorData is null
+            )}
+
 
             {/* Food Items Section */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">

@@ -4,7 +4,7 @@ import {
      register,
      verifyOtp,
      editVendorDetails,
-     fetchVendorDetails
+     fetchVendorDetails,addDishes,addAuditorium
 } from "../controller/vendorController.js";
 import upload from "../middleware/multer.js";
 
@@ -15,5 +15,9 @@ router.post("/verifyOtp", verifyOtp);
 router.post("/login", login);
 router.patch('/editVendorDetails', upload.single('image'), editVendorDetails);
 router.get('/fetchVendorDetails/:vendorId', fetchVendorDetails);
+router.post('/addDishes', upload.single('image'), addDishes);
+router.post('/addAuditorium', upload.single('image'), addAuditorium);
+
+
 
 export default router;

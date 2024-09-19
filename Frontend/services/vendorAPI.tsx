@@ -39,6 +39,8 @@ export const verifyOtp = async (data: any) => {
 
 export const addDishAPI = async (data: any) => {
   try {
+    console.log('api dishe-------------------------s');
+    
     console.log('addDishApi');
     return await axios.post(`${SERVER_URL_vendor}/addDishes`, data, { withCredentials: true });
   } catch (error) {

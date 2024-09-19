@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FaEdit } from 'react-icons/fa'; // Edit icon
 import { VendorEdit } from '@/services/vendorAPI';
 import { toast } from 'react-toastify'; // Assuming you're using toast for notifications
-import router from 'next/router';
 
 interface Vendor {
   image?: string;
@@ -23,6 +22,8 @@ interface Vendor {
 
 const EditVendor: React.FC = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();  // Move useRouter outside of handlers
+
   const [vendorDetails, setVendorDetails] = useState<Vendor | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,8 +49,6 @@ const EditVendor: React.FC = () => {
 
   // Function to handle image change
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const router = useRouter();
-
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
@@ -72,22 +71,27 @@ const EditVendor: React.FC = () => {
     formData.append('reviews', vendorDetails.reviews);
 
     if (selectedImage) {
-      formData.append('image', selectedImage); // Use 'image' to match the field name
+      formData.append('image', selectedImage);
     }
 
     console.log('selected images', selectedImage);
 
     try {
-      const result = await VendorEdit(formData); // Adjust the API call to handle form data
+      const result = await VendorEdit(formData); 
       console.log('main content', result.data);
       if (result) {
+        console.log('all set');
+        
         localStorage.setItem('vendor', JSON.stringify(result.data));
+        console.log('set item');
+        
+        // Use router to push to the dashboard after success
+        router.push(`/vendordashboard`);
+
         toast.success('Vendor details updated successfully.');
       }
     } catch (err) {
       toast.error('An error occurred while saving vendor details. Please try again.');
-      router.push(`/vendordashboard`);
-
       console.error('EditVendor API error:', err);
     }
   };
@@ -105,29 +109,31 @@ const EditVendor: React.FC = () => {
   }
 
   return (
-    <form onSubmit={async (e) => {
-      e.preventDefault();
-      await saveVendorDetails();
-      setIsEditing(false);
-    }} className="max-w-xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mt-12">
+    <form
+      onSubmit={async (e) => {
+        e.preventDefault();
+        await saveVendorDetails();
+        setIsEditing(false);
+      }}
+      className="max-w-xl mx-auto bg-white rounded-lg shadow-md overflow-hidden mt-12"
+    >
       <div className="p-6">
-      <div className="flex items-center justify-center mb-6">
-        {/* Profile Picture */}
-        {vendorDetails?.profileImage || imagePreview ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
-            <img
-              src={imagePreview || vendorDetails.profileImage}
-              alt="Vendor"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ) : (
-          <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
-            No Image
-          </div>
-        )}
-      </div>
+        <div className="flex items-center justify-center mb-6">
+          {/* Profile Picture */}
+          {vendorDetails?.profileImage || imagePreview ? (
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
+              <img
+                src={imagePreview || vendorDetails.profileImage}
+                alt="Vendor"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
+              No Image
+            </div>
+          )}
+        </div>
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
           {isEditing ? (
             <input
@@ -258,49 +264,6 @@ const EditVendor: React.FC = () => {
               <p className="text-gray-600">{vendorDetails.reviews || 'N/A'}</p>
             )}
           </div>
-
-          {/* Image Upload */}
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-gray-700">Upload Image</label>
-            {isEditing ? (
-              <>
-                <input
-                  type="file"
-                  name='image'
-                  className="border border-gray-300 rounded p-2 w-full"
-                  onChange={handleImageChange}
-                  accept="image/*" // Ensure only image files are selected
-                />
-                {imagePreview && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={imagePreview}
-                    alt="Selected"
-                    className="mt-4 w-32 h-32 object-cover rounded"
-                  />
-                )}
-              </>
-            ) : vendorDetails?.image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={vendorDetails.image}
-                alt="Vendor"
-                className="mt-4 w-32 h-32 object-cover rounded"
-              />
-            ) : (
-              <p className="text-gray-600">No image uploaded</p>
-            )}
-          </div>
-        </div>
-
-        {/* Ratings and View Reviews */}
-        <div className="flex justify-between items-center mt-6">
-          <div className="bg-green-500 text-white rounded-full px-4 py-1 text-sm">
-            {vendorDetails?.rating || '4.7'}
-          </div>
-          <a href="#" className="text-sm text-green-600">
-            View Reviews
-          </a>
         </div>
 
         {/* Edit and Save Buttons */}

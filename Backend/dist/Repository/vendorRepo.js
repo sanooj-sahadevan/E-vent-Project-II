@@ -1,6 +1,8 @@
 // import mongoose, { Schema, Document } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
+import { Dishes } from '../models/dishesModel.js';
+import { Auditorium } from "../models/auditoriumModel.js";
 const VendorSchema = new Schema({
     vendorname: { type: String, required: true },
     phone: { type: Number, required: true },
@@ -93,4 +95,50 @@ export const uploadImage = async function (imageFile) {
 export const findVendorByIdInDb = async (vendorId) => {
     console.log('controller 3');
     return await VendorModel.findById(vendorId); // Find vendor by ID in the database
+};
+export const createDishes = async (dishesData) => {
+    try {
+        // Create a new Dishes instance
+        const dish = new Dishes({
+            vendorId: dishesData.vendorId,
+            dishesName: dishesData.data.dishesName,
+            description: dishesData.data.description,
+            menu: dishesData.data.menu,
+            types: dishesData.data.types,
+            price: dishesData.data.price,
+            category: dishesData.data.category,
+            status: dishesData.data.status,
+            images: dishesData.images,
+        });
+        // Save the Dishes to the database
+        const savedDish = await dish.save();
+        console.log("Saved Dish: ", savedDish);
+        return savedDish;
+    }
+    catch (error) {
+        console.error("Error saving dish: ", error);
+        throw error;
+    }
+};
+export const createAuditorium = async (auditoriumData) => {
+    try {
+        const auditorium = new Auditorium({
+            vendorId: auditoriumData.vendorId,
+            auditoriumName: auditoriumData.data.auditoriumName,
+            description: auditoriumData.data.description,
+            types: auditoriumData.data.types,
+            price: auditoriumData.data.price,
+            category: auditoriumData.data.category,
+            status: auditoriumData.data.status,
+            images: auditoriumData.image ? [auditoriumData.image] : [], // Handle single image as array
+            capacity: auditoriumData.data.capacity,
+        });
+        const savedAuditorium = await auditorium.save();
+        console.log("Saved Auditorium: ", savedAuditorium);
+        return savedAuditorium;
+    }
+    catch (error) {
+        console.error("Error saving auditorium: ", error);
+        throw error;
+    }
 };

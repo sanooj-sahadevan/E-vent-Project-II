@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, vendorAddressFromDB, vendorEditFromDB, } from "../Repository/vendorRepo.js";
+import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 export const registerVendor = async (vendor) => {
     try {
@@ -72,6 +72,7 @@ export const editVendor = async (vendorDetails, imageUrl) => {
 // import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
 export const uploadImage = async function (imageFile) {
     try {
+        console.log('first step');
         const uploadedUrl = await uploadToS3Bucket([imageFile], imageFile); // Pass both the array and file
         return uploadedUrl;
     }
@@ -87,5 +88,30 @@ export const findVendorById = async (vendorId) => {
     }
     catch (error) {
         throw new Error(`Error finding vendor: ${error}`);
+    }
+};
+export const uploadDishes = async (vendorId, data, images) => {
+    try {
+        const dishesData = { vendorId, data, images };
+        // Ensure price is a number
+        dishesData.data.price = Number(dishesData.data.price);
+        const newDish = await createDishes(dishesData);
+        return newDish;
+    }
+    catch (error) {
+        console.error("Error in uploadDishes: ", error);
+        console.error();
+    }
+};
+export const uploadAuditorium = async (vendorId, data, image) => {
+    try {
+        const auditoriumData = { vendorId, data, image };
+        auditoriumData.data.price = Number(auditoriumData.data.price);
+        const newAuditorium = await createAuditorium(auditoriumData);
+        return newAuditorium;
+    }
+    catch (error) {
+        console.error("Error in uploadAuditorium: ", error);
+        throw error;
     }
 };

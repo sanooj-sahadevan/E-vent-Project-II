@@ -1,4 +1,4 @@
-import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadImage, editVendor, findVendorById } from "../Service/vendorService.js";
+import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes, uploadImage, editVendor, findVendorById, uploadAuditorium } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
@@ -127,5 +127,61 @@ export const fetchVendorDetails = async (req, res, next) => {
     }
     catch (error) {
         next(error); // Pass error to error handler middleware
+    }
+};
+export const addDishes = async (req, res) => {
+    try {
+        console.log('1');
+        const { body } = req;
+        const vendorId = req.vendorId;
+        const file = req.file; // Single file upload
+        console.log('2');
+        // Image upload handling
+        let imageUrl = null;
+        console.log('3');
+        if (file) {
+            // Image upload handling for a single file
+            imageUrl = await uploadImage(file);
+        }
+        console.log('4');
+        // Passing the vendorId, body, and image URLs to the service function
+        const dishesData = await uploadDishes(vendorId, body);
+        console.log('5');
+        if (dishesData) {
+            res.status(200).json("Dishes added successfully");
+        }
+        else {
+            res.status(400).json({ error: "Dishes not added: something went wrong" });
+        }
+    }
+    catch (error) {
+        console.error("Error adding dishes: ", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+export const addAuditorium = async (req, res) => {
+    try {
+        const { body } = req;
+        const vendorId = req.vendorId;
+        const file = req.file; // Single file upload
+        let imageUrl = null;
+        console.log('3');
+        if (file) {
+            // Image upload handling for a single file
+            imageUrl = await uploadImage(file);
+        }
+        console.log('4');
+        // Pass the vendorId, body, and image URL to the service function
+        const auditoriumData = await uploadAuditorium(vendorId, body);
+        if (auditoriumData) {
+            res.status(200).json("Auditorium added successfully");
+        }
+        else {
+            res.status(400).json({ error: "Auditorium not added: something went wrong" });
+        }
+    }
+    catch (error) {
+        console.error("Error adding auditorium: ", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 };

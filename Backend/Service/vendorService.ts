@@ -4,7 +4,7 @@ import {
     createVendor,
     findVendorByEmail,
     findVendorByIdInDb,
-    updateVendor,vendorAddressFromDB,vendorEditFromDB,
+    updateVendor,vendorAddressFromDB,vendorEditFromDB,createDishes,createAuditorium
   } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 import { IMulterFile } from "../utils/type";
@@ -96,17 +96,14 @@ export const registerVendor = async (vendor: Vendor) => {
 
 export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
   try {
+    console.log('first step');
+    
     const uploadedUrl = await uploadToS3Bucket([imageFile], imageFile); // Pass both the array and file
     return uploadedUrl;
   } catch (error: any) {
     throw new Error(error.message);
   }
 };
-
-
-
-
-
 
 
 export const findVendorById = async (vendorId: string) => {
@@ -121,3 +118,65 @@ export const findVendorById = async (vendorId: string) => {
 };
 
 
+import { Dishes } from '../models/dishesModel';
+
+interface DishData {
+  dishesName: string;
+  description?: string;
+  menu: string;
+  types: string;
+  price: number;
+  category?: string;
+  status: string;
+}
+
+export const uploadDishes = async (
+  vendorId: string,
+  data: DishData,
+  images?: string
+) => {
+  try {
+    const dishesData = { vendorId, data, images };
+
+    // Ensure price is a number
+    dishesData.data.price = Number(dishesData.data.price);
+
+    const newDish = await createDishes(dishesData);
+
+    return newDish;
+  } catch (error) {
+    console.error("Error in uploadDishes: ", error);
+console.error();
+  }
+};
+
+
+interface AuditoriumData {
+  dishesName: string;
+  description?: string;
+  types: string;
+  price: number;
+  category?: string;
+  status: string;
+  capacity: number;  
+}
+
+
+
+export const uploadAuditorium = async (
+  vendorId: string,
+  data: AuditoriumData,
+  image?: string
+) => {
+  try {
+    const auditoriumData = { vendorId, data, image };
+    auditoriumData.data.price = Number(auditoriumData.data.price);
+
+    const newAuditorium = await createAuditorium(auditoriumData);
+
+    return newAuditorium;
+  } catch (error) {
+    console.error("Error in uploadAuditorium: ", error);
+    throw error;
+  }
+};

@@ -1,24 +1,41 @@
-// export interface Dishes {
-//     dishName: string;
-//     category?: string;
-//     menu: string;
-//     type: string;
-//     profileImage?: string;
-//     description?: string;
-//     vendorID :string
-// }
-import mongoose, { Schema } from "mongoose";
-// Dishes Schema
-const DishesSchema = new Schema({
-    vendorId: { type: String, required: true },
-    dishName: { type: String, required: true },
-    description: { type: String },
-    menu: { type: String, required: true },
-    type: { type: String, required: true },
-    price: { type: Number, required: true },
-    category: { type: String },
-    status: { type: String, required: true },
-    images: [{ type: String }],
-});
-// Export Dishes model
-export const DishesModel = mongoose.model("Dishes", DishesSchema);
+import mongoose, { Schema } from 'mongoose';
+const dishesSchema = new Schema({
+    dishesName: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: false,
+    },
+    images: {
+        type: String,
+        required: false,
+    },
+    price: {
+        type: Number,
+        required: true,
+    },
+    vendorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "VendorId",
+        required: false,
+    },
+    category: {
+        type: String,
+        required: false,
+    },
+    status: {
+        type: String,
+        required: true,
+    },
+    types: {
+        type: String,
+        required: true,
+    },
+    menu: {
+        type: String,
+        required: true,
+    },
+}, { timestamps: true });
+export const Dishes = mongoose.model("Dishes", dishesSchema);
