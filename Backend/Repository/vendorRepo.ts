@@ -2,6 +2,10 @@
 import mongoose,{Schema,Document} from "mongoose";
 import { Vendor } from "../models/vendorModel.js";
 import jwt from "jsonwebtoken";
+import { uploadToS3Bucket } from "../middleware/fileUpload.js";
+import { IMulterFile } from "../utils/type.js";
+import { Dishes } from '../models/dishesModel.js';
+import { Auditorium } from "../models/auditoriumModel.js";
 
 
 
@@ -69,7 +73,7 @@ export const vendorAddressFromDB = async () => {
 
 
 
-export const vendorEditFromDB = async (vendorDetails: Vendor): Promise<Vendor> => {
+export const vendorEditFromDB = async (vendorDetails: Vendor, imageUrl: string | undefined): Promise<Vendor> => {
   try {
     // Find the vendor by email
     const existingVendor = await VendorModel.findOne({ email: vendorDetails.email });
@@ -78,11 +82,15 @@ export const vendorEditFromDB = async (vendorDetails: Vendor): Promise<Vendor> =
       // Update vendor details
       existingVendor.vendorname = vendorDetails.vendorname;
       existingVendor.phone = vendorDetails.phone;
-      existingVendor.profileImage = vendorDetails.profileImage;
       existingVendor.address = vendorDetails.address;
       existingVendor.district = vendorDetails.district;
       existingVendor.state = vendorDetails.state;
       existingVendor.reviews = vendorDetails.reviews;
+
+      // Update profile image if a new one is uploaded
+      if (imageUrl) {
+        existingVendor.profileImage = imageUrl;
+      }
 
       // Only update password if provided
       if (vendorDetails.password) {
@@ -94,7 +102,10 @@ export const vendorEditFromDB = async (vendorDetails: Vendor): Promise<Vendor> =
       return existingVendor;
     } else {
       // If vendor doesn't exist, create a new one
-      const newVendor = new VendorModel(vendorDetails);
+      const newVendor = new VendorModel({
+        ...vendorDetails,
+        profileImage: imageUrl || vendorDetails.profileImage // Set the imageUrl if available, otherwise keep the existing one
+      });
       await newVendor.save();
       return newVendor;
     }
@@ -105,3 +116,80 @@ export const vendorEditFromDB = async (vendorDetails: Vendor): Promise<Vendor> =
 };
 
 
+export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
+  try {
+    return await uploadToS3Bucket([], imageFile); 
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+
+
+
+
+
+export const findVendorByIdInDb = async (vendorId: string) => {
+  console.log('controller 3');
+
+  return await VendorModel.findById(vendorId); // Find vendor by ID in the database
+};
+
+
+
+
+
+export const createDishes = async (dishesData: any) => {
+  try {
+    // Create a new Dishes instance
+    const dish = new Dishes({
+      vendorId: dishesData.vendorId,
+      dishesName: dishesData.data.dishesName,
+      description: dishesData.data.description,
+      menu: dishesData.data.menu,
+      types: dishesData.data.types,
+      price: dishesData.data.price,
+      category: dishesData.data.category,
+      status: dishesData.data.status,
+      images: dishesData.images, 
+    });
+
+    // Save the Dishes to the database
+    const savedDish = await dish.save();
+    console.log("Saved Dish: ", savedDish);
+
+    return savedDish;
+  } catch (error) {
+    console.error("Error saving dish: ", error);
+    throw error;
+  }
+};
+
+
+
+
+
+
+export const createAuditorium = async (auditoriumData: any) => {
+  try {
+    const auditorium = new Auditorium({
+      vendorId: auditoriumData.vendorId,
+      auditoriumName: auditoriumData.data.auditoriumName,
+      description: auditoriumData.data.description,
+      types: auditoriumData.data.types,
+      price: auditoriumData.data.price,
+      category: auditoriumData.data.category,
+      status: auditoriumData.data.status,
+      images: auditoriumData.image ? [auditoriumData.image] : [], // Handle single image as array
+      capacity: auditoriumData.data.capacity,
+    });
+
+    const savedAuditorium = await auditorium.save();
+    console.log("Saved Auditorium: ", savedAuditorium);
+
+    return savedAuditorium;
+  } catch (error) {
+    console.error("Error saving auditorium: ", error);
+    throw error;
+  }
+};

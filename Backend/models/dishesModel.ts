@@ -1,39 +1,59 @@
-// export interface Dishes {
-//     dishName: string;
-//     category?: string;
-//     menu: string;
-//     type: string;
-//     profileImage?: string;
-//     description?: string;
-//     vendorID :string
-// }
+import mongoose, { Document, Schema } from 'mongoose';
 
-import mongoose, { Schema, Document } from "mongoose";
-
-export interface IDishes extends Document {
-  vendorId: string;
-  dishName: string;
+interface DishDocument extends Document {
+  vendorId: mongoose.Schema.Types.ObjectId;
+  dishesName: string;
   description?: string;
   menu: string;
-  type: string;
+  types: string;
   price: number;
   category?: string;
   status: string;
-  images?: string[];
+  images?: string
 }
 
-// Dishes Schema
-const DishesSchema: Schema = new Schema({
-  vendorId: { type: String, required: true },
-  dishName: { type: String, required: true },
-  description: { type: String },
-  menu: { type: String, required: true },
-  type: { type: String, required: true },
-  price: { type: Number, required: true },
-  category: { type: String },
-  status: { type: String, required: true },
-  images: [{ type: String }],
-});
+const dishesSchema = new Schema<DishDocument>(
+  {
+    dishesName: {
+      type: String,
+      required: true,
+    },
+    description: {
+      type: String,
+      required: false,
+    },
+    images: {
+      type: String,
+      required: false,
+    },
+    price: {
+      type: Number,
+      required: true,
+    },
+    vendorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "VendorId",
+      required: false,
+    },
+    category: {
+      type: String,
+      required: false,
+    },
+    status: {
+      type: String,
+      required: true,
+    },
+    types: {
+      type: String,
+      required: true,
+    },
+    menu: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-// Export Dishes model
-export const DishesModel = mongoose.model<IDishes>("Dishes", DishesSchema);
+export const Dishes = mongoose.model<DishDocument>("Dishes", dishesSchema);
+export type { DishDocument };

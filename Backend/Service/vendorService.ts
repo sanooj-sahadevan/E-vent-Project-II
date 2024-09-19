@@ -3,8 +3,11 @@ import jwt from "jsonwebtoken";
 import {
     createVendor,
     findVendorByEmail,
-    updateVendor,vendorAddressFromDB,vendorEditFromDB
+    findVendorByIdInDb,
+    updateVendor,vendorAddressFromDB,vendorEditFromDB,createDishes,createAuditorium
   } from "../Repository/vendorRepo.js";
+import { uploadToS3Bucket } from "../middleware/fileUpload.js";
+import { IMulterFile } from "../utils/type";
 
 export const registerVendor = async (vendor: Vendor) => {
     try {
@@ -74,13 +77,106 @@ export const registerVendor = async (vendor: Vendor) => {
   };
 
   
-  export const editVendor = async (vendorDetails: Vendor) => {
+  export const editVendor = async (vendorDetails: Vendor, imageUrl: string | undefined) => {
     try {
-      console.log('1');
+      console.log('service');
       
-      return await vendorEditFromDB(vendorDetails); // Call the repository to update or insert vendor
+      // Pass both vendor details and image URL to the repository
+      return await vendorEditFromDB(vendorDetails, imageUrl);
     } catch (error) {
       throw new Error('Failed to update vendor details');
     }
   };
   
+  
+//   import { IMulterFile } from '../utils/type';
+// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
+// import { IMulterFile } from '../utils/type';
+// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
+
+export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
+  try {
+    console.log('first step');
+    
+    const uploadedUrl = await uploadToS3Bucket([imageFile], imageFile); // Pass both the array and file
+    return uploadedUrl;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
+
+export const findVendorById = async (vendorId: string) => {
+  try {
+    console.log('controller 2');
+
+    const vendor = await findVendorByIdInDb(vendorId);
+    return vendor;
+  } catch (error) {
+    throw new Error(`Error finding vendor: ${error}`);
+  }
+};
+
+
+import { Dishes } from '../models/dishesModel';
+
+interface DishData {
+  dishesName: string;
+  description?: string;
+  menu: string;
+  types: string;
+  price: number;
+  category?: string;
+  status: string;
+}
+
+export const uploadDishes = async (
+  vendorId: string,
+  data: DishData,
+  images?: string
+) => {
+  try {
+    const dishesData = { vendorId, data, images };
+
+    // Ensure price is a number
+    dishesData.data.price = Number(dishesData.data.price);
+
+    const newDish = await createDishes(dishesData);
+
+    return newDish;
+  } catch (error) {
+    console.error("Error in uploadDishes: ", error);
+console.error();
+  }
+};
+
+
+interface AuditoriumData {
+  dishesName: string;
+  description?: string;
+  types: string;
+  price: number;
+  category?: string;
+  status: string;
+  capacity: number;  
+}
+
+
+
+export const uploadAuditorium = async (
+  vendorId: string,
+  data: AuditoriumData,
+  image?: string
+) => {
+  try {
+    const auditoriumData = { vendorId, data, image };
+    auditoriumData.data.price = Number(auditoriumData.data.price);
+
+    const newAuditorium = await createAuditorium(auditoriumData);
+
+    return newAuditorium;
+  } catch (error) {
+    console.error("Error in uploadAuditorium: ", error);
+    throw error;
+  }
+};

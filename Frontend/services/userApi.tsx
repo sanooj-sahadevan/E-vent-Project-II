@@ -111,3 +111,21 @@ export const allVendorAPI = async () => {
   }
 
 };
+
+
+export const UserEdit = async (vendorData: any) => {
+  try {
+    console.log('Editing user details -------------------------------', vendorData);
+
+    // Make the API call to update the user
+    return await axios.patch(`${SERVER_URL}/edituserDetails`, vendorData, {
+      headers: {
+        'Content-Type': 'application/json', // Ensure JSON data is being sent
+      },
+      withCredentials: true, // If you're using cookies or authentication
+    });
+  } catch (error) {
+    console.error('Error updating user details:', error);
+    throw error;
+  }
+};

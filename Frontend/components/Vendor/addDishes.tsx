@@ -3,87 +3,74 @@
 import { addDishAPI } from '@/services/vendorAPI';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 type FormValues = {
-    DishesName: string;
+    dishesName: string;
     description: string;
-    // images: File[];
     price: number;
     types: string;
     category: string;
+    menu: string;
     status: string;
+    vendorId: string; // Use string instead of mongoose.Schema.Types.ObjectId
 };
 
-const AddDishes = () => {
-    const { control, handleSubmit, setValue, formState: { errors }, register } = useForm<FormValues>({
+const AddDishes: React.FC = () => {
+    const { handleSubmit, formState: { errors }, register } = useForm<FormValues>({
         defaultValues: {
-            DishesName: "",
+            dishesName: "",
             description: "",
-            // images: [],
             types: "",
             price: 0,
             category: "",
+            menu: "",
             status: "Upcoming",
         },
     });
 
     const router = useRouter();
-    const [photos, setPhotos] = useState<File[]>([]);
+    const [photo, setPhoto] = useState<File | null>(null);
 
-    // Handle photo change for image input
-    // const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     if (e.target.files) {
-    //         const filesArray = Array.from(e.target.files);
-    //         setPhotos((prevPhotos) => [...prevPhotos, ...filesArray]);
+    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setPhoto(e.target.files[0]);
+        }
+    };
 
-    //         // Update the form with the new photo list
-    //         setValue("images", [...photos, ...filesArray]);
-    //     }
-    // };
+    const removePhoto = () => {
+        setPhoto(null);
+    };
 
-    // Remove photo by index
-    // const removePhoto = (index: number) => {
-    //     const updatedPhotos = photos.filter((_, i) => i !== index);
-    //     setPhotos(updatedPhotos);
-    //     setValue("images", updatedPhotos);
-    // };
-
-    // Submit handler
-    const onSubmit = async (data: FormValues) => {
-        console.log('onsubmit');
-
+    const onSubmit: SubmitHandler<FormValues> = async (data) => {
         const formData = new FormData();
-        formData.append("DishesName", data.DishesName);
+        formData.append("dishesName", data.dishesName);
         formData.append("description", data.description);
         formData.append("price", data.price.toString());
         formData.append("types", data.types);
         formData.append("category", data.category);
+        formData.append("menu", data.menu);
         formData.append("status", data.status);
-        console.log(formData);
-
-        // if (data.images) {
-        //     data.images.forEach((image) => {
-        //         formData.append(`images`, image, image.name);
-        //     });
-        // }
+        if (photo) {
+            formData.append("image", photo, photo.name);
+        }
 
         try {
-            const result = await addDishAPI(formData); // Make API call here
-            console.log(result);
+            console.log('Submitting FormData:', formData);
 
+            const result = await addDishAPI(formData);
             if (result) {
                 toast.success("Dish added successfully");
                 setTimeout(() => {
-                    router.push(`/vendor/dishes`); // Redirect after success
+                    router.push(`/vendordashboard`);
                 }, 3000);
             } else {
                 toast.error("Something went wrong!");
             }
         } catch (error) {
-            toast.error("Dish already exists!");
+            console.error(error);
+            toast.error("An error occurred while adding the dish!");
         }
     };
 
@@ -93,58 +80,62 @@ const AddDishes = () => {
 
             <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl mx-auto">
                 <div className="flex space-x-6">
-                    {/* Add Photo Section */}
                     <div className="w-1/3">
                         <div className="border border-gray-300 rounded-lg p-6 text-center">
-                            {photos.length > 0 ? (
-                                photos.map((photo, index) => (
-                                    <div key={index} className="mb-4">
-                                        <img
-                                            src={URL.createObjectURL(photo)}
-                                            alt="Dish"
-                                            className="w-full h-40 object-cover rounded-lg mb-4"
-                                        />
-                                        {/* <button
-                                            type="button"
-                                            className="bg-red-500 text-white px-2 py-1 rounded-lg"
-                                            onClick={() => removePhoto(index)}
-                                        >
-                                            Remove
-                                        </button> */}
-                                    </div>
-                                ))
+                            {photo ? (
+                                <div className="mb-4">
+                                    <img
+                                        src={URL.createObjectURL(photo)}
+                                        alt="Dish"
+                                        className="w-full h-40 object-cover rounded-lg mb-4"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="bg-pink-500 text-white px-2 py-1 rounded-lg"
+                                        onClick={removePhoto}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
                             ) : (
-                                <div className="text-gray-500 mb-4">Add Photos</div>
+                                <div className="text-gray-500 mb-4">Add Photo</div>
                             )}
-                            {/* <input
+                            <input
                                 type="file"
-                                accept="image/*"
-                                multiple
-                                className="hidden"
                                 id="dish-photo"
-                                // onChange={handlePhotoChange}
-                            /> */}
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handlePhotoChange}
+                            />
                             <label
                                 htmlFor="dish-photo"
                                 className="bg-pink-500 text-white px-4 py-2 rounded-lg cursor-pointer hover:bg-pink-600"
                             >
                                 Upload Photo
                             </label>
+                            <div className="mt-4">
+                                <label className="block text-gray-700">Description</label>
+                                <textarea
+                                    {...register("description", { required: true })}
+                                    className="w-full p-2 border border-gray-300 rounded-lg mt-2"
+                                    placeholder="Enter description"
+                                />
+                                {errors.description && <p className="text-red-500">Description is required.</p>}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Add Details Section */}
                     <div className="w-2/3">
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-gray-700">Dish Name</label>
                                 <input
                                     type="text"
-                                    {...register("DishesName", { required: true })}
+                                    {...register("dishesName", { required: true })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter dish name"
                                 />
-                                {errors.DishesName && <p className="text-red-500">Dish name is required.</p>}
+                                {errors.dishesName && <p className="text-red-500">Dish name is required.</p>}
                             </div>
 
                             <div>
@@ -159,6 +150,16 @@ const AddDishes = () => {
                             </div>
 
                             <div>
+                                <label className="block text-gray-700">Menu</label>
+                                <textarea
+                                    {...register("menu", { required: true })}
+                                    className="w-full p-2 border border-gray-300 rounded-lg mt-2"
+                                    placeholder="Enter Menu"
+                                />
+                                {errors.menu && <p className="text-red-500">Menu is required.</p>}
+                            </div>
+
+                            <div>
                                 <label className="block text-gray-700">Type of Food</label>
                                 <select
                                     {...register("types", { required: true })}
@@ -168,7 +169,15 @@ const AddDishes = () => {
                                     <option value="Veg">Veg</option>
                                     <option value="Non-Veg">Non-Veg</option>
                                 </select>
-                                {errors.types && <p className="text-red-500">Type is required.</p>}
+                                {errors.types
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                && <p className="text-red-500">Type is required.</p>}
                             </div>
 
                             <div>
@@ -183,16 +192,6 @@ const AddDishes = () => {
                                     <option value="Silver">Silver</option>
                                 </select>
                                 {errors.category && <p className="text-red-500">Category is required.</p>}
-                            </div>
-
-                            <div>
-                                <label className="block text-gray-700">Description</label>
-                                <textarea
-                                    {...register("description", { required: true })}
-                                    className="w-full p-2 border border-gray-300 rounded-lg"
-                                    placeholder="Enter description"
-                                />
-                                {errors.description && <p className="text-red-500">Description is required.</p>}
                             </div>
 
                             <button

@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
-import { createVendor, findVendorByEmail, updateVendor, vendorAddressFromDB, vendorEditFromDB } from "../Repository/vendorRepo.js";
+import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium } from "../Repository/vendorRepo.js";
+import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 export const registerVendor = async (vendor) => {
     try {
         const existingVendor = await findVendorByEmail(vendor.email);
@@ -55,12 +56,62 @@ export const vendorAddress = async () => {
         throw new Error('Failed to fetch vendor addresses'); // Throw error to controller
     }
 };
-export const editVendor = async (vendorDetails) => {
+export const editVendor = async (vendorDetails, imageUrl) => {
     try {
-        console.log('1');
-        return await vendorEditFromDB(vendorDetails); // Call the repository to update or insert vendor
+        console.log('service');
+        // Pass both vendor details and image URL to the repository
+        return await vendorEditFromDB(vendorDetails, imageUrl);
     }
     catch (error) {
         throw new Error('Failed to update vendor details');
+    }
+};
+//   import { IMulterFile } from '../utils/type';
+// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
+// import { IMulterFile } from '../utils/type';
+// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
+export const uploadImage = async function (imageFile) {
+    try {
+        console.log('first step');
+        const uploadedUrl = await uploadToS3Bucket([imageFile], imageFile); // Pass both the array and file
+        return uploadedUrl;
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+};
+export const findVendorById = async (vendorId) => {
+    try {
+        console.log('controller 2');
+        const vendor = await findVendorByIdInDb(vendorId);
+        return vendor;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor: ${error}`);
+    }
+};
+export const uploadDishes = async (vendorId, data, images) => {
+    try {
+        const dishesData = { vendorId, data, images };
+        // Ensure price is a number
+        dishesData.data.price = Number(dishesData.data.price);
+        const newDish = await createDishes(dishesData);
+        return newDish;
+    }
+    catch (error) {
+        console.error("Error in uploadDishes: ", error);
+        console.error();
+    }
+};
+export const uploadAuditorium = async (vendorId, data, image) => {
+    try {
+        const auditoriumData = { vendorId, data, image };
+        auditoriumData.data.price = Number(auditoriumData.data.price);
+        const newAuditorium = await createAuditorium(auditoriumData);
+        return newAuditorium;
+    }
+    catch (error) {
+        console.error("Error in uploadAuditorium: ", error);
+        throw error;
     }
 };

@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
 interface Vendor {
+    profileImage: string | undefined;
+    profileimage: string | undefined;
+    _id: string; // Ensure this is a string to match the MongoDB ObjectId type
     image: string | undefined;
     vendorname: string;
     state: string;
@@ -16,7 +17,7 @@ interface Vendor {
 }
 
 const VendorsPage: React.FC = () => {
-    const router = useRouter(); // Correctly call useRouter here
+    const router = useRouter();
     const [vendor, setVendor] = useState<Vendor[]>([]);
 
     useEffect(() => {
@@ -27,12 +28,13 @@ const VendorsPage: React.FC = () => {
 
                 setVendor(response);
             } catch (error) {
+                router.push('/login');
                 console.error("Failed to fetch vendors:", error);
             }
         };
 
         fetchVendor();
-    }, []);
+    }, [router]);
 
     return (
         <div className="container mx-auto px-8 py-8 bg-white">
@@ -63,7 +65,7 @@ const VendorsPage: React.FC = () => {
                 {vendor.map((vendor, index) => (
                     <div key={index} className="bg-white shadow-md rounded-lg p-4">
                         <img
-                            src={vendor.image}
+                            src={vendor.profileImage}
                             alt={vendor.vendorname}
                             className="w-full h-40 object-cover rounded-t-md"
                         />
@@ -75,7 +77,7 @@ const VendorsPage: React.FC = () => {
                                 <span className="ml-1 text-sm text-gray-600">{vendor.rating}</span>
                             </div>
                             <button
-                                onClick={() => router.push('/vendorProfile')}
+                                onClick={() => router.push(`/vendorProfile?vendorId=${vendor._id}`)}
                                 className="mt-4 w-full bg-black text-white py-2 rounded-md"
                             >
                                 Find Vendors

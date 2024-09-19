@@ -39,6 +39,8 @@ export const verifyOtp = async (data: any) => {
 
 export const addDishAPI = async (data: any) => {
   try {
+    console.log('api dishe-------------------------s');
+    
     console.log('addDishApi');
     return await axios.post(`${SERVER_URL_vendor}/addDishes`, data, { withCredentials: true });
   } catch (error) {
@@ -96,3 +98,16 @@ export const VendorEdit = async (vendorData: any) => {
 
 
 }
+
+export const fetchvendor = async (vendorId: string) => {
+  try {
+    console.log('rdyyyyy');
+    
+      const res = await axios.get(`${SERVER_URL_vendor}/fetchVendorDetails/${vendorId}`);
+      console.log(res);
+      return res;
+  } catch (error) {
+    console.error(error);
+    
+  }
+};

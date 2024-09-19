@@ -1,36 +1,60 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import React from "react";
-import { useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
+
+import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { fetchvendor } from '@/services/vendorAPI';
 
 interface Vendor {
-    image: string | undefined;
+    profileImage: string | undefined;
     vendorname: string;
     email: string;
     state: string;
     rating: number;
     reviews: Array<{ name: string; review: string; rating: number }>;
-    photos: string[];
+    photos: []   // Default to an empty array
 }
 
-const vendorData: Vendor = {
-    image: "/vendor-image.jpg",
-    vendorname: "Lakme",
-    email: "somephotoes007@gmail.com",
-    state: "Coimbatore",
-    rating: 4.5,
-    reviews: [
-        { name: "Muhammad Riyan", review: "So cool!", rating: 5.0 },
-        { name: "John Doe", review: "Great service!", rating: 4.5 },
-        { name: "Jane Smith", review: "Nice experience!", rating: 4.0 },
-    ],
-    photos: Array(9).fill("/photo-1.jpg"), // Dummy photo URLs
-};
-
 const VendorsPage: React.FC = () => {
-    const router = useRouter();
+    const searchParams = useSearchParams();
+    const vendorId = searchParams.get("vendorId");
+
+    const [vendorData, setVendorData] = useState<Vendor | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchVendorDetails = async () => {
+            if (vendorId) {
+                try {
+                    const response = await fetchvendor(vendorId);
+
+                    if (response && response.data) {
+                        const vendorData: Vendor = response.data;
+                        setVendorData(vendorData);
+                    } else {
+                        toast.error("Vendor details not found.");
+                    }
+                } catch (error) {
+                    toast.error("Failed to load vendor details.");
+                    console.error(error);
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchVendorDetails();
+    }, [vendorId]);
+
+    if (loading) {
+        return <p>Loading...</p>; // Optional: Add a loading spinner or placeholder
+    }
+
+    if (!vendorData) {
+        return <p>No vendor data available.</p>; // Handle cases where no vendor data is available
+    }
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-6 mt-12">
@@ -40,9 +64,9 @@ const VendorsPage: React.FC = () => {
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url('/vendor-bg.jpg')` }}
                 ></div>
-                <div className="relative z-10 flex items-center space-x-6">
+                <div className="relative  flex items-center space-x-6">
                     <img
-                        src={vendorData.image || "/default-vendor.jpg"}
+                        src={vendorData.profileImage || "/default-vendor.jpg"}
                         alt="Vendor Image"
                         className="rounded-full w-24 h-24 object-cover border-4 border-white"
                     />
@@ -52,7 +76,7 @@ const VendorsPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="relative z-10 flex items-center mt-4">
+                <div className="relative  flex items-center mt-4">
                     {/* Location symbol and state */}
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +95,7 @@ const VendorsPage: React.FC = () => {
                     <p className="text-gray-700">{vendorData.state}</p>
                 </div>
 
-                <div className="absolute right-6 top-6 flex space-x-4 z-10">
+                <div className="absolute right-6 top-6 flex space-x-4 ">
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Book Now</button>
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Chat With Us</button>
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Check Availability</button>
@@ -82,75 +106,76 @@ const VendorsPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-[70px] mt-[71px]">
                 <div className="bg-gray-100 p-4 rounded-md shadow">
                     <h3 className="text-lg font-semibold">Platinum</h3>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat
-                        eros non urna fermentum.
-                    </p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat eros non urna fermentum.</p>
                 </div>
                 <div className="bg-yellow-100 p-4 rounded-md shadow">
                     <h3 className="text-lg font-semibold">Gold</h3>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat
-                        eros non urna fermentum.
-                    </p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat eros non urna fermentum.</p>
                 </div>
                 <div className="bg-gray-200 p-4 rounded-md shadow">
                     <h3 className="text-lg font-semibold">Silver</h3>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat
-                        eros non urna fermentum.
-                    </p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat eros non urna fermentum.</p>
                 </div>
             </div>
 
             {/* Photos */}
             <div className="mt-8">
                 <h2 className="text-xl font-semibold">Photos</h2>
-                <div className="grid grid-cols-4 gap-4 mt-4">
-                    {vendorData.photos.map((photo, index) => (
-                        <img
-                            key={index}
-                            src={photo}
-                            alt={`Vendor Photo ${index + 1}`}
-                            className="object-cover w-full h-40 rounded-md"
-                        />
-                    ))}
-                </div>
-                <div className="flex justify-center">
+                {Array.isArray(vendorData.photos) && vendorData.photos.length > 0 ? (
+                    <div className="grid grid-cols-4 gap-4 mt-4">
+                        {vendorData.photos.map((photo, index) => (
+                            <img
+                                key={index}
+                                src={photo}
+                                alt={`Vendor Photo ${index + 1}`}
+                                className="object-cover w-full h-40 rounded-md"
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-center text-gray-500">No photos available.</p>
+                )}
+                {/* <div className="flex justify-center">
                     <button className="mt-4 px-4 py-2 bg-buttonBg text-white rounded">
                         View More
                     </button>
-                </div>
+                </div> */}
             </div>
 
+
+
             {/* Reviews */}
-            <div className=" mb-[70px] mt-[71px]">
+            <div className="mb-[70px] mt-[71px]">
                 <h2 className="text-xl font-semibold">Reviews</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    {vendorData.reviews.map((review, index) => (
-                        <div key={index} className="p-4 bg-gray-100 rounded-md shadow-md">
-                            <div className="flex justify-between">
-                                <p>{review.name}</p>
-                                <div className="flex items-center space-x-1">
-                                    <span className="text-yellow-500">
-                                        {"★".repeat(Math.round(review.rating))}
-                                    </span>
-                                    <span>{review.rating}</span>
+                {Array.isArray(vendorData.reviews) && vendorData.reviews.length > 0 ? (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                            {vendorData.reviews.map((review, index) => (
+                                <div key={index} className="p-4 bg-gray-100 rounded-md shadow-md">
+                                    <div className="flex justify-between">
+                                        <p>{review.name}</p>
+                                        <div className="flex items-center space-x-1">
+                                            <span className="text-yellow-500">
+                                                {"★".repeat(Math.round(review.rating))}
+                                            </span>
+                                            <span>{review.rating}</span>
+                                        </div>
+                                    </div>
+                                    <p>{review.review}</p>
                                 </div>
-                            </div>
-                            <p>{review.review}</p>
+                            ))}
                         </div>
-                    ))}
-                </div>
-                <div className="mt-6 flex justify-center space-x-4">
-                    {/* <button className="px-4 py-2  bg-buttonBg text-white rounded">
-                        Write a Review
-                    </button> */}
-                    <button className="px-4 py-2  bg-buttonBg text-white rounded">
-                        View All
-                    </button>
-                </div>
+                        <div className="mt-6 flex justify-center space-x-4">
+                            <button className="px-4 py-2 bg-buttonBg text-white rounded">
+                                View All
+                            </button>
+                        </div>
+                    </>
+                ) : (
+                    <p className="text-center text-gray-500">No reviews available.</p>
+                )}
             </div>
+
 
         </div>
     );
