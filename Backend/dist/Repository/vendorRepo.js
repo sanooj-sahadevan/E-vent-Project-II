@@ -86,7 +86,7 @@ export const vendorEditFromDB = async (vendorDetails, imageUrl) => {
 };
 export const uploadImage = async function (imageFile) {
     try {
-        return await uploadToS3Bucket(imageFile);
+        return await uploadToS3Bucket([], imageFile);
     }
     catch (error) {
         throw new Error(error.message);
