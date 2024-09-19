@@ -3,76 +3,76 @@
 import { addAuditoriumAPI } from '@/services/vendorAPI';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 type FormValues = {
+    capacity: number;
     auditoriumName: string;
     description: string;
     price: number;
     types: string;
     category: string;
-    occupancy: number;
     status: string;
+    vendorId: string; // Use string for vendorId
 };
 
-const AddAuditorium = () => {
-    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+const AddAuditorium: React.FC = () => {
+    const { handleSubmit, formState: { errors }, register } = useForm<FormValues>({
         defaultValues: {
             auditoriumName: "",
             description: "",
-            price: 0,
             types: "",
+            price: 0,
             category: "",
-            occupancy: 0,
-            status: "Upcoming",
+            capacity: 0,
+            status: "",
         },
     });
 
     const router = useRouter();
     const [photo, setPhoto] = useState<File | null>(null);
 
-    // Handle photo change for image input
     const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files) {
-            const file = e.target.files[0];
-            setPhoto(file);
+        if (e.target.files && e.target.files[0]) {
+            setPhoto(e.target.files[0]);
         }
     };
 
-    // Submit handler
-    const onSubmit = async (data: FormValues) => {
-        console.log('onsubmit auditoriums');
+    const removePhoto = () => {
+        setPhoto(null);
+    };
 
+    const onSubmit: SubmitHandler<FormValues> = async (data) => {
         const formData = new FormData();
         formData.append("auditoriumName", data.auditoriumName);
         formData.append("description", data.description);
         formData.append("price", data.price.toString());
         formData.append("types", data.types);
         formData.append("category", data.category);
-        formData.append("occupancy", data.occupancy.toString());
-        // formData.append("status", data.status);
+        formData.append("capacity", data.capacity.toString());
+        formData.append("status", data.status);
 
         if (photo) {
-            formData.append("photo", photo, photo.name);
+            formData.append("image", photo, photo.name);
         }
 
         try {
-            const result = await addAuditoriumAPI(formData); // Make API call here
-            console.log(result);
+            console.log('Submitting FormData:', formData);
 
+            const result = await addAuditoriumAPI(formData);
             if (result) {
                 toast.success("Auditorium added successfully");
                 setTimeout(() => {
-                    router.push(`/vendor/auditoriums`); // Redirect after success
+                    router.push(`/vendordashboard`);
                 }, 3000);
             } else {
                 toast.error("Something went wrong!");
             }
         } catch (error) {
-            console.error("Error:", error);
-            toast.error("Error adding auditorium!");
+            console.error("Error submitting form:", error);
+            toast.error("An error occurred while adding the auditorium!");
         }
     };
 
@@ -129,7 +129,7 @@ const AddAuditorium = () => {
                                 <label className="block text-gray-700">Price</label>
                                 <input
                                     type="number"
-                                    {...register('price', { required: 'Price is required' })}
+                                    {...register('price', { required: 'Price is required', min: 0 })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter price"
                                 />
@@ -165,14 +165,14 @@ const AddAuditorium = () => {
                             </div>
 
                             <div>
-                                <label className="block text-gray-700">Occupancy</label>
+                                <label className="block text-gray-700">capacity</label>
                                 <input
                                     type="number"
-                                    {...register('occupancy', { required: 'Occupancy is required' })}
+                                    {...register('capacity', { required: 'capacity is required', min: 1 })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
-                                    placeholder="Enter occupancy"
+                                    placeholder="Enter capacity"
                                 />
-                                {errors.occupancy && <p className="text-red-500">{errors.occupancy.message}</p>}
+                                {errors.capacity && <p className="text-red-500">{errors.capacity.message}</p>}
                             </div>
                         </div>
                     </div>
@@ -186,19 +186,6 @@ const AddAuditorium = () => {
                         />
                         {errors.description && <p className="text-red-500">{errors.description.message}</p>}
                     </div>
-
-                    {/* <div>
-                        <label className="block text-gray-700">Status</label>
-                        <select
-                            {...register('status', { required: 'Status is required' })}
-                            className="w-full p-2 border border-gray-300 rounded-lg"
-                        >
-                            <option value="Upcoming">Upcoming</option>
-                            <option value="Ongoing">Ongoing</option>
-                            <option value="Completed">Completed</option>
-                        </select>
-                        {errors.status && <p className="text-red-500">{errors.status.message}</p>}
-                    </div> */}
 
                     <button
                         type="submit"

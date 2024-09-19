@@ -116,13 +116,14 @@ export const vendorEditFromDB = async (vendorDetails: Vendor, imageUrl: string |
 };
 
 
-export const uploadImage =async function (imageFile: unknown): Promise<string> {
+export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
   try {
-    return await uploadToS3Bucket(imageFile as IMulterFile);
+    return await uploadToS3Bucket([], imageFile); 
   } catch (error: any) {
     throw new Error(error.message);
   }
-}
+};
+
 
 
 

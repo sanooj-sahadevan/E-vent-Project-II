@@ -10,7 +10,6 @@ import {
 } from "../controller/userController.js";
 import  { verifyUser } from "../middleware/userJWT.js";
 
-
 const router = express.Router();
 
 router.post("/signup", register);

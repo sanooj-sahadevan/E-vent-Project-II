@@ -41,11 +41,11 @@ const auditoriumSchema = new Schema<AuditoriumDocument>(
     },
     capacity: {
       type: Number,  // Changed to Number
-      required: true,
+      required: false,
     },
     status: {
       type: String,
-      required: true,
+      required: false,
     },
     types: {
       type: String,
