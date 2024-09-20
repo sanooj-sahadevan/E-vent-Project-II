@@ -159,18 +159,15 @@ export const addDishes = async (req, res) => {
 export const addAuditorium = async (req, res) => {
     try {
         const { body } = req;
-        const vendorId = req.vendorId; // Ensure `vendorId` is part of your extended request
-        // Check if vendorId is undefined
+        const vendorId = req.vendorId;
         if (!vendorId) {
             return res.status(400).json({ error: "Vendor ID is required" });
         }
-        const file = req.file; // Single file upload
-        let imageUrl = undefined; // Initialize as `undefined`
+        const file = req.file;
+        let imageUrl = undefined;
         if (file) {
-            // Image upload handling for a single file
             imageUrl = await uploadImage(file);
         }
-        // Pass the vendorId, body, and image URL to the service function
         const auditoriumData = await uploadAuditorium(vendorId, body, imageUrl);
         if (auditoriumData) {
             return res.status(200).json("Auditorium added successfully");
@@ -182,5 +179,21 @@ export const addAuditorium = async (req, res) => {
     catch (error) {
         console.error("Error adding auditorium: ", error);
         return res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+export const fecthDetilsVendor = async (req, res, next) => {
+    try {
+        console.log('controler');
+        const { vendorId } = req.params;
+        const vendor = await findVendorById(vendorId);
+        if (!vendor) {
+            res.status(404).json({ message: "Vendor not found" });
+        }
+        else {
+            res.status(200).json(vendor);
+        }
+    }
+    catch (error) {
+        next(error);
     }
 };

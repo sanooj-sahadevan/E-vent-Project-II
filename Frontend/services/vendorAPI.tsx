@@ -111,3 +111,13 @@ export const fetchvendor = async (vendorId: string) => {
     
   }
 };
+
+export const fetchDetilsVendor = async (vendorId: string) => {
+  try {
+    const res = await axios.get(`${SERVER_URL_vendor}/fecthDetilsVendor/${vendorId}`); // Ensure the route is correct here
+    console.log(res);
+    return res;
+  } catch (error) {
+    console.error(error);
+  }
+};
