@@ -2,8 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import {
   loginVendor,
   registerVendor,
-  verifyAndSaveVendor, vendorAddress,uploadDishes,
-  uploadImage,editVendor,findVendorById,uploadAuditorium
+  verifyAndSaveVendor, vendorAddress, uploadDishes,
+  uploadImage, editVendor, findVendorById, uploadAuditorium
 } from "../Service/vendorService.js";
 
 import { otpGenerator } from "../utils/otpGenerator.js";
@@ -18,8 +18,8 @@ export const register = async (req: Request, res: Response, next: NextFunction):
   try {
     const { vendorname, email, phone, password } = req.body;
 
-    console.log(req.body,'');
-    
+    console.log(req.body, '');
+
 
     // Proceed with registration logic
     const proceedWithRegistration = async () => {
@@ -137,7 +137,7 @@ export const editVendorDetails = async (req: Request, res: Response, next: NextF
     }
 
     // Pass both vendor details and image URL to the service
-    const updatedVendor = await editVendor(vendorDetails, imageUrl); 
+    const updatedVendor = await editVendor(vendorDetails, imageUrl);
     res.status(200).json({ ...updatedVendor, imageUrl }); // Include imageUrl if available
 
   } catch (error) {
@@ -188,7 +188,7 @@ export const addDishes = async (req: ExtendedRequest, res: Response): Promise<Re
     }
 
     // Passing the vendorId and body to the service function
-    const dishesData = await uploadDishes(vendorId, body,imageUrl);
+    const dishesData = await uploadDishes(vendorId, body, imageUrl);
 
     if (dishesData) {
       return res.status(200).json("Dishes added successfully");
@@ -201,33 +201,24 @@ export const addDishes = async (req: ExtendedRequest, res: Response): Promise<Re
   }
 };
 
-
-
-
-
-
-
 export const addAuditorium = async (req: ExtendedRequest, res: Response): Promise<Response> => {
   try {
     const { body } = req;
-    const vendorId = req.vendorId; // Ensure `vendorId` is part of your extended request
+    const vendorId = req.vendorId;
 
-    // Check if vendorId is undefined
     if (!vendorId) {
       return res.status(400).json({ error: "Vendor ID is required" });
     }
 
-    const file = req.file as unknown as IMulterFile; // Single file upload
+    const file = req.file as unknown as IMulterFile;
 
-    let imageUrl: string | undefined = undefined; // Initialize as `undefined`
+    let imageUrl: string | undefined = undefined;
 
     if (file) {
-      // Image upload handling for a single file
       imageUrl = await uploadImage(file);
     }
 
-    // Pass the vendorId, body, and image URL to the service function
-    const auditoriumData = await uploadAuditorium(vendorId, body,imageUrl);
+    const auditoriumData = await uploadAuditorium(vendorId, body, imageUrl);
 
     if (auditoriumData) {
       return res.status(200).json("Auditorium added successfully");
@@ -239,4 +230,24 @@ export const addAuditorium = async (req: ExtendedRequest, res: Response): Promis
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+export const fecthDetilsVendor = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('controler');
+    
+    const { vendorId } = req.params;
+    const vendor = await findVendorById(vendorId);
+
+    if (!vendor) {
+      res.status(404).json({ message: "Vendor not found" });
+    } else {
+      res.status(200).json(vendor);
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+
 

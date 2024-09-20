@@ -96,6 +96,8 @@ const Home: React.FC = () => {
     const handleEditProfile = () => {
         if (vendorData) {
             const query = encodeURIComponent(JSON.stringify(vendorData)); // Properly encode the data for the URL
+            console.log(query,'query');
+            
             router.push(`/vendorEditProfile?query=${query}`);
         }
     };

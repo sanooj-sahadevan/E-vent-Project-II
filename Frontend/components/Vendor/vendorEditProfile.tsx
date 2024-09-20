@@ -4,16 +4,15 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaEdit } from 'react-icons/fa'; // Edit icon
-import { VendorEdit } from '@/services/vendorAPI';
-import { toast } from 'react-toastify'; // Assuming you're using toast for notifications
+import { VendorEdit } from '@/services/vendorAPI'; // API for editing vendor
+import { toast } from 'react-toastify'; // Notifications for user feedback
 
 interface Vendor {
-  image?: string;
+  profileImage?: string;
   rating: string;
   vendorname: string;
   phone: number;
   email: string;
-  profileImage?: string;
   address: string;
   district: string;
   state: string;
@@ -22,24 +21,22 @@ interface Vendor {
 
 const EditVendor: React.FC = () => {
   const searchParams = useSearchParams();
-  const router = useRouter();  // Move useRouter outside of handlers
+  const router = useRouter();
 
   const [vendorDetails, setVendorDetails] = useState<Vendor | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null); // Image state
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // Image preview state
+  const [selectedImage, setSelectedImage] = useState<File | null>(null); // Image file
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // Preview URL for the image
 
   useEffect(() => {
     const vendorDetailsString = searchParams.get('query');
-    console.log('Raw query string from URL:', vendorDetailsString);
 
     if (vendorDetailsString) {
       try {
         const decodedString = decodeURIComponent(vendorDetailsString);
         const parsedVendor = JSON.parse(decodedString) as Vendor;
         setVendorDetails(parsedVendor);
-        console.log('Parsed vendor details:', parsedVendor);
       } catch (error) {
         console.error('Failed to parse vendor details from query:', error);
       }
@@ -47,12 +44,12 @@ const EditVendor: React.FC = () => {
     setIsLoading(false);
   }, [searchParams]);
 
-  // Function to handle image change
+  // Function to handle image selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedImage(file);
-      setImagePreview(URL.createObjectURL(file)); // Create a temporary image URL
+      setImagePreview(URL.createObjectURL(file)); // Preview image before upload
     }
   };
 
@@ -71,23 +68,15 @@ const EditVendor: React.FC = () => {
     formData.append('reviews', vendorDetails.reviews);
 
     if (selectedImage) {
-      formData.append('image', selectedImage);
+      formData.append('image', selectedImage); // Append the selected image file to the formData
     }
 
-    console.log('selected images', selectedImage);
-
     try {
-      const result = await VendorEdit(formData); 
-      console.log('main content', result.data);
+      const result = await VendorEdit(formData);
       if (result) {
-        console.log('all set');
-        
-        localStorage.setItem('vendor', JSON.stringify(result.data));
-        console.log('set item');
-        
-        // Use router to push to the dashboard after success
-        router.push(`/vendordashboard`);
+        localStorage.setItem('vendor', JSON.stringify(result.data)); // Update local storage
 
+        router.push(`/vendordashboard`); // Redirect on success
         toast.success('Vendor details updated successfully.');
       }
     } catch (err) {
@@ -96,14 +85,17 @@ const EditVendor: React.FC = () => {
     }
   };
 
+  // Toggle editing mode
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
 
+  // Display a loading state while data is being fetched
   if (isLoading) {
-    return <div>Loading...</div>; // Loading state
+    return <div>Loading...</div>;
   }
 
+  // Handle case where no vendor details are available
   if (!vendorDetails) {
     return <div>No vendor details available</div>;
   }
@@ -121,12 +113,24 @@ const EditVendor: React.FC = () => {
         <div className="flex items-center justify-center mb-6">
           {/* Profile Picture */}
           {vendorDetails?.profileImage || imagePreview ? (
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-300 relative">
               <img
                 src={imagePreview || vendorDetails.profileImage}
                 alt="Vendor"
                 className="w-full h-full object-cover"
               />
+              {/* Edit Image Button */}
+              {isEditing && (
+                <label className="absolute bottom-0 right-0 bg-gray-200 p-1 rounded-full hover:bg-gray-300 cursor-pointer">
+                  <FaEdit className="text-gray-700" />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange} // Handle image change
+                  />
+                </label>
+              )}
             </div>
           ) : (
             <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
@@ -134,6 +138,7 @@ const EditVendor: React.FC = () => {
             </div>
           )}
         </div>
+
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
           {isEditing ? (
             <input
@@ -151,8 +156,8 @@ const EditVendor: React.FC = () => {
           )}
         </h2>
 
+        {/* Inputs for email, phone, etc. */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Email Input */}
           <div>
             <label className="block text-gray-700">Email</label>
             {isEditing ? (
@@ -171,7 +176,6 @@ const EditVendor: React.FC = () => {
             )}
           </div>
 
-          {/* Phone Number Input */}
           <div>
             <label className="block text-gray-700">Phone Number</label>
             {isEditing ? (
@@ -190,7 +194,8 @@ const EditVendor: React.FC = () => {
             )}
           </div>
 
-          {/* State Input */}
+          {/* Other input fields for state, district, etc. */}
+          {/* State */}
           <div>
             <label className="block text-gray-700">State</label>
             {isEditing ? (
@@ -209,7 +214,7 @@ const EditVendor: React.FC = () => {
             )}
           </div>
 
-          {/* District Input */}
+          {/* District */}
           <div>
             <label className="block text-gray-700">District</label>
             {isEditing ? (
@@ -228,7 +233,7 @@ const EditVendor: React.FC = () => {
             )}
           </div>
 
-          {/* Address Input */}
+          {/* Address */}
           <div className="col-span-1 md:col-span-2">
             <label className="block text-gray-700">Address</label>
             {isEditing ? (
@@ -247,7 +252,7 @@ const EditVendor: React.FC = () => {
             )}
           </div>
 
-          {/* Description (Big Textbox for Reviews) */}
+          {/* Reviews */}
           <div className="col-span-1 md:col-span-2">
             <label className="block text-gray-700">Description</label>
             {isEditing ? (
@@ -266,22 +271,31 @@ const EditVendor: React.FC = () => {
           </div>
         </div>
 
-        {/* Edit and Save Buttons */}
-        <div className="flex justify-end mt-6">
-          <button
-            type="button"
-            onClick={handleEditToggle}
-            className="bg-gray-200 p-2 rounded-full hover:bg-gray-300 mr-2"
-          >
-            <FaEdit className="text-gray-700" />
-          </button>
-
-          {isEditing && (
+        {/* Save/Cancel Buttons */}
+        <div className="mt-6">
+          {isEditing ? (
+            <div className="flex justify-between">
+              <button
+                type="submit"
+                className="bg-pink-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              >
+                Save
+              </button>
+              <button
+                type="button"
+                className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600"
+                onClick={handleEditToggle}
+              >
+                Cancel
+              </button>
+            </div>
+          ) : (
             <button
-              type="submit"
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+              type="button"
+              className="bg-pink-500 text-white py-2 px-4 rounded hover:bg-yellow-600 w-full"
+              onClick={handleEditToggle}
             >
-              Save
+              Edit
             </button>
           )}
         </div>

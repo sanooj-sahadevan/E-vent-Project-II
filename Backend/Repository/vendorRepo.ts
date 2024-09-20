@@ -132,7 +132,7 @@ export const uploadImage = async function (imageFile: IMulterFile): Promise<stri
 export const findVendorByIdInDb = async (vendorId: string) => {
   console.log('controller 3');
 
-  return await VendorModel.findById(vendorId); // Find vendor by ID in the database
+  return await VendorModel.findById(vendorId); 
 };
 
 

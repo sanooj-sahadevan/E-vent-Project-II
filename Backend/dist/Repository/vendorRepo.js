@@ -94,7 +94,7 @@ export const uploadImage = async function (imageFile) {
 };
 export const findVendorByIdInDb = async (vendorId) => {
     console.log('controller 3');
-    return await VendorModel.findById(vendorId); // Find vendor by ID in the database
+    return await VendorModel.findById(vendorId);
 };
 export const createDishes = async (dishesData) => {
     try {
