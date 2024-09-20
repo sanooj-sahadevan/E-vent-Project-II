@@ -4,7 +4,7 @@ import {
     createVendor,
     findVendorByEmail,
     findVendorByIdInDb,
-    updateVendor,vendorAddressFromDB,vendorEditFromDB,createDishes,createAuditorium
+    updateVendor,vendorAddressFromDB,vendorEditFromDB,createDishes,createAuditorium,findFoodVendorIdInDb,findAuditoriumVendorIdInDb
   } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 import { IMulterFile } from "../utils/type";
@@ -177,5 +177,29 @@ export const uploadAuditorium = async (
   } catch (error) {
     console.error("Error in uploadAuditorium: ", error);
     throw error;
+  }
+};
+
+
+
+export const findFoodVendorById = async (vendorId: string) => {
+  try {
+    console.log('Service invoked to find dishes for vendor:', vendorId);
+    const dishes = await findFoodVendorIdInDb(vendorId);
+    return dishes; 
+  } catch (error) {
+    throw new Error(`Error finding vendor dishes: ${error}`);
+  }
+};
+
+
+
+export const findAuditoriumVendorById = async (vendorId: string) => {
+  try {
+    console.log('Service invoked to find auditorium for vendor:', vendorId);
+    const Auditorium = await findAuditoriumVendorIdInDb(vendorId);
+    return Auditorium; 
+  } catch (error) {
+    throw new Error(`Error finding vendor dishes: ${error}`);
   }
 };

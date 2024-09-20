@@ -18,7 +18,6 @@ import {
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { HttpStatus } from '../utils/httpStatus.js'
-import { log } from "console";
 
 
 
@@ -69,7 +68,11 @@ export const login = async (req: Request, res: Response) => {
     const { user, token } = await loginUser(email, password);
     // console.log({user, token});
 
-    res.cookie("token", token);
+    res.cookie("token", token,   {
+     
+      sameSite: 'strict', 
+      maxAge: 3600000 
+    } );
     // console.log('Cookie set:', req.cookies['token']);
     res.status(HttpStatus.OK).json({ user, token });
   } catch (error: any) {

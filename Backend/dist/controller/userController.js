@@ -52,7 +52,10 @@ export const login = async (req, res) => {
         const { email, password } = req.body;
         const { user, token } = await loginUser(email, password);
         // console.log({user, token});
-        res.cookie("token", token);
+        res.cookie("token", token, {
+            sameSite: 'strict',
+            maxAge: 3600000
+        });
         // console.log('Cookie set:', req.cookies['token']);
         res.status(HttpStatus.OK).json({ user, token });
     }

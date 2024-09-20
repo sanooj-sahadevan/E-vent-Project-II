@@ -24,7 +24,7 @@ const UserSchema = new Schema<IUserModel>({
   username: { type: String, required: true },
   phone: { type: Number },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
   profileImage: { type: String },
   otp: { type: String },
   otpVerified: { type: Boolean, default: false },
@@ -86,14 +86,14 @@ export const userEditFromDB = async (userDetails: User): Promise<IUserModel> => 
       existingUser.profileImage = userDetails.profileImage;
       existingUser.address = userDetails.address;
       existingUser.state = userDetails.state;
-      existingUser.district = userDetails.district; // Now this works
+      existingUser.district = userDetails.district;
       existingUser.pincode = userDetails.pincode;
-      existingUser.reviews = userDetails.reviews; // Now this works
+      existingUser.reviews = userDetails.reviews;
 
       // Only update password if provided
-      if (userDetails.password) {
-        existingUser.password = userDetails.password;
-      }
+      // if (userDetails.password) {
+      //   existingUser.password = userDetails.password;
+      // }
 
       // Save the updated user
       await existingUser.save();

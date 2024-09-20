@@ -1,4 +1,4 @@
-import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes, uploadImage, editVendor, findVendorById, uploadAuditorium } from "../Service/vendorService.js";
+import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes, uploadImage, editVendor, findVendorById, uploadAuditorium, findFoodVendorById, findAuditoriumVendorById } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
@@ -68,13 +68,12 @@ export const login = async (req, res, next) => {
         const { email, password } = req.body;
         console.log(req.body);
         const { vendor, vendorToken } = await loginVendor(email, password);
-        if (vendor) {
-            res.cookie("vendorToken", vendorToken, { httpOnly: true });
-            res.status(HttpStatus.OK).json({ vendor, vendorToken });
-        }
-        else {
-            res.status(HttpStatus.UNAUTHORIZED).json({ error: "Invalid email or password" }); // Respond with error if vendor not found
-        }
+        // if (vendor) {
+        // } else {
+        //   res.status(HttpStatus.UNAUTHORIZED).json({ error: "Invalid email or password" }); // Respond with error if vendor not found
+        // }
+        res.cookie("vendorToken", vendorToken);
+        res.status(HttpStatus.OK).json({ vendor, vendorToken });
     }
     catch (error) {
         res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message }); // Corrected error message syntax
@@ -133,6 +132,7 @@ export const addDishes = async (req, res) => {
     try {
         const { body } = req;
         const vendorId = req.vendorId;
+        console.log(vendorId, 'llllllllllllllllllllll');
         // Check if vendorId is undefined
         if (!vendorId) {
             return res.status(400).json({ error: "Vendor ID is required" });
@@ -158,6 +158,7 @@ export const addDishes = async (req, res) => {
 };
 export const addAuditorium = async (req, res) => {
     try {
+        console.log('1');
         const { body } = req;
         const vendorId = req.vendorId;
         if (!vendorId) {
@@ -181,19 +182,58 @@ export const addAuditorium = async (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
-export const fecthDetilsVendor = async (req, res, next) => {
+// Ensure the function name is consistent
+export const fetchDetailsVendor = async (req, res, next) => {
     try {
-        console.log('controler');
+        console.log('Controller invoked');
         const { vendorId } = req.params;
         const vendor = await findVendorById(vendorId);
         if (!vendor) {
             res.status(404).json({ message: "Vendor not found" });
         }
         else {
+            console.log(vendor, 'bdhewbfew ');
             res.status(200).json(vendor);
         }
     }
     catch (error) {
+        console.error('Error in fetchDetailsVendor:', error);
+        next(error);
+    }
+};
+export const fetchFoodDetails = async (req, res, next) => {
+    try {
+        console.log('Controller invoked');
+        const { vendorId } = req.params;
+        const dishes = await findFoodVendorById(vendorId); // Fetch dishes for the vendor
+        if (!dishes || dishes.length === 0) {
+            res.status(404).json({ message: "No dishes found for this vendor" });
+        }
+        else {
+            console.log(dishes, 'Fetched dishes for vendor');
+            res.status(200).json(dishes); // Return the array of dishes
+        }
+    }
+    catch (error) {
+        console.error('Error in fetchFoodDetails:', error);
+        next(error);
+    }
+};
+export const fetchAuditoriumDetails = async (req, res, next) => {
+    try {
+        console.log('Controller invoked');
+        const { vendorId } = req.params;
+        const auditorium = await findAuditoriumVendorById(vendorId); // Fetch dishes for the vendor
+        if (!auditorium || auditorium.length === 0) {
+            res.status(404).json({ message: "No dishes found for this vendor" });
+        }
+        else {
+            console.log(auditorium, 'Fetched dishes for vendor');
+            res.status(200).json(auditorium); // Return the array of dishes
+        }
+    }
+    catch (error) {
+        console.error('Error in fetchFoodDetails:', error);
         next(error);
     }
 };

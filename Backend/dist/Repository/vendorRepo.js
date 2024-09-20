@@ -70,10 +70,9 @@ export const vendorEditFromDB = async (vendorDetails, imageUrl) => {
             return existingVendor;
         }
         else {
-            // If vendor doesn't exist, create a new one
             const newVendor = new VendorModel({
                 ...vendorDetails,
-                profileImage: imageUrl || vendorDetails.profileImage // Set the imageUrl if available, otherwise keep the existing one
+                profileImage: imageUrl || vendorDetails.profileImage
             });
             await newVendor.save();
             return newVendor;
@@ -95,6 +94,18 @@ export const uploadImage = async function (imageFile) {
 export const findVendorByIdInDb = async (vendorId) => {
     console.log('controller 3');
     return await VendorModel.findById(vendorId);
+};
+export const findFoodVendorIdInDb = async (vendorId) => {
+    console.log('Fetching dishes for vendor ID:', vendorId);
+    const result = await Dishes.find({ vendorId: vendorId }); // Find all dishes with the matching vendorId
+    console.log('---------------------', result);
+    return result;
+};
+export const findAuditoriumVendorIdInDb = async (vendorId) => {
+    console.log('Fetching auditorium for vendor ID:', vendorId);
+    const res = await Auditorium.find({ vendorId: vendorId }); // Find all auditorium with the matching vendorId
+    console.log('---------------------', res);
+    return res;
 };
 export const createDishes = async (dishesData) => {
     try {
