@@ -112,12 +112,78 @@ export const fetchvendor = async (vendorId: string) => {
   }
 };
 
-export const fetchDetilsVendor = async (vendorId: string) => {
+
+
+
+export const fetchdishes = async (dishesId: string) => {
   try {
-    const res = await axios.get(`${SERVER_URL_vendor}/fecthDetilsVendor/${vendorId}`); // Ensure the route is correct here
-    console.log(res);
-    return res;
+    console.log('rdyyyyy');
+    
+      const res = await axios.get(`${SERVER_URL_vendor}/fetchdishes/${dishesId}`);
+      console.log(res);
+      return res;
   } catch (error) {
     console.error(error);
+    
+  }
+};
+
+
+export const fetchDetailsVendor = async (vendorId: string) => {
+  try {
+
+    console.log('pokunnu  detils ');
+    
+    const res = await axios.get(`${SERVER_URL_vendor}/fetchDetailsVendor/${vendorId}`);
+    return res.data; // Return data directly for easier usage in the component
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    throw new Error('Failed to fetch vendor details');
+  }
+};
+
+
+
+
+export const FetchDishes = async (vendorId: string) => {
+  try {
+
+    console.log('pokunnu food');
+    
+    const res = await axios.get(`${SERVER_URL_vendor}/fetchFoodDetails/${vendorId}`);
+    return res.data; // Return data directly for easier usage in the component
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    throw new Error('Failed to fetch vendor details');
+  }
+};
+
+
+
+export const FetchAuditorium = async (vendorId: string) => {
+  try {
+
+    console.log('pokunnu hall');
+    
+    const res = await axios.get(`${SERVER_URL_vendor}/fetchAuditoriumDetails/${vendorId}`);
+    return res.data; // Return data directly for easier usage in the component
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    throw new Error('Failed to fetch vendor details');
+  }
+};
+
+
+
+export const fetchauditorium = async (auditoriumId: string) => {
+  try {
+    console.log('rdyyyy auditirum profie');
+    
+      const res = await axios.get(`${SERVER_URL_vendor}/fetchauditorium/${auditoriumId}`);
+      console.log(res);
+      return res;
+  } catch (error) {
+    console.error(error);
+    
   }
 };

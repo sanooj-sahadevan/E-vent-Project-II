@@ -7,8 +7,8 @@ import {
   createUser,
   userEditFromDB, 
    updateUser,
-  findUserByEmailupdate,
-  VendorRepository,
+  findUserByEmailupdate,fetchfromDB,
+  VendorRepository,fetchfromDBAuditorium,
   findUserByEmail
 } from "../Repository/userReop.js";
 
@@ -183,16 +183,37 @@ export const update = async (email: string, password: string) => {
 
 
 
-const vendorRepository = new VendorRepository(); // Instantiate repository
+const vendorRepository = new VendorRepository();
 
 export const getAllVendors = async (): Promise<any[]> => {
   try {
-    return await vendorRepository.getAllVendors(); // Call the repository method
+    return await vendorRepository.getAllVendors();     
   } catch (error) {
-    throw new Error('Error fetching vendors'); // Handle error
+    throw new Error('Error fetching vendors'); 
   }
 };
 
+
+
+export const getAllDishes = async (): Promise<any[]> => {
+  try {
+    console.log('Service: Fetching dishes');
+    const result = await fetchfromDB(); 
+    return result;
+  } catch (error) {
+    throw new Error('Error fetching dishes');
+  }
+};
+
+export const getAllAuditorium = async (): Promise<any[]> => {
+  try {
+    console.log('Service: Fetching dishes');
+    const result = await fetchfromDBAuditorium(); 
+    return result;
+  } catch (error) {
+    throw new Error('Error fetching dishes');
+  }
+};
 
 
 // // import { UserRepository } from '../Repository/userRepo.js'; // Import the repository

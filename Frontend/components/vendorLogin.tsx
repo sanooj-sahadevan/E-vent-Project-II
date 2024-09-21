@@ -35,23 +35,18 @@ const VendorLoginForm: React.FC = () => {
       const result = await LoginAPI(data);
       console.log("LoginAPI result:", result); // Debugging line
 
-      // if (result && !result.vendor.adminVerified) {
-      //   router.push("/vendor/approval");
-      // } else 
       if (result && result.vendor && result.vendorToken) {
         console.log(result.vendor.adminVerified);
 
         localStorage.setItem("vendorToken", result.vendorToken);
         localStorage.setItem("vendor", JSON.stringify(result.vendor));
 
+        // Redirecting with vendor.id as a query parameter
+        router.push(`/vendordashboard?vendorId=${result.vendor._id}`);
         toast.success("Login Successful!");
-        window.location.href = "/vendordashboard"; // Replace "/" with your desired path
-        // router.push("/vendordashboard");
       } else {
         toast.error("Invalid login credentials. Please try again.");
       }
-
-     
     } catch (err) {
       toast.error("An error occurred during login. Please try again.");
     }
@@ -72,8 +67,8 @@ const VendorLoginForm: React.FC = () => {
       />
 
 
-<div className="flex min-h-screen bg-white-100 p-8">
-<div className="hidden md:block flex-1">
+      <div className="flex min-h-screen bg-white-100 p-8">
+        <div className="hidden md:block flex-1">
           <Image
             src={img}
             alt="Sign up"
@@ -131,7 +126,7 @@ const VendorLoginForm: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
       </div>
 
     </>

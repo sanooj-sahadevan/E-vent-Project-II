@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findFoodVendorIdInDb, findAuditoriumVendorIdInDb } from "../Repository/vendorRepo.js";
+import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 export const registerVendor = async (vendor) => {
     try {
@@ -84,6 +84,26 @@ export const findVendorById = async (vendorId) => {
     try {
         console.log('controller 2');
         const vendor = await findVendorByIdInDb(vendorId);
+        return vendor;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor: ${error}`);
+    }
+};
+export const findAuditoriumById = async (auditoriumId) => {
+    try {
+        console.log('controller 2');
+        const vendor = await findAuditoriumByIdInDb(auditoriumId);
+        return vendor;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor: ${error}`);
+    }
+};
+export const findDishesById = async (dishesId) => {
+    try {
+        console.log('controller 2');
+        const vendor = await findDishesByIdInDb(dishesId);
         return vendor;
     }
     catch (error) {

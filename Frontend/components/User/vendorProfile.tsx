@@ -18,6 +18,7 @@ interface Vendor {
 }
 
 const VendorsPage: React.FC = () => {
+    const router = useRouter()
     const searchParams = useSearchParams();
     const vendorId = searchParams.get("vendorId");
 
@@ -96,7 +97,7 @@ const VendorsPage: React.FC = () => {
                 </div>
 
                 <div className="absolute right-6 top-6 flex space-x-4 ">
-                    <button className="px-4 py-2 bg-buttonBg text-white rounded">Book Now</button>
+                    <button  onClick={()=>router.push('/booknow')}   className="px-4 py-2 bg-buttonBg text-white rounded">Book Now</button>
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Chat With Us</button>
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Check Availability</button>
                 </div>

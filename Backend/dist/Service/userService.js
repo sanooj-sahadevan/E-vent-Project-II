@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, VendorRepository, findUserByEmail } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, fetchfromDB, VendorRepository, fetchfromDBAuditorium, findUserByEmail } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -134,13 +134,33 @@ export const update = async (email, password) => {
     const user = await findUserByEmailupdate(email, password);
     return user; // Return the updated user
 };
-const vendorRepository = new VendorRepository(); // Instantiate repository
+const vendorRepository = new VendorRepository();
 export const getAllVendors = async () => {
     try {
-        return await vendorRepository.getAllVendors(); // Call the repository method
+        return await vendorRepository.getAllVendors();
     }
     catch (error) {
-        throw new Error('Error fetching vendors'); // Handle error
+        throw new Error('Error fetching vendors');
+    }
+};
+export const getAllDishes = async () => {
+    try {
+        console.log('Service: Fetching dishes');
+        const result = await fetchfromDB();
+        return result;
+    }
+    catch (error) {
+        throw new Error('Error fetching dishes');
+    }
+};
+export const getAllAuditorium = async () => {
+    try {
+        console.log('Service: Fetching dishes');
+        const result = await fetchfromDBAuditorium();
+        return result;
+    }
+    catch (error) {
+        throw new Error('Error fetching dishes');
     }
 };
 // // import { UserRepository } from '../Repository/userRepo.js'; // Import the repository

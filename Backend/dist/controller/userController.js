@@ -4,7 +4,7 @@ getAllVendors,
 // googleLogin,
 registerUser, verifyAndSaveUser, update, 
 // UserService
-loginUser, editUser, checkEmail } from "../Service/userService.js";
+loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium } from "../Service/userService.js";
 import { findUserByEmail,
 // findUserById,
  } from "../Repository/userReop.js";
@@ -109,6 +109,26 @@ export const vendorList = async (req, res, next) => {
         console.log('list');
         const vendors = await getAllVendors();
         res.status(HttpStatus.OK).json(vendors);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+export const dishlist = async (req, res, next) => {
+    try {
+        console.log('Fetching dish list');
+        const dishes = await getAllDishes();
+        res.status(HttpStatus.OK).json(dishes);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+export const auditoriumlist = async (req, res, next) => {
+    try {
+        console.log('Fetching auditorium list');
+        const auditorium = await getAllAuditorium();
+        res.status(HttpStatus.OK).json(auditorium);
     }
     catch (error) {
         next(error);

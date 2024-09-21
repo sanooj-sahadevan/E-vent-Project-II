@@ -133,7 +133,20 @@ export const findVendorByIdInDb = async (vendorId: string) => {
 
   return await VendorModel.findById(vendorId); 
 };
+export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
+  console.log('controller profile audioooooooooooooooooooo');
+  console.log(auditoriumId);
+  
+  let result  = await Auditorium.findById(auditoriumId); 
+  console.log(result);
+return result
+};
 
+export const findDishesByIdInDb = async (dishesId: string) => {
+  console.log('controller 3');
+
+  return await Dishes.findById(dishesId); 
+};
 
 export const findFoodVendorIdInDb = async (vendorId: string) => {
   console.log('Fetching dishes for vendor ID:', vendorId);

@@ -9,7 +9,7 @@ import {
   // UserService
   loginUser,
   editUser,
-  checkEmail
+  checkEmail,getAllDishes,getAllAuditorium
 } from "../Service/userService.js";
 import {
   findUserByEmail,
@@ -148,8 +148,25 @@ export const vendorList = async (req: Request, res: Response, next: NextFunction
   }
 };
 
+export const dishlist = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('Fetching dish list');
+    const dishes = await getAllDishes(); 
+    res.status(HttpStatus.OK).json(dishes);
+  } catch (error) {
+    next(error); 
+  }
+};
 
-
+export const auditoriumlist = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('Fetching auditorium list');
+    const auditorium = await getAllAuditorium(); 
+    res.status(HttpStatus.OK).json(auditorium);
+  } catch (error) {
+    next(error); 
+  }
+};
 
 export const forgottenPassword = async (req: Request, res: Response) => {
   try {

@@ -1,6 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 import { VendorModel } from "./vendorRepo.js";
+import { Dishes } from "../models/dishesModel.js";
+import { Auditorium } from "../models/auditoriumModel.js";
 // Define the Mongoose schema for the User
 const UserSchema = new Schema({
     username: { type: String, required: true },
@@ -115,6 +117,22 @@ export class VendorRepository {
         }
     }
 }
+export const fetchfromDB = async () => {
+    try {
+        return await Dishes.find().sort({ createdAt: -1 }); // Fetch dishes sorted by creation date
+    }
+    catch (error) {
+        throw new Error('Error fetching dishes from the database');
+    }
+};
+export const fetchfromDBAuditorium = async () => {
+    try {
+        return await Auditorium.find().sort({ createdAt: -1 }); // Fetch dishes sorted by creation date
+    }
+    catch (error) {
+        throw new Error('Error fetching dishes from the database');
+    }
+};
 // // export const userEditFromDB = async (userDetails: User): Promise<User> => {
 // //   try {
 // //     const existingUser = await UserModel.findOne({ email: userDetails.email });

@@ -1,51 +1,49 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
 import React, { useEffect, useState } from "react";
-import { allVendorAPI } from "@/services/userApi";
+import { allDishesAPI } from "@/services/userApi";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 interface Dishes {
-    profileImage: string | undefined;
-    profileimage: string | undefined;
-    _id: string; // Ensure this is a string to match the MongoDB ObjectId type
+    _id: string;
     image: string | undefined;
-    vendorname: string;
+    dishesName: string;
     state: string;
     rating: number;
+    price: number;
 }
 
-const VendorsPage: React.FC = () => {
+const DishesPage: React.FC = () => {
     const router = useRouter();
-    const [vendor, setVendor] = useState<Dishes[]>([]); // Ensure it's initialized as an empty array
+    const [dishes, setDishes] = useState<Dishes[]>([]); // Initialize as an empty array
 
     useEffect(() => {
-        const fetchVendor = async () => {
+        const fetchDishes = async () => {
             try {
-                const response = await allVendorAPI();
+                const response = await allDishesAPI();
                 console.log("API Response:", response);
-
-                // Ensure the response is an array
                 if (Array.isArray(response)) {
-                    setVendor(response);
+                    setDishes(response);
                 } else {
                     console.error("Unexpected response format:", response);
-                    toast.error("Failed to load vendors. Please try again later.");
+                    toast.error("Failed to load Dishes. Please try again later.");
                 }
             } catch (error) {
-                router.push('/login');
-                console.error("Failed to fetch vendors:", error);
+                console.error("Failed to fetch Dishes:", error);
+                toast.error("Error fetching dishes. Redirecting to login.");
+                router.push('/login');  // Ensure correct redirection
             }
         };
 
-        fetchVendor();
+        fetchDishes();
     }, [router]);
 
     return (
         <div className="container mx-auto px-8 py-8 bg-white">
-            {/* Filter Section */}
-            <div className="my-8">
+            {/* Filter Section - Uncomment and implement as needed */}
+            {/* <div className="my-8">
                 <div className="flex justify-end space-x-4">
                     <div>Filter by</div>
                     <select className="border rounded px-2 py-1">
@@ -64,47 +62,49 @@ const VendorsPage: React.FC = () => {
                         <option>Type 2</option>
                     </select>
                 </div>
-            </div>
+            </div> */}
 
-            {/* Vendor Cards */}
+            {/* dishes Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {vendor.length > 0 ? (
-                    vendor.map((vendor, index) => (
-                        <div key={index} className="bg-white shadow-md rounded-lg p-4">
+                {dishes.length > 0 ? (
+                    dishes.map((dish) => (
+                        <div key={dish._id} className="bg-white shadow-md rounded-lg p-4">
                             <img
-                                src={vendor.profileImage || vendor.profileimage || "/placeholder.png"} // Fallback for missing image
-                                alt={vendor.vendorname}
+                                src={dish.image || "/placeholder.png"}  // Fixed fallback image logic
+                                alt={dish.dishesName}
                                 className="w-full h-40 object-cover rounded-t-md"
                             />
                             <div className="mt-4">
-                                <h3 className="text-lg font-semibold">{vendor.vendorname}</h3>
-                                <p className="text-sm text-gray-600">{vendor.state}</p>
+                                <h3 className="text-lg font-semibold">{dish.dishesName}</h3>
+                                <p className="text-sm text-gray-600">Price: ${dish.price}</p>
                                 <div className="flex items-center mt-2">
                                     <span className="text-red-500 text-lg">★</span>
-                                    <span className="ml-1 text-sm text-gray-600">{vendor.rating}</span>
+                                    <span className="ml-1 text-sm text-gray-600">{dish.rating}</span>
                                 </div>
                                 <button
-                                    onClick={() => router.push(`/vendorProfile?vendorId=${vendor._id}`)}
+                                    onClick={() => router.push(`/dishesinfo?dishesId=${dish._id}`)}  // Ensure correct ID is passed
                                     className="mt-4 w-full bg-black text-white py-2 rounded-md"
                                 >
-                                    Find Vendors
+                                    Find Dish
                                 </button>
                             </div>
                         </div>
                     ))
                 ) : (
-                    <p>No vendors found.</p> // Fallback when no vendors are available
+                    <p>No dishes found.</p> // Fallback when no dishes are available
                 )}
             </div>
 
-            {/* Pagination */}
+            {/* Pagination - Dummy button for now */}
             <div className="flex justify-center mt-8">
                 <button className="w-10 h-10 flex items-center justify-center bg-pink-500 text-white rounded-full">
                     1
                 </button>
             </div>
+
+            <ToastContainer />
         </div>
     );
-};
+}
 
-export default VendorsPage;
+export default DishesPage;

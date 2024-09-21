@@ -3,7 +3,7 @@ import {
   loginVendor,
   registerVendor,
   verifyAndSaveVendor, vendorAddress, uploadDishes,
-  uploadImage, editVendor, findVendorById, uploadAuditorium,findFoodVendorById,findAuditoriumVendorById
+  uploadImage, editVendor, findVendorById, uploadAuditorium,findFoodVendorById,findAuditoriumVendorById,findDishesById,findAuditoriumById
 } from "../Service/vendorService.js";
 
 import { otpGenerator } from "../utils/otpGenerator.js";
@@ -164,6 +164,57 @@ export const fetchVendorDetails = async (req: Request, res: Response, next: Next
     next(error); // Pass error to error handler middleware
   }
 };
+
+
+
+export const fetchdishes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('controller');
+    const { dishesId } = req.params; // Extract vendorId from request params
+    const vendor = await findDishesById(dishesId); // Fetch vendor details
+    if (!vendor) {
+      res.status(404).json({ message: "Vendor not found" });
+    } else {
+      res.status(200).json(vendor); // Return vendor details
+    }
+  } catch (error) {
+    next(error); // Pass error to error handler middleware
+  }
+};
+
+
+
+export const fetchauditorium = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('controller  indo audi ');
+    const { auditoriumId } = req.params; 
+    console.log(auditoriumId,'---------------------------------------------------------------------------------');
+    
+    const vendor = await findAuditoriumById(auditoriumId); // Fetch vendor details
+    if (!vendor) {
+      res.status(404).json({ message: "Vendor not found" });
+    } else {
+      res.status(200).json(vendor); // Return vendor details
+    }
+  } catch (error) {
+    next(error); // Pass error to error handler middleware
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 interface ExtendedRequest extends Request {
   vendorId?: string; // Optional, since it might not be available in all cases

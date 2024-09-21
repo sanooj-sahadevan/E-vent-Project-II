@@ -1,12 +1,14 @@
 import express from "express";
 import { 
 // googleLoginHandler,
-login, register, verifyOtp, vendorList, editUserDetails, forgottenPassword, updatePassword } from "../controller/userController.js";
+login, register, verifyOtp, vendorList, editUserDetails, forgottenPassword, dishlist, updatePassword, auditoriumlist } from "../controller/userController.js";
 const router = express.Router();
 router.post("/signup", register);
 router.post("/verifyOtp", verifyOtp);
 router.post("/login", login);
 router.get('/vendors', vendorList);
+router.get('/dishlist', dishlist);
+router.get('/auditoriumlist', auditoriumlist);
 router.patch('/edituserDetails', editUserDetails);
 // router.post("/googleLogin", googleLoginHandler); 
 router.post('/forgottenpassword', forgottenPassword);

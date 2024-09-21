@@ -2,6 +2,8 @@ import mongoose, { Schema, Document } from "mongoose";
 import { User } from "../models/userModel.js"; // Assuming this is the full User interface
 import bcrypt from "bcrypt";
 import { VendorModel } from "./vendorRepo.js";
+import { Dishes } from "../models/dishesModel.js";
+import { Auditorium } from "../models/auditoriumModel.js";
 
 // Extend Mongoose's Document interface
 interface IUserModel extends Document {
@@ -177,6 +179,25 @@ export class VendorRepository {
   }
 }
 
+
+
+
+export const fetchfromDB = async (): Promise<any[]> => {
+  try {
+    return await Dishes.find().sort({ createdAt: -1 }); // Fetch dishes sorted by creation date
+  } catch (error) {
+    throw new Error('Error fetching dishes from the database');
+  }
+};
+
+
+export const fetchfromDBAuditorium = async (): Promise<any[]> => {
+  try {
+    return await Auditorium.find().sort({ createdAt: -1 }); // Fetch dishes sorted by creation date
+  } catch (error) {
+    throw new Error('Error fetching dishes from the database');
+  }
+};
 
 // // export const userEditFromDB = async (userDetails: User): Promise<User> => {
 // //   try {

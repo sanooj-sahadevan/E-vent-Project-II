@@ -1,4 +1,4 @@
-import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes, uploadImage, editVendor, findVendorById, uploadAuditorium, findFoodVendorById, findAuditoriumVendorById } from "../Service/vendorService.js";
+import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes, uploadImage, editVendor, findVendorById, uploadAuditorium, findFoodVendorById, findAuditoriumVendorById, findDishesById, findAuditoriumById } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
@@ -117,6 +117,39 @@ export const fetchVendorDetails = async (req, res, next) => {
         console.log('controller');
         const { vendorId } = req.params; // Extract vendorId from request params
         const vendor = await findVendorById(vendorId); // Fetch vendor details
+        if (!vendor) {
+            res.status(404).json({ message: "Vendor not found" });
+        }
+        else {
+            res.status(200).json(vendor); // Return vendor details
+        }
+    }
+    catch (error) {
+        next(error); // Pass error to error handler middleware
+    }
+};
+export const fetchdishes = async (req, res, next) => {
+    try {
+        console.log('controller');
+        const { dishesId } = req.params; // Extract vendorId from request params
+        const vendor = await findDishesById(dishesId); // Fetch vendor details
+        if (!vendor) {
+            res.status(404).json({ message: "Vendor not found" });
+        }
+        else {
+            res.status(200).json(vendor); // Return vendor details
+        }
+    }
+    catch (error) {
+        next(error); // Pass error to error handler middleware
+    }
+};
+export const fetchauditorium = async (req, res, next) => {
+    try {
+        console.log('controller  indo audi ');
+        const { auditoriumId } = req.params;
+        console.log(auditoriumId, '---------------------------------------------------------------------------------');
+        const vendor = await findAuditoriumById(auditoriumId); // Fetch vendor details
         if (!vendor) {
             res.status(404).json({ message: "Vendor not found" });
         }
