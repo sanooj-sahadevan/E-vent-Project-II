@@ -8,8 +8,9 @@ import {
   userEditFromDB, 
    updateUser,
   findUserByEmailupdate,fetchfromDB,
-  VendorRepository,fetchfromDBAuditorium,
-  findUserByEmail
+  VendorRepository,fetchfromDBAuditorium,findVendorByIdInDb,
+  findUserByEmail,
+  findFoodVendorIdInDb
 } from "../Repository/userReop.js";
 
 export const registerUser = async (user: User) => {
@@ -205,15 +206,16 @@ export const getAllDishes = async (): Promise<any[]> => {
   }
 };
 
-export const getAllAuditorium = async (): Promise<any[]> => {
+export const getAllAuditorium = async (vendorId: string): Promise<any[]> => {
   try {
-    console.log('Service: Fetching dishes');
-    const result = await fetchfromDBAuditorium(); 
+    console.log('Service: Fetching auditoriums for vendor:', vendorId);
+    const result = await fetchfromDBAuditorium(vendorId); 
     return result;
   } catch (error) {
-    throw new Error('Error fetching dishes');
+    throw new Error('Error fetching auditoriums');
   }
 };
+
 
 
 // // import { UserRepository } from '../Repository/userRepo.js'; // Import the repository
@@ -230,7 +232,28 @@ export const editUser = async (userDetails: User) => { // Changed vendorDetails 
 };
 
 
+export const findVendorById = async (vendorId: string) => {
+  try {
+    console.log('controller 2  user service');
+    const vendor = await findVendorByIdInDb(vendorId);
+    return vendor;
+  } catch (error) {
+    throw new Error(`Error finding vendor: ${error}`);
+  }
+};
 
 
+
+
+
+export const findFoodVendorById = async (vendorId: string) => {
+  try {
+    console.log('Service invoked to find dishes for vendor:', vendorId);
+    const dishes = await findFoodVendorIdInDb(vendorId);  // Call the repo to fetch dishes
+    return dishes;
+  } catch (error) {
+    throw new Error(`Error finding vendor dishes: ${error}`);
+  }
+};
 
 

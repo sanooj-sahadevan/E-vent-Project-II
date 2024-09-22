@@ -157,7 +157,10 @@ export const createAuditorium = async (auditoriumData) => {
         });
         const savedAuditorium = await auditorium.save();
         console.log("Saved Auditorium: ", savedAuditorium);
-        return savedAuditorium;
+        return {
+            savedAuditorium,
+            vendorId: auditoriumData.vendorId,
+        };
     }
     catch (error) {
         console.error("Error saving auditorium: ", error);

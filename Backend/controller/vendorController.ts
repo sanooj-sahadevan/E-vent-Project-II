@@ -316,7 +316,7 @@ export const fetchDetailsVendor = async (req: Request, res: Response, next: Next
 
 export const fetchFoodDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    console.log('Controller invoked');
+    console.log('Controller invoked foooooooooooooood' );
 
     const { vendorId } = req.params;
     const dishes = await findFoodVendorById(vendorId); // Fetch dishes for the vendor

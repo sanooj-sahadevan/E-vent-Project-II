@@ -32,7 +32,7 @@ const auditoriumSchema = new Schema<AuditoriumDocument>(
     },
     vendorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "VendorId",
+      ref: "Vendor",
       required: false,
     },
     category: {

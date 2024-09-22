@@ -1,17 +1,57 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React from "react";
+import React, { useState } from "react";
 import Image from 'next/image';
-import { useRouter } from "next/navigation"; 
-import img from '@/public/7.jpg.jpg'
+import { useRouter, useSearchParams } from "next/navigation";
+import img from '@/public/7.jpg.jpg';
 
 const Booknow: React.FC = () => {
-  const router = useRouter(); 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const vendorId = searchParams.get("vendorId");
+
+  console.log(vendorId,'000000000000000000000000000000000000000000000000000000000000000000000');
+  const auditoriumId = searchParams.get("auditoriumId");
 
   // Handle checkbox click and navigate
-  const handleCheckboxChange = (route: string) => {
-    router.push(route); // Navigate to the respective route
+  // const handleCheckboxChange = (route: string) => {
+  //   router.push(route); // Navigate to the respective route
+  // };
+
+  // Handle form submission
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Collecting form data, including auditoriumId
+    const formData = {
+      date: event.currentTarget.date.value,
+      category: event.currentTarget.category.value,
+      eventType: event.currentTarget.eventType.value,
+      people: event.currentTarget.people.value,
+      // auditoriumId: auditoriumId || "", // Include auditoriumId if present
+    };
+
+    try {
+      console.log(formData);
+      
+      const response = await fetch('/api/book-event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        console.log('Event booked successfully');
+        router.push('/checkout');
+      } else {
+        console.error('Failed to book event');
+      }
+    } catch (error) {
+      console.error('Error booking event:', error);
+    }
   };
 
   return (
@@ -20,7 +60,7 @@ const Booknow: React.FC = () => {
         {/* Form Section */}
         <div className="w-1/2 p-8">
           <h2 className="text-2xl font-semibold mb-6">BOOK AN EVENT</h2>
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Date Input */}
             <div>
               <label className="block text-sm font-medium text-gray-700" htmlFor="date">
@@ -53,20 +93,6 @@ const Booknow: React.FC = () => {
               </select>
             </div>
 
-            {/* Name */}
-            {/* <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="name">
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                required
-              />
-            </div> */}
-
             {/* Event Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700" htmlFor="eventType">
@@ -80,20 +106,6 @@ const Booknow: React.FC = () => {
                 required
               />
             </div>
-
-            {/* Address */}
-            {/* <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="address">
-                Address
-              </label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                required
-              />
-            </div> */}
 
             {/* Total amount of people */}
             <div>
@@ -110,34 +122,35 @@ const Booknow: React.FC = () => {
             </div>
 
             {/* Add Dishes */}
-            <div>
+            {/* <div>
               <label className="inline-flex items-center">
                 <input
                   type="checkbox"
                   className="form-checkbox text-indigo-600"
-                  onChange={() => handleCheckboxChange("/dishesList")}
+                  // onChange={() => handleCheckboxChange("/dishesList")}
+                  onClick={()=> router.push('/dishesList?vendorId=${vendorId}')}
                 />
                 <span className="ml-2 text-sm font-medium text-gray-700">Add Dishes</span>
               </label>
-            </div>
+            </div> */}
 
             {/* Add Auditorium */}
-            <div>
+            {/* <div>
               <label className="inline-flex items-center">
                 <input
                   type="checkbox"
                   className="form-checkbox text-indigo-600"
-                  onChange={() => handleCheckboxChange("/auditoriumList")}
+                  onClick={()=> router.push('auditoriumList/?vendorId=${vendorId}')}
                 />
                 <span className="ml-2 text-sm font-medium text-gray-700">Add Auditorium</span>
               </label>
-            </div>
+            </div> */}
 
             {/* Submit Button */}
             <div>
               <button
                 type="submit"
-                className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-700 transition" onClick={()=>router.push('/checkout')}
+                className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-700 transition"
               >
                 Book now
               </button>
@@ -147,16 +160,11 @@ const Booknow: React.FC = () => {
 
         {/* Image Section */}
         <div className="w-1/2 relative">
-          <Image
-            src={img} // Replace with the actual image path
-            alt="Wedding event"
-            layout="fill"
-            objectFit="cover"
-          />
+          <Image src={img} alt="Wedding event" layout="fill" objectFit="cover" />
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default Booknow;

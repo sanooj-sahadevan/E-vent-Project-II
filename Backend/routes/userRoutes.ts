@@ -6,7 +6,7 @@ import {
     verifyOtp, vendorList,
     editUserDetails,
     forgottenPassword,dishlist,
-    updatePassword,auditoriumlist
+    updatePassword,auditoriumlist,fetchVendorDetails,fetchFoodDetails
 } from "../controller/userController.js";
 import { verifyUser } from "../middleware/userJWT.js";
 
@@ -23,9 +23,52 @@ router.get('/dishlist', dishlist);
 router.get('/auditoriumlist', auditoriumlist);
 
 router.patch('/edituserDetails',  editUserDetails);
-// router.post("/googleLogin", googleLoginHandler); 
+// router.post("/googleLogin", googleLoginHandler); auditoriumlist
 router.post('/forgottenpassword', forgottenPassword)
 router.post('/updatePassword', updatePassword)
+
+
+
+router.get('/fetchVendorDetails/:vendorId', fetchVendorDetails);
+router.get('/fetchFoodDetails/:vendorId', fetchFoodDetails);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export default router;
 
 // import { Router } from 'express';

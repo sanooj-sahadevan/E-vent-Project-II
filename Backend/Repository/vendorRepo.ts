@@ -1,5 +1,5 @@
 // import mongoose, { Schema, Document } from "mongoose";
-import mongoose,{Schema,Document} from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 import { Vendor } from "../models/vendorModel.js";
 import jwt from "jsonwebtoken";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
@@ -37,8 +37,8 @@ export const VendorModel = mongoose.model<VendorModel>("Vendor", VendorSchema);
 // Function to create a new user
 export const createVendor = async (vendor: Vendor) => {
   console.log('last');
-  
-    const newVendor = new VendorModel(vendor);
+
+  const newVendor = new VendorModel(vendor);
   return newVendor.save();
 };
 
@@ -103,7 +103,7 @@ export const vendorEditFromDB = async (vendorDetails: Vendor, imageUrl: string |
     } else {
       const newVendor = new VendorModel({
         ...vendorDetails,
-        profileImage: imageUrl || vendorDetails.profileImage 
+        profileImage: imageUrl || vendorDetails.profileImage
       });
       await newVendor.save();
       return newVendor;
@@ -117,7 +117,7 @@ export const vendorEditFromDB = async (vendorDetails: Vendor, imageUrl: string |
 
 export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
   try {
-    return await uploadToS3Bucket([], imageFile); 
+    return await uploadToS3Bucket([], imageFile);
   } catch (error: any) {
     throw new Error(error.message);
   }
@@ -131,30 +131,30 @@ export const uploadImage = async function (imageFile: IMulterFile): Promise<stri
 export const findVendorByIdInDb = async (vendorId: string) => {
   console.log('controller 3');
 
-  return await VendorModel.findById(vendorId); 
+  return await VendorModel.findById(vendorId);
 };
 export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
   console.log('controller profile audioooooooooooooooooooo');
   console.log(auditoriumId);
-  
-  let result  = await Auditorium.findById(auditoriumId); 
+
+  let result = await Auditorium.findById(auditoriumId);
   console.log(result);
-return result
+  return result
 };
 
 export const findDishesByIdInDb = async (dishesId: string) => {
   console.log('controller 3');
 
-  return await Dishes.findById(dishesId); 
+  return await Dishes.findById(dishesId);
 };
 
 export const findFoodVendorIdInDb = async (vendorId: string) => {
   console.log('Fetching dishes for vendor ID:', vendorId);
 
-  
-  const result =  await Dishes.find({ vendorId: vendorId }); // Find all dishes with the matching vendorId
-  console.log('---------------------',result);
-  
+
+  const result = await Dishes.find({ vendorId: vendorId }); // Find all dishes with the matching vendorId
+  console.log('---------------------', result);
+
   return result
 };
 
@@ -163,9 +163,9 @@ export const findFoodVendorIdInDb = async (vendorId: string) => {
 export const findAuditoriumVendorIdInDb = async (vendorId: string) => {
   console.log('Fetching auditorium for vendor ID:', vendorId);
 
-  
-  const res =  await Auditorium.find({ vendorId: vendorId }); // Find all auditorium with the matching vendorId
-  console.log('---------------------',res);
+
+  const res = await Auditorium.find({ vendorId: vendorId }); // Find all auditorium with the matching vendorId
+  console.log('---------------------', res);
 
   return res
 };
@@ -183,7 +183,7 @@ export const createDishes = async (dishesData: any) => {
       price: dishesData.data.price,
       category: dishesData.data.category,
       status: dishesData.data.status,
-      images: dishesData.images, 
+      images: dishesData.images,
     });
 
     // Save the Dishes to the database
@@ -219,7 +219,10 @@ export const createAuditorium = async (auditoriumData: any) => {
     const savedAuditorium = await auditorium.save();
     console.log("Saved Auditorium: ", savedAuditorium);
 
-    return savedAuditorium;
+    return {
+      savedAuditorium,
+      vendorId: auditoriumData.vendorId,
+    };
   } catch (error) {
     console.error("Error saving auditorium: ", error);
     throw error;

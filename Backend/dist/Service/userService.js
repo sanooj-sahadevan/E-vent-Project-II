@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, fetchfromDB, VendorRepository, fetchfromDBAuditorium, findUserByEmail } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, fetchfromDB, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findFoodVendorIdInDb } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -153,14 +153,14 @@ export const getAllDishes = async () => {
         throw new Error('Error fetching dishes');
     }
 };
-export const getAllAuditorium = async () => {
+export const getAllAuditorium = async (vendorId) => {
     try {
-        console.log('Service: Fetching dishes');
-        const result = await fetchfromDBAuditorium();
+        console.log('Service: Fetching auditoriums for vendor:', vendorId);
+        const result = await fetchfromDBAuditorium(vendorId);
         return result;
     }
     catch (error) {
-        throw new Error('Error fetching dishes');
+        throw new Error('Error fetching auditoriums');
     }
 };
 // // import { UserRepository } from '../Repository/userRepo.js'; // Import the repository
@@ -170,5 +170,25 @@ export const editUser = async (userDetails) => {
     }
     catch (error) {
         throw new Error('Failed to update user details');
+    }
+};
+export const findVendorById = async (vendorId) => {
+    try {
+        console.log('controller 2  user service');
+        const vendor = await findVendorByIdInDb(vendorId);
+        return vendor;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor: ${error}`);
+    }
+};
+export const findFoodVendorById = async (vendorId) => {
+    try {
+        console.log('Service invoked to find dishes for vendor:', vendorId);
+        const dishes = await findFoodVendorIdInDb(vendorId); // Call the repo to fetch dishes
+        return dishes;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor dishes: ${error}`);
     }
 };

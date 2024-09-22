@@ -152,16 +152,42 @@ export const allDishesAPI = async () => {
 
 
 
-export const allAuditoriumAPI = async () => {
+export const allAuditoriumAPI = async (vendorId: string) => {
   try {
-    console.log('sucess front end ');
+      console.log('Success front end');
 
-    const response = await axios.get(`${SERVER_URL}/auditoriumlist`);
-    console.log(response.data,'basdhbqhbd')
-    return response.data;
+      const response = await axios.get(`${SERVER_URL}/auditoriumlist?vendorId=${vendorId}`); // Send vendorId as a query parameter
+      console.log(response.data, 'basdhbqhbd');
+      return response.data;
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+
+export const fetchvendor = async (vendorId: string) => { //  fecth vendor profile in userside 
+  try {
+    console.log('rdyyyyy');
+    
+      const res = await axios.get(`${SERVER_URL}/fetchVendorDetails/${vendorId}`);
+      console.log(res);
+      return res;
   } catch (error) {
     console.error(error);
-
+    
   }
+};
 
+
+export const FetchDishes = async (vendorId: string) => {
+  try {
+
+    console.log('pokunnu food');
+    
+    const res = await axios.get(`${SERVER_URL}/fetchFoodDetails/${vendorId}`);
+    return res.data; // Return data directly for easier usage in the component
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    throw new Error('Failed to fetch vendor details');
+  }
 };

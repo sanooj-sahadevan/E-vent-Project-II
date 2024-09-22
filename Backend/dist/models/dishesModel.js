@@ -16,9 +16,14 @@ const dishesSchema = new Schema({
         type: Number,
         required: true,
     },
+    // vendorId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "VendorId",
+    //   required: false,
+    // },
     vendorId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "VendorId",
+        ref: "Vendor", // Ensure this matches your actual Vendor model name
         required: false,
     },
     category: {

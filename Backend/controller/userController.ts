@@ -9,7 +9,8 @@ import {
   // UserService
   loginUser,
   editUser,
-  checkEmail,getAllDishes,getAllAuditorium
+  checkEmail,getAllDishes,getAllAuditorium,findVendorById,
+  findFoodVendorById
 } from "../Service/userService.js";
 import {
   findUserByEmail,
@@ -160,13 +161,17 @@ export const dishlist = async (req: Request, res: Response, next: NextFunction):
 
 export const auditoriumlist = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const { vendorId } = req.query; // Extract vendorId
+    console.log('Vendor ID:', vendorId);
     console.log('Fetching auditorium list');
-    const auditorium = await getAllAuditorium(); 
+    
+    const auditorium = await getAllAuditorium(vendorId as string); // Pass vendorId as string
     res.status(HttpStatus.OK).json(auditorium);
   } catch (error) {
     next(error); 
   }
 };
+
 
 export const forgottenPassword = async (req: Request, res: Response) => {
   try {
@@ -282,5 +287,47 @@ export const editUserDetails = async (req: Request, res: Response, next: NextFun
 };
 
 
+
+
+
+export const fetchVendorDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('controller   user acintrolelr');
+    const { vendorId } = req.params; // Extract vendorId from request params
+    const vendor = await findVendorById(vendorId); // Fetch vendor details
+    if (!vendor) {
+      res.status(404).json({ message: "Vendor not found" });
+    } else {
+      res.status(200).json(vendor); // Return vendor details
+    }
+  } catch (error) {
+    next(error); // Pass error to error handler middleware
+  }
+};
+
+
+
+
+
+
+export const fetchFoodDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    console.log('Controller invoked');
+
+    const { vendorId } = req.params;  // Ensure vendorId is extracted correctly
+    const dishes = await findFoodVendorById(vendorId);  // Fetch dishes for the vendor
+
+    if (!dishes || dishes.length === 0) {
+      res.status(200).json(null);  // Return null if no dishes found
+    } else {
+      console.log('Fetched dishes for vendor:', dishes);
+      res.status(200).json(dishes);  // Return the fetched dishes
+    }
+    
+  } catch (error) {
+    console.error('Error in fetchFoodDetails:', error);
+    next(error);
+  }
+};
 
 

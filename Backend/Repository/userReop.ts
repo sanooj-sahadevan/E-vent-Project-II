@@ -48,12 +48,12 @@ export const createUser = async (user: User) => {
   try {
     console.log('repo');
 
-  const newUser = new UserModel(user);
-  return newUser.save();
-    
+    const newUser = new UserModel(user);
+    return newUser.save();
+
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
@@ -124,7 +124,7 @@ export const userEditFromDB = async (userDetails: User): Promise<IUserModel> => 
 
 
 
- // Import the User type
+// Import the User type
 
 // Function to update user details in the database
 // export const userEditFromDB = async (userDetails: User): Promise<User> => {
@@ -191,13 +191,27 @@ export const fetchfromDB = async (): Promise<any[]> => {
 };
 
 
-export const fetchfromDBAuditorium = async (): Promise<any[]> => {
+export const fetchfromDBAuditorium = async (vendorId: string): Promise<any[]> => {
   try {
-    return await Auditorium.find().sort({ createdAt: -1 }); // Fetch dishes sorted by creation date
+    console.log('Fetching auditoriums for vendor ID:', vendorId);
+    
+    // Convert vendorId to ObjectId if needed
+    const objectId = new mongoose.Types.ObjectId(vendorId);
+console.log(objectId);
+
+    const result = await Auditorium.find({ vendorId: objectId }) 
+      .sort({ createdAt: -1 }); 
+
+    console.log('Fetched auditoriums:', result);
+
+    return result;
   } catch (error) {
-    throw new Error('Error fetching dishes from the database');
+    console.error('Error fetching auditoriums from the database:', error);
+    throw new Error('Error fetching auditoriums from the database');
   }
 };
+
+
 
 // // export const userEditFromDB = async (userDetails: User): Promise<User> => {
 // //   try {
@@ -231,4 +245,41 @@ export const fetchfromDBAuditorium = async (): Promise<any[]> => {
 // //     throw new Error('Database operation failed');
 // //   }
 // // };
+
+
+
+export const findVendorByIdInDb = async (vendorId: string) => {
+  console.log('controller 3   repo');
+
+  return await VendorModel.findById(vendorId);
+};
+
+
+
+
+export const findFoodVendorIdInDb = async (vendorId: string) => {
+  console.log('Fetching dishes for vendor ID:', vendorId);
+
+  try {
+    // Ensure vendorId is an ObjectId
+    const objectId = new mongoose.Types.ObjectId(vendorId);  // Convert to ObjectId
+
+    const result = await Dishes.find({ vendorId: objectId });  // Query the Dishes collection
+    console.log('Result from database:', result);
+
+    // Check if the result is an empty array
+    if (result.length === 0) {
+      console.log('No dishes found for vendor:', vendorId);
+      return null;  // Return null if no dishes found
+    }
+
+    return result;  // Return the found dishes
+  } catch (error) {
+    console.error('Error fetching dishes for vendor:', error);
+    throw new Error(`Error fetching dishes: ${error}`);  // Return only the error message
+  }
+};
+
+
+
 

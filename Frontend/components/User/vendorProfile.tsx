@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { fetchvendor } from '@/services/vendorAPI';
+import { fetchvendor } from '@/services/userApi';
 
 interface Vendor {
     profileImage: string | undefined;
@@ -22,6 +22,8 @@ const VendorsPage: React.FC = () => {
     const searchParams = useSearchParams();
     const vendorId = searchParams.get("vendorId");
 
+    console.log(vendorId,'000000000000000000000000000000000000000000000000000000000000000000000');
+    
     const [vendorData, setVendorData] = useState<Vendor | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -96,8 +98,13 @@ const VendorsPage: React.FC = () => {
                     <p className="text-gray-700">{vendorData.state}</p>
                 </div>
 
-                <div className="absolute right-6 top-6 flex space-x-4 ">
-                    <button  onClick={()=>router.push('/booknow')}   className="px-4 py-2 bg-buttonBg text-white rounded">Book Now</button>
+                <div className="absolute right-6 top-6 flex space-x-4">
+                    <button
+                        onClick={() => router.push(`/booknow?vendorId=${vendorId}`)} 
+                        className="px-4 py-2 bg-buttonBg text-white rounded"
+                    >
+                        Book Now
+                    </button>
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Chat With Us</button>
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Check Availability</button>
                 </div>

@@ -56,22 +56,51 @@ const AddDishes: React.FC = () => {
             formData.append("image", photo, photo.name);
         }
 
+
+        const storedVendor = localStorage.getItem("vendor");
+        let vendorId = '';
+    
+        if (storedVendor) {
+            const parsedVendor = JSON.parse(storedVendor);
+            vendorId = parsedVendor._id;
+            console.log(vendorId);
+        }
+    
         try {
             console.log('Submitting FormData:', formData);
-
+    
             const result = await addDishAPI(formData);
+    
+            console.log(result);
+    
             if (result) {
-                toast.success("Dish added successfully");
+                toast.success("Auditorium added successfully");
                 setTimeout(() => {
-                    router.push(`/vendordashboard`);
+                    router.push(`/vendordashboard?vendorId=${vendorId}`);
                 }, 3000);
             } else {
                 toast.error("Something went wrong!");
             }
         } catch (error) {
-            console.error(error);
-            toast.error("An error occurred while adding the dish!");
+            console.error("Error submitting form:", error);
+            toast.error("An error occurred while adding the auditorium!");
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     };
 
     return (

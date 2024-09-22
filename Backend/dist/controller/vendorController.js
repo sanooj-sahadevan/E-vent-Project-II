@@ -236,7 +236,7 @@ export const fetchDetailsVendor = async (req, res, next) => {
 };
 export const fetchFoodDetails = async (req, res, next) => {
     try {
-        console.log('Controller invoked');
+        console.log('Controller invoked foooooooooooooood');
         const { vendorId } = req.params;
         const dishes = await findFoodVendorById(vendorId); // Fetch dishes for the vendor
         if (!dishes || dishes.length === 0) {
