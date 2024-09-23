@@ -11,13 +11,8 @@ const Booknow: React.FC = () => {
   const searchParams = useSearchParams();
   const vendorId = searchParams.get("vendorId");
 
-  console.log(vendorId,'000000000000000000000000000000000000000000000000000000000000000000000');
+  console.log(vendorId, '000000000000000000000000000000000000000000000000000000000000000000000');
   const auditoriumId = searchParams.get("auditoriumId");
-
-  // Handle checkbox click and navigate
-  // const handleCheckboxChange = (route: string) => {
-  //   router.push(route); // Navigate to the respective route
-  // };
 
   // Handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -29,26 +24,21 @@ const Booknow: React.FC = () => {
       category: event.currentTarget.category.value,
       eventType: event.currentTarget.eventType.value,
       people: event.currentTarget.people.value,
-      // auditoriumId: auditoriumId || "", // Include auditoriumId if present
+      vendorId: vendorId || "",
+      auditoriumId: auditoriumId || "",
     };
 
     try {
       console.log(formData);
-      
-      const response = await fetch('/api/book-event', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      console.log('Event booked successfully');
 
-      if (response.ok) {
-        console.log('Event booked successfully');
-        router.push('/checkout');
-      } else {
-        console.error('Failed to book event');
-      }
+      // Convert formData to query parameters
+      const queryString = new URLSearchParams(formData).toString();
+      console.log(queryString, '----------------------------------');
+
+      // Push to /checkout with all form data in query params
+      router.push(`/checkout?${queryString}`);
+
     } catch (error) {
       console.error('Error booking event:', error);
     }
@@ -121,30 +111,36 @@ const Booknow: React.FC = () => {
               />
             </div>
 
-            {/* Add Dishes */}
-            {/* <div>
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="form-checkbox text-indigo-600"
-                  // onChange={() => handleCheckboxChange("/dishesList")}
-                  onClick={()=> router.push('/dishesList?vendorId=${vendorId}')}
-                />
-                <span className="ml-2 text-sm font-medium text-gray-700">Add Dishes</span>
+            <div>
+              <label className="block text-sm font-medium text-gray-700" htmlFor="auditorium">
+                Add Dishes
               </label>
-            </div> */}
+              <input
+                type="button"
+                value="Select Dishes"
+                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer"
+                onClick={() => router.push(`/dishesList?vendorId=${vendorId}`)}
+                required
+              />
+            </div>
 
-            {/* Add Auditorium */}
-            {/* <div>
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  className="form-checkbox text-indigo-600"
-                  onClick={()=> router.push('auditoriumList/?vendorId=${vendorId}')}
-                />
-                <span className="ml-2 text-sm font-medium text-gray-700">Add Auditorium</span>
+
+
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700" htmlFor="auditorium">
+                Add Auditorium
               </label>
-            </div> */}
+              <input
+                type="button"
+                value="Select Auditorium"
+                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer"
+                onClick={() => router.push(`/auditoriumList?vendorId=${vendorId}`)}
+                required
+              />
+            </div>
+
+
 
             {/* Submit Button */}
             <div>

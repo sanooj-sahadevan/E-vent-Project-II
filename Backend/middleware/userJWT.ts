@@ -18,12 +18,14 @@ export function verifyUser(req: any, res: Response, next: NextFunction) {
     return res.status(401).json("JWT not found in the cookies");
   }
 
-  const secret = process.env.JWT_SECRET || "";
+  const secret = process.env.JWT_SECRET ;
   if (!secret) {
     return res.status(500).json("JWT secret not found in the environment");
   }
 
   try {
+    console.log('verfiyng');
+    
     const decoded: any = jwt.verify(Token, secret);
     req.userId = decoded?.userId;
 

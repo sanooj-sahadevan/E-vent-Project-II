@@ -117,28 +117,34 @@ export class VendorRepository {
         }
     }
 }
-export const fetchfromDB = async () => {
+export const fetchfromDBDishes = async (vendorId) => {
     try {
-        return await Dishes.find().sort({ createdAt: -1 }); // Fetch dishes sorted by creation date
+        console.log('Fetching Dishes for vendor ID:', vendorId);
+        const objectId = new mongoose.Types.ObjectId(vendorId);
+        console.log(objectId);
+        // `findById` returns a single document or null
+        const result = await Auditorium.find(objectId);
+        console.log('Fetched Dishes:', result);
+        return result; // `result` is either an object or null
     }
     catch (error) {
-        throw new Error('Error fetching dishes from the database');
+        console.error('Error fetching Dishes from the database:', error);
+        throw new Error('Error fetching Dishes from the database');
     }
 };
 export const fetchfromDBAuditorium = async (vendorId) => {
     try {
-        console.log('Fetching auditoriums for vendor ID:', vendorId);
-        // Convert vendorId to ObjectId if needed
+        console.log('Fetching auditorium for vendor ID:', vendorId);
         const objectId = new mongoose.Types.ObjectId(vendorId);
         console.log(objectId);
-        const result = await Auditorium.find({ vendorId: objectId })
-            .sort({ createdAt: -1 });
-        console.log('Fetched auditoriums:', result);
-        return result;
+        // `findById` returns a single document or null
+        const result = await Auditorium.findById(objectId);
+        console.log('Fetched auditorium:', result);
+        return result; // `result` is either an object or null
     }
     catch (error) {
-        console.error('Error fetching auditoriums from the database:', error);
-        throw new Error('Error fetching auditoriums from the database');
+        console.error('Error fetching auditorium from the database:', error);
+        throw new Error('Error fetching auditorium from the database');
     }
 };
 // // export const userEditFromDB = async (userDetails: User): Promise<User> => {
@@ -175,11 +181,30 @@ export const findVendorByIdInDb = async (vendorId) => {
     return await VendorModel.findById(vendorId);
 };
 export const findFoodVendorIdInDb = async (vendorId) => {
-    console.log('Fetching dishes for vendor ID:', vendorId);
+    console.log('Fetching dishes for vendor ID myrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr:', vendorId);
     try {
         // Ensure vendorId is an ObjectId
         const objectId = new mongoose.Types.ObjectId(vendorId); // Convert to ObjectId
         const result = await Dishes.find({ vendorId: objectId }); // Query the Dishes collection
+        console.log('Result from database:', result);
+        // Check if the result is an empty array
+        if (result.length === 0) {
+            console.log('No dishes found for vendor:', vendorId);
+            return null; // Return null if no dishes found
+        }
+        return result; // Return the found dishes
+    }
+    catch (error) {
+        console.error('Error fetching dishes for vendor:', error);
+        throw new Error(`Error fetching dishes: ${error}`); // Return only the error message
+    }
+};
+export const findAuditoriumVendorIdInDb = async (vendorId) => {
+    console.log('Fetching dishes for vendor ID:', vendorId);
+    try {
+        // Ensure vendorId is an ObjectId
+        const objectId = new mongoose.Types.ObjectId(vendorId); // Convert to ObjectId
+        const result = await Auditorium.find({ vendorId: objectId }); // Query the Dishes collection
         console.log('Result from database:', result);
         // Check if the result is an empty array
         if (result.length === 0) {

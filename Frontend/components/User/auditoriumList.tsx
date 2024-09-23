@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import React, { useEffect, useState } from "react";
-import { allAuditoriumAPI } from "@/services/userApi";
+import { FetchAuditorium } from "@/services/userApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -29,7 +29,7 @@ const AuditoriumPage: React.FC = () => {
             }
     
             try {
-                const response = await allAuditoriumAPI(vendorId); // Now it's safe to pass vendorId
+                const response = await FetchAuditorium(vendorId); // Now it's safe to pass vendorId
                 console.log("API Response:", response);
                 if (Array.isArray(response)) {
                     setAuditorium(response);
@@ -44,6 +44,7 @@ const AuditoriumPage: React.FC = () => {
             }
         };
     
+        // Pass vendorId to the fetchAuditorium function
         fetchAuditorium();
     }, [vendorId, router]);
     

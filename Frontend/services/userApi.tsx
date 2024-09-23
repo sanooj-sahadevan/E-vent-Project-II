@@ -136,11 +136,11 @@ export const UserEdit = async (vendorData: any) => {
 
 
 
-export const allDishesAPI = async () => {
+export const allDishesAPI =  async (vendorId: string) => {
   try {
     console.log('sucess front end ');
 
-    const response = await axios.get(`${SERVER_URL}/dishlist`);
+    const response = await axios.get(`${SERVER_URL}/dishlist?vendorId=${vendorId}`); // Send vendorId as a query parameter
     console.log(response.data,'basdhbqhbd')
     return response.data;
   } catch (error) {
@@ -149,8 +149,6 @@ export const allDishesAPI = async () => {
   }
 
 };
-
-
 
 export const allAuditoriumAPI = async (vendorId: string) => {
   try {
@@ -191,3 +189,35 @@ export const FetchDishes = async (vendorId: string) => {
     throw new Error('Failed to fetch vendor details');
   }
 };
+
+
+export const FetchAuditorium = async (vendorId: string) => {
+  try {
+
+    console.log('pokunnu Ausittttttttttttttttttt');
+    
+    const res = await axios.get(`${SERVER_URL}/fetchAuditoriumDetails/${vendorId}`);
+    return res.data; // Return data directly for easier usage in the component
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    throw new Error('Failed to fetch vendor details');
+  }
+};
+
+
+
+
+export const Payment = async (username: string) => {
+  try {
+
+    console.log('payment on');
+    
+    const res = await axios.get(`${SERVER_URL}/Payment/${username}`);
+    return res.data;
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    throw new Error('Failed to process payment');
+  }
+};
+
+

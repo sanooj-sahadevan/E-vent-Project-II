@@ -5,12 +5,13 @@ import bcrypt from "bcrypt";
 
 import {
   createUser,
+  
   userEditFromDB, 
    updateUser,
-  findUserByEmailupdate,fetchfromDB,
+  findUserByEmailupdate,fetchfromDBDishes,
   VendorRepository,fetchfromDBAuditorium,findVendorByIdInDb,
   findUserByEmail,
-  findFoodVendorIdInDb
+  findFoodVendorIdInDb,findAuditoriumVendorIdInDb
 } from "../Repository/userReop.js";
 
 export const registerUser = async (user: User) => {
@@ -196,10 +197,10 @@ export const getAllVendors = async (): Promise<any[]> => {
 
 
 
-export const getAllDishes = async (): Promise<any[]> => {
+export const getAllDishes = async (vendorId: string): Promise<any[]> => {
   try {
     console.log('Service: Fetching dishes');
-    const result = await fetchfromDB(); 
+    const result = await fetchfromDBDishes(vendorId); 
     return result;
   } catch (error) {
     throw new Error('Error fetching dishes');
@@ -215,6 +216,8 @@ export const getAllAuditorium = async (vendorId: string): Promise<any[]> => {
     throw new Error('Error fetching auditoriums');
   }
 };
+
+
 
 
 
@@ -257,3 +260,13 @@ export const findFoodVendorById = async (vendorId: string) => {
 };
 
 
+
+export const findAuditoriumVendorById = async (vendorId: string) => {
+  try {
+    console.log('Service invoked to find dishes for vendor:', vendorId);
+    const dishes = await findAuditoriumVendorIdInDb(vendorId);  // Call the repo to fetch dishes
+    return dishes;
+  } catch (error) {
+    throw new Error(`Error finding vendor dishes: ${error}`);
+  }
+};

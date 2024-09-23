@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, fetchfromDB, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findFoodVendorIdInDb } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -143,10 +143,10 @@ export const getAllVendors = async () => {
         throw new Error('Error fetching vendors');
     }
 };
-export const getAllDishes = async () => {
+export const getAllDishes = async (vendorId) => {
     try {
         console.log('Service: Fetching dishes');
-        const result = await fetchfromDB();
+        const result = await fetchfromDBDishes(vendorId);
         return result;
     }
     catch (error) {
@@ -186,6 +186,16 @@ export const findFoodVendorById = async (vendorId) => {
     try {
         console.log('Service invoked to find dishes for vendor:', vendorId);
         const dishes = await findFoodVendorIdInDb(vendorId); // Call the repo to fetch dishes
+        return dishes;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor dishes: ${error}`);
+    }
+};
+export const findAuditoriumVendorById = async (vendorId) => {
+    try {
+        console.log('Service invoked to find dishes for vendor:', vendorId);
+        const dishes = await findAuditoriumVendorIdInDb(vendorId); // Call the repo to fetch dishes
         return dishes;
     }
     catch (error) {

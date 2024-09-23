@@ -1,7 +1,7 @@
 import express from "express";
 import { 
 // googleLoginHandler,
-login, register, verifyOtp, vendorList, editUserDetails, forgottenPassword, dishlist, updatePassword, auditoriumlist, fetchVendorDetails, fetchFoodDetails } from "../controller/userController.js";
+login, register, verifyOtp, vendorList, editUserDetails, forgottenPassword, dishlist, updatePassword, auditoriumlist, fetchVendorDetails, fetchFoodDetails, fetchAuditoriumDetails } from "../controller/userController.js";
 const router = express.Router();
 router.post("/signup", register);
 router.post("/verifyOtp", verifyOtp);
@@ -10,11 +10,12 @@ router.get('/vendors', vendorList);
 router.get('/dishlist', dishlist);
 router.get('/auditoriumlist', auditoriumlist);
 router.patch('/edituserDetails', editUserDetails);
-// router.post("/googleLogin", googleLoginHandler); auditoriumlist
 router.post('/forgottenpassword', forgottenPassword);
 router.post('/updatePassword', updatePassword);
 router.get('/fetchVendorDetails/:vendorId', fetchVendorDetails);
 router.get('/fetchFoodDetails/:vendorId', fetchFoodDetails);
+router.get('/fetchAuditoriumDetails/:vendorId', fetchAuditoriumDetails);
+// router.get('/Payment',payment)
 export default router;
 // import { Router } from 'express';
 // import { LoginController, VendorController, UserController } from '../controller/userController.js';

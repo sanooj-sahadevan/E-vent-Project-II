@@ -4,7 +4,7 @@ getAllVendors,
 // googleLogin,
 registerUser, verifyAndSaveUser, update, 
 // UserService
-loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findFoodVendorById } from "../Service/userService.js";
+loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findFoodVendorById } from "../Service/userService.js";
 import { findUserByEmail,
 // findUserById,
  } from "../Repository/userReop.js";
@@ -116,8 +116,10 @@ export const vendorList = async (req, res, next) => {
 };
 export const dishlist = async (req, res, next) => {
     try {
-        console.log('Fetching dish list');
-        const dishes = await getAllDishes();
+        const { vendorId } = req.query; // Extract vendorId
+        console.log('Vendor ID:', vendorId);
+        console.log('Fetching dishes list');
+        const dishes = await getAllDishes(vendorId); // Pass vendorId as string
         res.status(HttpStatus.OK).json(dishes);
     }
     catch (error) {
@@ -221,7 +223,7 @@ export const editUserDetails = async (req, res, next) => {
 };
 export const fetchVendorDetails = async (req, res, next) => {
     try {
-        console.log('controller   user acintrolelr');
+        console.log('controller   user controlelr auditorum');
         const { vendorId } = req.params; // Extract vendorId from request params
         const vendor = await findVendorById(vendorId); // Fetch vendor details
         if (!vendor) {
@@ -247,6 +249,23 @@ export const fetchFoodDetails = async (req, res, next) => {
             console.log('Fetched dishes for vendor:', dishes);
             res.status(200).json(dishes); // Return the fetched dishes
         }
+    }
+    catch (error) {
+        console.error('Error in fetchFoodDetails:', error);
+        next(error);
+    }
+};
+export const fetchAuditoriumDetails = async (req, res, next) => {
+    try {
+        console.log('Controller invoked');
+        const { vendorId } = req.params; // Ensure vendorId is extracted correctly
+        const dishes = await findAuditoriumVendorById(vendorId); // Fetch dishes for the vendor
+        // if (!dishes || dishes.length === 0) {
+        //   res.status(200).json(null);  // Return null if no dishes found
+        // } else {
+        console.log('Fetched dishes for vendor:', dishes);
+        res.status(200).json(dishes); // Return the fetched dishes
+        // }
     }
     catch (error) {
         console.error('Error in fetchFoodDetails:', error);
