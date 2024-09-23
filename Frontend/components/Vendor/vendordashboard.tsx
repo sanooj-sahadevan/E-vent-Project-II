@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaEdit, FaPlus, FaTrashAlt } from 'react-icons/fa';
-import { fetchDetailsVendor, FetchDishes, FetchAuditorium } from '@/services/vendorAPI';
+import { fetchDetailsVendor, FetchDishes, FetchAuditorium, deleteDish, deleteAuditorium } from '@/services/vendorAPI'; // Assuming deleteAuditorium is the soft delete API
 import 'react-toastify/dist/ReactToastify.css';
 
 interface VendorData {
@@ -17,20 +17,23 @@ interface VendorData {
 }
 
 interface FoodItem {
+    _id: string;  // Include _id to identify items for delete
     images: string | undefined;
     dishesName: string | undefined;
     description: string;
+    isDeleted?: boolean; // Add soft delete flag
 }
 
 interface Auditorium {
-    auditoriumName: string| undefined;
+    _id: string;  // Include _id for delete
+    auditoriumName: string | undefined;
     description: string | undefined;
     images: string;
 }
 
 const Home: React.FC = () => {
     const searchParams = useSearchParams();
-    const query = searchParams.get("vendorId");
+    const query = searchParams.get('vendorId');
     const router = useRouter();
 
     const [vendorData, setVendorData] = useState<VendorData | null>(null);
@@ -49,7 +52,7 @@ const Home: React.FC = () => {
                     return;
                 }
 
-                const data = await fetchDetailsVendor(query); // Correct function name
+                const data = await fetchDetailsVendor(query);
                 setVendorData(data);
                 setError(null);
             } catch (err) {
@@ -60,7 +63,7 @@ const Home: React.FC = () => {
                     phone: 0,
                     state: 'N/A',
                     rating: 'N/A',
-                    profileImage: '', // or a placeholder image URL
+                    profileImage: '',
                 });
             } finally {
                 setLoading(false);
@@ -72,7 +75,6 @@ const Home: React.FC = () => {
             if (query) {
                 await fetchAuditorium(query);
                 await fetchDishes(query);
-               
             }
         };
 
@@ -82,29 +84,49 @@ const Home: React.FC = () => {
     const fetchDishes = async (vendorId: string) => {
         try {
             const dishes = await FetchDishes(vendorId);
-            console.log(dishes);
-            
-            setFoodItems(dishes);
+            setFoodItems(dishes.filter((dish: { isDeleted: any; }) => !dish.isDeleted));
             setDishError(null);
         } catch (error) {
             console.error('Error fetching dishes:', error);
             setDishError('Failed to load dishes.');
-            setFoodItems([]); // Clear food items on error
+            setFoodItems([]);
         }
     };
 
     const fetchAuditorium = async (vendorId: string) => {
         try {
             const auditorium = await FetchAuditorium(vendorId);
-            console.log();
-            
             setAuditoriums(auditorium);
             setDishError(null);
         } catch (error) {
             console.error('Error fetching auditoriums:', error);
             setDishError('Failed to load auditoriums.');
-            setAuditoriums([]); // Clear auditoriums on error
+            setAuditoriums([]);
         }
+    };
+
+    const handleDelete = (dishId: string) => {
+        if (!query) return;
+        deleteDish(dishId)
+            .then(response => {
+                console.log('Dish deleted successfully', response);
+                fetchDishes(query);
+            })
+            .catch(error => {
+                console.error('Error deleting dish:', error);
+            });
+    };
+
+    const handleDeleteAuditorium = (auditoriumId: string) => {
+        if (!query) return;
+        deleteAuditorium(auditoriumId)
+            .then((response: any) => {
+                console.log('Auditorium deleted successfully', response);
+                fetchAuditorium(query);
+            })
+            .catch((error: any) => {
+                console.error('Error deleting auditorium:', error);
+            });
     };
 
     const handleEditProfile = () => {
@@ -176,18 +198,16 @@ const Home: React.FC = () => {
 
             {/* Food Items Section */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
-                <h2 className="text-2xl font-bold mb-6 flex items-center">
-                    <span className="mr-2">🍲</span> Food Items
-                    <a href="/vendorAddDishes">
-                        <FaPlus className="text-green-500 cursor-pointer" />
-                    </a>
+                <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
+                    <span className="flex items-center"><span className="mr-2">🍲</span> Food Items</span>
+                    <a href="/vendorAddDishes" className="text-green-500"><FaPlus /></a>
                 </h2>
                 <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
                     {dishError ? (
                         <p className="text-red-600 text-center">{dishError}</p>
                     ) : foodItems.length > 0 ? (
-                        foodItems.map((food, index) => (
-                            <div key={index} className="flex items-center justify-between border-b border-gray-200 py-4">
+                        foodItems.map((food) => (
+                            <div key={food._id} className="flex items-center justify-between border-b border-gray-200 py-4">
                                 <div className="flex items-center">
                                     <img
                                         src={food.images}
@@ -201,28 +221,31 @@ const Home: React.FC = () => {
                                 </div>
                                 <div className="flex items-center space-x-4">
                                     <FaEdit className="text-gray-500 cursor-pointer" />
-                                    <FaTrashAlt className="text-gray-500 cursor-pointer" />
+                                    <FaTrashAlt
+                                        className="text-black cursor-pointer"
+                                        onClick={() => handleDelete(food._id)}
+                                    />
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500 text-center">No food items available.</p>
+                        <p>No food items found.</p>
                     )}
                 </div>
             </div>
 
-            {/* Auditoriums Section */}
+            {/* Auditorium Section */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
-                <h2 className="text-2xl font-bold mb-6 flex items-center">
-                    <span className="mr-2">🏛️</span> Auditoriums
-                    <a href="/vendorAddAuditoriums">
-                        <FaPlus className="text-green-500 cursor-pointer" />
-                    </a>
+                <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
+                    <span className="flex items-center"><span className="mr-2">🏛️</span> Auditorium</span>
+                    <a href="/auditoriumAdd" className="text-green-500"><FaPlus /></a>
                 </h2>
                 <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
-                    {auditoriums.length > 0 ? (
-                        auditoriums.map((auditorium, index) => (
-                            <div key={index} className="flex items-center justify-between border-b border-gray-200 py-4">
+                    {dishError ? (
+                        <p className="text-red-600 text-center">{dishError}</p>
+                    ) : auditoriums.length > 0 ? (
+                        auditoriums.map((auditorium) => (
+                            <div key={auditorium._id} className="flex items-center justify-between border-b border-gray-200 py-4">
                                 <div className="flex items-center">
                                     <img
                                         src={auditorium.images}
@@ -234,14 +257,14 @@ const Home: React.FC = () => {
                                         <p className="text-sm text-gray-600 truncate">{auditorium.description}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center space-x-4">
-                                    <FaEdit className="text-gray-500 cursor-pointer" />
-                                    <FaTrashAlt className="text-gray-500 cursor-pointer" />
-                                </div>
+                                <FaTrashAlt
+                                    className="text-black cursor-pointer"
+                                    onClick={() => handleDeleteAuditorium(auditorium._id)}
+                                />
                             </div>
                         ))
                     ) : (
-                        <p className="text-gray-500 text-center">No auditoriums available.</p>
+                        <p>No auditorium details found.</p>
                     )}
                 </div>
             </div>

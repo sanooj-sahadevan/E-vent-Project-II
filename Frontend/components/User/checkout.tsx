@@ -1,56 +1,71 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 import { useSearchParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Payment } from '@/services/userApi';
-// import PayUComponent from '../payment/payUcomponent';
+import PayUComponent from "@/components/payment/payUcomponent";
 
 const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const date = searchParams.get("date");
-  const eventType = searchParams.get("eventType");
-  const vendorId = searchParams.get("vendorId");
-  const auditoriumId = searchParams.get("auditoriumId");
 
-  const [selectedCard, setSelectedCard] = useState<string>('Visa');
-  const [user, setUser] = useState<{ username: string; address?: string; phone?: string } | null>(null);
-  const [advanceAmount, setAdvanceAmount] = useState<number>(10000); // Default amount
+  // State to store booking details including userId
+  const [bookingDetails, setBookingDetails] = useState({
+    userId: {
+      username: '',
+      address: '',
+      phone: '',
+      _id: '', // _id added here
+    },
+    category: '',
+    date: '',
+    eventType: '',
+    vendorId: '',
+    auditoriumId: '',
+    dishesId: '',
+    advanceAmount: 10000,  // Default advance amount
+  });
 
-  // Fetch user from localStorage
+  // State to control PayUComponent visibility
+  const [showPayUComponent, setShowPayUComponent] = useState(false);
+
+  // Fetch user and query params on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      const parsedUser = JSON.parse(storedUser);
+      setBookingDetails((prev) => ({
+        ...prev,
+        userId: {
+          username: parsedUser.username || '',
+          address: parsedUser.address || '',
+          phone: parsedUser.phone || '',
+          email: parsedUser.email || '',
+          _id: parsedUser._id || '', // _id added here
+        },
+      }));
     }
-  }, []);
 
-  const handleSubmit = async () => {
-    if (user) {
-      try {
-        const paymentResponse = await Payment(user.username); // Pass the username as a string
-        console.log('Payment successful:', paymentResponse);
-        // Handle success (e.g., navigate to success page, show confirmation)
-      } catch (error) {
-        console.error('Payment failed:', error);
-        // Handle failure (e.g., show error message to user)
-      }
-    } else {
-      console.error('User not found.');
-    }
-  };
+    // Extract search params
+    const params = {
+      category: searchParams.get("category") || '',
+      date: searchParams.get("date") || '',
+      eventType: searchParams.get("eventType") || '',
+      vendorId: searchParams.get("vendorId") || '',
+      auditoriumId: searchParams.get("auditoriumId") || '',
+      dishesId: searchParams.get("dishesId") || '',
+    };
 
-  // Create the booking details object
-  const bookingDetails = {
-    username: user?.username,
-    category,
-    date,
-    eventType,
-    vendorId,
-    auditoriumId,
-    advanceAmount
+    // Update bookingDetails state with the params
+    setBookingDetails((prev) => ({
+      ...prev,
+      ...params,
+    }));
+  }, [searchParams]);
+
+  console.log(bookingDetails, 'Booking Details -------------------------------------------------------');
+
+  // Handle showing the PayUComponent
+  const handlePayment = () => {
+    setShowPayUComponent(true); // Show PayUComponent directly
   };
 
   return (
@@ -62,23 +77,25 @@ const CheckoutPage: React.FC = () => {
         {/* Left: Price Details */}
         <div className="w-full lg:w-1/3 bg-white shadow-lg rounded-lg p-8">
           <h2 className="text-2xl font-bold text-gray-700 mb-6">Price Details</h2>
-          
-          {user && <p className="text-lg text-gray-600 mb-2">User: <span className="font-semibold">{user.username}</span></p>}
-          {date && <p className="text-lg text-gray-600 mb-2">Event Date: <span className="font-semibold">{date}</span></p>}
-          {eventType && <p className="text-lg text-gray-600 mb-2">Event Type: <span className="font-semibold">{eventType}</span></p>}
-          {category && <p className="text-lg text-gray-600 mb-2">Category: <span className="font-semibold capitalize">{category}</span></p>}
-          {vendorId && <p className="text-lg text-gray-600 mb-2">Vendor ID: <span className="font-semibold">{vendorId}</span></p>}
+          {bookingDetails.userId.username && <p className="text-lg text-gray-600 mb-2">User: <span className="font-semibold">{bookingDetails.userId.username}</span></p>}
+          {bookingDetails.userId.address && <p className="text-lg text-gray-600 mb-2">Address: <span className="font-semibold">{bookingDetails.userId.address}</span></p>}
+          {bookingDetails.userId.phone && <p className="text-lg text-gray-600 mb-2">Phone: <span className="font-semibold">{bookingDetails.userId.phone}</span></p>}
+          {bookingDetails.date && <p className="text-lg text-gray-600 mb-2">Event Date: <span className="font-semibold">{bookingDetails.date}</span></p>}
+          {bookingDetails.eventType && <p className="text-lg text-gray-600 mb-2">Event Type: <span className="font-semibold">{bookingDetails.eventType}</span></p>}
+          {bookingDetails.category && <p className="text-lg text-gray-600 mb-2">Category: <span className="font-semibold capitalize">{bookingDetails.category}</span></p>}
+          {bookingDetails.vendorId && <p className="text-lg text-gray-600 mb-2">Vendor ID: <span className="font-semibold">{bookingDetails.vendorId}</span></p>}
+          {bookingDetails.auditoriumId && <p className="text-lg text-gray-600 mb-2">Auditorium ID: <span className="font-semibold">{bookingDetails.auditoriumId}</span></p>}
 
           <div className="my-4">
             <div className="flex justify-between text-lg">
               <p>Advance Amount</p>
-              <p className="font-semibold text-gray-800">{advanceAmount}</p>
+              <p className="font-semibold text-gray-800">{bookingDetails.advanceAmount}</p>
             </div>
           </div>
           <hr className="my-4" />
           <div className="flex justify-between text-xl font-semibold text-gray-700">
             <p>Total Payable</p>
-            <p>{advanceAmount}</p>
+            <p>{bookingDetails.advanceAmount}</p>
           </div>
         </div>
 
@@ -89,16 +106,17 @@ const CheckoutPage: React.FC = () => {
           {/* Total Price and Pay Button */}
           <div className="flex justify-between text-xl font-semibold text-gray-700 mb-4">
             <p>Total</p>
-            <p>{advanceAmount}</p>
+            <p>{bookingDetails.advanceAmount}</p>
           </div>
           <button
             className="bg-pink-500 hover:bg-pink-600 text-white py-3 px-6 w-full rounded-lg font-bold transition-all duration-200"
-            onClick={handleSubmit}
+            onClick={handlePayment}
           >
             Pay Now
           </button>
-          {/* Pass bookingDetails to PayUComponent */}
-          {/* <PayUComponent BookedData={bookingDetails} /> */}
+
+          {/* Conditionally render the PayUComponent */}
+          {showPayUComponent && <PayUComponent BookedData={bookingDetails} />}
         </div>
       </div>
     </div>

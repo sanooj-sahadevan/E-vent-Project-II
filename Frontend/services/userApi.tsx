@@ -221,3 +221,61 @@ export const Payment = async (username: string) => {
 };
 
 
+// alone dishs
+
+export const fetchdishes = async (auditoriumId: string) => {
+  try {
+    console.log('rdyyyy auditirum profie');
+    
+      const res = await axios.get(`${SERVER_URL}/fetchdishes/${auditoriumId}`);
+      console.log(res);
+      return res;
+  } catch (error) {
+    console.error(error);
+    
+  }
+};
+
+
+export const fetchauditorium = async (auditoriumId: string) => {
+  try {
+    console.log('rdyyyy auditirum profie');
+    
+      const res = await axios.get(`${SERVER_URL}/fetchauditorium/${auditoriumId}`);
+      console.log(res);
+      return res;
+  } catch (error) {
+    console.error(error);
+    
+  }
+};
+
+
+
+
+export const saveDB = async (bookingDetails: Object) => {
+  try {
+    console.log('Saving to database...');
+
+    const res = await axios.post(`${SERVER_URL}/saveDB`, bookingDetails); // Use POST and send the object in the body
+    console.log(res.data);
+    return res.data; // Return the response data
+  } catch (error) {
+    console.error('Error saving to database:', error);
+    throw error; // Optionally rethrow the error for handling in the caller
+  }
+};
+
+
+export const fetchBookedData = async (bookingId: string) => {
+  try {
+
+    console.log('32423453525');
+    
+    const response = await axios.get(`${SERVER_URL}/bookEvent/${bookingId}`, { withCredentials: true}); // Adjust the API endpoint
+    return response.data; // Return the data from the response
+  } catch (error) {
+    console.error("Error fetching booking data:", error);
+    throw error;
+  }
+};

@@ -3,8 +3,8 @@ import {
      login,
      register,
      verifyOtp,
-     editVendorDetails,
-      addDishes, addAuditorium, fetchDetailsVendor, fetchFoodDetails, fetchAuditoriumDetails,fetchdishes,fetchauditorium
+     editVendorDetails,softDeleteAuditorium,
+      addDishes, addAuditorium, fetchDetailsVendor, fetchFoodDetails, fetchAuditoriumDetails,fetchdishes,fetchauditorium,softDeleteDish,
 } from "../controller/vendorController.js";
 import upload from "../middleware/multer.js";
 import { verifyvendor } from "../middleware/vendorJWT.js";
@@ -29,5 +29,16 @@ router.get('/fetchAuditoriumDetails/:vendorId', fetchAuditoriumDetails);
 
 router.get('/fetchauditorium/:auditoriumId', fetchauditorium);
 router.get('/fetchdishes/:dishesId', fetchdishes);
+
+
+
+
+
+
+
+router.patch('/dishes/:dishId',softDeleteDish);
+router.patch('/auditorium/:auditoriumId',softDeleteAuditorium);
+
+
 
 export default router;

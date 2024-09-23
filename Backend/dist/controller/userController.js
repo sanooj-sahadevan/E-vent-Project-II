@@ -1,16 +1,13 @@
 import { 
-// LoginService,
-getAllVendors, 
 // googleLogin,
-registerUser, verifyAndSaveUser, update, 
-// UserService
-loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findFoodVendorById } from "../Service/userService.js";
+getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, findFoodVendorById, saveDatabase, findEvent } from "../Service/userService.js";
 import { findUserByEmail,
 // findUserById,
  } from "../Repository/userReop.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { HttpStatus } from '../utils/httpStatus.js';
+import jsSHA from 'jssha';
 export const register = async (req, res, next) => {
     try {
         const { username, email, phone, password } = req.body;
@@ -51,35 +48,16 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         const { user, token } = await loginUser(email, password);
-        // console.log({user, token});
         res.cookie("token", token, {
             sameSite: 'strict',
             maxAge: 3600000
         });
-        // console.log('Cookie set:', req.cookies['token']);
         res.status(HttpStatus.OK).json({ user, token });
     }
     catch (error) {
         res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
     }
 };
-// export class LoginController {
-//   private loginService: LoginService;
-//   constructor() {
-//     this.loginService = new LoginService();
-//   }
-//   public async login(req: Request, res: Response, next: NextFunction): Promise<void> {
-//     try {
-//       const { email, password } = req.body;
-//       const { user, token } = await this.loginService.loginUser(email, password);
-//       console.log({ user, token });
-//       res.cookie("token", token);
-//       res.status(200).json({ user, token });
-//     } catch (error: any) {
-//       next(error);
-//     }
-//   }
-// }
 export const verifyOtp = async (req, res) => {
     try {
         const { email, otp } = req.body;
@@ -116,10 +94,10 @@ export const vendorList = async (req, res, next) => {
 };
 export const dishlist = async (req, res, next) => {
     try {
-        const { vendorId } = req.query; // Extract vendorId
+        const { vendorId } = req.query;
         console.log('Vendor ID:', vendorId);
         console.log('Fetching dishes list');
-        const dishes = await getAllDishes(vendorId); // Pass vendorId as string
+        const dishes = await getAllDishes(vendorId);
         res.status(HttpStatus.OK).json(dishes);
     }
     catch (error) {
@@ -128,10 +106,10 @@ export const dishlist = async (req, res, next) => {
 };
 export const auditoriumlist = async (req, res, next) => {
     try {
-        const { vendorId } = req.query; // Extract vendorId
+        const { vendorId } = req.query;
         console.log('Vendor ID:', vendorId);
         console.log('Fetching auditorium list');
-        const auditorium = await getAllAuditorium(vendorId); // Pass vendorId as string
+        const auditorium = await getAllAuditorium(vendorId);
         res.status(HttpStatus.OK).json(auditorium);
     }
     catch (error) {
@@ -142,13 +120,10 @@ export const forgottenPassword = async (req, res) => {
     try {
         const { email } = req.body;
         const { user } = await checkEmail(email);
-        console.log('oooooooooooooooooooooooo');
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
         const otp = otpGenerator();
-        console.log('oooooooooooooooooooooooo');
-        // await registerUser({ email, otp, username: "", password: "" });
         await sendEmail(email, otp);
         res.status(200).json({ message: 'OTP sent successfully', otp, email });
         res.status(HttpStatus.OK).json({ message: 'OTP sent successfully', otp, email });
@@ -162,17 +137,15 @@ export const updatePassword = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         console.log(email, password + ' main content ithil ind');
-        // Update the user's password
         const user = await update(email, password);
         if (!user) {
             res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
-            return; // Exit the function after sending the response
+            return;
         }
-        // Respond with the updated user data
         res.status(HttpStatus.OK).json({ message: "Password updated successfully", user });
     }
     catch (error) {
-        next(error); // Pass the error to the error-handling middleware
+        next(error);
     }
 };
 // export class VendorController {
@@ -208,7 +181,6 @@ export const updatePassword = async (req, res, next) => {
 // // import { UserService } from '../Service/userService.js'; // Import the service
 export const editUserDetails = async (req, res, next) => {
     try {
-        console.log('1');
         console.log('Controller: Edit User Details');
         const userDetails = req.body;
         console.log('Request Body:', userDetails);
@@ -217,37 +189,37 @@ export const editUserDetails = async (req, res, next) => {
     }
     catch (error) {
         console.error('Error in editUserDetails controller:', error);
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' }); // Send an error response
-        next(error); // Forward error to the error handler
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
+        next(error);
     }
 };
 export const fetchVendorDetails = async (req, res, next) => {
     try {
         console.log('controller   user controlelr auditorum');
-        const { vendorId } = req.params; // Extract vendorId from request params
-        const vendor = await findVendorById(vendorId); // Fetch vendor details
+        const { vendorId } = req.params;
+        const vendor = await findVendorById(vendorId);
         if (!vendor) {
             res.status(404).json({ message: "Vendor not found" });
         }
         else {
-            res.status(200).json(vendor); // Return vendor details
+            res.status(200).json(vendor);
         }
     }
     catch (error) {
-        next(error); // Pass error to error handler middleware
+        next(error);
     }
 };
 export const fetchFoodDetails = async (req, res, next) => {
     try {
         console.log('Controller invoked');
-        const { vendorId } = req.params; // Ensure vendorId is extracted correctly
-        const dishes = await findFoodVendorById(vendorId); // Fetch dishes for the vendor
+        const { vendorId } = req.params;
+        const dishes = await findFoodVendorById(vendorId);
         if (!dishes || dishes.length === 0) {
-            res.status(200).json(null); // Return null if no dishes found
+            res.status(200).json(null);
         }
         else {
             console.log('Fetched dishes for vendor:', dishes);
-            res.status(200).json(dishes); // Return the fetched dishes
+            res.status(200).json(dishes);
         }
     }
     catch (error) {
@@ -258,17 +230,143 @@ export const fetchFoodDetails = async (req, res, next) => {
 export const fetchAuditoriumDetails = async (req, res, next) => {
     try {
         console.log('Controller invoked');
-        const { vendorId } = req.params; // Ensure vendorId is extracted correctly
-        const dishes = await findAuditoriumVendorById(vendorId); // Fetch dishes for the vendor
-        // if (!dishes || dishes.length === 0) {
-        //   res.status(200).json(null);  // Return null if no dishes found
-        // } else {
-        console.log('Fetched dishes for vendor:', dishes);
-        res.status(200).json(dishes); // Return the fetched dishes
-        // }
+        const { vendorId } = req.params;
+        const dishes = await findAuditoriumVendorById(vendorId);
+        if (!dishes || dishes.length === 0) {
+            res.status(200).json(null);
+        }
+        else {
+            console.log('Fetched dishes for vendor:', dishes);
+            res.status(200).json(dishes);
+        }
     }
     catch (error) {
         console.error('Error in fetchFoodDetails:', error);
         next(error);
     }
 };
+// infooo
+export const fetchauditorium = async (req, res, next) => {
+    try {
+        console.log('controller  indo audi ');
+        const { auditoriumId } = req.params;
+        console.log(auditoriumId, '---------------------------------------------------------------------------------');
+        const vendor = await findAuditoriumById(auditoriumId);
+        if (!vendor) {
+            res.status(404).json({ message: "Vendor not found" });
+        }
+        else {
+            res.status(200).json(vendor);
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+};
+export const fetchdishes = async (req, res, next) => {
+    try {
+        console.log('dishes  indo audi ');
+        const { dishesId } = req.params;
+        console.log(dishesId, '---------------------------------------------------------------------------------');
+        const vendor = await finddishesById(dishesId);
+        if (!vendor) {
+            res.status(404).json({ message: "Vendor not found" });
+        }
+        else {
+            res.status(200).json(vendor);
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+};
+export const saveDB = async (req, res, next) => {
+    try {
+        const bookingDetails = req.body;
+        const savedBooking = await saveDatabase(bookingDetails);
+        if (!savedBooking) {
+            res.status(404).json({ message: "Failed to save booking" });
+        }
+        else {
+            res.status(200).json(savedBooking);
+        }
+    }
+    catch (error) {
+        next(error);
+    }
+};
+export const fetchBookedData = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const booking = await findEvent(id);
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        res.status(200).json(booking);
+    }
+    catch (error) {
+        console.error("Error fetching booking data:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
+// PAYMENT
+export const payment = async (req, res) => {
+    try {
+        console.log('hey paymeent');
+        const { txnid, amount, productinfo, username, email } = req.body;
+        console.log({ txnid, amount, productinfo, username, email });
+        if (!txnid || !amount || !productinfo || !username || !email) {
+            res.status(400).send("Mandatory fields missing");
+            return;
+        }
+        // console.log({ process.env.PAYU_MERCHANT_KEY, PAYU_SALT, txnid });
+        const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|||||||||||${process.env.PAYU_SALT}`;
+        const sha = new jsSHA("SHA-512", "TEXT");
+        sha.update(hashString);
+        const hash = sha.getHash("HEX");
+        res.send({ hash: hash });
+    }
+    catch (error) {
+        console.log("error payment:", error);
+        res.status(500).send("Internal server error");
+    }
+};
+export const addTransaction = async (req, res, next) => {
+    try {
+        const { PayUOrderId, email, status } = req.body;
+        console.log({ PayUOrderId, email, status });
+        const transactionId = await addTransactionDetails(email, PayUOrderId, status);
+        res.status(200).send(transactionId);
+    }
+    catch (error) {
+        next(error);
+    }
+};
+// export const saveData = async (req: Request, res: Response) => {
+//   try {
+//     const { txnid, email, productinfo, status } = req.body;
+//     console.log({ txnid, email, productinfo, status });
+//     if (status == "success") {
+//       const bookedTripId = await fetchbookingData(txnid, productinfo, status);
+//       console.log({bookedTripId});
+//       const { tripId, userId }: any = bookedTripId;
+//       const trip = await fetchDetailTrip(tripId);
+//       const companyId = trip?.companyId;
+//       let chat = await chatModel.findOne({ userId, companyId });
+//       if (!chat) {
+//         // If no chat exists, create a new chat
+//         chat = new chatModel({
+//           userId,
+//           companyId,
+//         });
+//         await chat.save();
+//       }
+//       res.status(200).json(bookedTripId?._id);
+//     } else if (status == "failure") {
+//       res.json("booking failed");
+//       console.log(status);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

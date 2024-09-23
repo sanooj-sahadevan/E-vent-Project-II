@@ -187,3 +187,32 @@ export const fetchauditorium = async (auditoriumId: string) => {
     
   }
 };
+
+
+
+export const deleteDish = async (dishId: string,  ) => {
+  try {
+      console.log('Attempting to delete dish');
+      const response = await axios.patch(`${SERVER_URL_vendor}/dishes/${dishId}`, {
+          isDeleted: true,
+      });
+      return response.data;
+  } catch (error) {
+      console.error('Error deleting dish:', error);
+      throw new Error('Failed to delete dish');
+  }
+};
+
+
+export const deleteAuditorium = async (aditoriumId: string,  ) => {
+  try {
+      console.log('Attempting to delete dish');
+      const response = await axios.patch(`${SERVER_URL_vendor}/auditorium/${aditoriumId}`, {
+          isDeleted: true,
+      });
+      return response.data;
+  } catch (error) {
+      console.error('Error deleting dish:', error);
+      throw new Error('Failed to delete dish');
+  }
+};

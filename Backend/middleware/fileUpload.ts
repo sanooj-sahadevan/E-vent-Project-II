@@ -12,7 +12,7 @@ export async function uploadToS3Bucket(p0: any[], file: IMulterFile): Promise<st
     
     const params: any = {
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `posts/${Date.now()}_${file.originalname}`, // Unique file name
+      Key: `posts/${Date.now()}_${file.originalname}`, 
       Body: file.buffer,
       ContentType: file.mimetype,
     };

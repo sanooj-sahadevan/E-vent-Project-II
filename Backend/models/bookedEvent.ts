@@ -10,19 +10,19 @@ interface Booking extends Document {
     totalAmount: number;
     paymentType?: string;
     paymentStatus?: string;
-    createdAt: Date;
+    createdAt: Date
 }
 
 const bookingSchema = new Schema<Booking>({
     dishesId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Dishes",
-        required: true
+        required: false
     },
     auditoriumId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Auditorium",
-        required: true
+        required: false
     },
     vendorId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -32,7 +32,7 @@ const bookingSchema = new Schema<Booking>({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: false
     },
     date: {
         type: Date,
@@ -44,7 +44,7 @@ const bookingSchema = new Schema<Booking>({
     },
     totalAmount: {
         type: Number,
-        required: true
+        required: false
     },
     paymentType: {
         type: String,
@@ -60,4 +60,5 @@ const bookingSchema = new Schema<Booking>({
     }
 });
 
-export const bookedModel = mongoose.model<Booking>("BookedTrip", bookingSchema);
+export const bookedModel = mongoose.model<Booking>("Booked", bookingSchema);
+export type { Booking };

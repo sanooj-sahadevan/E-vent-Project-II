@@ -3,7 +3,7 @@ const auditoriumSchema = new Schema({
     auditoriumName: {
         type: String,
         required: true,
-    },
+    }, isDeleted: { type: Boolean, default: false }, // Correctly defined as a boolean
     description: {
         type: String,
         required: false,

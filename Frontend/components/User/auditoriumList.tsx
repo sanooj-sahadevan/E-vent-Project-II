@@ -40,7 +40,7 @@ const AuditoriumPage: React.FC = () => {
             } catch (error) {
                 console.error("Failed to fetch Auditorium:", error);
                 toast.error("Error fetching Auditorium. Redirecting to login.");
-                router.push('/login');  // Ensure correct redirection
+                // router.push('/login');  // Ensure correct redirection
             }
         };
     
@@ -68,7 +68,7 @@ const AuditoriumPage: React.FC = () => {
                                     <span className="ml-1 text-sm text-gray-600">{aud.types}</span>
                                 </div>
                                 <button
-                                    onClick={() => router.push(`/auditoriumInfo?auditoriumId=${aud._id}`)}  // Ensure correct ID is passed
+                                    onClick={() => router.push(`/auditoriumInfo?auditoriumId=${aud._id,vendorId}&vendorId=${vendorId}`)}  
                                     className="mt-4 w-full bg-black text-white py-2 rounded-md"
                                 >
                                     Find auditorium

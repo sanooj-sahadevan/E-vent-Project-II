@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 export const connectToMongoDB = async (): Promise<void> => {
   try {
     await mongoose.connect(process.env.DB_CONNECTION_STRING!, {
-      serverSelectionTimeoutMS: 30000, // Timeout after 30 seconds if the server isn't responding
+      serverSelectionTimeoutMS: 30000, 
     });
     console.log('Successfully connected to MongoDB Atlas');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
-    process.exit(1); // Exit process with failure if connection fails
+    process.exit(1); 
   }
 
   mongoose.connection.on('connected', () => {

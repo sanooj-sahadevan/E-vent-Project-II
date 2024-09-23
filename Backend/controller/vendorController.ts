@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import {
-  loginVendor,
-  registerVendor,
-  verifyAndSaveVendor, vendorAddress, uploadDishes,
-  uploadImage, editVendor, findVendorById, uploadAuditorium,findFoodVendorById,findAuditoriumVendorById,findDishesById,findAuditoriumById
+  loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes,
+  uploadImage, editVendor, findVendorById, uploadAuditorium,softDeleteDishService,
+  findFoodVendorById, findAuditoriumVendorById, findDishesById, findAuditoriumById,softDeleteAuditoriumService
 } from "../Service/vendorService.js";
 
 import { otpGenerator } from "../utils/otpGenerator.js";
@@ -12,32 +11,26 @@ import { findVendorByEmail } from "../Repository/vendorRepo.js";
 import { HttpStatus } from "../utils/httpStatus.js";
 import { IMulterFile } from "../utils/type.js";
 
-// Controller for vendor registration
-// Controller for vendor registration
+
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { vendorname, email, phone, password } = req.body;
 
     console.log(req.body, '');
-
-
-    // Proceed with registration logic
     const proceedWithRegistration = async () => {
       try {
-        const otp = otpGenerator(); // Generate OTP for the vendor
+        const otp = otpGenerator();
         console.log('Generated OTP:', otp);
-
-        // Register the vendor with the required and optional fields
         await registerVendor({
           vendorname,
           phone,
           email,
           password,
-          otp, // Required OTP
-          reviews: "", // Default empty string
-          address: "", // Default empty address
-          district: "", // Default empty district
-          state: "" // Default empty state
+          otp, 
+          reviews: "", 
+          address: "", 
+          district: "", 
+          state: "" 
         });
 
         // Send OTP to vendor's email
@@ -68,7 +61,7 @@ export const verifyOtp = async (req: Request, res: Response, next: NextFunction)
 
     if (!vendor) {
       res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
-      return;  // Stop further execution after sending the response
+      return;  
     }
 
     if (vendor.otp === otp) {
@@ -78,7 +71,7 @@ export const verifyOtp = async (req: Request, res: Response, next: NextFunction)
       res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
     }
   } catch (error: any) {
-    next(error); // Pass the error to the error-handling middleware
+    next(error);
   }
 };
 
@@ -89,16 +82,10 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     console.log(req.body);
 
     const { vendor, vendorToken } = await loginVendor(email, password);
-
-    // if (vendor) {
-
-    // } else {
-    //   res.status(HttpStatus.UNAUTHORIZED).json({ error: "Invalid email or password" }); // Respond with error if vendor not found
-    // }
     res.cookie("vendorToken", vendorToken,);
     res.status(HttpStatus.OK).json({ vendor, vendorToken });
   } catch (error: any) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message }); // Corrected error message syntax
+    res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message }); 
   }
 };
 
@@ -111,10 +98,9 @@ export const fetchAddress = async (req: Request, res: Response, next: NextFuncti
     const vendorAddresses = await vendorAddress();
     console.log(vendorAddresses);
 
-    // Get addresses from service
-    res.status(HttpStatus.OK).json(vendorAddresses); // Send response
+    res.status(HttpStatus.OK).json(vendorAddresses); 
   } catch (error) {
-    next(error); // Pass error to the next middleware (error handler)
+    next(error); 
   }
 };
 ;
@@ -122,22 +108,17 @@ export const fetchAddress = async (req: Request, res: Response, next: NextFuncti
 // Edit vendor details
 
 
-
-// import { editVendor } from '../services/vendorService'; // Adjust the import path as needed
-
 export const editVendorDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     console.log('controller');
 
     const vendorDetails = req.body;
-    const file = req.file as unknown as IMulterFile; // Single file upload
+    const file = req.file as unknown as IMulterFile; 
 
     let imageUrl: string | undefined;
     if (file) {
-      imageUrl = await uploadImage(file); // Upload image and get the URL
+      imageUrl = await uploadImage(file); 
     }
-
-    // Pass both vendor details and image URL to the service
     const updatedVendor = await editVendor(vendorDetails, imageUrl);
     res.status(200).json({ ...updatedVendor, imageUrl }); // Include imageUrl if available
 
@@ -146,9 +127,6 @@ export const editVendorDetails = async (req: Request, res: Response, next: NextF
   }
 };
 
-
-
-;
 
 export const fetchVendorDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -166,19 +144,18 @@ export const fetchVendorDetails = async (req: Request, res: Response, next: Next
 };
 
 
-
 export const fetchdishes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     console.log('controller');
-    const { dishesId } = req.params; // Extract vendorId from request params
-    const vendor = await findDishesById(dishesId); // Fetch vendor details
+    const { dishesId } = req.params; 
+    const vendor = await findDishesById(dishesId); 
     if (!vendor) {
       res.status(404).json({ message: "Vendor not found" });
     } else {
-      res.status(200).json(vendor); // Return vendor details
+      res.status(200).json(vendor); 
     }
   } catch (error) {
-    next(error); // Pass error to error handler middleware
+    next(error); 
   }
 };
 
@@ -187,55 +164,37 @@ export const fetchdishes = async (req: Request, res: Response, next: NextFunctio
 export const fetchauditorium = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     console.log('controller  indo audi ');
-    const { auditoriumId } = req.params; 
-    console.log(auditoriumId,'---------------------------------------------------------------------------------');
-    
-    const vendor = await findAuditoriumById(auditoriumId); // Fetch vendor details
+    const { auditoriumId } = req.params;
+    console.log(auditoriumId, '---------------------------------------------------------------------------------');
+
+    const vendor = await findAuditoriumById(auditoriumId); 
     if (!vendor) {
       res.status(404).json({ message: "Vendor not found" });
     } else {
-      res.status(200).json(vendor); // Return vendor details
+      res.status(200).json(vendor); 
     }
   } catch (error) {
-    next(error); // Pass error to error handler middleware
+    next(error); 
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 interface ExtendedRequest extends Request {
   vendorId?: string; // Optional, since it might not be available in all cases
 }
 
-
-
 export const addDishes = async (req: ExtendedRequest, res: Response): Promise<Response> => {
   try {
     const { body } = req;
     const vendorId = req.vendorId;
-    console.log(vendorId, 'llllllllllllllllllllll');
 
-    // Check if vendorId is undefined
     if (!vendorId) {
       return res.status(400).json({ error: "Vendor ID is required" });
     }
 
-    const file = req.file as unknown as IMulterFile; // Single file upload
+    const file = req.file as unknown as IMulterFile; 
 
-    let imageUrl: string | undefined = undefined; // Initialize as `undefined`
+    let imageUrl: string | undefined = undefined; 
     if (file) {
       imageUrl = await uploadImage(file);
     }
@@ -256,7 +215,6 @@ export const addDishes = async (req: ExtendedRequest, res: Response): Promise<Re
 
 export const addAuditorium = async (req: ExtendedRequest, res: Response): Promise<Response> => {
   try {
-    console.log('1');
 
     const { body } = req;
     const vendorId = req.vendorId;
@@ -288,7 +246,6 @@ export const addAuditorium = async (req: ExtendedRequest, res: Response): Promis
 
 
 
-// Ensure the function name is consistent
 export const fetchDetailsVendor = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     console.log('Controller invoked');
@@ -299,11 +256,11 @@ export const fetchDetailsVendor = async (req: Request, res: Response, next: Next
     if (!vendor) {
       res.status(404).json({ message: "Vendor not found" });
     } else {
-      console.log(vendor,'bdhewbfew ');
+      console.log(vendor, 'bdhewbfew ');
 
       res.status(200).json(vendor);
     }
-    
+
   } catch (error) {
     console.error('Error in fetchDetailsVendor:', error);
     next(error);
@@ -312,29 +269,23 @@ export const fetchDetailsVendor = async (req: Request, res: Response, next: Next
 
 
 
-
-
 export const fetchFoodDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    console.log('Controller invoked foooooooooooooood' );
-
     const { vendorId } = req.params;
-    const dishes = await findFoodVendorById(vendorId); // Fetch dishes for the vendor
+    const dishes = await findFoodVendorById(vendorId); 
 
     if (!dishes || dishes.length === 0) {
       res.status(404).json({ message: "No dishes found for this vendor" });
     } else {
       console.log(dishes, 'Fetched dishes for vendor');
-      res.status(200).json(dishes); // Return the array of dishes
+      res.status(200).json(dishes); 
     }
-    
+
   } catch (error) {
     console.error('Error in fetchFoodDetails:', error);
     next(error);
   }
 };
-
-
 
 
 export const fetchAuditoriumDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -342,17 +293,75 @@ export const fetchAuditoriumDetails = async (req: Request, res: Response, next: 
     console.log('Controller invoked');
 
     const { vendorId } = req.params;
-    const auditorium = await findAuditoriumVendorById(vendorId); // Fetch dishes for the vendor
+    const auditorium = await findAuditoriumVendorById(vendorId); 
 
     if (!auditorium || auditorium.length === 0) {
       res.status(404).json({ message: "No dishes found for this vendor" });
     } else {
       console.log(auditorium, 'Fetched dishes for vendor');
-      res.status(200).json(auditorium); // Return the array of dishes
+      res.status(200).json(auditorium); 
     }
-    
   } catch (error) {
     console.error('Error in fetchFoodDetails:', error);
     next(error);
   }
 };
+
+
+
+
+
+export const softDeleteDish = async (req: Request, res: Response) => {
+  try {
+
+    console.log('delete');
+    
+      const { dishId } = req.params;  // Only dishId is needed
+
+      if (!dishId) {
+          return res.status(400).json({ message: 'Dish ID is missing' });
+      }
+
+      const updatedDish = await softDeleteDishService(dishId); // Call the service to soft delete the dish
+      if (!updatedDish) {
+          return res.status(404).json({ message: 'Dish not found or already deleted' });
+      }
+
+      res.status(200).json({ message: 'Dish deleted successfully', dish: updatedDish });
+  } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+
+
+export const softDeleteAuditorium = async (req: Request, res: Response) => {
+  try {
+    console.log('delete');
+    const { auditoriumId } = req.params;
+    if (!auditoriumId) {
+      return res.status(400).json({ message: 'Auditorium ID is missing' });
+    }
+    const updatedAuditorium = await softDeleteAuditoriumService(auditoriumId); // Call the service to soft delete the auditorium
+    if (!updatedAuditorium) {
+      return res.status(404).json({ message: 'Auditorium not found or already deleted' });
+    }
+
+    res.status(200).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+
+
+
+
+
+// const dish = vendor.dishes.id(dishId);
+// if (!dish) {
+//   return res.status(404).json({ message: 'Dish not found' });
+// }
+
+// dish.isDeleted = true; // Set soft delete flag
+// await vendor.save();

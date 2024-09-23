@@ -5,7 +5,6 @@ const AdminSchema = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
 });
-// Create the Mongoose model
 export const AdminModel = mongoose.model("Admin", AdminSchema);
 export const findUserByEmailAdmin = async (email) => {
     const admin = await AdminModel.findOne({ email });

@@ -5,11 +5,11 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { fetchauditorium } from "@/services/vendorAPI";
+import { fetchdishes } from "@/services/userApi";
 
-interface Auditorium {
+interface Dishes {
   images?: string;
-  auditoriumName: string;
+  dishesName: string;
   rating: number;
   category?: string;
   description?: string;
@@ -19,26 +19,29 @@ interface Auditorium {
 }
 
 const FoodItemPage: React.FC = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const auditoriumId = searchParams.get("auditoriumId");
+  const dishesId = searchParams.get("dishesId");
+  const vendorId = searchParams.get("vendorId");
 
-  const [auditoriumData, setAuditoriumData] = useState<Auditorium | null>(null);
+
+  const [dishesData, setDishesData] = useState<Dishes | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchAuditoriumDetails = async () => {
-      if (auditoriumId) {
+    const fetchDishesDetails = async () => {
+      if (dishesId) {
         try {
-          const response = await fetchauditorium(auditoriumId);
+          const response = await fetchdishes(dishesId);
           console.log(response);
 
           if (response && response.data) {
-            setAuditoriumData(response.data);
+            setDishesData(response.data);
           } else {
-            toast.error("Auditorium details not found.");
+            toast.error("Dishes details not found.");
           }
         } catch (error) {
-          toast.error("Failed to load auditorium details.");
+          toast.error("Failed to load dishes details.");
           console.error(error);
         } finally {
           setLoading(false);
@@ -46,83 +49,100 @@ const FoodItemPage: React.FC = () => {
       }
     };
 
-    fetchAuditoriumDetails();
-  }, [auditoriumId]);
+    fetchDishesDetails();
+  }, [dishesId]);
+
+  const addItem = () => {
+    if (dishesId) {
+      toast.success("Item added to the cart.");
+    } else {
+      toast.error("No valid item to add.");
+    }
+  };
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const checked = event.target.checked;
     console.log(checked);
-    // You can handle the checkbox state here, such as adding an item ID reference
   };
 
   if (loading) {
-    return <p>Loading...</p>; // Optional: Add a loading spinner or placeholder
+    return <p>Loading...</p>;
   }
 
-  if (!auditoriumData) {
-    return <p>No auditorium data available.</p>; // Handle cases where no auditorium data is available
+  if (!dishesData) {
+    return <p>No dishes data available.</p>;
   }
 
   const {
     images = "/placeholder.png",
-    auditoriumName,
+    dishesName,
     rating,
     category,
     description,
     menu,
     types,
     price,
-  } = auditoriumData;
+  } = dishesData;
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-center text-2xl font-bold mb-8">Food Items</h1>
+      <h1 className="text-center text-3xl font-bold mb-8 text-gray-800">Food Item Details</h1>
 
       {/* Top Food Image */}
-      <div className="relative w-full h-[300px] mb-8">
+      <div className="relative w-full h-[400px] mb-8">
         <img
-          src={images} // Replace with dynamic image URL
-          alt={auditoriumName}
-          className="w-full h-full object-cover rounded-lg shadow-lg"
+          src={images}
+          alt={dishesName}
+          className="w-full h-full object-cover rounded-xl shadow-lg"
         />
       </div>
 
       {/* Content Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Menu Card */}
-        <div className="bg-white shadow-lg rounded-lg p-4">
-          <h2 className="text-xl font-semibold mb-4">Menu: {menu}</h2>
-          <p className="text-sm text-gray-600 mb-6">
+        <div className="bg-white shadow-xl rounded-lg p-6">
+          <h2 className="text-2xl font-semibold mb-4">Menu: {menu}</h2>
+          <p className="text-gray-600 mb-6">
             {description || 'No description available.'}
           </p>
-          <label className="inline-flex items-center">
+          <label className="inline-flex items-center mb-6">
             <input
               type="checkbox"
               className="form-checkbox text-indigo-600"
-              onChange={handleCheckboxChange} // Checkbox handler
+              onChange={handleCheckboxChange}
             />
             <span className="ml-2 text-sm font-medium text-gray-700">Add Item</span>
           </label>
         </div>
 
-        {/* Auditorium Description */}
-        <div className="bg-white shadow-lg rounded-lg p-4">
-          <h2 className="text-xl font-semibold mb-2">{auditoriumName}</h2>
-          <div className="text-sm text-gray-500 mb-4 flex items-center">
+        {/* Dishes Description */}
+        <div className="bg-white shadow-xl rounded-lg p-6">
+          <h2 className="text-2xl font-semibold mb-2">{dishesName}</h2>
+          <div className="text-gray-500 mb-4 flex items-center">
             <span className="inline-block mr-2">📍</span>
             <span>{category || 'No category available'}</span>
           </div>
-          <div className="text-sm text-gray-600 mb-4">
+          <div className="text-gray-600 mb-4">
             <strong>Type: </strong> {types}
           </div>
           <div className="flex items-center mb-4">
             <span className="text-red-500 text-lg">★</span>
             <span className="ml-1 text-sm text-gray-600">{rating}</span>
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-gray-600 text-sm">
             <strong>Price: </strong> ${price}
           </p>
         </div>
+      </div>
+
+      {/* Add to Cart Button */}
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={() => router.push(`/booknow?dishesId=${dishesId}&vendorId=${vendorId}`)}
+          className="w-full md:w-1/3 bg-pink-500 hover:bg-pink-600 text-white py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105"
+        >
+          Add Item
+        </button>
       </div>
     </div>
   );

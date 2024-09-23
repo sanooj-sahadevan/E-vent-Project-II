@@ -1,37 +1,61 @@
-// import axios from "axios";
-// import { PAYMENT_SERVICE_DOMAIN } from "../constants";
+/* eslint-disable import/no-anonymous-default-export */
 // import { SERVER_URL } from "@/app/services/serverURL";
+import { SERVER_URL } from "@/services/serverURL";
 
-// const apiClient = axios.create({
-//   baseURL: SERVER_URL,
-//   withCredentials: true,
-//   timeout: 120000,
-// });
+import axios from "axios";
 
-// // eslint-disable-next-line import/no-anonymous-default-export
-// export default {
-//   addTransaction: async function (
-//     PayUOrderId: string,
-//     email: string,
-//     status: "success" | "failed"
-//   ) {
-//     try {
-//       const res = await apiClient.post("/addTransaction", {
-//         PayUOrderId,
-//         email,
-//         status,
-//       });
-//       return res.data;
-//     } catch (error: any) {
-//       throw new Error(error.message);
-//     }
-//   },
-//   getPosts: async function () {
-//     try {
-//       const res = await apiClient.get("/getPosts");
-//       return res.data;
-//     } catch (error: any) {
-//       throw new Error(error.message);
-//     }
-//   },
-// };
+const apiClient = axios.create({
+  baseURL: `${SERVER_URL}`,
+  withCredentials: true,
+  timeout: 120000,
+});
+
+export const PayUUrl = {
+  payment: `${SERVER_URL}/payment`,
+  response: `${SERVER_URL}/response`,
+  test: `${SERVER_URL}/response/test`,
+};
+
+export default {
+    
+  paymentReq: async function (data: any) {
+    console.log('routikii');
+    
+    try {
+      const reshash = await apiClient.post("/payment", JSON.stringify(data), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log({reshash})
+      return reshash.data;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+  response: async function (pd: any) {
+    try {
+      const response = await apiClient.post("/response", JSON.stringify(pd), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log({response})
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+  saveData: async function (pd: any) {
+    try {
+      const response = await apiClient.post("/response/saveData", JSON.stringify(pd), {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  },
+};

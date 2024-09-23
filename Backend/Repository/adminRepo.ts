@@ -11,7 +11,6 @@ const AdminSchema: Schema<Admin> = new Schema({
   password: { type: String, required: true },
 });
 
-// Create the Mongoose model
 export const AdminModel = mongoose.model<Admin>("Admin", AdminSchema);
 
 export const findUserByEmailAdmin = async (

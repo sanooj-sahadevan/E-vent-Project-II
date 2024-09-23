@@ -5,8 +5,10 @@ import {
     register,
     verifyOtp, vendorList,
     editUserDetails,
-    forgottenPassword,dishlist,
-    updatePassword,auditoriumlist,fetchVendorDetails,fetchFoodDetails,fetchAuditoriumDetails
+    forgottenPassword, dishlist,
+    updatePassword, auditoriumlist, fetchVendorDetails,
+     fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes,fetchBookedData,
+      payment, addTransaction,saveDB,
 } from "../controller/userController.js";
 import { verifyUser } from "../middleware/userJWT.js";
 
@@ -22,7 +24,7 @@ router.get('/vendors', vendorList);
 router.get('/dishlist', dishlist);
 router.get('/auditoriumlist', auditoriumlist);
 
-router.patch('/edituserDetails',  editUserDetails);
+router.patch('/edituserDetails', editUserDetails);
 router.post('/forgottenpassword', forgottenPassword)
 router.post('/updatePassword', updatePassword)
 
@@ -34,7 +36,37 @@ router.get('/fetchAuditoriumDetails/:vendorId', fetchAuditoriumDetails);
 
 
 
-// router.get('/Payment',payment)
+
+
+
+
+router.get("/bookEvent/:id",  fetchBookedData);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// info
+router.get('/fetchauditorium/:auditoriumId', fetchauditorium);
+router.get('/fetchdishes/:dishesId', fetchdishes);
+
+
+router.post('/saveDB', saveDB); // Use POST instead of GET
+
+
+router.post('/payment', payment);
+router.post('/addTransaction', addTransaction);
+// router.post('/response/saveData', saveData)
 
 
 

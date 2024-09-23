@@ -1,13 +1,13 @@
 import { Vendor } from "../models/vendorModel";
 import jwt from "jsonwebtoken";
 import {
-  createVendor,
-  findVendorByEmail,
-  findVendorByIdInDb,
-  updateVendor, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb
+  createVendor,findVendorByEmail,findVendorByIdInDb,updateVendor, 
+  vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium,
+  findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb,softDeleteDishRepo,softDeleteAuditoriumRepo,
 } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 import { IMulterFile } from "../utils/type";
+import { DishDocument } from "../models/dishesModel";
 
 export const registerVendor = async (vendor: Vendor) => {
   try {
@@ -22,10 +22,6 @@ export const registerVendor = async (vendor: Vendor) => {
         return existingVendor;
       }
     }
-
-    //   const hashedPassword = await bcrypt.hash(vendor.password, 10);
-    //   vendor.password = hashedPassword;
-
     return await createVendor(vendor);
   } catch (error) {
     console.error("Error during user registration:", error);
@@ -70,9 +66,9 @@ export const loginVendor = async (email: string, password: string) => {
 
 export const vendorAddress = async () => {
   try {
-    return await vendorAddressFromDB(); // Fetch from the repository
+    return await vendorAddressFromDB(); 
   } catch (error) {
-    throw new Error('Failed to fetch vendor addresses'); // Throw error to controller
+    throw new Error('Failed to fetch vendor addresses'); 
   }
 };
 
@@ -80,19 +76,12 @@ export const vendorAddress = async () => {
 export const editVendor = async (vendorDetails: Vendor, imageUrl: string | undefined) => {
   try {
     console.log('service');
-
-    // Pass both vendor details and image URL to the repository
     return await vendorEditFromDB(vendorDetails, imageUrl);
   } catch (error) {
     throw new Error('Failed to update vendor details');
   }
 };
 
-
-//   import { IMulterFile } from '../utils/type';
-// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
-// import { IMulterFile } from '../utils/type';
-// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
 
 export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
   try {
@@ -138,7 +127,6 @@ export const findDishesById = async (dishesId: string) => {
 };
 
 
-import { Dishes } from '../models/dishesModel';
 
 interface DishData {
   dishesName: string;
@@ -224,3 +212,31 @@ export const findAuditoriumVendorById = async (vendorId: string) => {
     throw new Error(`Error finding vendor dishes: ${error}`);
   }
 };
+
+
+
+
+
+export const softDeleteDishService = async (dishId: string): Promise<DishDocument | null> => {
+  try {
+    const updatedDish = await softDeleteDishRepo(dishId); // Delegate the deletion to the repository
+    return updatedDish;
+  } catch (error) {
+    throw new Error(`Error soft-deleting dish: ${error}`);
+  }
+};
+
+
+
+
+export const softDeleteAuditoriumService = async (auditoriumId: string) => {
+  try {
+    console.log('delete service');
+    
+    const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId); // Delegate the deletion to the repository
+    return updatedAuditorium;
+  } catch (error) {
+    throw new Error(`Error soft-deleting auditorium: ${error}`);
+  }
+};
+

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb } from "../Repository/vendorRepo.js";
+import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb, softDeleteDishRepo, softDeleteAuditoriumRepo, } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 export const registerVendor = async (vendor) => {
     try {
@@ -14,8 +14,6 @@ export const registerVendor = async (vendor) => {
                 return existingVendor;
             }
         }
-        //   const hashedPassword = await bcrypt.hash(vendor.password, 10);
-        //   vendor.password = hashedPassword;
         return await createVendor(vendor);
     }
     catch (error) {
@@ -50,26 +48,21 @@ export const loginVendor = async (email, password) => {
 };
 export const vendorAddress = async () => {
     try {
-        return await vendorAddressFromDB(); // Fetch from the repository
+        return await vendorAddressFromDB();
     }
     catch (error) {
-        throw new Error('Failed to fetch vendor addresses'); // Throw error to controller
+        throw new Error('Failed to fetch vendor addresses');
     }
 };
 export const editVendor = async (vendorDetails, imageUrl) => {
     try {
         console.log('service');
-        // Pass both vendor details and image URL to the repository
         return await vendorEditFromDB(vendorDetails, imageUrl);
     }
     catch (error) {
         throw new Error('Failed to update vendor details');
     }
 };
-//   import { IMulterFile } from '../utils/type';
-// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
-// import { IMulterFile } from '../utils/type';
-// import { uploadToS3Bucket } from '../repositories/s3Repository'; // Adjust the import path as needed
 export const uploadImage = async function (imageFile) {
     try {
         console.log('first step');
@@ -153,5 +146,24 @@ export const findAuditoriumVendorById = async (vendorId) => {
     }
     catch (error) {
         throw new Error(`Error finding vendor dishes: ${error}`);
+    }
+};
+export const softDeleteDishService = async (dishId) => {
+    try {
+        const updatedDish = await softDeleteDishRepo(dishId); // Delegate the deletion to the repository
+        return updatedDish;
+    }
+    catch (error) {
+        throw new Error(`Error soft-deleting dish: ${error}`);
+    }
+};
+export const softDeleteAuditoriumService = async (auditoriumId) => {
+    try {
+        console.log('delete service');
+        const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId); // Delegate the deletion to the repository
+        return updatedAuditorium;
+    }
+    catch (error) {
+        throw new Error(`Error soft-deleting auditorium: ${error}`);
     }
 };

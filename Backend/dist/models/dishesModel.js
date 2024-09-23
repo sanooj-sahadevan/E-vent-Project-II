@@ -37,7 +37,7 @@ const dishesSchema = new Schema({
     types: {
         type: String,
         required: true,
-    },
+    }, isDeleted: { type: Boolean, default: false }, // Correctly defined as a boolean
     menu: {
         type: String,
         required: true,

@@ -1,4 +1,3 @@
-// import mongoose, { Schema, Document } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 import { Dishes } from '../models/dishesModel.js';
@@ -7,50 +6,57 @@ const VendorSchema = new Schema({
     vendorname: { type: String, required: true },
     phone: { type: Number, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: [true, 'Password is required'], select: false }, // `select: false` to exclude password by default in queries
-    profileImage: { type: String, default: '' }, // Set default value for profileImage
-    adminVerified: { type: Boolean, default: false }, // adminVerified is not required, default is false
-    otp: { type: String, required: false }, // OTP is required for registration
-    otpVerified: { type: Boolean, default: false }, // Set OTP as not verified by default
-    reviews: { type: String, default: '' }, // Default to an empty string for reviews
-    address: { type: String, default: '' }, // Default empty address
-    district: { type: String, default: '' }, // Default empty district
-    state: { type: String, default: '' }, // Default empty state
+    password: { type: String, required: [true, 'Password is required'], select: false },
+    profileImage: { type: String, default: '' },
+    adminVerified: { type: Boolean, default: false },
+    otp: { type: String, required: false },
+    otpVerified: { type: Boolean, default: false },
+    reviews: { type: String, default: '' },
+    address: { type: String, default: '' },
+    district: { type: String, default: '' },
+    state: { type: String, default: '' },
 });
-// Create the Mongoose model
 export const VendorModel = mongoose.model("Vendor", VendorSchema);
-// Function to create a new user
 export const createVendor = async (vendor) => {
-    console.log('last');
-    const newVendor = new VendorModel(vendor);
-    return newVendor.save();
+    try {
+        const newVendor = new VendorModel(vendor);
+        return newVendor.save();
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
-// Function to find a comapany by email
 export const findVendorByEmail = async (email) => {
-    return VendorModel.findOne({ email });
+    try {
+        return VendorModel.findOne({ email });
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
-// Function to update a company by email
 export const updateVendor = async (email, update) => {
-    return VendorModel.findOneAndUpdate({ email }, update, { new: true });
+    try {
+        return VendorModel.findOneAndUpdate({ email }, update, { new: true });
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
-// Function to find a company by email and password
 export const findVendorByEmailAndPassword = async (email, password) => {
     return VendorModel.findOne({ email, password });
 };
 export const vendorAddressFromDB = async () => {
     try {
-        return await VendorModel.find().sort({ createdAt: -1 }); // Fetch sorted addresses
+        return await VendorModel.find().sort({ createdAt: -1 });
     }
     catch (error) {
-        throw new Error('Database query failed'); // Error message for DB failure
+        throw new Error('Database query failed');
     }
 };
 export const vendorEditFromDB = async (vendorDetails, imageUrl) => {
     try {
-        // Find the vendor by email
         const existingVendor = await VendorModel.findOne({ email: vendorDetails.email });
         if (existingVendor) {
-            // Update vendor details
             existingVendor.vendorname = vendorDetails.vendorname;
             existingVendor.phone = vendorDetails.phone;
             existingVendor.address = vendorDetails.address;
@@ -96,31 +102,40 @@ export const findVendorByIdInDb = async (vendorId) => {
     return await VendorModel.findById(vendorId);
 };
 export const findAuditoriumByIdInDb = async (auditoriumId) => {
-    console.log('controller profile audioooooooooooooooooooo');
     console.log(auditoriumId);
     let result = await Auditorium.findById(auditoriumId);
     console.log(result);
     return result;
 };
 export const findDishesByIdInDb = async (dishesId) => {
-    console.log('controller 3');
-    return await Dishes.findById(dishesId);
+    try {
+        console.log('controller 3');
+        return await Dishes.findById(dishesId);
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const findFoodVendorIdInDb = async (vendorId) => {
-    console.log('Fetching dishes for vendor ID:', vendorId);
-    const result = await Dishes.find({ vendorId: vendorId }); // Find all dishes with the matching vendorId
-    console.log('---------------------', result);
-    return result;
+    try {
+        const result = await Dishes.find({ vendorId: vendorId });
+        return result;
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const findAuditoriumVendorIdInDb = async (vendorId) => {
-    console.log('Fetching auditorium for vendor ID:', vendorId);
-    const res = await Auditorium.find({ vendorId: vendorId }); // Find all auditorium with the matching vendorId
-    console.log('---------------------', res);
-    return res;
+    try {
+        const res = await Auditorium.find({ vendorId: vendorId });
+        return res;
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const createDishes = async (dishesData) => {
     try {
-        // Create a new Dishes instance
         const dish = new Dishes({
             vendorId: dishesData.vendorId,
             dishesName: dishesData.data.dishesName,
@@ -164,6 +179,38 @@ export const createAuditorium = async (auditoriumData) => {
     }
     catch (error) {
         console.error("Error saving auditorium: ", error);
+        throw error;
+    }
+};
+export const softDeleteDishRepo = async (dishId) => {
+    try {
+        const dish = await Dishes.findById(dishId); // Fetch dish by its ID
+        if (!dish || dish.isDeleted) {
+            return null; // If dish not found or already soft-deleted, return null
+        }
+        dish.isDeleted = true; // Mark the dish as soft-deleted
+        await dish.save(); // Save the updated dish
+        return dish;
+    }
+    catch (error) {
+        console.error(`Error soft-deleting dish: ${error}`);
+        throw error;
+    }
+};
+export const softDeleteAuditoriumRepo = async (auditoriumId) => {
+    try {
+        console.log('delete repo');
+        const auditorium = await Auditorium.findById(auditoriumId); // Fetch auditorium by its ID
+        console.log(auditorium);
+        if (!auditorium || auditorium.isDeleted) {
+            return null;
+        }
+        auditorium.isDeleted = true;
+        await auditorium.save();
+        return auditorium; // Return the updated auditorium
+    }
+    catch (error) {
+        console.error(`Error soft-deleting auditorium: ${error}`);
         throw error;
     }
 };
