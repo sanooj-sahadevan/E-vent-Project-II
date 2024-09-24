@@ -288,7 +288,24 @@ export const getBookingDetail = async (id: string) => {
 
 
 
+export const createBookedTrip = async (
+  productinfo: string,
+  txnid: string,
+  status: string
+) => {
+  try {
+    const bookedData = await bookedModel.create({
+      productinfo, // Assuming this is event/product info
+      txnId: txnid,
+      paymentStatus: status,
+    });
 
+    return bookedData; // Return the created document
+  } catch (error) {
+    console.error(error);
+    return null; 
+  }
+};
 
 
 

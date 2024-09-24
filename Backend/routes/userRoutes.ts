@@ -7,7 +7,7 @@ import {
     editUserDetails,
     forgottenPassword, dishlist,
     updatePassword, auditoriumlist, fetchVendorDetails,
-     fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes,fetchBookedData,
+     fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes,fetchBookedData,saveData,
       payment, addTransaction,saveDB,
 } from "../controller/userController.js";
 import { verifyUser } from "../middleware/userJWT.js";
@@ -66,7 +66,7 @@ router.post('/saveDB', saveDB); // Use POST instead of GET
 
 router.post('/payment', payment);
 router.post('/addTransaction', addTransaction);
-// router.post('/response/saveData', saveData)
+router.post('/response/saveData', saveData);
 
 
 

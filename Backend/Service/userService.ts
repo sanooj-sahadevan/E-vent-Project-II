@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 
 
 import {
-  createUser,userEditFromDB,updateUser,
+  createUser,userEditFromDB,updateUser,createBookedTrip,
   findUserByEmailupdate,fetchfromDBDishes,VendorRepository,
   fetchfromDBAuditorium,findVendorByIdInDb,findUserByEmail,
   findAuditoriumByIdInDb,getBookingDetail,findFoodVendorIdInDb,
@@ -271,7 +271,14 @@ export const addTransactionDetails = async (
   }
 }
 
-// export const fetchbookingData = async (txnid: string, productinfo: string, status: string) => {
+export const fetchbookingData = async (
+  txnid: string,
+  productinfo: string,
+  status: string
+) => {
+  const bookedTrip = await createBookedTrip(productinfo, txnid, status);
+  return bookedTrip;
+};
 
 //   const bookedTrip = await updateBookedTrip(productinfo, txnid, status);
 //   return bookedTrip;

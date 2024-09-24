@@ -160,7 +160,7 @@ export const softDeleteDishService = async (dishId) => {
 export const softDeleteAuditoriumService = async (auditoriumId) => {
     try {
         console.log('delete service');
-        const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId); // Delegate the deletion to the repository
+        const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId);
         return updatedAuditorium;
     }
     catch (error) {

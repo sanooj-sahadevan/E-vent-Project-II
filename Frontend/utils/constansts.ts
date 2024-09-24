@@ -3,6 +3,9 @@ export const PayU = {
   };
   
   //  /* PROD: =
+
+  console.log('hjcbefhvbhufbvhubfhuvbrfhvbhurfbvhrbvhuvb');
+  
   export const FRONTEND_DOMAIN = "http://localhost:3000";
   
   const DOMAIN = "http://localhost:3000";
@@ -23,4 +26,6 @@ export const PayU = {
   export const SOCKET_URI = "http://localhost:3000";
   
   
-  export const JWT_SECRET =process.env.JWT_SECRET
+  // export const JWT_SECRET =process.env.JWT_SECRET
+
+  export const JWT_SECRET =   "dfnidhfhudhjvbjdbvudhvuhdfhvfheu"

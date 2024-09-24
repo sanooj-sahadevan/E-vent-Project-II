@@ -1,7 +1,7 @@
 import express from "express";
 import { 
 // googleLoginHandler,
-login, register, verifyOtp, vendorList, editUserDetails, forgottenPassword, dishlist, updatePassword, auditoriumlist, fetchVendorDetails, fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, payment, addTransaction, saveDB, } from "../controller/userController.js";
+login, register, verifyOtp, vendorList, editUserDetails, forgottenPassword, dishlist, updatePassword, auditoriumlist, fetchVendorDetails, fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, saveData, payment, addTransaction, saveDB, } from "../controller/userController.js";
 const router = express.Router();
 router.post("/signup", register);
 router.post("/verifyOtp", verifyOtp);
@@ -22,7 +22,7 @@ router.get('/fetchdishes/:dishesId', fetchdishes);
 router.post('/saveDB', saveDB); // Use POST instead of GET
 router.post('/payment', payment);
 router.post('/addTransaction', addTransaction);
-// router.post('/response/saveData', saveData)
+router.post('/response/saveData', saveData);
 export default router;
 // import { Router } from 'express';
 // import { LoginController, VendorController, UserController } from '../controller/userController.js';

@@ -1,6 +1,6 @@
 import { 
 // googleLogin,
-getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, findFoodVendorById, saveDatabase, findEvent } from "../Service/userService.js";
+getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, findFoodVendorById, saveDatabase, findEvent } from "../Service/userService.js";
 import { findUserByEmail,
 // findUserById,
  } from "../Repository/userReop.js";
@@ -333,6 +333,7 @@ export const payment = async (req, res) => {
 };
 export const addTransaction = async (req, res, next) => {
     try {
+        console.log('add transactionnnnnnnnnnnnnnnnnnnnnnnnnn');
         const { PayUOrderId, email, status } = req.body;
         console.log({ PayUOrderId, email, status });
         const transactionId = await addTransactionDetails(email, PayUOrderId, status);
@@ -342,31 +343,30 @@ export const addTransaction = async (req, res, next) => {
         next(error);
     }
 };
-// export const saveData = async (req: Request, res: Response) => {
-//   try {
-//     const { txnid, email, productinfo, status } = req.body;
-//     console.log({ txnid, email, productinfo, status });
-//     if (status == "success") {
-//       const bookedTripId = await fetchbookingData(txnid, productinfo, status);
-//       console.log({bookedTripId});
-//       const { tripId, userId }: any = bookedTripId;
-//       const trip = await fetchDetailTrip(tripId);
-//       const companyId = trip?.companyId;
-//       let chat = await chatModel.findOne({ userId, companyId });
-//       if (!chat) {
-//         // If no chat exists, create a new chat
-//         chat = new chatModel({
-//           userId,
-//           companyId,
-//         });
-//         await chat.save();
-//       }
-//       res.status(200).json(bookedTripId?._id);
-//     } else if (status == "failure") {
-//       res.json("booking failed");
-//       console.log(status);
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+export const saveData = async (req, res) => {
+    try {
+        console.log("save data   payament");
+        const { txnid, email, productinfo, status } = req.body;
+        console.log({ txnid, email, productinfo, status });
+        if (status === "success") {
+            const bookedTripId = await fetchbookingData(txnid, productinfo, status);
+            console.log({ bookedTripId });
+            if (bookedTripId) {
+                res.status(200).json({ success: true, bookedTripId: bookedTripId._id });
+            }
+            else {
+                res.status(500).json({ success: false, message: "Booking update failed" });
+            }
+        }
+        else if (status === "failure") {
+            res.status(400).json({ success: false, message: "Booking failed" });
+        }
+        else {
+            res.status(400).json({ success: false, message: "Unknown status" });
+        }
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};

@@ -233,7 +233,7 @@ export const softDeleteAuditoriumService = async (auditoriumId: string) => {
   try {
     console.log('delete service');
     
-    const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId); // Delegate the deletion to the repository
+    const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId); 
     return updatedAuditorium;
   } catch (error) {
     throw new Error(`Error soft-deleting auditorium: ${error}`);

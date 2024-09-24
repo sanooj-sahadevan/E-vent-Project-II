@@ -200,7 +200,7 @@ export const softDeleteDishRepo = async (dishId) => {
 export const softDeleteAuditoriumRepo = async (auditoriumId) => {
     try {
         console.log('delete repo');
-        const auditorium = await Auditorium.findById(auditoriumId); // Fetch auditorium by its ID
+        const auditorium = await Auditorium.findById(auditoriumId);
         console.log(auditorium);
         if (!auditorium || auditorium.isDeleted) {
             return null;

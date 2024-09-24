@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, saveBookingDetailsInDB } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, saveBookingDetailsInDB } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -222,7 +222,10 @@ export const addTransactionDetails = async (email, PayUOrderId, status) => {
         throw new Error(error.message);
     }
 };
-// export const fetchbookingData = async (txnid: string, productinfo: string, status: string) => {
+export const fetchbookingData = async (txnid, productinfo, status) => {
+    const bookedTrip = await createBookedTrip(productinfo, txnid, status);
+    return bookedTrip;
+};
 //   const bookedTrip = await updateBookedTrip(productinfo, txnid, status);
 //   return bookedTrip;
 // };
