@@ -10,6 +10,7 @@ import morgan from 'morgan';
 import fs from 'fs';
 import path from 'path';
 import { createStream } from 'rotating-file-stream';
+import chatRoutes from './routes/chatRoutes.js';
 // import { fileURLToPath } from 'url';
 // import { dirname } from 'path';
 
@@ -58,6 +59,7 @@ app.use(morgan('dev'));
 app.use('/user', userRoutes);
 app.use('/vendor', vendorRoutes);
 app.use('/admin', adminRoutes);
+app.use('/chat', chatRoutes);
 
 // Start the server
 app.listen(PORT, () => {

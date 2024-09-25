@@ -39,7 +39,6 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 export const LoginAPI = async (reqBody: any) => {
   console.log('logggg');
 
-  // return await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
   const response = await axios.post(`${SERVER_URL}/login`, reqBody, { withCredentials: true });
   console.log(response.data);
 
@@ -60,7 +59,6 @@ export const verifyOtp = async (data: any) => {
 export const GoogleLoginAPI = async (reqBody: any) => {
   console.log(reqBody);
 
-  // return await commonAPI("POST", `${SERVER_URL}/googleLogin`, reqBody);
   const response = await axios.post(`${SERVER_URL}/googleLogin`, reqBody, { withCredentials: true });
   return response.data
 };
@@ -68,7 +66,6 @@ export const GoogleLoginAPI = async (reqBody: any) => {
 export const ForgotenAPI = async (reqBody: any) => {
   console.log('logggg');
 
-  // return await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
   const response = await axios.post(`${SERVER_URL}/forgottenpassword`, reqBody, { withCredentials: true });
   console.log('vann');
 
@@ -154,7 +151,7 @@ export const allAuditoriumAPI = async (vendorId: string) => {
   try {
       console.log('Success front end');
 
-      const response = await axios.get(`${SERVER_URL}/auditoriumlist?vendorId=${vendorId}`); // Send vendorId as a query parameter
+      const response = await axios.get(`${SERVER_URL}/auditoriumlist?vendorId=${vendorId}`); 
       console.log(response.data, 'basdhbqhbd');
       return response.data;
   } catch (error) {
@@ -163,18 +160,16 @@ export const allAuditoriumAPI = async (vendorId: string) => {
 };
 
 
-export const fetchvendor = async (vendorId: string) => { //  fecth vendor profile in userside 
+export const fetchvendor = async (vendorId: string, userId: string) => {
   try {
-    console.log('rdyyyyy');
-    
-      const res = await axios.get(`${SERVER_URL}/fetchVendorDetails/${vendorId}`);
-      console.log(res);
-      return res;
+    const res = await axios.get(`${SERVER_URL}/fetchVendorDetails?vendorId=${vendorId}&userId=${userId}`);
+    return res;
   } catch (error) {
-    console.error(error);
-    
+    console.error("Error fetching vendor:", error);
+    throw error;
   }
 };
+
 
 
 export const FetchDishes = async (vendorId: string) => {
@@ -290,3 +285,8 @@ export const fetchingBookingDetails = async (bookingId: any) => {
     throw error;
   }
 };
+
+
+
+
+

@@ -5,6 +5,7 @@ import { VendorModel } from "./vendorRepo.js";
 import { Dishes } from "../models/dishesModel.js";
 import { Auditorium } from "../models/auditoriumModel.js";
 import { bookedModel } from "../models/bookedEvent.js";
+import { chatModel } from "../models/chatModel.js";
 
 // Extend Mongoose's Document interface
 interface IUserModel extends Document {
@@ -59,22 +60,22 @@ export const findUserByEmail = async (email: string) => {
     return UserModel.findOne({ email });
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
 
 export const findUserById = async (userId: string) => {
- try {
-  return UserModel.findById(userId);
- } catch (error) {
-  console.error(error);
-  
- }
+  try {
+    return UserModel.findById(userId);
+  } catch (error) {
+    console.error(error);
+
+  }
 };
 
 
-export const userEditFromDB = async (userDetails: User): Promise<IUserModel> => { 
+export const userEditFromDB = async (userDetails: User): Promise<IUserModel> => {
   try {
     const existingUser = await UserModel.findOne({ email: userDetails.email });
 
@@ -106,27 +107,27 @@ export const updateUser = async (email: string, update: Partial<User>) => {
   try {
     return UserModel.findOneAndUpdate({ email }, update, { new: true });
   } catch (error) {
-    console.error(error); 
+    console.error(error);
   }
 };
 
 export const findUserByEmailupdate = async (email: string, password: string) => {
- try {
-  const user = await UserModel.findOne({ email });
+  try {
+    const user = await UserModel.findOne({ email });
 
-  if (!user) {
-    throw new Error("User not found");
+    if (!user) {
+      throw new Error("User not found");
+    }
+    console.log(user.email);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+
+    await user.save();
+    return user;
+  } catch (error) {
+    console.error(error);
+
   }
-  console.log(user.email);
-  const hashedPassword = await bcrypt.hash(password, 10);
-  user.password = hashedPassword;
-
-  await user.save();
-  return user; 
- } catch (error) {
-  console.error(error);
-  
- }
 };
 
 
@@ -140,7 +141,7 @@ export class VendorRepository {
   }
 }
 
-export const fetchfromDBDishes =  async (vendorId: string): Promise<any | null> => {
+export const fetchfromDBDishes = async (vendorId: string): Promise<any | null> => {
   try {
     console.log('Fetching Dishes for vendor ID:', vendorId);
 
@@ -171,7 +172,7 @@ export const fetchfromDBAuditorium = async (vendorId: string): Promise<any | nul
 
     console.log('Fetched auditorium:', result);
 
-    return result; 
+    return result;
   } catch (error) {
     console.error('Error fetching auditorium from the database:', error);
     throw new Error('Error fetching auditorium from the database');
@@ -180,14 +181,30 @@ export const fetchfromDBAuditorium = async (vendorId: string): Promise<any | nul
 
 
 
-export const findVendorByIdInDb = async (vendorId: string) => {
-try {
-  return await VendorModel.findById(vendorId);
+export const findVendorByIdInDb = async (vendorId: string, userId: string) => {
+  try {
+    // Find the vendor by ID
+    const vendor = await VendorModel.findById(vendorId);
+    if (!vendor) {
+      throw new Error("Vendor not found");
+    }
 
-} catch (error) {
-  console.error(error);
-  
-}
+
+    let chat = await chatModel.findOne({ userId, vendorId });
+    
+    if (!chat) {
+      chat = new chatModel({
+        userId,
+        vendorId,
+      });
+      await chat.save(); 
+    }
+
+    return vendor; 
+  } catch (error) {
+    console.error("Error in repository:", error);
+    throw error;
+  }
 };
 
 
@@ -195,25 +212,25 @@ try {
 
 export const findFoodVendorIdInDb = async (vendorId: string) => {
   try {
-    const objectId = new mongoose.Types.ObjectId(vendorId); 
-    const result = await Dishes.find({ vendorId: objectId });  
+    const objectId = new mongoose.Types.ObjectId(vendorId);
+    const result = await Dishes.find({ vendorId: objectId });
     console.log('Result from database:', result);
     if (result.length === 0) {
       console.log('No dishes found for vendor:', vendorId);
-      return null;  
+      return null;
     }
 
-    return result; 
+    return result;
   } catch (error) {
     console.error('Error fetching dishes for vendor:', error);
-    throw new Error(`Error fetching dishes: ${error}`);  
+    throw new Error(`Error fetching dishes: ${error}`);
   }
 };
 
 export const findAuditoriumVendorIdInDb = async (vendorId: string) => {
 
   try {
-    const objectId = new mongoose.Types.ObjectId(vendorId); 
+    const objectId = new mongoose.Types.ObjectId(vendorId);
 
     const result = await Auditorium.find({ vendorId: objectId });  // Query the Dishes collection
     console.log('Result from database:', result);
@@ -235,36 +252,28 @@ export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
 
   try {
     let result = await Auditorium.findById(auditoriumId);
-  console.log(result);
-  return result
+    console.log(result);
+    return result
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
 
 
 export const finddishesByIdInDb = async (dishesId: string) => {
-try {
-  let result = await Dishes.findById(dishesId);
-  console.log(result);
-  return result
-} catch (error) {
-  console.error(error); 
-}
+  try {
+    let result = await chatModel.findById(dishesId);
+    console.log(result);
+    return result
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 
-export const saveBookingDetailsInDB = async (bookingDetails: Object) => {
-  console.log('Saving booking details to database...');
-  console.log(bookingDetails); // Log the details being saved
 
-  const booking = new bookedModel(bookingDetails);
-  const result = await booking.save(); // Use save on the instance
-  console.log(result);
-  return result;
-};
 
 
 
@@ -273,7 +282,8 @@ export const getBookingDetail = async (id: string) => {
   try {
     const bookedData = await bookedModel
       .findById(id)
-      .populate("userId"); 
+      .populate("tripId") 
+      .populate("userId");
 
     if (!bookedData) {
       throw new Error(`Booking with id ${id} not found`);
@@ -294,18 +304,32 @@ export const createBookedTrip = async (
   status: string
 ) => {
   try {
+
+    console.log('save karo');
+
     const bookedData = await bookedModel.create({
-      productinfo, // Assuming this is event/product info
+      productinfo,
       txnId: txnid,
       paymentStatus: status,
     });
 
-    return bookedData; // Return the created document
+    return bookedData;
   } catch (error) {
     console.error(error);
-    return null; 
+    return null;
   }
 };
 
 
 
+export const savechatDB = async (chat: string) => {
+  try {
+    console.log('Saving chat to DB');
+
+    const newChat = new chatModel({ message: chat });  // Create a new instance of the Chat model
+    return await newChat.save();  // Save the chat in the database
+  } catch (error) {
+    console.error("Database error:", error);
+    throw new Error("Database operation failed.");  // Handle and throw database-related errors
+  }
+};

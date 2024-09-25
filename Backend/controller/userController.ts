@@ -4,7 +4,7 @@ import {
   getAllVendors,registerUser,verifyAndSaveUser,update,loginUser,editUser,
   checkEmail,getAllDishes,getAllAuditorium,findVendorById,findAuditoriumVendorById,
   findAuditoriumById,finddishesById,addTransactionDetails,fetchbookingData,
-  findFoodVendorById,saveDatabase,findEvent
+  findFoodVendorById,findEvent
 } from "../Service/userService.js";
 
 import {
@@ -246,17 +246,25 @@ export const editUserDetails = async (req: Request, res: Response, next: NextFun
 export const fetchVendorDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     console.log('controller   user controlelr auditorum');
-    const { vendorId } = req.params;
-    const vendor = await findVendorById(vendorId); 
+    const { vendorId, userId } = req.query;
+
+    if (!vendorId || !userId) {
+      res.status(400).json({ message: "Missing vendorId or userId" });
+      return; 
+    }
+
+    const vendor = await findVendorById(vendorId as string, userId as string); // Pass both IDs to service
+
     if (!vendor) {
       res.status(404).json({ message: "Vendor not found" });
     } else {
-      res.status(200).json(vendor); 
+      res.status(200).json(vendor);
     }
   } catch (error) {
     next(error); 
   }
 };
+
 
 
 
@@ -342,20 +350,7 @@ export const fetchdishes = async (req: Request, res: Response, next: NextFunctio
 };
 
 
-export const saveDB = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const bookingDetails = req.body; 
 
-    const savedBooking = await saveDatabase(bookingDetails); 
-    if (!savedBooking) {
-      res.status(404).json({ message: "Failed to save booking" });
-    } else {
-      res.status(200).json(savedBooking);
-    }
-  } catch (error) {
-    next(error); 
-  }
-};
 
 
 
@@ -461,3 +456,8 @@ export const saveData = async (req: Request, res: Response) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+
+
+//Chat
+

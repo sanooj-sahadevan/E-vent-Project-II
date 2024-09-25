@@ -10,6 +10,7 @@ export async function POST(req: any, res: NextApiResponse) {
   console.log({ contentType });
 
   const formData = await req.formData();
+  console.log(formData, '1111111111111111111111111111111111111111111111111111111111111111111111111111111111');
 
   const data: { [key: string]: any } = {};
   formData.forEach((value: any, key: string) => {
@@ -19,9 +20,8 @@ export async function POST(req: any, res: NextApiResponse) {
   let PayUOrderId
   try {
     PayUOrderId = await PayUApiCalls.saveData(data);
-    console.log(PayUOrderId,'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
+    console.log(PayUOrderId, 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
 
-    // await paymentService.addTransaction(PayUOrderId, data.email, "success");
   } catch (error: any) {
     console.log(error.message);
   }

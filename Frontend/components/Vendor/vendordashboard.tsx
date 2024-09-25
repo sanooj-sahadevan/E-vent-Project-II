@@ -96,7 +96,7 @@ const Home: React.FC = () => {
     const fetchAuditorium = async (vendorId: string) => {
         try {
             const auditorium = await FetchAuditorium(vendorId);
-            setAuditoriums(auditorium);
+            setAuditoriums(auditorium.filter((auditorium: { isDeleted: any; }) => !auditorium.isDeleted));
             setDishError(null);
         } catch (error) {
             console.error('Error fetching auditoriums:', error);
@@ -200,7 +200,7 @@ const Home: React.FC = () => {
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
                 <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
                     <span className="flex items-center"><span className="mr-2">🍲</span> Food Items</span>
-                    <a href="/vendorAddDishes" className="text-green-500"><FaPlus /></a>
+                    <a href="/vendorAddDishes" className="text-black-500"><FaPlus /></a>
                 </h2>
                 <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
                     {dishError ? (
@@ -238,7 +238,7 @@ const Home: React.FC = () => {
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
                 <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
                     <span className="flex items-center"><span className="mr-2">🏛️</span> Auditorium</span>
-                    <a href="/auditoriumAdd" className="text-green-500"><FaPlus /></a>
+                    <a href="/vendorAddAuditoriums" className="text-black-500"><FaPlus /></a>
                 </h2>
                 <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
                     {dishError ? (

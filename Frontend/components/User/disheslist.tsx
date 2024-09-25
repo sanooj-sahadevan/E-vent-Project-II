@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 interface Dishes {
     _id: string;
-    image: string | undefined;
+    images: string | undefined;
     dishesName: string;
     state: string;
     rating: number;
@@ -57,13 +57,13 @@ const DishesPage: React.FC = () => {
 
 
     return (
-        <div className="container mx-auto px-8 py-8 bg-white">
+        <div className="container mx-auto px-8 py-8 bg-white m-[100px] mt-[100px]">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {dishes.length > 0 ? (
                     dishes.map((dish) => (
                         <div key={dish._id} className="bg-white shadow-md rounded-lg p-4">
                             <img
-                                src={dish.image || "/placeholder.png"}  // Fixed fallback image logic
+                                src={dish.images || "/placeholder.png"}  // Fixed fallback image logic
                                 alt={dish.dishesName}
                                 className="w-full h-40 object-cover rounded-t-md"
                             />
@@ -72,7 +72,7 @@ const DishesPage: React.FC = () => {
                                 <p className="text-sm text-gray-600">Price: ${dish.price}</p>
                                 <div className="flex items-center mt-2">
                                     <span className="text-red-500 text-lg">★</span>
-                                    <span className="ml-1 text-sm text-gray-600">{dish.rating}</span>
+                                    <span className="ml-1 text-sm text-gray-600">{dish.state}</span>
                                 </div>
                                 <button
                                     onClick={() => router.push(`/dishesinfo?dishesId=${dish._id}&vendorId=${vendorId}`)}  // Pass vendorId along with dishesId

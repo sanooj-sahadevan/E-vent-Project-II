@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, saveBookingDetailsInDB } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -107,10 +107,9 @@ export const editUser = async (userDetails) => {
         throw new Error('Failed to update user details');
     }
 };
-export const findVendorById = async (vendorId) => {
+export const findVendorById = async (vendorId, userId) => {
     try {
-        console.log('controller 2  user service');
-        const vendor = await findVendorByIdInDb(vendorId);
+        const vendor = await findVendorByIdInDb(vendorId, userId);
         return vendor;
     }
     catch (error) {
@@ -155,15 +154,6 @@ export const finddishesById = async (dishesId) => {
     }
     catch (error) {
         throw new Error(`Error finding vendor: ${error}`);
-    }
-};
-export const saveDatabase = async (bookingDetails) => {
-    try {
-        const savedBooking = await saveBookingDetailsInDB(bookingDetails); // Pass the booking details
-        return savedBooking;
-    }
-    catch (error) {
-        throw new Error(`Error saving booking details: ${error}`);
     }
 };
 export const findEvent = async (bookingId) => {
@@ -223,9 +213,8 @@ export const addTransactionDetails = async (email, PayUOrderId, status) => {
     }
 };
 export const fetchbookingData = async (txnid, productinfo, status) => {
+    console.log('service');
     const bookedTrip = await createBookedTrip(productinfo, txnid, status);
+    console.log(bookedTrip);
     return bookedTrip;
 };
-//   const bookedTrip = await updateBookedTrip(productinfo, txnid, status);
-//   return bookedTrip;
-// };

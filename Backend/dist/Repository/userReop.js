@@ -4,6 +4,7 @@ import { VendorModel } from "./vendorRepo.js";
 import { Dishes } from "../models/dishesModel.js";
 import { Auditorium } from "../models/auditoriumModel.js";
 import { bookedModel } from "../models/bookedEvent.js";
+import { chatModel } from "../models/chatModel.js";
 // Define the Mongoose schema for the User
 const UserSchema = new Schema({
     username: { type: String, required: true },
@@ -134,12 +135,26 @@ export const fetchfromDBAuditorium = async (vendorId) => {
         throw new Error('Error fetching auditorium from the database');
     }
 };
-export const findVendorByIdInDb = async (vendorId) => {
+export const findVendorByIdInDb = async (vendorId, userId) => {
     try {
-        return await VendorModel.findById(vendorId);
+        // Find the vendor by ID
+        const vendor = await VendorModel.findById(vendorId);
+        if (!vendor) {
+            throw new Error("Vendor not found");
+        }
+        let chat = await chatModel.findOne({ userId, vendorId });
+        if (!chat) {
+            chat = new chatModel({
+                userId,
+                vendorId,
+            });
+            await chat.save();
+        }
+        return vendor;
     }
     catch (error) {
-        console.error(error);
+        console.error("Error in repository:", error);
+        throw error;
     }
 };
 export const findFoodVendorIdInDb = async (vendorId) => {
@@ -186,7 +201,7 @@ export const findAuditoriumByIdInDb = async (auditoriumId) => {
 };
 export const finddishesByIdInDb = async (dishesId) => {
     try {
-        let result = await Dishes.findById(dishesId);
+        let result = await chatModel.findById(dishesId);
         console.log(result);
         return result;
     }
@@ -194,18 +209,11 @@ export const finddishesByIdInDb = async (dishesId) => {
         console.error(error);
     }
 };
-export const saveBookingDetailsInDB = async (bookingDetails) => {
-    console.log('Saving booking details to database...');
-    console.log(bookingDetails); // Log the details being saved
-    const booking = new bookedModel(bookingDetails);
-    const result = await booking.save(); // Use save on the instance
-    console.log(result);
-    return result;
-};
 export const getBookingDetail = async (id) => {
     try {
         const bookedData = await bookedModel
             .findById(id)
+            .populate("tripId")
             .populate("userId");
         if (!bookedData) {
             throw new Error(`Booking with id ${id} not found`);
@@ -219,15 +227,27 @@ export const getBookingDetail = async (id) => {
 };
 export const createBookedTrip = async (productinfo, txnid, status) => {
     try {
+        console.log('save karo');
         const bookedData = await bookedModel.create({
-            productinfo, // Assuming this is event/product info
+            productinfo,
             txnId: txnid,
             paymentStatus: status,
         });
-        return bookedData; // Return the created document
+        return bookedData;
     }
     catch (error) {
         console.error(error);
         return null;
+    }
+};
+export const savechatDB = async (chat) => {
+    try {
+        console.log('Saving chat to DB');
+        const newChat = new chatModel({ message: chat }); // Create a new instance of the Chat model
+        return await newChat.save(); // Save the chat in the database
+    }
+    catch (error) {
+        console.error("Database error:", error);
+        throw new Error("Database operation failed."); // Handle and throw database-related errors
     }
 };

@@ -7,6 +7,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
+import chatRoutes from './routes/chatRoutes.js';
 // import { fileURLToPath } from 'url';
 // import { dirname } from 'path';
 dotenv.config();
@@ -41,6 +42,7 @@ app.use(morgan('dev'));
 app.use('/user', userRoutes);
 app.use('/vendor', vendorRoutes);
 app.use('/admin', adminRoutes);
+app.use('/chat', chatRoutes);
 // Start the server
 app.listen(PORT, () => {
     console.log(`Server started running on http://localhost:${PORT}/`);

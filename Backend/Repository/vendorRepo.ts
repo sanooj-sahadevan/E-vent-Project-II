@@ -236,15 +236,14 @@ export const createAuditorium = async (auditoriumData: any) => {
 
 export const softDeleteDishRepo = async (dishId: string): Promise<DishDocument | null> => {
   try {
-    const dish = await Dishes.findById(dishId); // Fetch dish by its ID
+    const dish = await Dishes.findById(dishId); 
 
     if (!dish || dish.isDeleted) {
-      return null; // If dish not found or already soft-deleted, return null
+      return null; 
     }
 
-    dish.isDeleted = true; // Mark the dish as soft-deleted
-    await dish.save(); // Save the updated dish
-
+    dish.isDeleted = true; 
+    await dish.save(); 
     return dish;
   } catch (error) {
     console.error(`Error soft-deleting dish: ${error}`);
@@ -270,7 +269,7 @@ console.log(auditorium);
     auditorium.isDeleted = true; 
     await auditorium.save(); 
 
-    return auditorium; // Return the updated auditorium
+    return auditorium; 
   } catch (error) {
     console.error(`Error soft-deleting auditorium: ${error}`);
     throw error;

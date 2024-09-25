@@ -25,7 +25,7 @@ const CheckoutPage: React.FC = () => {
   });
 
   // State to control PayUComponent visibility
-  const [showPayUComponent, setShowPayUComponent] = useState(false);
+  const [isPaymentEnabled, setIsPaymentEnabled] = useState(false); // Toggle state
 
   // Fetch user and query params on component mount
   useEffect(() => {
@@ -54,19 +54,25 @@ const CheckoutPage: React.FC = () => {
       dishesId: searchParams.get("dishesId") || '',
     };
 
-    // Update bookingDetails state with the params
+    // Determine the advance amount based on the category
+    let advanceAmount = 10000; // Default
+    if (params.category === 'platinum') {
+      advanceAmount = 20000;
+    } else if (params.category === 'gold') {
+      advanceAmount = 15000;
+    } else if (params.category === 'silver') {
+      advanceAmount = 1000;
+    }
+
+    // Update bookingDetails state with the params and advanceAmount
     setBookingDetails((prev) => ({
       ...prev,
       ...params,
+      advanceAmount, // Set the advanceAmount based on the category
     }));
   }, [searchParams]);
 
   console.log(bookingDetails, 'Booking Details -------------------------------------------------------');
-
-  // Handle showing the PayUComponent
-  const handlePayment = () => {
-    setShowPayUComponent(true); // Show PayUComponent directly
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -101,22 +107,26 @@ const CheckoutPage: React.FC = () => {
 
         {/* Right: Payment Method */}
         <div className="w-full lg:w-1/3 bg-white shadow-lg rounded-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-700 mb-6">Click the Button for Payment</h2>
+          <h2 className="text-2xl font-bold text-gray-700 mb-6">Enable Payment</h2>
 
-          {/* Total Price and Pay Button */}
-          <div className="flex justify-between text-xl font-semibold text-gray-700 mb-4">
-            <p>Total</p>
-            <p>{bookingDetails.advanceAmount}</p>
+          {/* Toggle for Payment Method */}
+          <div className="flex items-center mb-4">
+            <input
+              type="checkbox"
+              id="paymentToggle"
+              checked={isPaymentEnabled}
+              onChange={() => setIsPaymentEnabled(!isPaymentEnabled)} // Toggle state
+              className="mr-2"
+            />
+            <label htmlFor="paymentToggle" className="text-lg text-gray-700">
+              Enable Payment
+            </label>
           </div>
-          <button
-            className="bg-pink-500 hover:bg-pink-600 text-white py-3 px-6 w-full rounded-lg font-bold transition-all duration-200"
-            onClick={handlePayment}
-          >
-            Pay Now
-          </button>
 
           {/* Conditionally render the PayUComponent */}
-          {showPayUComponent && <PayUComponent BookedData={bookingDetails} />}
+          {isPaymentEnabled && (
+            <PayUComponent BookedData={bookingDetails} />
+          )}
         </div>
       </div>
     </div>

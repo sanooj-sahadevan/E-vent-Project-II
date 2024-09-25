@@ -261,7 +261,7 @@ const EditVendor: React.FC = () => {
 
           {/* Reviews */}
           <div className="col-span-1 md:col-span-2">
-            <label className="block text-gray-700">Reviews</label>
+            <label className="block text-gray-700">Description</label>
             {isEditing ? (
               <textarea
                 value={vendorDetails.reviews}

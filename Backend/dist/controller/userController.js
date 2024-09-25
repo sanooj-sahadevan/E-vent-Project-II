@@ -1,6 +1,6 @@
 import { 
 // googleLogin,
-getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, findFoodVendorById, saveDatabase, findEvent } from "../Service/userService.js";
+getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, findFoodVendorById, findEvent } from "../Service/userService.js";
 import { findUserByEmail,
 // findUserById,
  } from "../Repository/userReop.js";
@@ -196,8 +196,12 @@ export const editUserDetails = async (req, res, next) => {
 export const fetchVendorDetails = async (req, res, next) => {
     try {
         console.log('controller   user controlelr auditorum');
-        const { vendorId } = req.params;
-        const vendor = await findVendorById(vendorId);
+        const { vendorId, userId } = req.query;
+        if (!vendorId || !userId) {
+            res.status(400).json({ message: "Missing vendorId or userId" });
+            return;
+        }
+        const vendor = await findVendorById(vendorId, userId); // Pass both IDs to service
         if (!vendor) {
             res.status(404).json({ message: "Vendor not found" });
         }
@@ -280,21 +284,6 @@ export const fetchdishes = async (req, res, next) => {
         next(error);
     }
 };
-export const saveDB = async (req, res, next) => {
-    try {
-        const bookingDetails = req.body;
-        const savedBooking = await saveDatabase(bookingDetails);
-        if (!savedBooking) {
-            res.status(404).json({ message: "Failed to save booking" });
-        }
-        else {
-            res.status(200).json(savedBooking);
-        }
-    }
-    catch (error) {
-        next(error);
-    }
-};
 export const fetchBookedData = async (req, res) => {
     const { id } = req.params;
     try {
@@ -370,3 +359,4 @@ export const saveData = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
+//Chat

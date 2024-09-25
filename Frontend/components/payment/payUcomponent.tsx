@@ -21,7 +21,7 @@ const PayUComponent = ({ BookedData }: Props) => {
     const { username = '', email = '', phone = '' } = BookedData.userId || {};
     const key = PayU.merchantKey;
     console.log('324131');
-    
+
     const surl = `${FRONTEND_DOMAIN}/api/paymentSuccess`;
     const furl = `${FRONTEND_DOMAIN}/api/paymentFailure`;
 
@@ -30,9 +30,9 @@ const PayUComponent = ({ BookedData }: Props) => {
 
         (async function () {
             try {
-                console.log('Payment request data:', data); 
+                console.log('Payment request data:', data);
                 const res = await PayUApiCalls.paymentReq(data);
-                setHash(res.hash); 
+                setHash(res.hash);
             } catch (error: any) {
                 console.error("Payment Error: " + error.message);
                 alert(error.message);
@@ -56,7 +56,7 @@ const PayUComponent = ({ BookedData }: Props) => {
                 <button
                     type="submit"
                     value="submit"
-                    className="w-full bg-blue-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-pink-600 transition"
+                    className="w-full bg-pink-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-pink-600 transition"
                 >
                     Pay with PayU
                 </button>

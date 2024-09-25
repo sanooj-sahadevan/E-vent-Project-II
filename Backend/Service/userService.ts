@@ -8,7 +8,7 @@ import {
   findUserByEmailupdate,fetchfromDBDishes,VendorRepository,
   fetchfromDBAuditorium,findVendorByIdInDb,findUserByEmail,
   findAuditoriumByIdInDb,getBookingDetail,findFoodVendorIdInDb,
-  findAuditoriumVendorIdInDb,finddishesByIdInDb,saveBookingDetailsInDB
+  findAuditoriumVendorIdInDb,finddishesByIdInDb,savechatDB,
 } from "../Repository/userReop.js";
 
 export const registerUser = async (user: User) => {
@@ -139,10 +139,9 @@ export const editUser = async (userDetails: User) => {
 };
 
 
-export const findVendorById = async (vendorId: string) => {
+export const findVendorById = async (vendorId: string, userId: string) => {
   try {
-    console.log('controller 2  user service');
-    const vendor = await findVendorByIdInDb(vendorId);
+    const vendor = await findVendorByIdInDb(vendorId, userId); 
     return vendor;
   } catch (error) {
     throw new Error(`Error finding vendor: ${error}`);
@@ -194,14 +193,7 @@ export const finddishesById = async (dishesId: string) => {
 };
 
 
-export const saveDatabase = async (bookingDetails: Object) => {
-  try {
-    const savedBooking = await saveBookingDetailsInDB(bookingDetails); // Pass the booking details
-    return savedBooking;
-  } catch (error) {
-    throw new Error(`Error saving booking details: ${error}`);
-  }
-};
+
 
 
 
@@ -276,10 +268,16 @@ export const fetchbookingData = async (
   productinfo: string,
   status: string
 ) => {
+
+  console.log('service');
+  
   const bookedTrip = await createBookedTrip(productinfo, txnid, status);
+  console.log(bookedTrip);
+  
   return bookedTrip;
+
 };
 
-//   const bookedTrip = await updateBookedTrip(productinfo, txnid, status);
-//   return bookedTrip;
-// };
+
+
+

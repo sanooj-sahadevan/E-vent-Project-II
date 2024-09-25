@@ -23,7 +23,7 @@ const BookingSuccess: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-4 text-center">Booking Successful!</h2>
           <div className="mb-4 text-center">
             <p className="text-lg font-medium">Transaction ID:</p>
-            <p className="text-gray-700">1234567890</p> {/* Static transaction ID for now */}
+            <p className="text-gray-700">66f27061859b4d9bf5ccaeba</p> Static transaction ID for now
           </div>
           <div className="mt-6">
             <button

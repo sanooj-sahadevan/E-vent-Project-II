@@ -85,11 +85,14 @@ const FoodItemPage: React.FC = () => {
   } = dishesData;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-center text-3xl font-bold mb-8 text-gray-800">Food Item Details</h1>
+
+
+
+    <div className="container mx-auto px-10 py-10 shadow-lg"> {/* Added shadow to the container */}
+      <h1 className="text-center text-3xl font-bold mb-6 text-gray-800">Food Item Details</h1>
 
       {/* Top Food Image */}
-      <div className="relative w-full h-[400px] mb-8">
+      <div className="relative w-full h-[300px] mb-6 shadow-lg"> {/* Added shadow */}
         <img
           src={images}
           alt={dishesName}
@@ -98,14 +101,14 @@ const FoodItemPage: React.FC = () => {
       </div>
 
       {/* Content Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Menu Card */}
-        <div className="bg-white shadow-xl rounded-lg p-6">
+        <div className="bg-white shadow-lg rounded-lg p-4"> {/* Adjusted shadow */}
           <h2 className="text-2xl font-semibold mb-4">Menu: {menu}</h2>
-          <p className="text-gray-600 mb-6">
+          <p className="text-gray-600 mb-4">
             {description || 'No description available.'}
           </p>
-          <label className="inline-flex items-center mb-6">
+          <label className="inline-flex items-center mb-4">
             <input
               type="checkbox"
               className="form-checkbox text-indigo-600"
@@ -116,16 +119,16 @@ const FoodItemPage: React.FC = () => {
         </div>
 
         {/* Dishes Description */}
-        <div className="bg-white shadow-xl rounded-lg p-6">
+        <div className="bg-white shadow-lg rounded-lg p-4"> {/* Adjusted shadow */}
           <h2 className="text-2xl font-semibold mb-2">{dishesName}</h2>
-          <div className="text-gray-500 mb-4 flex items-center">
+          <div className="text-gray-500 mb-2 flex items-center">
             <span className="inline-block mr-2">📍</span>
             <span>{category || 'No category available'}</span>
           </div>
-          <div className="text-gray-600 mb-4">
+          <div className="text-gray-600 mb-2">
             <strong>Type: </strong> {types}
           </div>
-          <div className="flex items-center mb-4">
+          <div className="flex items-center mb-2">
             <span className="text-red-500 text-lg">★</span>
             <span className="ml-1 text-sm text-gray-600">{rating}</span>
           </div>
@@ -136,7 +139,7 @@ const FoodItemPage: React.FC = () => {
       </div>
 
       {/* Add to Cart Button */}
-      <div className="flex justify-center mt-8">
+      <div className="flex justify-center mt-6">
         <button
           onClick={() => router.push(`/booknow?dishesId=${dishesId}&vendorId=${vendorId}`)}
           className="w-full md:w-1/3 bg-pink-500 hover:bg-pink-600 text-white py-3 px-6 rounded-lg shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-105"
@@ -145,6 +148,11 @@ const FoodItemPage: React.FC = () => {
         </button>
       </div>
     </div>
+
+
+
+
+
   );
 };
 

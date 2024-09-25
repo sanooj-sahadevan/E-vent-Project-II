@@ -143,7 +143,7 @@ const Booknow: React.FC = () => {
               </label>
               <input
                 type="button"
-                value="Select Dishes"
+                value="Click here"
                 className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer"
                 onClick={() => vendorId && router.push(`/dishesList?vendorId=${vendorId}`)}
               />
@@ -156,7 +156,7 @@ const Booknow: React.FC = () => {
               </label>
               <input
                 type="button"
-                value="Select Auditorium"
+                value="Click here"
                 className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer"
                 onClick={() => vendorId && router.push(`/auditoriumList?vendorId=${vendorId}`)}
               />
