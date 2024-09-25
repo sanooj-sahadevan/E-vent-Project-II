@@ -39,7 +39,6 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 export const LoginAPI = async (reqBody: any) => {
   console.log('logggg');
 
-  // return await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
   const response = await axios.post(`${SERVER_URL}/login`, reqBody, { withCredentials: true });
   console.log(response.data);
 
@@ -60,7 +59,6 @@ export const verifyOtp = async (data: any) => {
 export const GoogleLoginAPI = async (reqBody: any) => {
   console.log(reqBody);
 
-  // return await commonAPI("POST", `${SERVER_URL}/googleLogin`, reqBody);
   const response = await axios.post(`${SERVER_URL}/googleLogin`, reqBody, { withCredentials: true });
   return response.data
 };
@@ -68,7 +66,6 @@ export const GoogleLoginAPI = async (reqBody: any) => {
 export const ForgotenAPI = async (reqBody: any) => {
   console.log('logggg');
 
-  // return await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
   const response = await axios.post(`${SERVER_URL}/forgottenpassword`, reqBody, { withCredentials: true });
   console.log('vann');
 
@@ -129,3 +126,167 @@ export const UserEdit = async (vendorData: any) => {
     throw error;
   }
 };
+
+
+
+
+
+
+
+export const allDishesAPI =  async (vendorId: string) => {
+  try {
+    console.log('sucess front end ');
+
+    const response = await axios.get(`${SERVER_URL}/dishlist?vendorId=${vendorId}`); // Send vendorId as a query parameter
+    console.log(response.data,'basdhbqhbd')
+    return response.data;
+  } catch (error) {
+    console.error(error);
+
+  }
+
+};
+
+export const allAuditoriumAPI = async (vendorId: string) => {
+  try {
+      console.log('Success front end');
+
+      const response = await axios.get(`${SERVER_URL}/auditoriumlist?vendorId=${vendorId}`); 
+      console.log(response.data, 'basdhbqhbd');
+      return response.data;
+  } catch (error) {
+      console.error(error);
+  }
+};
+
+
+export const fetchvendor = async (vendorId: string, userId: string) => {
+  try {
+    const res = await axios.get(`${SERVER_URL}/fetchVendorDetails?vendorId=${vendorId}&userId=${userId}`);
+    return res;
+  } catch (error) {
+    console.error("Error fetching vendor:", error);
+    throw error;
+  }
+};
+
+
+
+export const FetchDishes = async (vendorId: string) => {
+  try {
+
+    console.log('pokunnu food');
+    
+    const res = await axios.get(`${SERVER_URL}/fetchFoodDetails/${vendorId}`);
+    return res.data; // Return data directly for easier usage in the component
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    throw new Error('Failed to fetch vendor details');
+  }
+};
+
+
+export const FetchAuditorium = async (vendorId: string) => {
+  try {
+
+    console.log('pokunnu Ausittttttttttttttttttt');
+    
+    const res = await axios.get(`${SERVER_URL}/fetchAuditoriumDetails/${vendorId}`);
+    return res.data; // Return data directly for easier usage in the component
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    throw new Error('Failed to fetch vendor details');
+  }
+};
+
+
+
+
+export const Payment = async (username: string) => {
+  try {
+
+    console.log('payment on');
+    
+    const res = await axios.get(`${SERVER_URL}/Payment/${username}`);
+    return res.data;
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    throw new Error('Failed to process payment');
+  }
+};
+
+
+// alone dishs
+
+export const fetchdishes = async (auditoriumId: string) => {
+  try {
+    console.log('rdyyyy auditirum profie');
+    
+      const res = await axios.get(`${SERVER_URL}/fetchdishes/${auditoriumId}`);
+      console.log(res);
+      return res;
+  } catch (error) {
+    console.error(error);
+    
+  }
+};
+
+
+export const fetchauditorium = async (auditoriumId: string) => {
+  try {
+    console.log('rdyyyy auditirum profie');
+    
+      const res = await axios.get(`${SERVER_URL}/fetchauditorium/${auditoriumId}`);
+      console.log(res);
+      return res;
+  } catch (error) {
+    console.error(error);
+    
+  }
+};
+
+
+
+
+export const saveDB = async (bookingDetails: Object) => {
+  try {
+    console.log('Saving to database...');
+
+    const res = await axios.post(`${SERVER_URL}/saveDB`, bookingDetails); // Use POST and send the object in the body
+    console.log(res.data);
+    return res.data; // Return the response data
+  } catch (error) {
+    console.error('Error saving to database:', error);
+    throw error; // Optionally rethrow the error for handling in the caller
+  }
+};
+
+
+export const fetchBookedData = async (bookingId: string) => {
+  try {
+
+    console.log('32423453525');
+    
+    const response = await axios.get(`${SERVER_URL}/bookEvent/${bookingId}`, { withCredentials: true}); // Adjust the API endpoint
+    return response.data; // Return the data from the response
+  } catch (error) {
+    console.error("Error fetching booking data:", error);
+    throw error;
+  }
+};
+
+
+export const fetchingBookingDetails = async (bookingId: any) => {
+  try {
+    const response = await axios.get(`${SERVER_URL}/bookedTrip/${bookingId}`, { withCredentials: true}); // Adjust the API endpoint
+    return response.data; // Return the data from the response
+  } catch (error) {
+    console.error("Error fetching booking data:", error);
+    throw error;
+  }
+};
+
+
+
+
+

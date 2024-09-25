@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { fetchvendor } from '@/services/vendorAPI';
+import { fetchvendor } from '@/services/userApi';
 
 interface Vendor {
     profileImage: string | undefined;
@@ -14,21 +14,32 @@ interface Vendor {
     state: string;
     rating: number;
     reviews: Array<{ name: string; review: string; rating: number }>;
-    photos: []   // Default to an empty array
+    photos: [];
 }
 
 const VendorsPage: React.FC = () => {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const vendorId = searchParams.get("vendorId");
 
     const [vendorData, setVendorData] = useState<Vendor | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [userId, setUserId] = useState<string | null>(null);
+
+    // Get the user from localStorage in useEffect (client-side only)
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const user = localStorage.getItem('user');
+            const parsedUser = user ? JSON.parse(user) : null;
+            setUserId(parsedUser?._id || null);
+        }
+    }, []);
 
     useEffect(() => {
         const fetchVendorDetails = async () => {
-            if (vendorId) {
+            if (vendorId && userId) {
                 try {
-                    const response = await fetchvendor(vendorId);
+                    const response = await fetchvendor(vendorId, userId);
 
                     if (response && response.data) {
                         const vendorData: Vendor = response.data;
@@ -42,18 +53,20 @@ const VendorsPage: React.FC = () => {
                 } finally {
                     setLoading(false);
                 }
+            } else {
+                setLoading(false); // In case `vendorId` or `userId` is missing
             }
         };
 
         fetchVendorDetails();
-    }, [vendorId]);
+    }, [vendorId, userId]);
 
     if (loading) {
-        return <p>Loading...</p>; // Optional: Add a loading spinner or placeholder
+        return <p>Loading...</p>;
     }
 
     if (!vendorData) {
-        return <p>No vendor data available.</p>; // Handle cases where no vendor data is available
+        return <p>No vendor data available.</p>;
     }
 
     return (
@@ -95,9 +108,14 @@ const VendorsPage: React.FC = () => {
                     <p className="text-gray-700">{vendorData.state}</p>
                 </div>
 
-                <div className="absolute right-6 top-6 flex space-x-4 ">
-                    <button className="px-4 py-2 bg-buttonBg text-white rounded">Book Now</button>
-                    <button className="px-4 py-2 bg-buttonBg text-white rounded">Chat With Us</button>
+                <div className="absolute right-6 top-6 flex space-x-4">
+                    <button
+                        onClick={() => router.push(`/booknow?vendorId=${vendorId}`)}
+                        className="px-4 py-2 bg-buttonBg text-white rounded"
+                    >
+                        Book Now
+                    </button>
+                    <button onClick={() => router.push(`/chat?vendorId=${vendorId}`)} className="px-4 py-2 bg-buttonBg text-white rounded">Chat With Us</button>
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Check Availability</button>
                 </div>
             </div>
@@ -135,14 +153,7 @@ const VendorsPage: React.FC = () => {
                 ) : (
                     <p className="text-center text-gray-500">No photos available.</p>
                 )}
-                {/* <div className="flex justify-center">
-                    <button className="mt-4 px-4 py-2 bg-buttonBg text-white rounded">
-                        View More
-                    </button>
-                </div> */}
             </div>
-
-
 
             {/* Reviews */}
             <div className="mb-[70px] mt-[71px]">
@@ -175,8 +186,6 @@ const VendorsPage: React.FC = () => {
                     <p className="text-center text-gray-500">No reviews available.</p>
                 )}
             </div>
-
-
         </div>
     );
 };

@@ -10,6 +10,8 @@ interface AuditoriumDocument extends Document {
   status: string;
   images?: string;  // Changed to array of strings
   capacity: number;   // Changed to Number
+  isDeleted: boolean;
+
 }
 
 const auditoriumSchema = new Schema<AuditoriumDocument>(
@@ -17,7 +19,8 @@ const auditoriumSchema = new Schema<AuditoriumDocument>(
     auditoriumName: {
       type: String,
       required: true,
-    },
+    }, isDeleted: { type: Boolean, default: false }, // Correctly defined as a boolean
+
     description: {
       type: String,
       required: false,
@@ -32,7 +35,7 @@ const auditoriumSchema = new Schema<AuditoriumDocument>(
     },
     vendorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "VendorId",
+      ref: "Vendor",
       required: false,
     },
     category: {

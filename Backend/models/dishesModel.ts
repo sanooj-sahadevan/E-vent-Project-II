@@ -10,6 +10,7 @@ interface DishDocument extends Document {
   category?: string;
   status: string;
   images?: string
+  isDeleted: boolean
 }
 
 const dishesSchema = new Schema<DishDocument>(
@@ -30,9 +31,14 @@ const dishesSchema = new Schema<DishDocument>(
       type: Number,
       required: true,
     },
+    // vendorId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "VendorId",
+    //   required: false,
+    // },
     vendorId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "VendorId",
+      ref: "Vendor", // Ensure this matches your actual Vendor model name
       required: false,
     },
     category: {
@@ -46,7 +52,8 @@ const dishesSchema = new Schema<DishDocument>(
     types: {
       type: String,
       required: true,
-    },
+    }, isDeleted: { type: Boolean, default: false }, // Correctly defined as a boolean
+
     menu: {
       type: String,
       required: true,

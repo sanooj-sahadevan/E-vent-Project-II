@@ -7,7 +7,7 @@ export async function uploadToS3Bucket(p0, file) {
         }
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
-            Key: `posts/${Date.now()}_${file.originalname}`, // Unique file name
+            Key: `posts/${Date.now()}_${file.originalname}`,
             Body: file.buffer,
             ContentType: file.mimetype,
         };

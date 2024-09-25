@@ -2,6 +2,10 @@ import mongoose, { Schema, Document } from "mongoose";
 import { User } from "../models/userModel.js"; // Assuming this is the full User interface
 import bcrypt from "bcrypt";
 import { VendorModel } from "./vendorRepo.js";
+import { Dishes } from "../models/dishesModel.js";
+import { Auditorium } from "../models/auditoriumModel.js";
+import { bookedModel } from "../models/bookedEvent.js";
+import { chatModel } from "../models/chatModel.js";
 
 // Extend Mongoose's Document interface
 interface IUserModel extends Document {
@@ -24,7 +28,7 @@ const UserSchema = new Schema<IUserModel>({
   username: { type: String, required: true },
   phone: { type: Number },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
   profileImage: { type: String },
   otp: { type: String },
   otpVerified: { type: Boolean, default: false },
@@ -35,71 +39,59 @@ const UserSchema = new Schema<IUserModel>({
   reviews: { type: [String] } // Added 'reviews'
 });
 
-// Create the Mongoose model with the appropriate type
 const UserModel = mongoose.model<IUserModel>("User", UserSchema);
-
 export default UserModel;
 
 
-// Function to create a new user
+
+
 export const createUser = async (user: User) => {
   try {
-    console.log('repo');
-
-  const newUser = new UserModel(user);
-  return newUser.save();
-    
+    const newUser = new UserModel(user);
+    return newUser.save();
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
 export const findUserByEmail = async (email: string) => {
-  return UserModel.findOne({ email });
-};
+  try {
+    return UserModel.findOne({ email });
+  } catch (error) {
+    console.error(error);
 
+  }
+};
 
 
 export const findUserById = async (userId: string) => {
-  return UserModel.findById(userId);
+  try {
+    return UserModel.findById(userId);
+  } catch (error) {
+    console.error(error);
+
+  }
 };
 
 
-
-
-// export const updateUser = async (email: string, update: Partial<User>) => {
-//   return UserModel.findOneAndUpdate({ email }, update, { new: true });
-// };
-
-
-
-export const userEditFromDB = async (userDetails: User): Promise<IUserModel> => { // Ensure it returns IUserModel
+export const userEditFromDB = async (userDetails: User): Promise<IUserModel> => {
   try {
-    // Find the user by email
     const existingUser = await UserModel.findOne({ email: userDetails.email });
 
     if (existingUser) {
-      // Update user details
       existingUser.username = userDetails.username;
       existingUser.phone = userDetails.phone;
       existingUser.profileImage = userDetails.profileImage;
       existingUser.address = userDetails.address;
       existingUser.state = userDetails.state;
-      existingUser.district = userDetails.district; // Now this works
+      existingUser.district = userDetails.district;
       existingUser.pincode = userDetails.pincode;
-      existingUser.reviews = userDetails.reviews; // Now this works
+      existingUser.reviews = userDetails.reviews;
 
-      // Only update password if provided
-      if (userDetails.password) {
-        existingUser.password = userDetails.password;
-      }
-
-      // Save the updated user
       await existingUser.save();
       return existingUser;
     } else {
-      // If user doesn't exist, create a new one
       const newUser = new UserModel(userDetails);
       await newUser.save();
       return newUser;
@@ -111,63 +103,35 @@ export const userEditFromDB = async (userDetails: User): Promise<IUserModel> => 
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
- // Import the User type
-
-// Function to update user details in the database
-// export const userEditFromDB = async (userDetails: User): Promise<User> => {
-//   try {
-//     const { id, ...updates } = userDetails; // Assume userDetails contains an id and update fields
-//     const updatedUser = await UserModel.findByIdAndUpdate(id, updates, { new: true }); // Update user and return the updated document
-//     if (!updatedUser) {
-//       throw new Error('User not found');
-//     }
-//     return updatedUser;
-//   } catch (error) {
-//     console.error('Error updating user:', error);
-//     throw new Error('Failed to update user details');
-//   }
-// };
-
-
-
-
 export const updateUser = async (email: string, update: Partial<User>) => {
-  return UserModel.findOneAndUpdate({ email }, update, { new: true });
+  try {
+    return UserModel.findOneAndUpdate({ email }, update, { new: true });
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export const findUserByEmailupdate = async (email: string, password: string) => {
-  console.log('Repository: Updating user password');
+  try {
+    const user = await UserModel.findOne({ email });
 
-  const user = await UserModel.findOne({ email });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    console.log(user.email);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
 
-  if (!user) {
-    throw new Error("User not found");
+    await user.save();
+    return user;
+  } catch (error) {
+    console.error(error);
+
   }
-
-  console.log(user.email);
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-  user.password = hashedPassword;
-
-  await user.save();
-  return user; // Return the updated user
 };
 
-// import { VendorModel } from '../model/VendorModel.js'; // Import your Mongoose model
 
 export class VendorRepository {
-  // Fetch all vendors from the database
   public async getAllVendors(): Promise<any[]> {
     try {
       return await VendorModel.find().sort({ createdAt: -1 }); // Fetch vendors sorted by creation date
@@ -177,37 +141,195 @@ export class VendorRepository {
   }
 }
 
+export const fetchfromDBDishes = async (vendorId: string): Promise<any | null> => {
+  try {
+    console.log('Fetching Dishes for vendor ID:', vendorId);
 
-// // export const userEditFromDB = async (userDetails: User): Promise<User> => {
-// //   try {
-// //     const existingUser = await UserModel.findOne({ email: userDetails.email });
+    const objectId = new mongoose.Types.ObjectId(vendorId);
+    console.log(objectId);
 
-// //     if (existingUser) {
-// //       // Update user details
-// //       existingUser.username = userDetails.username;
-// //       existingUser.phone = userDetails.phone;
-// //       existingUser.profileImage = userDetails.profileImage;
-// //       existingUser.address = userDetails.address;
-// //       existingUser.state = userDetails.state;
-// //       existingUser.pincode = userDetails.pincode;
+    const result = await Auditorium.find(objectId);
 
-// //       // Only update password if provided
-// //       if (userDetails.password) {
-// //         existingUser.password = userDetails.password;
-// //       }
+    console.log('Fetched Dishes:', result);
 
-// //       // Save the updated user
-// //       await existingUser.save();
-// //       return existingUser;
-// //     } else {
-// //       // If user doesn't exist, create a new one
-// //       const newUser = new UserModel(userDetails);
-// //       await newUser.save();
-// //       return newUser;
-// //     }
-// //   } catch (error) {
-// //     console.error('Error updating user:', error);
-// //     throw new Error('Database operation failed');
-// //   }
-// // };
+    return result;
+  } catch (error) {
+    console.error('Error fetching Dishes from the database:', error);
+    throw new Error('Error fetching Dishes from the database');
+  }
 
+};
+
+
+export const fetchfromDBAuditorium = async (vendorId: string): Promise<any | null> => {
+  try {
+    console.log('Fetching auditorium for vendor ID:', vendorId);
+
+    const objectId = new mongoose.Types.ObjectId(vendorId);
+    console.log(objectId);
+
+    const result = await Auditorium.findById(objectId);
+
+    console.log('Fetched auditorium:', result);
+
+    return result;
+  } catch (error) {
+    console.error('Error fetching auditorium from the database:', error);
+    throw new Error('Error fetching auditorium from the database');
+  }
+};
+
+
+
+export const findVendorByIdInDb = async (vendorId: string, userId: string) => {
+  try {
+    // Find the vendor by ID
+    const vendor = await VendorModel.findById(vendorId);
+    if (!vendor) {
+      throw new Error("Vendor not found");
+    }
+
+
+    let chat = await chatModel.findOne({ userId, vendorId });
+    
+    if (!chat) {
+      chat = new chatModel({
+        userId,
+        vendorId,
+      });
+      await chat.save(); 
+    }
+
+    return vendor; 
+  } catch (error) {
+    console.error("Error in repository:", error);
+    throw error;
+  }
+};
+
+
+
+
+export const findFoodVendorIdInDb = async (vendorId: string) => {
+  try {
+    const objectId = new mongoose.Types.ObjectId(vendorId);
+    const result = await Dishes.find({ vendorId: objectId });
+    console.log('Result from database:', result);
+    if (result.length === 0) {
+      console.log('No dishes found for vendor:', vendorId);
+      return null;
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error fetching dishes for vendor:', error);
+    throw new Error(`Error fetching dishes: ${error}`);
+  }
+};
+
+export const findAuditoriumVendorIdInDb = async (vendorId: string) => {
+
+  try {
+    const objectId = new mongoose.Types.ObjectId(vendorId);
+
+    const result = await Auditorium.find({ vendorId: objectId });  // Query the Dishes collection
+    console.log('Result from database:', result);
+
+    if (result.length === 0) {
+      console.log('No dishes found for vendor:', vendorId);
+      return null;  // Return null if no dishes found
+    }
+
+    return result;  // Return the found dishes
+  } catch (error) {
+    console.error('Error fetching dishes for vendor:', error);
+    throw new Error(`Error fetching dishes: ${error}`);  // Return only the error message
+  }
+};
+
+
+export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
+
+  try {
+    let result = await Auditorium.findById(auditoriumId);
+    console.log(result);
+    return result
+  } catch (error) {
+    console.error(error);
+
+  }
+};
+
+
+
+export const finddishesByIdInDb = async (dishesId: string) => {
+  try {
+    let result = await chatModel.findById(dishesId);
+    console.log(result);
+    return result
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+
+
+
+
+
+export const getBookingDetail = async (id: string) => {
+  try {
+    const bookedData = await bookedModel
+      .findById(id)
+      .populate("tripId") 
+      .populate("userId");
+
+    if (!bookedData) {
+      throw new Error(`Booking with id ${id} not found`);
+    }
+    return bookedData;
+  } catch (error) {
+    console.error("Error fetching booking details:", error);
+    throw error;
+  }
+};
+
+
+
+
+export const createBookedTrip = async (
+  productinfo: string,
+  txnid: string,
+  status: string
+) => {
+  try {
+
+    console.log('save karo');
+
+    const bookedData = await bookedModel.create({
+      productinfo,
+      txnId: txnid,
+      paymentStatus: status,
+    });
+
+    return bookedData;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+
+
+export const savechatDB = async (chat: string) => {
+  try {
+    console.log('Saving chat to DB');
+
+    const newChat = new chatModel({ message: chat });  // Create a new instance of the Chat model
+    return await newChat.save();  // Save the chat in the database
+  } catch (error) {
+    console.error("Database error:", error);
+    throw new Error("Database operation failed.");  // Handle and throw database-related errors
+  }
+};

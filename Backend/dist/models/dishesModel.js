@@ -16,9 +16,14 @@ const dishesSchema = new Schema({
         type: Number,
         required: true,
     },
+    // vendorId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "VendorId",
+    //   required: false,
+    // },
     vendorId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "VendorId",
+        ref: "Vendor", // Ensure this matches your actual Vendor model name
         required: false,
     },
     category: {
@@ -32,7 +37,7 @@ const dishesSchema = new Schema({
     types: {
         type: String,
         required: true,
-    },
+    }, isDeleted: { type: Boolean, default: false }, // Correctly defined as a boolean
     menu: {
         type: String,
         required: true,

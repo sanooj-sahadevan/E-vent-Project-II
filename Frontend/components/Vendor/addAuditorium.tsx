@@ -53,19 +53,31 @@ const AddAuditorium: React.FC = () => {
         formData.append("category", data.category);
         formData.append("capacity", data.capacity.toString());
         formData.append("status", data.status);
-
+    
         if (photo) {
             formData.append("image", photo, photo.name);
         }
-
+    
+        const storedVendor = localStorage.getItem("vendor");
+        let vendorId = '';
+    
+        if (storedVendor) {
+            const parsedVendor = JSON.parse(storedVendor);
+            vendorId = parsedVendor._id;
+            console.log(vendorId);
+        }
+    
         try {
             console.log('Submitting FormData:', formData);
-
+    
             const result = await addAuditoriumAPI(formData);
+    
+            console.log(result);
+    
             if (result) {
                 toast.success("Auditorium added successfully");
                 setTimeout(() => {
-                    router.push(`/vendordashboard`);
+                    router.push(`/vendordashboard?vendorId=${vendorId}`);
                 }, 3000);
             } else {
                 toast.error("Something went wrong!");
@@ -75,7 +87,7 @@ const AddAuditorium: React.FC = () => {
             toast.error("An error occurred while adding the auditorium!");
         }
     };
-
+    
     return (
         <div className="container mx-auto p-8">
             <h1 className="text-3xl font-bold mb-8 text-center">Add Auditorium</h1>

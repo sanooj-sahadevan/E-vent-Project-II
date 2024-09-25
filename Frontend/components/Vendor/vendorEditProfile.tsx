@@ -73,17 +73,24 @@ const EditVendor: React.FC = () => {
 
     try {
       const result = await VendorEdit(formData);
-      if (result) {
+      
+      // Ensure that the `vendor` exists inside `result.data`
+      if (result && result.data) {
         localStorage.setItem('vendor', JSON.stringify(result.data)); // Update local storage
-
-        router.push(`/vendordashboard`); // Redirect on success
-        toast.success('Vendor details updated successfully.');
+        
+        if (result.data.vendor && result.data.vendor._id) {
+          router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
+          toast.success('Vendor details updated successfully.');
+        } else {
+          toast.error('Vendor details could not be found.');
+        }
       }
     } catch (err) {
       toast.error('An error occurred while saving vendor details. Please try again.');
       console.error('EditVendor API error:', err);
     }
-  };
+  }
+    
 
   // Toggle editing mode
   const handleEditToggle = () => {
@@ -119,18 +126,6 @@ const EditVendor: React.FC = () => {
                 alt="Vendor"
                 className="w-full h-full object-cover"
               />
-              {/* Edit Image Button */}
-              {isEditing && (
-                <label className="absolute bottom-0 right-0 bg-gray-200 p-1 rounded-full hover:bg-gray-300 cursor-pointer">
-                  <FaEdit className="text-gray-700" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange} // Handle image change
-                  />
-                </label>
-              )}
             </div>
           ) : (
             <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500">
@@ -138,6 +133,18 @@ const EditVendor: React.FC = () => {
             </div>
           )}
         </div>
+
+        {isEditing && (
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2">Upload New Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange} // Handle image change
+              className="border border-gray-300 rounded p-2 w-full"
+            />
+          </div>
+        )}
 
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
           {isEditing ? (

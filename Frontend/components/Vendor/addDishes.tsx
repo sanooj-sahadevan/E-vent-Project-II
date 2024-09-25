@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 type FormValues = {
     dishesName: string;
     description: string;
@@ -56,20 +57,33 @@ const AddDishes: React.FC = () => {
             formData.append("image", photo, photo.name);
         }
 
+        const storedVendor = localStorage.getItem("vendor");
+        let vendorId = '';
+
+        if (storedVendor) {
+            const parsedVendor = JSON.parse(storedVendor);
+            vendorId = parsedVendor._id; // Assuming _id is the vendor ID
+            console.log(vendorId);
+        }
+
         try {
             console.log('Submitting FormData:', formData);
 
             const result = await addDishAPI(formData);
+
+            console.log(result);
+
             if (result) {
                 toast.success("Dish added successfully");
                 setTimeout(() => {
-                    router.push(`/vendordashboard`);
+                    // Redirect to the vendor dashboard with vendorId
+                    router.push(`/vendordashboard?vendorId=${vendorId}`);
                 }, 3000);
             } else {
                 toast.error("Something went wrong!");
             }
         } catch (error) {
-            console.error(error);
+            console.error("Error submitting form:", error);
             toast.error("An error occurred while adding the dish!");
         }
     };
@@ -169,15 +183,7 @@ const AddDishes: React.FC = () => {
                                     <option value="Veg">Veg</option>
                                     <option value="Non-Veg">Non-Veg</option>
                                 </select>
-                                {errors.types
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-                                && <p className="text-red-500">Type is required.</p>}
+                                {errors.types && <p className="text-red-500">Type is required.</p>}
                             </div>
 
                             <div>
@@ -194,9 +200,22 @@ const AddDishes: React.FC = () => {
                                 {errors.category && <p className="text-red-500">Category is required.</p>}
                             </div>
 
+                            <div>
+                                <label className="block text-gray-700">Status</label>
+                                <select
+                                    {...register("status")}
+                                    className="w-full p-2 border border-gray-300 rounded-lg"
+                                >
+                                    <option value="Upcoming">Upcoming</option>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+
                             <button
+                                type="submit"
                                 onClick={handleSubmit(onSubmit)}
-                                className="mt-6 bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600"
+                                className="bg-pink-500 text-white px-4 py-2 rounded-lg hover:bg-pink-600"
                             >
                                 Add Dish
                             </button>
@@ -204,7 +223,6 @@ const AddDishes: React.FC = () => {
                     </div>
                 </div>
             </div>
-
             <ToastContainer />
         </div>
     );

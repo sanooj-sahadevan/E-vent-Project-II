@@ -4,7 +4,8 @@ import jwt from "jsonwebtoken";
 
 export function verifyvendor(req: any, res: Response, next: NextFunction) {
     
-  const vendorToken = req.cookies?.vendorToken;
+  const vendorToken = req.cookies?.vendorToken
+    console.log(vendorToken);
     
   if (!vendorToken) {
     return res.status(401).send("JWT not found in the cookies");
@@ -19,7 +20,9 @@ export function verifyvendor(req: any, res: Response, next: NextFunction) {
     const decoded: any = jwt.verify(vendorToken, secret);
     req.vendorId = decoded?.vendorId;
     
-    
+    // if (!decoded?.role || decoded.role != "Travelie-company") {
+    //   return res.status(401).send("Invalid JWT");
+    // }
     
     next();
   } catch (err: any) {

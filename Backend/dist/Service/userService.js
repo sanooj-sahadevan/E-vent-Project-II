@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, findUserByEmailupdate, VendorRepository, findUserByEmail } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -43,30 +43,6 @@ export const loginUser = async (email, password) => {
     // });
     return { user, token };
 };
-// export class LoginService {
-//   private userRepository: UserRepository;
-//   constructor() {
-//     this.userRepository = new UserRepository();
-//   }
-//   public async loginUser(email: string, password: string) {
-//     console.log('log in');
-//     const user = await this.userRepository.findUserByEmail(email);
-//     console.log(user);
-//     if (!user) {
-//       throw new Error("Invalid Email/Password");
-//     }
-//     const isPasswordValid = await bcrypt.compare(password, user.password);
-//     if (!isPasswordValid) {
-//       throw new Error("Invalid Email/Password");
-//     }
-//     console.log('jwt');
-//     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
-//       expiresIn: "1h",
-//     });
-// ``
-//     return { user, token };
-//   }
-// }
 export const checkEmail = async (email) => {
     const user = await findUserByEmail(email);
     if (!user) {
@@ -84,71 +60,161 @@ export const verifyAndSaveUser = async (email, otp) => {
     }
     throw new Error("Invalid OTP");
 };
-// // export const googleLogin = async ({
-// //   email,
-// //   profileImagePath,
-// //   username,
-// //   phone,
-// // }: {
-// //   email: string;
-// //   profileImagePath?: string;
-// //   username: string;
-// //   phone?: number;
-// // }) => {
-// //   try {
-// //     const existingUser = await findUserByEmail(email);
-// //     if (existingUser) {
-// //       const token = jwt.sign(
-// //         { userId: existingUser._id },
-// //         'sanoojsanooj',
-// //         { expiresIn: "1h" }
-// //       );
-// //       return { user: existingUser, token };
-// //     } else {
-// //       const newUser: User = {
-// //         username,
-// //         email,
-// //         password: "defaultPassword",
-// //         profileImage: profileImagePath || "",
-// //         phone: phone || undefined,
-// //         otpVerified: true,
-// //       };
-// //       // const hashedPassword = await bcrypt.hash(newUser.password, 10);
-// //       // newUser.password = hashedPassword;
-// //       const createdUser = await createUser(newUser);
-// //       const token = jwt.sign(
-// //         { userId: createdUser._id },
-// //         process.env.JWT_SECRET_KEY!,
-// //         { expiresIn: "1h" }
-// //       );
-// //       return { user: createdUser, token };
-// //     }
-// //   } catch (error) {
-// //     console.error("Error during Google login:", error);
-// //     throw new Error("Failed to handle Google login");
-// //   }
-// // };
 export const update = async (email, password) => {
-    console.log('Service: Calling repository to update password');
-    // Call the repository function to update the password
-    const user = await findUserByEmailupdate(email, password);
-    return user; // Return the updated user
-};
-const vendorRepository = new VendorRepository(); // Instantiate repository
-export const getAllVendors = async () => {
     try {
-        return await vendorRepository.getAllVendors(); // Call the repository method
+        console.log('Service: Calling repository to update password');
+        const user = await findUserByEmailupdate(email, password);
+        return user;
     }
     catch (error) {
-        throw new Error('Error fetching vendors'); // Handle error
+        console.error(error);
     }
 };
-// // import { UserRepository } from '../Repository/userRepo.js'; // Import the repository
+const vendorRepository = new VendorRepository();
+export const getAllVendors = async () => {
+    try {
+        return await vendorRepository.getAllVendors();
+    }
+    catch (error) {
+        throw new Error('Error fetching vendors');
+    }
+};
+export const getAllDishes = async (vendorId) => {
+    try {
+        console.log('Service: Fetching dishes');
+        const result = await fetchfromDBDishes(vendorId);
+        return result;
+    }
+    catch (error) {
+        throw new Error('Error fetching dishes');
+    }
+};
+export const getAllAuditorium = async (vendorId) => {
+    try {
+        console.log('Service: Fetching auditoriums for vendor:', vendorId);
+        const result = await fetchfromDBAuditorium(vendorId);
+        return result;
+    }
+    catch (error) {
+        throw new Error('Error fetching auditoriums');
+    }
+};
 export const editUser = async (userDetails) => {
     try {
-        return await userEditFromDB(userDetails); // Pass userDetails instead of vendorDetails
+        return await userEditFromDB(userDetails);
     }
     catch (error) {
         throw new Error('Failed to update user details');
     }
+};
+export const findVendorById = async (vendorId, userId) => {
+    try {
+        const vendor = await findVendorByIdInDb(vendorId, userId);
+        return vendor;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor: ${error}`);
+    }
+};
+export const findFoodVendorById = async (vendorId) => {
+    try {
+        console.log('Service invoked to find dishes for vendor:', vendorId);
+        const dishes = await findFoodVendorIdInDb(vendorId); // Call the repo to fetch dishes
+        return dishes;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor dishes: ${error}`);
+    }
+};
+export const findAuditoriumVendorById = async (vendorId) => {
+    try {
+        console.log('Service invoked to find dishes for vendor:', vendorId);
+        const dishes = await findAuditoriumVendorIdInDb(vendorId);
+        return dishes;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor dishes: ${error}`);
+    }
+};
+export const findAuditoriumById = async (auditoriumId) => {
+    try {
+        console.log('controller 2');
+        const vendor = await findAuditoriumByIdInDb(auditoriumId);
+        return vendor;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor: ${error}`);
+    }
+};
+export const finddishesById = async (dishesId) => {
+    try {
+        console.log('controller 2');
+        const vendor = await finddishesByIdInDb(dishesId);
+        return vendor;
+    }
+    catch (error) {
+        throw new Error(`Error finding vendor: ${error}`);
+    }
+};
+export const findEvent = async (bookingId) => {
+    try {
+        const bookingDetails = await getBookingDetail(bookingId);
+        return bookingDetails;
+    }
+    catch (error) {
+        console.error("Error fetching booking details:", error);
+        throw error;
+    }
+};
+export const addTransactionDetails = async (email, PayUOrderId, status) => {
+    try {
+        // const PayUOrderData = await PayURepository.getPayUOrder(PayUOrderId);
+        // if (!PayUOrderData) throw new Error("PayU Order Data not found");
+        // console.log("Got order id");
+        // console.log(PayUOrderData);
+        // const userData = await userServices.getUserDataByEmail(email);
+        // if (!userData) throw new Error("User Data not found.");
+        // const userId = userData._id.toString();
+        // const transaction = await adsRepository.addTransaction(
+        //   userId,
+        //   PayUOrderId,
+        //   PayUOrderData.mihpayid,
+        //   status,
+        //   PayUOrderData.amount
+        // );
+        // console.log("Added transaction");
+        // console.log(transaction);
+        // if (!transaction) throw new Error("Transaction Data not found");
+        // if (status === "success") {
+        //   const postId = PayUOrderData?.productinfo;
+        //   const WeNetAdsData = await adsRepository.createWenetAds(
+        //     userId,
+        //     postId,
+        //     transaction._id.toString()
+        //   );
+        //   console.log("created WeNetAdsData");
+        //   console.log(WeNetAdsData);
+        //   const postData = await adsRepository.addAdDataToPost(postId);
+        //   console.log("Added ad data to post ");
+        //   console.log(postData);
+        //   try {
+        //     await adsRepository.sendPostAdDataToMQ(
+        //       postData._id.toString(),
+        //       postData.WeNetAds
+        //     );
+        //   } catch (error: any) {
+        //     console.log(error.message);
+        //   }
+        // }
+        // return transaction._id.toString();
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+};
+export const fetchbookingData = async (txnid, productinfo, status) => {
+    console.log('service');
+    const bookedTrip = await createBookedTrip(productinfo, txnid, status);
+    console.log(bookedTrip);
+    return bookedTrip;
 };
