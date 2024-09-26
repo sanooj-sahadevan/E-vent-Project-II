@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 interface IMessage extends Document {
   chatId: mongoose.Schema.Types.ObjectId; // Reference to chat
   senderId: mongoose.Schema.Types.ObjectId; // Reference to the sender (User or Company)
-  senderModel: "User" | "Vendor"; // To differentiate between User and Company
+  senderModel: "User" | "Vendor"; 
   text: string;
   isRead: boolean;
   createdAt?: Date;

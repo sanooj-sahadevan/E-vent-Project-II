@@ -191,16 +191,19 @@ export const findVendorByIdInDb = async (vendorId: string, userId: string) => {
 
 
     let chat = await chatModel.findOne({ userId, vendorId });
-    
+
     if (!chat) {
       chat = new chatModel({
         userId,
         vendorId,
       });
-      await chat.save(); 
+      await chat.save();
     }
 
-    return vendor; 
+    return {
+      vendor,
+      chatId: chat._id
+    };
   } catch (error) {
     console.error("Error in repository:", error);
     throw error;
@@ -282,7 +285,7 @@ export const getBookingDetail = async (id: string) => {
   try {
     const bookedData = await bookedModel
       .findById(id)
-      .populate("tripId") 
+      .populate("tripId")
       .populate("userId");
 
     if (!bookedData) {

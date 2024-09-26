@@ -3,7 +3,7 @@ import { server_URL_chat } from "./serverURL";
 import axios from 'axios'
 
 
-export const SaveChat = async (reqBody: { chat: string; senderId: string | null; vendorId: string | null }) => {
+export const SaveChat = async (reqBody: { text: string; senderId: string | null; vendorId: string | null }) => {
   try {
       console.log('Sending request to save chat:', reqBody); // Debugging line
       const response = await axios.post(`${server_URL_chat}/savechat`, reqBody, {
@@ -55,6 +55,8 @@ export const sendMessage = async (
     }
   };
   
+
+
   export const getMessages = (id: string) => {
     try {
       return axios.get(`${server_URL_chat}/message/${id}`);
@@ -62,6 +64,7 @@ export const sendMessage = async (
       console.log(error);
     }
   };
+
   
   // company API;
   

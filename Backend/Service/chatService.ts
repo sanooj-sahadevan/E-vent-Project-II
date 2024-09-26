@@ -8,10 +8,10 @@ import {
 } from "../Repository/chatRepo.js";
 
 
-export const savechatService = async (chat: string, userId: string, vendorId: string) => {
+export const savechatService = async (text: string, userId: string, vendorId: string) => {
   try {
-      const chatService = await savechatDB(chat, userId, vendorId);  // Call the repository function to save the chat
-      return chatService;  // Return the saved chat result
+      const chatService = await savechatDB(text, userId, vendorId);  
+      return chatService;  
   } catch (error) {
       console.error("Service error:", error);
       throw new Error("Could not save chat.");  // Throw an error if there's an issue

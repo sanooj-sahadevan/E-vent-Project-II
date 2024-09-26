@@ -109,8 +109,11 @@ export const editUser = async (userDetails) => {
 };
 export const findVendorById = async (vendorId, userId) => {
     try {
-        const vendor = await findVendorByIdInDb(vendorId, userId);
-        return vendor;
+        const { vendor, chatId } = await findVendorByIdInDb(vendorId, userId); // Fetch vendor and chatId from DB
+        return {
+            vendor,
+            chatId // Return both vendor details and chat ID
+        };
     }
     catch (error) {
         throw new Error(`Error finding vendor: ${error}`);

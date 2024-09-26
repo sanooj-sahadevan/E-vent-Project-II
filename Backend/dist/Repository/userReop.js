@@ -150,7 +150,10 @@ export const findVendorByIdInDb = async (vendorId, userId) => {
             });
             await chat.save();
         }
-        return vendor;
+        return {
+            vendor,
+            chatId: chat._id
+        };
     }
     catch (error) {
         console.error("Error in repository:", error);

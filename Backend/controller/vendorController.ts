@@ -357,11 +357,3 @@ export const softDeleteAuditorium = async (req: Request, res: Response) => {
 
 
 
-
-// const dish = vendor.dishes.id(dishId);
-// if (!dish) {
-//   return res.status(404).json({ message: 'Dish not found' });
-// }
-
-// dish.isDeleted = true; // Set soft delete flag
-// await vendor.save();
