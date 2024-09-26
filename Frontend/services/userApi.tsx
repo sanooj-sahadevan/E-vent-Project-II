@@ -160,10 +160,16 @@ export const allAuditoriumAPI = async (vendorId: string) => {
 };
 
 
+
 export const fetchvendor = async (vendorId: string, userId: string) => {
   try {
     const res = await axios.get(`${SERVER_URL}/fetchVendorDetails?vendorId=${vendorId}&userId=${userId}`);
-    return res;
+    
+    const { vendor, chatId } = res.data;  
+    
+    console.log(vendor, chatId, 'Received vendor and chat ID');
+    
+    return { vendor, chatId };  
   } catch (error) {
     console.error("Error fetching vendor:", error);
     throw error;

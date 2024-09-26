@@ -195,18 +195,18 @@ export const editUserDetails = async (req, res, next) => {
 };
 export const fetchVendorDetails = async (req, res, next) => {
     try {
-        console.log('controller   user controlelr auditorum');
+        console.log('controller: fetchVendorDetails');
         const { vendorId, userId } = req.query;
         if (!vendorId || !userId) {
             res.status(400).json({ message: "Missing vendorId or userId" });
             return;
         }
-        const vendor = await findVendorById(vendorId, userId); // Pass both IDs to service
-        if (!vendor) {
+        const result = await findVendorById(vendorId, userId);
+        if (!result.vendor) {
             res.status(404).json({ message: "Vendor not found" });
         }
         else {
-            res.status(200).json(vendor);
+            res.status(200).json(result);
         }
     }
     catch (error) {

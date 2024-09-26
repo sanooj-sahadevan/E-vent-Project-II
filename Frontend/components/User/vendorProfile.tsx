@@ -25,6 +25,7 @@ const VendorsPage: React.FC = () => {
     const [vendorData, setVendorData] = useState<Vendor | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [userId, setUserId] = useState<string | null>(null);
+    const [chatId, setChatId] = useState<string | null>(null); // New state for chatId
 
     // Get the user from localStorage in useEffect (client-side only)
     useEffect(() => {
@@ -41,9 +42,10 @@ const VendorsPage: React.FC = () => {
                 try {
                     const response = await fetchvendor(vendorId, userId);
 
-                    if (response && response.data) {
-                        const vendorData: Vendor = response.data;
-                        setVendorData(vendorData);
+                    if (response) {
+                        const { vendor, chatId } = response;
+                        setVendorData(vendor);
+                        setChatId(chatId); 
                     } else {
                         toast.error("Vendor details not found.");
                     }
@@ -61,6 +63,9 @@ const VendorsPage: React.FC = () => {
         fetchVendorDetails();
     }, [vendorId, userId]);
 
+
+    console.log({chatId},'-----------------------------------------------------------------------------------------');
+    
     if (loading) {
         return <p>Loading...</p>;
     }
@@ -77,7 +82,7 @@ const VendorsPage: React.FC = () => {
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url('/vendor-bg.jpg')` }}
                 ></div>
-                <div className="relative  flex items-center space-x-6">
+                <div className="relative flex items-center space-x-6">
                     <img
                         src={vendorData.profileImage || "/default-vendor.jpg"}
                         alt="Vendor Image"
@@ -89,7 +94,7 @@ const VendorsPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="relative  flex items-center mt-4">
+                <div className="relative flex items-center mt-4">
                     {/* Location symbol and state */}
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -115,7 +120,12 @@ const VendorsPage: React.FC = () => {
                     >
                         Book Now
                     </button>
-                    <button onClick={() => router.push(`/chat?vendorId=${vendorId}`)} className="px-4 py-2 bg-buttonBg text-white rounded">Chat With Us</button>
+                    <button
+                        onClick={() => chatId && router.push(`/chat?vendorId=${vendorId}&chatId=${chatId}`)} // Include chatId in the route
+                        className="px-4 py-2 bg-buttonBg text-white rounded"
+                    >
+                        Chat With Us
+                    </button>
                     <button className="px-4 py-2 bg-buttonBg text-white rounded">Check Availability</button>
                 </div>
             </div>

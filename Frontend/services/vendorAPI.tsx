@@ -1,5 +1,7 @@
 import { commonAPI } from "./commonAPI";
 import { SERVER_URL_vendor } from "./serverURL";
+import { server_URL_chat } from "./serverURL";
+
 
 import axios, { AxiosResponse } from "axios";
 
@@ -214,5 +216,37 @@ export const deleteAuditorium = async (aditoriumId: string,  ) => {
   } catch (error) {
       console.error('Error deleting dish:', error);
       throw new Error('Failed to delete dish');
+  }
+};
+
+
+export const vendorChats = (id: string) => {
+  return axios.get(`${server_URL_chat}/company/${id}`);
+};
+
+
+
+
+
+export const getMessages = (id: string) => {
+  try {
+    return axios.get(`${server_URL_chat}/message/${id}`);
+  } catch (error: any) {
+    console.log(error);
+  }
+};
+
+
+
+export const messageSend = async (messageData: any) => {
+  try {
+    console.log({ messageData,}, "Sending message data to backend");
+
+    // Send the message data directly
+    const response = await axios.post(`${server_URL_chat}/message`, messageData);
+
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Failed to send message");
   }
 };

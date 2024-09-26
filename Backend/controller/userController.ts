@@ -243,9 +243,12 @@ export const editUserDetails = async (req: Request, res: Response, next: NextFun
 };
 
 
+
+
 export const fetchVendorDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    console.log('controller   user controlelr auditorum');
+    console.log('controller: fetchVendorDetails');
+    
     const { vendorId, userId } = req.query;
 
     if (!vendorId || !userId) {
@@ -253,12 +256,12 @@ export const fetchVendorDetails = async (req: Request, res: Response, next: Next
       return; 
     }
 
-    const vendor = await findVendorById(vendorId as string, userId as string); // Pass both IDs to service
+    const result = await findVendorById(vendorId as string, userId as string);
 
-    if (!vendor) {
+    if (!result.vendor) {
       res.status(404).json({ message: "Vendor not found" });
     } else {
-      res.status(200).json(vendor);
+      res.status(200).json(result);  
     }
   } catch (error) {
     next(error); 
