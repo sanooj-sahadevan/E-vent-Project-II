@@ -33,8 +33,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({
         time: new Date().toISOString(),
       };
 
-      onNewMessage(message); // Send the new message to the parent component
-      setNewMessage(""); // Clear the input field after sending
+      onNewMessage(message); 
+      setNewMessage("");
     }
   };
 

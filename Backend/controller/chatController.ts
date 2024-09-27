@@ -69,9 +69,9 @@ export const companyChat = async (req: Request, res: Response) => {
 
 
 
-export const companyAddMessage =  async (req: Request, res: Response) => {
+export const companyAddMessage = async (req: Request, res: Response) => {
   const { vendorId, text, userId, senderModel } = req.body;
-console.log( req.body);
+  console.log(req.body);
 
   // Validation check for required fields
   if (!vendorId || !text || !userId || !senderModel) {
@@ -84,18 +84,26 @@ console.log( req.body);
   }
 
   try {
+    // Check if chatDocument exists, if not create one
+    let chatDocument = await chatModel.findOne({ userId, vendorId });
+    console.log(chatDocument);
+    
+    if (!chatDocument) {
+      chatDocument = new chatModel({ userId, vendorId });
+      await chatDocument.save();
+    }
+
     // Create a new message
     const message = new messageModel({
-      vendorId,
+      chatId: chatDocument._id,  
       text,
       senderId: userId,
       senderModel,
     });
 
-    // Attempt to save the message to the database
     const result = await message.save();
-    
-    res.status(200).json(result); // Respond with success
+
+    res.status(200).json(result); 
   } catch (error) {
     console.error('Error while saving the message:', error);
     res.status(500).json({ message: "Failed to add message", error });
