@@ -1,74 +1,100 @@
 import React, { useState } from "react";
 
-// Define interfaces for ChatMessage and ChatBoxProps
-interface ChatMessage {
-  text: string;
-  sender: string;
-  time: string;
-}
-
 interface ChatBoxProps {
-  messages: ChatMessage[];
+  messages: {
+    text: string;
+    sender: string;
+    time: string;
+    isFromVendor: boolean;
+    createdAt: string; // Updated: createdAt should be a string, representing the date in ISO format
+  }[];
   selectedUser: string;
   senderId: string;
   senderModel: string;
-  onNewMessage: (message: ChatMessage) => void;
+  companyName: string;
+  onNewMessage: (message: { text: string; sender: string; time: string }) => void;
 }
 
-// ChatBox Component
-const ChatBox: React.FC<ChatBoxProps> = ({
+const ChatBox = ({
   messages,
-  selectedUser,
-  senderId,
-  senderModel,
   onNewMessage,
-}) => {
+  senderId,
+  selectedUser,
+  companyName,
+}: ChatBoxProps) => {
   const [newMessage, setNewMessage] = useState("");
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
     if (newMessage.trim()) {
-      const message: ChatMessage = {
+      onNewMessage({
         text: newMessage,
-        sender: senderModel,  
-        time: new Date().toISOString(),
-      };
-
-      onNewMessage(message); 
-      setNewMessage("");
+        sender: senderId,
+        time: new Date().toISOString(), // Use the current time for the message
+      });
+      setNewMessage(""); // Clear the input field after sending
     }
   };
 
+  // Format the time to show hours and minutes in 12-hour format
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
+
   return (
-    <div className="w-3/4 h-full p-4 bg-white flex flex-col">
-      <h2 className="text-xl font-bold mb-4">Chat with {selectedUser}</h2>
-      <div className="flex-grow overflow-y-auto">
+    <div className="flex-1 flex flex-col h-full p-6 bg-white">
+      {/* Chat Header */}
+      <div className="h-16 bg-gray-200 flex items-center px-4 border-b border-gray-300">
+        <h2 className="text-xl font-semibold text-gray-800">{companyName || "Chat"}</h2>
+      </div>
+
+      {/* Chat Messages Area */}
+      <div className="flex-1 overflow-y-auto bg-gray-200 p-6 space-y-4">
         {messages.length > 0 ? (
-          <ul>
-            {messages.map((message, index) => (
-              <li key={index} className="mb-2">
-                <strong>{message.sender}:</strong> {message.text}
-                <div className="text-xs text-gray-500">{message.time}</div>
-              </li>
-            ))}
-          </ul>
+          messages.map((msg, index) => (
+            <div key={index} className={`flex ${msg.isFromVendor ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`${
+                  msg.isFromVendor ? "bg-pink-400 text-white" : "bg-gray-300 text-black"
+                } rounded-lg p-3 max-w-xs break-words`}
+              >
+                <p>{msg.text}</p>
+                <span className="text-xs text-gray-500 block mt-1">
+                  {msg.isFromVendor ? "You" : selectedUser}
+                </span>
+                <span className="text-xs text-gray-500 block mt-1">
+                  {formatDate(msg.createdAt)}
+                </span>
+              </div>
+            </div>
+          ))
         ) : (
-          <p>No messages yet</p>
+          <p className="text-center text-gray-500">No messages available.</p>
         )}
       </div>
-      <div className="mt-4">
-        <input
-          type="text"
-          placeholder="Type your message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        <button
-          onClick={handleSendMessage}
-          className="mt-2 bg-blue-500 text-white p-2 rounded"
-        >
-          Send
-        </button>
+
+      {/* Message Input Area */}
+      <div className="bg-gray-100 flex items-center p-4 border-t border-gray-300">
+        <form onSubmit={handleSendMessage} className="flex w-full">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:border-pink-500"
+          />
+          <button
+            type="submit"
+            className="bg-pink-500 text-white px-6 py-3 rounded-r-lg hover:bg-pink-600 focus:outline-none"
+          >
+            Send
+          </button>
+        </form>
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ const ChatPage = () => {
                 try {
                     const response = await getMessages(chatId);
                     const messagesData = response?.data || [];
-                    console.log(messagesData);
+                    console.log(messagesData,'------------------------------------------------');
                     setMessages(messagesData);
                     setCompanyName(messagesData[0]?.vendorId?.vendorname || "");
                 } catch (error) {
