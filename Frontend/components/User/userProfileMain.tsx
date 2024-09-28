@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -15,6 +16,7 @@ const ProfilePage: React.FC = () => {
     state: '', // Added state field
   });
   const [isEditing, setIsEditing] = useState(false); // Tracks if the user is editing
+  const [selectedImage, setSelectedImage] = useState<File | null>(null); // Holds the uploaded image
 
   useEffect(() => {
     const storedUserProfile = localStorage.getItem('user');
@@ -45,10 +47,16 @@ const ProfilePage: React.FC = () => {
     setAddress({ ...address, [name]: value });
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedImage(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Update userData with the new address before saving
+    // Update userData with the new address and photo before saving
     const updatedUserData = {
       ...userData,  // Keep all existing user data
       address: `${address.street}, ${address.cityState}`, // Update address
@@ -59,8 +67,26 @@ const ProfilePage: React.FC = () => {
     // Update the local userData state
     setUserData(updatedUserData);
 
-    // Call the function to save updated user details
-    await saveVendorDetails(updatedUserData);
+    // Handle photo upload logic
+    if (selectedImage) {
+      const formData = new FormData();
+      formData.append('profileImage', selectedImage); // Add the image to the form data
+      formData.append('userData', JSON.stringify(updatedUserData)); // Add the user data to the form data
+
+      try {
+        // Call the function to save updated user details with the image
+        const result = await UserEdit(formData); // Assuming UserEdit handles formData
+        localStorage.setItem("user", JSON.stringify(result.data)); // Update localStorage with the updated user data
+        toast.success("User details updated successfully.");
+        setIsEditing(false); // Turn off edit mode after saving
+      } catch (err) {
+        toast.error("An error occurred while saving user details. Please try again.");
+        console.error('EditUser API error:', err);
+      }
+    } else {
+      // If no image is uploaded, just save the user details
+      await saveVendorDetails(updatedUserData);
+    }
 
     console.log('User details submitted:', updatedUserData);
   };
@@ -162,6 +188,21 @@ const ProfilePage: React.FC = () => {
             )}
           </div>
 
+          {/* <div className="mb-4">
+            <label className="block text-gray-700">Profile Image:</label>
+            {isEditing ? (
+              <input
+                type="file"
+                name="profileImage"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="p-2 border rounded-lg focus:outline-none focus:border-pink-500"
+              />
+            ) : (
+              <img src={userData?.profileImage || '/default-avatar.png'} alt="Profile" className="w-24 h-24 rounded-full object-cover" />
+            )}
+          </div> */}
+
           <div className="mb-4">
             <label className="block text-gray-700">Address:</label>
             {isEditing ? (
@@ -173,7 +214,22 @@ const ProfilePage: React.FC = () => {
                 className="p-2 border rounded-lg focus:outline-none focus:border-pink-500"
               />
             ) : (
-              <p>{isEditing ? address.street : userData?.address || 'Nill'}</p>
+              <p>{userData?.address || 'Nill'}</p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700">City, State:</label>
+            {isEditing ? (
+              <input
+                type="text"
+                name="cityState"
+                placeholder="City, State"
+                onChange={handleAddressChange}
+                className="p-2 border rounded-lg focus:outline-none focus:border-pink-500"
+              />
+            ) : (
+              <p>{userData?.cityState || 'Nill'}</p>
             )}
           </div>
 
@@ -183,12 +239,12 @@ const ProfilePage: React.FC = () => {
               <input
                 type="text"
                 name="pinCode"
-                value={address.pinCode}
+                placeholder="Pin Code"
                 onChange={handleAddressChange}
                 className="p-2 border rounded-lg focus:outline-none focus:border-pink-500"
               />
             ) : (
-              <p>{isEditing ? address.pinCode : userData?.pincode || 'Nill'}</p>
+              <p>{userData?.pinCode || 'Nill'}</p>
             )}
           </div>
 
@@ -198,29 +254,29 @@ const ProfilePage: React.FC = () => {
               <input
                 type="text"
                 name="state"
-                value={address.state}
+                placeholder="State"
                 onChange={handleAddressChange}
                 className="p-2 border rounded-lg focus:outline-none focus:border-pink-500"
               />
             ) : (
-              <p>{isEditing ? address.state : userData?.state || 'Nill'}</p>
+              <p>{userData?.state || 'Nill'}</p>
             )}
           </div>
 
           {isEditing && (
-            <div className="flex justify-end space-x-2 mt-4">
-              <button
-                type="button"
-                onClick={() => setIsEditing(false)} // Cancel editing
-                className="p-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
-              >
-                Cancel
-              </button>
+            <div className="flex justify-between mt-4">
               <button
                 type="submit"
-                className="p-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+                className="px-4 py-2 text-white bg-pink-500 rounded-lg hover:bg-pink-600"
               >
                 Save
+              </button>
+              <button
+                type="button"
+                className="px-4 py-2 text-gray-700 border rounded-lg hover:bg-gray-100"
+                onClick={() => setIsEditing(false)}
+              >
+                Cancel
               </button>
             </div>
           )}

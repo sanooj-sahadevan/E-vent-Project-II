@@ -252,9 +252,14 @@ export const findAuditoriumVendorIdInDb = async (vendorId: string) => {
 
 
 export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
+  console.log('repoo vann auditorum1');
 
   try {
+    console.log('repoo vann auditorum2');
+
     let result = await Auditorium.findById(auditoriumId);
+    console.log('repoo vann auditorum3');
+
     console.log(result);
     return result
   } catch (error) {
@@ -266,9 +271,13 @@ export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
 
 
 export const finddishesByIdInDb = async (dishesId: string) => {
+  console.log('repo van');
+
   try {
-    let result = await chatModel.findById(dishesId);
-    console.log(result);
+    console.log('repo van');
+
+    let result = await Dishes.findById(dishesId);
+    console.log(result, 'resulty ann ');
     return result
   } catch (error) {
     console.error(error);
@@ -279,14 +288,14 @@ export const finddishesByIdInDb = async (dishesId: string) => {
 
 
 
-
-
 export const getBookingDetail = async (id: string) => {
   try {
+    console.log('controler 3');
+
     const bookedData = await bookedModel
       .findById(id)
-      .populate("tripId")
-      .populate("userId");
+      // .populate("tripId")
+      // .populate("userId");
 
     if (!bookedData) {
       throw new Error(`Booking with id ${id} not found`);
@@ -301,19 +310,28 @@ export const getBookingDetail = async (id: string) => {
 
 
 
-export const createBookedTrip = async (
-  productinfo: string,
-  txnid: string,
-  status: string
-) => {
-  try {
 
+export const createBookedTrip = async (bookingData: any) => {
+  try {
     console.log('save karo');
+
+    const {
+      productinfo,
+      txnid,
+      status,
+      amount,
+      userDetails,
+      payment_source
+    } = bookingData;
 
     const bookedData = await bookedModel.create({
       productinfo,
       txnId: txnid,
       paymentStatus: status,
+      totalAmount: amount,
+      payment_source,
+      userDetails,
+      createdAt: new Date(),
     });
 
     return bookedData;
@@ -324,15 +342,27 @@ export const createBookedTrip = async (
 };
 
 
-
 export const savechatDB = async (chat: string) => {
   try {
     console.log('Saving chat to DB');
 
-    const newChat = new chatModel({ message: chat });  // Create a new instance of the Chat model
-    return await newChat.save();  // Save the chat in the database
+    const newChat = new chatModel({ message: chat });
+    return await newChat.save();
   } catch (error) {
     console.error("Database error:", error);
-    throw new Error("Database operation failed.");  // Handle and throw database-related errors
+    throw new Error("Database operation failed.");
   }
 };
+
+
+
+export const findDetilsfromDB = async (userId: string) => {
+  try {
+    const result = await bookedModel.find(); 
+    return result;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw new Error("Database operation failed.");
+  }
+};
+

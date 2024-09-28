@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
-'use client';
 
-import React from "react";
+
+'use client'
+import React, { useEffect } from "react";
 import Image from 'next/image';
 import { useRouter, useSearchParams } from "next/navigation";
 import img from '@/public/7.jpg.jpg';
@@ -9,18 +9,28 @@ import img from '@/public/7.jpg.jpg';
 const Booknow: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const vendorId = searchParams.get("vendorId");
-  const auditoriumId = searchParams.get("auditoriumId");
-  const dishesId = searchParams.get("dishesId");
-  const profileImage = searchParams.get("profileImage") || "/default-vendor.jpg";
-  const vendorName = searchParams.get("vendorname") || "Vendor Name";
-  const email = searchParams.get("email") || "vendor@example.com";
 
-  // Handle form submission
+  // Get values from URL params or localStorage
+  const vendorId = searchParams.get("vendorId") || localStorage.getItem("vendorId");
+  const auditoriumId = searchParams.get("auditoriumId") || localStorage.getItem("auditoriumId");
+  const dishesId = searchParams.get("dishesId") || localStorage.getItem("dishesId");
+  const profileImage = searchParams.get("profileImage") || localStorage.getItem("profileImage") || "/default-vendor.jpg";
+  const vendorName = searchParams.get("vendorname") || localStorage.getItem("vendorName") || "Vendor Name";
+  const email = searchParams.get("email") || localStorage.getItem("email") || "vendor@example.com";
+
+  useEffect(() => {
+    // Save the search parameters to localStorage so they persist after refresh
+    if (vendorId) localStorage.setItem("vendorId", vendorId);
+    if (auditoriumId) localStorage.setItem("auditoriumId", auditoriumId);
+    if (dishesId) localStorage.setItem("dishesId", dishesId);
+    if (profileImage) localStorage.setItem("profileImage", profileImage);
+    if (vendorName) localStorage.setItem("vendorName", vendorName);
+    if (email) localStorage.setItem("email", email);
+  }, [vendorId, auditoriumId, dishesId, profileImage, vendorName, email]);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // Collecting form data, including auditoriumId
     const formData = {
       date: event.currentTarget.date.value,
       category: event.currentTarget.category.value,
@@ -28,14 +38,12 @@ const Booknow: React.FC = () => {
       people: event.currentTarget.people.value,
       vendorId: vendorId || "",
       auditoriumId: auditoriumId || "",
+      dishesId: dishesId || ""
     };
 
     try {
-      // Convert formData to query parameters
       const queryString = new URLSearchParams(formData).toString();
-      // Push to /checkout with all form data in query params
       router.push(`/checkout?${queryString}`);
-
     } catch (error) {
       console.error('Error booking event:', error);
     }

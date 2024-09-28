@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, findDetilsfromDB } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -161,6 +161,7 @@ export const finddishesById = async (dishesId) => {
 };
 export const findEvent = async (bookingId) => {
     try {
+        console.log('controler 2');
         const bookingDetails = await getBookingDetail(bookingId);
         return bookingDetails;
     }
@@ -215,9 +216,15 @@ export const addTransactionDetails = async (email, PayUOrderId, status) => {
         throw new Error(error.message);
     }
 };
-export const fetchbookingData = async (txnid, productinfo, status) => {
+export const fetchbookingData = async (bookingData) => {
     console.log('service');
-    const bookedTrip = await createBookedTrip(productinfo, txnid, status);
+    const bookedTrip = await createBookedTrip(bookingData);
     console.log(bookedTrip);
     return bookedTrip;
+};
+export const findDetils = async (userId) => {
+    console.log('findDetils');
+    const bookDetils = await findDetilsfromDB(userId); // Pass userId to the repository
+    console.log(bookDetils);
+    return bookDetils; // Return the booking details
 };

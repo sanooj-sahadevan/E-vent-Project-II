@@ -1,6 +1,6 @@
 import { 
 // googleLogin,
-getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, findFoodVendorById, findEvent } from "../Service/userService.js";
+getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, findFoodVendorById, findEvent, findDetils } from "../Service/userService.js";
 import { findUserByEmail,
 // findUserById,
  } from "../Repository/userReop.js";
@@ -287,6 +287,8 @@ export const fetchdishes = async (req, res, next) => {
 export const fetchBookedData = async (req, res) => {
     const { id } = req.params;
     try {
+        console.log({ id });
+        console.log('controler 1');
         const booking = await findEvent(id);
         if (!booking) {
             return res.status(404).json({ message: "Booking not found" });
@@ -308,7 +310,6 @@ export const payment = async (req, res) => {
             res.status(400).send("Mandatory fields missing");
             return;
         }
-        // console.log({ process.env.PAYU_MERCHANT_KEY, PAYU_SALT, txnid });
         const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|||||||||||${process.env.PAYU_SALT}`;
         const sha = new jsSHA("SHA-512", "TEXT");
         sha.update(hashString);
@@ -322,7 +323,6 @@ export const payment = async (req, res) => {
 };
 export const addTransaction = async (req, res, next) => {
     try {
-        console.log('add transactionnnnnnnnnnnnnnnnnnnnnnnnnn');
         const { PayUOrderId, email, status } = req.body;
         console.log({ PayUOrderId, email, status });
         const transactionId = await addTransactionDetails(email, PayUOrderId, status);
@@ -334,12 +334,27 @@ export const addTransaction = async (req, res, next) => {
 };
 export const saveData = async (req, res) => {
     try {
-        console.log("save data   payament");
-        const { txnid, email, productinfo, status } = req.body;
-        console.log({ txnid, email, productinfo, status });
+        const { txnid, email, productinfo, status, amount, firstname, lastname, phone, city, state, country, zipcode, payment_source, } = req.body;
+        console.log({ txnid, email, productinfo, status, amount });
         if (status === "success") {
-            const bookedTripId = await fetchbookingData(txnid, productinfo, status);
-            console.log({ bookedTripId });
+            // Pass additional details to the service layer
+            const bookedTripId = await fetchbookingData({
+                txnid,
+                productinfo,
+                status,
+                amount,
+                userDetails: {
+                    firstname,
+                    lastname,
+                    email,
+                    phone,
+                    city,
+                    state,
+                    country,
+                    zipcode,
+                },
+                payment_source
+            });
             if (bookedTripId) {
                 res.status(200).json({ success: true, bookedTripId: bookedTripId._id });
             }
@@ -347,11 +362,8 @@ export const saveData = async (req, res) => {
                 res.status(500).json({ success: false, message: "Booking update failed" });
             }
         }
-        else if (status === "failure") {
-            res.status(400).json({ success: false, message: "Booking failed" });
-        }
         else {
-            res.status(400).json({ success: false, message: "Unknown status" });
+            res.status(400).json({ success: false, message: "Booking failed" });
         }
     }
     catch (error) {
@@ -359,4 +371,17 @@ export const saveData = async (req, res) => {
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
-//Chat
+export const fetchBookingDetails = async (req, res) => {
+    const { userId } = req.params; // Get userId from the URL parameter
+    try {
+        const booking = await findDetils(userId); // Pass userId to the service layer
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        res.status(200).json(booking); // Return the booking details
+    }
+    catch (error) {
+        console.error("Error fetching booking data:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};

@@ -97,7 +97,7 @@ export const companyAddMessage = async (req: Request, res: Response) => {
     const message = new messageModel({
       chatId: chatDocument._id,  
       text,
-      senderId: userId,
+      senderId: vendorId,
       senderModel,
     });
 

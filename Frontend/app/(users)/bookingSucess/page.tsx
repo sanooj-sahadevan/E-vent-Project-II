@@ -1,10 +1,19 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import Footer from '@/components/footer';
 import Navbar from '@/components/Navbar';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const BookingSuccess: React.FC = () => {
+  const searchParams = useSearchParams();
+  
+  // Retrieve the PayUOrderId from query parameters
+  const PayUOrderId = searchParams.get('PayUOrderId');
+  
+  // Log the PayUOrderId to the console
+  console.log('PayUOrderId:', PayUOrderId,'8888888888888888888888888888888888888888888888888888');
+
   const router = useRouter();
 
   // Handle redirect to the homepage
@@ -13,7 +22,7 @@ const BookingSuccess: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between mt-[100px]"> {/* Added mt-[100px] for margin-top */}
+    <div className="min-h-screen flex flex-col justify-between mt-[100px]">
       {/* Navbar at the top */}
       <Navbar />
 
@@ -23,7 +32,8 @@ const BookingSuccess: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-4 text-center">Booking Successful!</h2>
           <div className="mb-4 text-center">
             <p className="text-lg font-medium">Transaction ID:</p>
-            <p className="text-gray-700">66f27061859b4d9bf5ccaeba</p> Static transaction ID for now
+            {/* Display the dynamic PayUOrderId */}
+            <p className="text-gray-700">{PayUOrderId || "Transaction ID not found"}</p>
           </div>
           <div className="mt-6">
             <button

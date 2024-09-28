@@ -6,7 +6,7 @@ interface ChatBoxProps {
     sender: string;
     time: string;
     isFromVendor: boolean;
-    createdAt: string; // Updated: createdAt should be a string, representing the date in ISO format
+    createdAt: string;
   }[];
   selectedUser: string;
   senderId: string;
@@ -29,14 +29,16 @@ const ChatBox = ({
     if (newMessage.trim()) {
       onNewMessage({
         text: newMessage,
-        sender: senderId,
-        time: new Date().toISOString(), // Use the current time for the message
+        sender: senderId,  
+        time: new Date().toISOString(),
+
       });
-      setNewMessage(""); // Clear the input field after sending
+      
+      setNewMessage("");
     }
   };
+  
 
-  // Format the time to show hours and minutes in 12-hour format
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
       hour: "numeric",

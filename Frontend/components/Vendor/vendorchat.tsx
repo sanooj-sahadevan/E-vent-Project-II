@@ -4,13 +4,12 @@ import ChatBox from "@/components/Vendor/chatBox";
 import ChatSidebar from "@/components/Vendor/chatSideBar";
 import { useEffect, useState } from "react";
 
-// Define interfaces for Vendor, Message, and ChatMessage
 interface Vendor {
   _id: string;
 }
 
 interface Message {
-  senderId: any;
+  senderId: string; // senderId is the sender's ID, which can be the vendor's ID or user's ID
   _id: string;
   text: string;
   vendorId: string;
@@ -35,17 +34,22 @@ const ChatApp = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
+  const [vendorId, setVendorId] = useState<string | null>(null);
 
-  // Retrieve vendor data from local storage on component mount
+  // Fetch vendor info from local storage
   useEffect(() => {
-    const vendorData = localStorage.getItem("vendor");
-    if (vendorData) {
-      const vendor = JSON.parse(vendorData);
-      setVendor(vendor);
+    // Fetch vendorId from localStorage
+    if (typeof window !== "undefined") {
+      const vendorData = localStorage.getItem("vendor");
+      if (vendorData) {
+        const vendor = JSON.parse(vendorData);
+        setVendor(vendor);
+        setVendorId(vendor._id); // Store vendor ID
+      }
     }
   }, []);
 
-  // Fetch chat users for the vendor
+  // Fetch chats for the vendor
   useEffect(() => {
     const getChats = async () => {
       if (vendor) {
@@ -63,7 +67,7 @@ const ChatApp = () => {
     getChats();
   }, [vendor]);
 
-  // Fetch chat messages when the selected user changes
+  // Fetch chat messages for the selected user
   useEffect(() => {
     const fetchChatDetails = async () => {
       if (selectedUser && vendor) {
@@ -74,8 +78,6 @@ const ChatApp = () => {
           try {
             const response = await getMessages(selectedChat._id);
             setSelectedMessages(response?.data || []);
-            console.log({response});
-            
           } catch (error) {
             console.error("Failed to fetch chat details:", error);
             setSelectedMessages([]);
@@ -86,7 +88,7 @@ const ChatApp = () => {
     fetchChatDetails();
   }, [selectedUser, chats, vendor]);
 
-  // Get unique users from chats
+  // Get unique users from the chat
   const uniqueUsers = Array.from(new Set(chats.map((chat) => chat?.userId?._id)))
     .map((id) => {
       const chat = chats.find((chat) => chat?.userId?._id === id);
@@ -94,7 +96,7 @@ const ChatApp = () => {
     })
     .filter((user) => user?.username);
 
-  // Handle sending new messages
+  // Handle sending a new message
   const handleNewMessage = async (message: ChatMessage) => {
     const selectedChat = chats.find(
       (chat) => chat?.userId?.username === selectedUser
@@ -103,7 +105,7 @@ const ChatApp = () => {
 
     try {
       const response = await messageSend({
-        vendorId: vendor._id,
+        vendorId: vendor._id, // Pass the vendor ID as the sender
         text: message.text,
         userId: selectedChat.userId._id,
         senderModel: "Vendor",
@@ -124,21 +126,21 @@ const ChatApp = () => {
 
       {selectedUser ? (
         <ChatBox
-          messages={selectedMessages
-            .filter((chat) => chat && chat.text) // Filter out any undefined or invalid messages
-            .map((chat) => ({
-              text: chat.text,
-              sender: chat.senderId.username, // Ensure this points to the username
-              time: chat.time, // Adjust this if your API returns a different time format
-              isFromVendor: chat.senderId?._id === vendor?._id, // Check if the message is from the vendor
-              createdAt: chat.time, // Use time here, assuming it's in ISO format; otherwise format accordingly
-            }))} 
-          selectedUser={selectedUser}
-          senderId={vendor?._id || ""}
-          senderModel="Vendor"
-          onNewMessage={handleNewMessage}
-          companyName={""}
-        />
+  messages={selectedMessages
+    .filter((chat) => chat && chat.text)
+    .map((chat) => ({
+      text: chat.text,
+      sender: chat.senderId,  // This can be vendorId
+      time: chat.time,
+      isFromVendor: chat.senderId === vendorId,  // This checks if the message is from the vendor
+      createdAt: chat.time,
+    }))}
+  selectedUser={selectedUser}
+  senderId={vendorId || ""}  // vendorId passed here as senderId
+  senderModel="Vendor"
+  onNewMessage={handleNewMessage}
+  companyName={""}
+/>
       ) : (
         <div className="w-3/4 h-full p-4">Select a user to view chats.</div>
       )}

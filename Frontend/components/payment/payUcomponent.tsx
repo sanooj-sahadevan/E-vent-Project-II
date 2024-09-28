@@ -17,7 +17,7 @@ const PayUComponent = ({ BookedData }: Props) => {
 
     // Extract values with default fallback
     const amount = BookedData.advanceAmount || 0; // Default to 0 if undefined
-    const productinfo = BookedData.vendorId || 'vendoriddd'; // Ensure this is set correctly
+    const productinfo = BookedData.vendorId  // Ensure this is set correctly
     const { username = '', email = '', phone = '' } = BookedData.userId || {};
     const key = PayU.merchantKey;
     console.log('324131');

@@ -10,17 +10,16 @@ export async function POST(req: any, res: NextApiResponse) {
   console.log({ contentType });
 
   const formData = await req.formData();
-  console.log(formData, '1111111111111111111111111111111111111111111111111111111111111111111111111111111111');
 
   const data: { [key: string]: any } = {};
   formData.forEach((value: any, key: string) => {
     data[key] = value;
   });
-  console.log(data)
+  console.log(data, 'this and all things')
   let PayUOrderId
   try {
     PayUOrderId = await PayUApiCalls.saveData(data);
-    console.log(PayUOrderId, 'ooooooooooooooooooooooooooooooooooooooooooooooooooooooooo');
+    console.log(PayUOrderId, 'pauorderId');
 
   } catch (error: any) {
     console.log(error.message);
@@ -29,9 +28,10 @@ export async function POST(req: any, res: NextApiResponse) {
   //   `users/paymentt/${PayUOrderId}`
   // );
 
+    // redirect(`/bookingSuccess?PayUOrderId=${PayUOrderId}`);
 
 
   redirect(
-    `/bookingSucess`
+    `/bookingSucess/${PayUOrderId}`
   );
 }

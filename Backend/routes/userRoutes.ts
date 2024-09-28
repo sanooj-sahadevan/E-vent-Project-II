@@ -6,7 +6,7 @@ import {
     verifyOtp, vendorList,
     editUserDetails,
     forgottenPassword, dishlist,
-    updatePassword, auditoriumlist, fetchVendorDetails,
+    updatePassword, auditoriumlist, fetchVendorDetails,fetchBookingDetails,
     fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, saveData,
     payment, addTransaction,
 } from "../controller/userController.js";
@@ -51,11 +51,11 @@ router.post('/payment', payment);
 router.post('/addTransaction', addTransaction);
 router.post('/response/saveData', saveData);
 
+// fect detils profile
 
 
 
-
-
+router.get('/fetchBookingDetails/:userId', fetchBookingDetails);
 
 
 export default router;

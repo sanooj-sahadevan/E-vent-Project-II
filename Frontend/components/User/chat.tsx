@@ -30,7 +30,7 @@ const ChatPage = () => {
                 try {
                     const response = await getMessages(chatId);
                     const messagesData = response?.data || [];
-                    console.log(messagesData,'------------------------------------------------');
+                    console.log(messagesData, '------------------------------------------------');
                     setMessages(messagesData);
                     setCompanyName(messagesData[0]?.vendorId?.vendorname || "");
                 } catch (error) {
@@ -74,7 +74,7 @@ const ChatPage = () => {
             console.error("Network error:", error);
         }
     };
-
+    console.log(message, 'ok de');
     // Function to format date
     const formatDate = (dateString: string) => {
         const options: Intl.DateTimeFormatOptions = {
@@ -111,15 +111,15 @@ const ChatPage = () => {
                         messages.map((msg, index) => (
                             <div
                                 key={index}
-                                className={`flex ${msg.senderId === vendorId ? "justify-end" : "justify-start"}`}
+                                className={`flex ${msg.senderId._id === userId ? "justify-end" : "justify-start"}`}
                             >
                                 <div
-                                    className={`${msg.senderId === userId ? "bg-pink-400 text-white" : "bg-pink-400 text-white"
-                                        } rounded-lg p-3 max-w-xs break-words`}
+                                    className={`${msg.senderId._id === userId ? "bg-pink-400 text-white" : "bg-green-400 text-white"} 
+                    rounded-lg p-3 max-w-xs break-words`}
                                 >
                                     <p>{msg.text}</p>
                                     <span className="text-xs text-gray-500 block mt-1">
-                                        {/* {msg.senderId === userId ? "You" : companyName} */}
+                                        {msg.senderId._id === userId ? "You" : companyName}
                                     </span>
                                     <span className="text-xs text-white-300 block mt-1">
                                         {formatDate(msg.createdAt)}
@@ -131,6 +131,7 @@ const ChatPage = () => {
                         <p className="text-center text-gray-500">No messages available.</p>
                     )}
                 </div>
+
 
                 {/* Message Input Area */}
                 <div className="bg-gray-100 flex items-center p-4 border-t border-gray-300">
