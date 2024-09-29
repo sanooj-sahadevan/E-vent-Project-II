@@ -51,7 +51,6 @@ router.post('/payment', payment);
 router.post('/addTransaction', addTransaction);
 router.post('/response/saveData', saveData);
 
-// fect detils profile
 
 
 

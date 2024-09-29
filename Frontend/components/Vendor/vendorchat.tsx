@@ -102,7 +102,7 @@ const ChatApp = () => {
       (chat) => chat?.userId?.username === selectedUser
     );
     if (!vendor || !selectedChat) return;
-
+  
     try {
       const response = await messageSend({
         vendorId: vendor._id, // Pass the vendor ID as the sender
@@ -110,11 +110,27 @@ const ChatApp = () => {
         userId: selectedChat.userId._id,
         senderModel: "Vendor",
       });
-      setSelectedMessages((prev) => [...prev, response.data]);
+  
+      const newMessage: Message = {
+        _id: response.data._id, 
+        senderId: vendor._id,   
+        text: response.data.text,
+        vendorId: vendor._id,
+        userId: {
+          _id: selectedChat.userId._id,
+          username: selectedChat.userId.username,
+        },
+        time: response.data.time,   // Assuming the API provides the time
+        senderModel: "Vendor",      // The model for the vendor
+      };
+  
+      // Update the messages state immediately after sending the message
+      setSelectedMessages((prev) => [...prev, newMessage]);
     } catch (error) {
       console.error("Failed to send message:", error);
     }
   };
+  
 
   return (
     <div className="h-screen flex">
@@ -130,7 +146,7 @@ const ChatApp = () => {
     .filter((chat) => chat && chat.text)
     .map((chat) => ({
       text: chat.text,
-      sender: chat.senderId,  // This can be vendorId
+      senderId: chat.senderId,  // This can be vendorId
       time: chat.time,
       isFromVendor: chat.senderId === vendorId,  // This checks if the message is from the vendor
       createdAt: chat.time,

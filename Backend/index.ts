@@ -7,10 +7,11 @@ import adminRoutes from './routes/adminRoutes.js';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
-import fs from 'fs';
-import path from 'path';
+import http, { createServer, Server } from "http";
 import { createStream } from 'rotating-file-stream';
 import chatRoutes from './routes/chatRoutes.js';
+import { socketHandler } from "./utils/socket/chat.js";
+import { Server as serverSocket} from 'socket.io';
 // import { fileURLToPath } from 'url';
 // import { dirname } from 'path';
 
@@ -60,6 +61,23 @@ app.use('/user', userRoutes);
 app.use('/vendor', vendorRoutes);
 app.use('/admin', adminRoutes);
 app.use('/chat', chatRoutes);
+
+
+
+
+const httpServer = createServer(app);
+
+export const io = new serverSocket(httpServer, {
+  cors: {
+    origin: "http://localhost:3000" || '*', 
+    methods: ['GET', 'POST'], 
+  },
+});
+
+
+socketHandler(io);
+
+
 
 // Start the server
 app.listen(PORT, () => {

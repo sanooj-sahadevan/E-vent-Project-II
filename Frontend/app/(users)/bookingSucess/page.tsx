@@ -7,12 +7,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 const BookingSuccess: React.FC = () => {
   const searchParams = useSearchParams();
-  
-  // Retrieve the PayUOrderId from query parameters
+
   const PayUOrderId = searchParams.get('PayUOrderId');
-  
+
   // Log the PayUOrderId to the console
-  console.log('PayUOrderId:', PayUOrderId,'8888888888888888888888888888888888888888888888888888');
+  console.log('PayUOrderId:', PayUOrderId, '88888888');
 
   const router = useRouter();
 

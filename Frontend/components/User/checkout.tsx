@@ -8,7 +8,6 @@ const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // State to store booking details including userId
   const [bookingDetails, setBookingDetails] = useState({
     userId: {
       username: '',
@@ -25,7 +24,7 @@ const CheckoutPage: React.FC = () => {
     advanceAmount: 10000,  
   });
 
- const [isPaymentEnabled, setIsPaymentEnabled] = useState(false); 
+  const [isPaymentEnabled, setIsPaymentEnabled] = useState(false); 
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -52,11 +51,7 @@ const CheckoutPage: React.FC = () => {
       dishesId: searchParams.get("dishesId") || '',
     };
 
-
-    console.log(bookingDetails, '0');
-
-
-    let advanceAmount = 10000; // Default
+    let advanceAmount = 10000; // Default amount
     if (params.category === 'platinum') {
       advanceAmount = 20000;
     } else if (params.category === 'gold') {
@@ -65,6 +60,7 @@ const CheckoutPage: React.FC = () => {
       advanceAmount = 1000;
     }
 
+    // Update booking details state
     setBookingDetails((prev) => ({
       ...prev,
       ...params,
@@ -72,7 +68,10 @@ const CheckoutPage: React.FC = () => {
     }));
   }, [searchParams]);
 
-  console.log(bookingDetails, 'Booking Details ---');
+  // Log booking details when they update
+  useEffect(() => {
+    console.log(bookingDetails, 'Booking Details ---');
+  }, [bookingDetails]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">

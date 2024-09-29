@@ -28,10 +28,12 @@ export async function POST(req: any, res: NextApiResponse) {
   //   `users/paymentt/${PayUOrderId}`
   // );
 
-    // redirect(`/bookingSuccess?PayUOrderId=${PayUOrderId}`);
+  // redirect(`/bookingSuccess?PayUOrderId=${PayUOrderId}`);
+
+  redirect(`/`);
 
 
-  redirect(
-    `/bookingSucess/${PayUOrderId}`
-  );
+  // redirect(
+  //   `/bookingSucess/${PayUOrderId}`
+  // );
 }

@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import React, { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { SaveChat, getMessages } from "@/services/chatApi";
 import { useSearchParams } from "next/navigation";
+import io, { Socket } from "socket.io-client";
 
 const ChatPage = () => {
     const searchParams = useSearchParams();
@@ -12,6 +14,41 @@ const ChatPage = () => {
     const [userId, setUserId] = useState<string | null>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [companyName, setCompanyName] = useState<string>("");
+    const [socket, setSocket] = useState<Socket | null>(null);
+
+    useEffect(() => {
+        const socketConnection = io("http://localhost:5000", {
+            transports: ["websocket"],
+            autoConnect: false,
+        });
+
+        socketConnection.connect();
+        setSocket(socketConnection);
+
+        return () => {
+            if (socketConnection) {
+                socketConnection.disconnect();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (socket && chatId) {
+            socket.emit("joinRoom", chatId);
+        }
+    }, [chatId, socket]);
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("message", (newMessage: any) => {
+                setMessages((prevMessages) => [...prevMessages, newMessage]);
+            });
+
+            return () => {
+                socket.off("message");
+            };
+        }
+    }, [socket]);
 
     useEffect(() => {
         // Fetch userId from localStorage
@@ -30,7 +67,6 @@ const ChatPage = () => {
                 try {
                     const response = await getMessages(chatId);
                     const messagesData = response?.data || [];
-                    console.log(messagesData, '------------------------------------------------');
                     setMessages(messagesData);
                     setCompanyName(messagesData[0]?.vendorId?.vendorname || "");
                 } catch (error) {
@@ -74,7 +110,7 @@ const ChatPage = () => {
             console.error("Network error:", error);
         }
     };
-    console.log(message, 'ok de');
+
     // Function to format date
     const formatDate = (dateString: string) => {
         const options: Intl.DateTimeFormatOptions = {
@@ -98,7 +134,6 @@ const ChatPage = () => {
             </div>
 
             {/* Main Chat Window */}
-
             <div className="flex-1 flex flex-col h-full p-6 bg-white">
                 {/* Chat Header */}
                 <div className="h-16 bg-gray-200 flex items-center px-4 border-b border-gray-300">
@@ -132,7 +167,6 @@ const ChatPage = () => {
                     )}
                 </div>
 
-
                 {/* Message Input Area */}
                 <div className="bg-gray-100 flex items-center p-4 border-t border-gray-300">
                     <form onSubmit={handleSendMessage} className="flex w-full">
@@ -152,12 +186,6 @@ const ChatPage = () => {
                     </form>
                 </div>
             </div>
-
-
-
-
-
-
         </div>
     );
 };

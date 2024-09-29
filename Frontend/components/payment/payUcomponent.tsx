@@ -12,22 +12,25 @@ const PayUComponent = ({ BookedData }: Props) => {
     const txnidRef = useRef(generateTxnId(8));
     const txnid = txnidRef.current;
 
-    // Check the structure of BookedData
     console.log('BookedData:', BookedData);
 
     // Extract values with default fallback
     const amount = BookedData.advanceAmount || 0; // Default to 0 if undefined
-    const productinfo = BookedData.vendorId  // Ensure this is set correctly
+    const productinfo = BookedData.vendorId || '';  // Ensure this is set correctly
+    const udf1 = BookedData.userId?._id || '';
     const { username = '', email = '', phone = '' } = BookedData.userId || {};
-    const key = PayU.merchantKey;
-    console.log('324131');
-
     const surl = `${FRONTEND_DOMAIN}/api/paymentSuccess`;
     const furl = `${FRONTEND_DOMAIN}/api/paymentFailure`;
 
-    useEffect(() => {
-        const data = { txnid, amount, productinfo, username, email, phone };
+    const udf2 = BookedData.auditoriumId || 'nil';  // Fallback to empty string if undefined
+    const udf3 = BookedData.dishesId || 'nil';  // Fallback to empty string if undefined
 
+    const key = PayU.merchantKey;
+
+   
+
+    useEffect(() => {
+        const data = { txnid, amount, productinfo, username, email, phone, udf1, udf2, udf3 };
         (async function () {
             try {
                 console.log('Payment request data:', data);
@@ -35,11 +38,10 @@ const PayUComponent = ({ BookedData }: Props) => {
                 setHash(res.hash);
             } catch (error: any) {
                 console.error("Payment Error: " + error.message);
-                alert(error.message);
             }
         })();
-    }, [amount, productinfo, txnid, username, email, phone]);
-
+    }, [amount, productinfo, txnid, username, email, phone, udf1, udf2, udf3]);
+    
     return (
         <form action="https://test.payu.in/_payment" method="post">
             <input type="hidden" name="key" value={key} />
@@ -48,9 +50,14 @@ const PayUComponent = ({ BookedData }: Props) => {
             <input type="hidden" name="amount" value={amount} />
             <input type="hidden" name="email" value={email} />
             <input type="hidden" name="firstname" value={username} />
+            <input type="hidden" name="phone" value={phone} />
+            <input type="hidden" name="udf1" value={udf1} />
+            <input type="hidden" name="udf2" value={udf2} />
+            <input type="hidden" name="udf3" value={udf3} />
             <input type="hidden" name="surl" value={surl} />
             <input type="hidden" name="furl" value={furl} />
-            <input type="hidden" name="phone" value={phone} />
+         
+
             <input type="hidden" name="hash" value={hash || ""} />
             {hash && (
                 <button

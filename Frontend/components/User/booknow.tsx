@@ -1,5 +1,3 @@
-
-
 'use client'
 import React, { useEffect } from "react";
 import Image from 'next/image';
@@ -18,8 +16,11 @@ const Booknow: React.FC = () => {
   const vendorName = searchParams.get("vendorname") || localStorage.getItem("vendorName") || "Vendor Name";
   const email = searchParams.get("email") || localStorage.getItem("email") || "vendor@example.com";
 
+  // Retrieve user data from localStorage
+  const user = JSON.parse(localStorage.getItem("user") || '{}');
+  const userId = user._id;
+
   useEffect(() => {
-    // Save the search parameters to localStorage so they persist after refresh
     if (vendorId) localStorage.setItem("vendorId", vendorId);
     if (auditoriumId) localStorage.setItem("auditoriumId", auditoriumId);
     if (dishesId) localStorage.setItem("dishesId", dishesId);
@@ -35,10 +36,11 @@ const Booknow: React.FC = () => {
       date: event.currentTarget.date.value,
       category: event.currentTarget.category.value,
       eventType: event.currentTarget.eventType.value,
-      people: event.currentTarget.people.value,
+      occupancy: event.currentTarget.people.value,
       vendorId: vendorId || "",
       auditoriumId: auditoriumId || "",
-      dishesId: dishesId || ""
+      dishesId: dishesId || "",
+      userId: userId
     };
 
     try {
@@ -51,34 +53,6 @@ const Booknow: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col justify-center mt-[100px] items-center bg-gray-100 p-8">
-      {/* <div className="relative p-6 rounded-lg mb-8 mt-4 shadow-lg w-full max-w-3xl">
-        <div
-          className="absolute inset-0 bg-cover bg-center rounded-lg"
-          style={{ backgroundImage: `url('/vendor-bg.jpg')` }}
-        ></div>
-        <div className="relative flex items-center space-x-6 z-10">
-          <img
-            src={profileImage}
-            alt="Vendor Image"
-            className="rounded-full w-24 h-24 object-cover border-4 border-white"
-          />
-          <div>
-            <h1 className="text-2xl font-semibold text-white">{vendorName}</h1>
-            <p className="text-sm text-gray-200">{email}</p>
-          </div>
-        </div>
-        <div className="absolute right-6 top-6 flex space-x-4 z-10">
-          <button
-            onClick={() => router.push(`/booknow?vendorId=${vendorId}`)} 
-            className="px-4 py-2 bg-buttonBg text-white rounded hover:bg-buttonBgHover transition"
-          >
-            Book Now
-          </button>
-          <button className="px-4 py-2 bg-buttonBg text-white rounded hover:bg-buttonBgHover transition">Chat With Us</button>
-          <button className="px-4 py-2 bg-buttonBg text-white rounded hover:bg-buttonBgHover transition">Check Availability</button>
-        </div>
-      </div> */}
-
       <div className="bg-white shadow-md rounded-lg overflow-hidden max-w-4xl w-full flex">
         {/* Form Section */}
         <div className="w-1/2 p-8">
@@ -184,7 +158,7 @@ const Booknow: React.FC = () => {
 
         {/* Image Section */}
         <div className="w-1/2 relative">
-          <Image src={img} alt="Wedding event" layout="fill" objectFit="cover" className="rounded-lg" />
+          <Image src={img} alt="Wedding event" fill className="rounded-lg object-cover" />
         </div>
       </div>
     </div>

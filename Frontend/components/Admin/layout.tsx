@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </li>
             <li className="px-5 py-3">
               <Link
-                href="/admin/dashboard"
+                href="/admin/adminUser"
                 className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/approval")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
@@ -61,7 +61,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </li>
             <li className="px-6 py-3">
               <Link
-                href="/admin/users"
+                href="/admin/adminVendor"
                 className={`rounded-lg block text-xl p-3 font-semibold  ${isActive("/admin/transaction")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
@@ -72,7 +72,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </li>
             <li className="px-6 py-3">
               <Link
-                href="/admin/vendor"
+                href="/admin/adminVendor"
                 className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/users")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"

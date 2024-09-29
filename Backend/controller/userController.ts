@@ -387,20 +387,25 @@ export const payment = async (req: Request, res: Response) => {
   try {
     console.log('hey paymeent');
 
-    const { txnid, amount, productinfo, username, email } = req.body;
-    console.log({ txnid, amount, productinfo, username, email });
+    const { txnid, amount, productinfo, username, email ,udf1, udf2, udf3} = req.body;
+    console.log({ txnid, amount, productinfo, username, email,udf1, udf2, udf3 });
+    console.log('hey paymeent1');
 
-    if (!txnid || !amount || !productinfo || !username || !email) {
+    if (!txnid || !amount || !productinfo || !username || !email || !udf1  || !udf2 || !udf3) {
       res.status(400).send("Mandatory fields missing");
       return;
     }
+    console.log('hey paymeent2');
 
 
-    const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|||||||||||${process.env.PAYU_SALT}`;
+
+    const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|${udf1}|${udf2}|${udf3}||||||||${process.env.PAYU_SALT}`;
+    console.log('hey paymeent3');
 
     const sha = new jsSHA("SHA-512", "TEXT");
     sha.update(hashString);
     const hash = sha.getHash("HEX");
+console.log('hash pokin');
 
     res.send({ hash: hash });
   } catch (error) {

@@ -24,7 +24,6 @@ router.get('/fetchdishes/:dishesId', fetchdishes);
 router.post('/payment', payment);
 router.post('/addTransaction', addTransaction);
 router.post('/response/saveData', saveData);
-// fect detils profile
 router.get('/fetchBookingDetails/:userId', fetchBookingDetails);
 export default router;
 // import { Router } from 'express';
