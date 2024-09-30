@@ -3,10 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { fetchBookingDetilsProfile } from '@/services/userApi';
 
-// Define the types for the event data
+// Define the types for the booking data
 interface Event {
-  createdAt: string;  // Updated to reflect the correct timestamp field
-  productinfo: string;
+  createdAt: string;
+  vendorId: {
+    vendorname: string;  // Ensure this matches the backend model
+  };
+  auditoriumId: {
+    auditoriumName: string;  // Ensure this matches the backend model
+  };
+  dishesId: {
+    dishesName: string;  // Ensure this matches the backend model
+  };
   txnId: string;
   paymentStatus: string;
   totalAmount: number;
@@ -27,6 +35,8 @@ const EventsPage: React.FC = () => {
 
     try {
       const data = await fetchBookingDetilsProfile(userId);
+      console.log({ data }, 'frondned');
+
       setBookingDetails(data);
       setLoading(false);
     } catch (err: any) {
@@ -40,7 +50,7 @@ const EventsPage: React.FC = () => {
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
-        const userId = user?._id; // Safely access user._id
+        const userId = user?._id; 
         if (!userId) {
           setError('User ID not found');
           setLoading(false);
@@ -71,7 +81,7 @@ const EventsPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-12">
-<h2 className="text-2xl font-bold mb-4 text-center">Booking Details</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Booking Details</h2>
 
       {error && <p className="text-red-500">{error}</p>}
       {loading ? (
@@ -82,11 +92,12 @@ const EventsPage: React.FC = () => {
             <thead>
               <tr className="bg-gray-300 text-left">
                 <th className="p-4">Date</th>
-                <th className="p-4">Event Name</th>
+                <th className="p-4">Vendor Name</th>
+                <th className="p-4">Auditorium Name</th>
+                <th className="p-4">Dishes Name</th>
                 <th className="p-4">Transaction ID</th>
                 <th className="p-4">Payment Status</th>
                 <th className="p-4">Total Amount</th>
-                {/* <th className="p-4">Actions</th> */}
               </tr>
             </thead>
             <tbody>
@@ -94,22 +105,12 @@ const EventsPage: React.FC = () => {
                 bookingDetails.map((event, index) => (
                   <tr key={index} className="border-b">
                     <td className="p-4">{formatDate(event.createdAt)}</td>
-                    <td className="p-4">{event.productinfo}</td>
+                    <td className="p-4">{event.vendorId?.vendorname || 'N/A'}</td>
+                    <td className="p-4">{event.auditoriumId?.auditoriumName || 'N/A'}</td>
+                    <td className="p-4">{event.dishesId?.dishesName || 'N/A'}</td>
                     <td className="p-4">{event.txnId}</td>
                     <td className="p-4">{event.paymentStatus}</td>
                     <td className="p-4">{event.totalAmount}</td>
-                    <td className="p-4">
-                      {/* <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2 hover:bg-blue-600"
-                      >
-                        {event.status === 'Complete' ? 'Add Review' : 'N/A'}
-                      </button>
-                      <button
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
-                      >
-                        &#10006;
-                      </button> */}
-                    </td>
                   </tr>
                 ))
               ) : (

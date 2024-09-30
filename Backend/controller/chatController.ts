@@ -18,7 +18,6 @@ export const savechat = async (req: Request, res: Response) => {
     const { text } = req.body;
     const userId = req.body.senderId;
     const vendorId = req.body.vendorId;
-    console.log(userId, 'saxasxasdbgedhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh');
 
     const result = await savechatService(text, userId, vendorId);
 

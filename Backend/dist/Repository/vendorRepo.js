@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 import { Dishes } from '../models/dishesModel.js';
 import { Auditorium } from "../models/auditoriumModel.js";
+import { bookedModel } from "../models/bookedEvent.js";
 const VendorSchema = new Schema({
     vendorname: { type: String, required: true },
     phone: { type: Number, required: true },
@@ -212,5 +213,21 @@ export const softDeleteAuditoriumRepo = async (auditoriumId) => {
     catch (error) {
         console.error(`Error soft-deleting auditorium: ${error}`);
         throw error;
+    }
+};
+export const findDetailsByvendorId = async (vendorId) => {
+    try {
+        const results = await bookedModel
+            .find({ userId: vendorId }) // Find all bookings that match the userId
+            .populate('dishesId') // Populate dishes details
+            .populate('userId') // Populate user details
+            .populate('vendorId') // Populate vendor details
+            .populate('auditoriumId'); // Populate auditorium details
+        console.log('Fetched Data with populated fields:', results);
+        return results; // Return the array of populated results
+    }
+    catch (error) {
+        console.error("Database error:", error);
+        throw new Error("Database operation failed.");
     }
 };

@@ -57,7 +57,7 @@ export const sendMessage = async (
   
 
 
-  export const getMessages = (id: string) => {
+  export const getMessages = (id: string, senderId: any) => {
     try {
       return axios.get(`${server_URL_chat}/message/${id}`);
     } catch (error: any) {
@@ -69,6 +69,8 @@ export const sendMessage = async (
   // company API;
   
   export const companyChats = (id: string) => {
+    console.log('first chat');
+    
     return axios.get(`${server_URL_chat}/company/${id}`);
   };
   

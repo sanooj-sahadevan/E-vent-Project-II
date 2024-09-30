@@ -6,17 +6,27 @@ import { SaveChat, getMessages } from "@/services/chatApi";
 import { useSearchParams } from "next/navigation";
 import io, { Socket } from "socket.io-client";
 
+// Message type definition
+interface Message {
+  [x: string]: any;
+  text: string;
+  senderId: { _id: string };
+  createdAt: string;
+}
+
 const ChatPage = () => {
     const searchParams = useSearchParams();
     const vendorId = searchParams.get("vendorId");
     const chatId = searchParams.get("chatId");
     const [message, setMessage] = useState<string>("");
     const [userId, setUserId] = useState<string | null>(null);
-    const [messages, setMessages] = useState<any[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [companyName, setCompanyName] = useState<string>("");
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
+        console.log('Connecting to local 5000');
+
         const socketConnection = io("http://localhost:5000", {
             transports: ["websocket"],
             autoConnect: false,
@@ -27,6 +37,7 @@ const ChatPage = () => {
 
         return () => {
             if (socketConnection) {
+                console.log('Disconnecting socket');
                 socketConnection.disconnect();
             }
         };
@@ -34,29 +45,33 @@ const ChatPage = () => {
 
     useEffect(() => {
         if (socket && chatId) {
+            console.log(`Joining chat room: ${chatId}`);
             socket.emit("joinRoom", chatId);
         }
     }, [chatId, socket]);
 
     useEffect(() => {
         if (socket) {
-            socket.on("message", (newMessage: any) => {
+            console.log('Listening for messages');
+            const messageListener = (newMessage: Message) => {
                 setMessages((prevMessages) => [...prevMessages, newMessage]);
-            });
+            };
 
+            socket.on("message", messageListener);
+
+            // Cleanup listener to prevent memory leaks
             return () => {
-                socket.off("message");
+                socket.off("message", messageListener);
             };
         }
     }, [socket]);
 
     useEffect(() => {
-        // Fetch userId from localStorage
         if (typeof window !== "undefined") {
             const user = localStorage.getItem("user");
             if (user) {
-                const senderId = JSON.parse(user);
-                setUserId(senderId?._id || null);
+                const parsedUser = JSON.parse(user);
+                setUserId(parsedUser?._id || null);
             }
         }
     }, []);
@@ -66,7 +81,7 @@ const ChatPage = () => {
             if (chatId) {
                 try {
                     const response = await getMessages(chatId);
-                    const messagesData = response?.data || [];
+                    const messagesData: Message[] = response?.data || [];
                     setMessages(messagesData);
                     setCompanyName(messagesData[0]?.vendorId?.vendorname || "");
                 } catch (error) {
@@ -100,8 +115,10 @@ const ChatPage = () => {
                 vendorId: vendorId,
             });
 
+            console.log(response, 'Message saved');
+
             if (response) {
-                setMessages([...messages, { text: message, senderId: userId, createdAt: new Date() }]);
+                setMessages([...messages, { text: message, senderId: { _id: userId }, createdAt: new Date().toISOString() }]);
                 setMessage("");
             } else {
                 console.error("Error saving message");

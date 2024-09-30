@@ -1,5 +1,5 @@
 import express from "express";
-import { login, register, verifyOtp, editVendorDetails, softDeleteAuditorium, addDishes, addAuditorium, fetchDetailsVendor, fetchFoodDetails, fetchAuditoriumDetails, fetchdishes, fetchauditorium, softDeleteDish, } from "../controller/vendorController.js";
+import { login, register, verifyOtp, editVendorDetails, softDeleteAuditorium, vendorBookingDetils, addDishes, addAuditorium, fetchDetailsVendor, fetchFoodDetails, fetchAuditoriumDetails, fetchdishes, fetchauditorium, softDeleteDish, } from "../controller/vendorController.js";
 import upload from "../middleware/multer.js";
 import { verifyvendor } from "../middleware/vendorJWT.js";
 const router = express.Router();
@@ -16,4 +16,5 @@ router.get('/fetchauditorium/:auditoriumId', fetchauditorium);
 router.get('/fetchdishes/:dishesId', fetchdishes);
 router.patch('/dishes/:dishId', softDeleteDish);
 router.patch('/auditorium/:auditoriumId', softDeleteAuditorium);
+router.get('/vendorBookingDetils/:vendorId', vendorBookingDetils);
 export default router;

@@ -288,7 +288,7 @@ export const fetchBookedData = async (bookingId: any) => {
 export const fetchBookingDetilsProfile = async (userId: string) => {
   try {
     const response = await axios.get(`${SERVER_URL}/fetchBookingDetails/${userId}`);
-    console.log(response.data);
+    console.log(response.data,'api call retuen');
     
     return response.data; 
   } catch (error) {

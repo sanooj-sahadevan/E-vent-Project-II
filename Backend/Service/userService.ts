@@ -8,7 +8,7 @@ import {
   findUserByEmailupdate,fetchfromDBDishes,VendorRepository,
   fetchfromDBAuditorium,findVendorByIdInDb,findUserByEmail,
   findAuditoriumByIdInDb,getBookingDetail,findFoodVendorIdInDb,
-  findAuditoriumVendorIdInDb,finddishesByIdInDb,savechatDB,findDetilsfromDB
+  findAuditoriumVendorIdInDb,finddishesByIdInDb,savechatDB,findDetailsByUserId,
 } from "../Repository/userReop.js";
 
 export const registerUser = async (user: User) => {
@@ -272,22 +272,20 @@ export const addTransactionDetails = async (
 
 export const fetchbookingData = async (bookingData: any) => {
   console.log('service');
-
   const bookedTrip = await createBookedTrip(bookingData);
   console.log(bookedTrip);
-
   return bookedTrip;
 };
 
 
 
+export const findBookingDetails = async (userId: string) => {
+  console.log('Fetching booking details for userId:', userId);
 
-export const findDetils = async (userId: string) => {
-  console.log('findDetils');
+  const bookingDetails = await findDetailsByUserId(userId); // Use the repository function
+  console.log('Booking details:', bookingDetails);
 
-  const bookDetils = await findDetilsfromDB(userId); // Pass userId to the repository
-  console.log(bookDetils);
-
-  return bookDetils; // Return the booking details
+  return bookingDetails; // Return the booking details
 };
+
 

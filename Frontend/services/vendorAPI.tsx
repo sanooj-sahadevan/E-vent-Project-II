@@ -253,3 +253,19 @@ export const messageSend = async (messageData: any) => {
     throw new Error(error.response?.data?.message || "Failed to send message");
   }
 };
+
+
+export const vendorBookingDetils = async (vendorId: string) => {
+  try {
+    const response = await axios.get(`${SERVER_URL_vendor}/vendorBookingDetils/${vendorId}`);
+    console.log(response.data,'api call retuen');
+    
+    return response.data; 
+  } catch (error) {
+    console.error('Error fetching booking data:', error);
+    throw error;
+  }
+};
+
+
+

@@ -109,7 +109,7 @@ const bookingSchema = new Schema<Booking>({
     },
     occupancy: {
         type: Number,
-        required: true
+        required: false
     },
     totalAmount: {
         type: Number,
@@ -129,8 +129,8 @@ const bookingSchema = new Schema<Booking>({
     },
     eventDate: {
         type: Date,
-        required: true
+        required: false
     }
 }, { timestamps: true });
 
-export const bookedModel = mongoose.model<Booking>("bookedTrip", bookingSchema);
+export const bookedModel = mongoose.model<Booking>("Booked", bookingSchema);

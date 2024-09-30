@@ -310,27 +310,37 @@ export const getBookingDetail = async (id: string) => {
 
 
 
-
 export const createBookedTrip = async (bookingData: any) => {
   try {
     console.log('save karo');
 
     const {
-      productinfo,
+      vendorId,
       txnid,
       status,
       amount,
-      userDetails,
+      userId,       // from udf1
+      auditoriumId, // from udf2
+      dishesId,     // from udf3
+      date,         // from udf4
+      category,
+      eventType,   // from udf5
       payment_source
     } = bookingData;
 
+    // Create the booking record
     const bookedData = await bookedModel.create({
-      productinfo,
+      vendorId,
       txnId: txnid,
       paymentStatus: status,
       totalAmount: amount,
+      userId,          // save userId in the model
+      auditoriumId,    // save auditoriumId in the model
+      dishesId,        // save dishesId in the model
+      date,            // save date in the model
+      category,
+      eventType,  
       payment_source,
-      userDetails,
       createdAt: new Date(),
     });
 
@@ -356,13 +366,23 @@ export const savechatDB = async (chat: string) => {
 
 
 
-export const findDetilsfromDB = async (userId: string) => {
+export const findDetailsByUserId = async (userId: string) => {
   try {
-    const result = await bookedModel.find(); 
-    return result;
+    const results = await bookedModel
+      .find({ userId: userId })  // Find all bookings that match the userId
+      .populate('dishesId')      // Populate dishes details
+      .populate('userId')        // Populate user details
+      .populate('vendorId')      // Populate vendor details
+      .populate('auditoriumId'); // Populate auditorium details
+
+    console.log('Fetched Data with populated fields:', results);
+    
+    return results; // Return the array of populated results
   } catch (error) {
     console.error("Database error:", error);
     throw new Error("Database operation failed.");
   }
 };
+
+
 

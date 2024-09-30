@@ -110,17 +110,19 @@ const ChatApp = () => {
         userId: selectedChat.userId._id,
         senderModel: "Vendor",
       });
+  console.log(response,'00a0a0a0a0a');
   
       const newMessage: Message = {
-        _id: response.data._id, 
+        _id: response._id, 
         senderId: vendor._id,   
-        text: response.data.text,
+        text: response.text,
         vendorId: vendor._id,
         userId: {
           _id: selectedChat.userId._id,
           username: selectedChat.userId.username,
         },
-        time: response.data.time,   // Assuming the API provides the time
+        time: response.
+        createdAt,   // Assuming the API provides the time
         senderModel: "Vendor",      // The model for the vendor
       };
   

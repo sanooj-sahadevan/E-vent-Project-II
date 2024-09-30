@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, findDetilsfromDB } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, findDetailsByUserId, } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
         console.log('service');
@@ -222,9 +222,9 @@ export const fetchbookingData = async (bookingData) => {
     console.log(bookedTrip);
     return bookedTrip;
 };
-export const findDetils = async (userId) => {
-    console.log('findDetils');
-    const bookDetils = await findDetilsfromDB(userId); // Pass userId to the repository
-    console.log(bookDetils);
-    return bookDetils; // Return the booking details
+export const findBookingDetails = async (userId) => {
+    console.log('Fetching booking details for userId:', userId);
+    const bookingDetails = await findDetailsByUserId(userId); // Use the repository function
+    console.log('Booking details:', bookingDetails);
+    return bookingDetails; // Return the booking details
 };
