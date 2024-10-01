@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { useSearchParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -7,13 +8,12 @@ const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // State to store booking details including userId
   const [bookingDetails, setBookingDetails] = useState({
     userId: {
       username: '',
       address: '',
       phone: '',
-      _id: '', // _id added here
+      _id: '',
     },
     category: '',
     date: '',
@@ -21,13 +21,11 @@ const CheckoutPage: React.FC = () => {
     vendorId: '',
     auditoriumId: '',
     dishesId: '',
-    advanceAmount: 10000,  // Default advance amount
+    advanceAmount: 10000,  
   });
 
-  // State to control PayUComponent visibility
-  const [isPaymentEnabled, setIsPaymentEnabled] = useState(false); // Toggle state
+  const [isPaymentEnabled, setIsPaymentEnabled] = useState(false); 
 
-  // Fetch user and query params on component mount
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -39,12 +37,11 @@ const CheckoutPage: React.FC = () => {
           address: parsedUser.address || '',
           phone: parsedUser.phone || '',
           email: parsedUser.email || '',
-          _id: parsedUser._id || '', // _id added here
+          _id: parsedUser._id || '', 
         },
       }));
     }
 
-    // Extract search params
     const params = {
       category: searchParams.get("category") || '',
       date: searchParams.get("date") || '',
@@ -54,8 +51,7 @@ const CheckoutPage: React.FC = () => {
       dishesId: searchParams.get("dishesId") || '',
     };
 
-    // Determine the advance amount based on the category
-    let advanceAmount = 10000; // Default
+    let advanceAmount = 10000; // Default amount
     if (params.category === 'platinum') {
       advanceAmount = 20000;
     } else if (params.category === 'gold') {
@@ -64,15 +60,18 @@ const CheckoutPage: React.FC = () => {
       advanceAmount = 1000;
     }
 
-    // Update bookingDetails state with the params and advanceAmount
+    // Update booking details state
     setBookingDetails((prev) => ({
       ...prev,
       ...params,
-      advanceAmount, // Set the advanceAmount based on the category
+      advanceAmount, 
     }));
   }, [searchParams]);
 
-  console.log(bookingDetails, 'Booking Details -------------------------------------------------------');
+  // Log booking details when they update
+  useEffect(() => {
+    console.log(bookingDetails, 'Booking Details ---');
+  }, [bookingDetails]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -115,7 +114,7 @@ const CheckoutPage: React.FC = () => {
               type="checkbox"
               id="paymentToggle"
               checked={isPaymentEnabled}
-              onChange={() => setIsPaymentEnabled(!isPaymentEnabled)} // Toggle state
+              onChange={() => setIsPaymentEnabled(!isPaymentEnabled)} 
               className="mr-2"
             />
             <label htmlFor="paymentToggle" className="text-lg text-gray-700">

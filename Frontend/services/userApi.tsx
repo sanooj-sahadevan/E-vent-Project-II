@@ -268,7 +268,7 @@ export const saveDB = async (bookingDetails: Object) => {
 };
 
 
-export const fetchBookedData = async (bookingId: string) => {
+export const fetchBookedData = async (bookingId: any) => {
   try {
 
     console.log('32423453525');
@@ -282,12 +282,17 @@ export const fetchBookedData = async (bookingId: string) => {
 };
 
 
-export const fetchingBookingDetails = async (bookingId: any) => {
+
+
+// Fetch booking details by userId
+export const fetchBookingDetilsProfile = async (userId: string) => {
   try {
-    const response = await axios.get(`${SERVER_URL}/bookedTrip/${bookingId}`, { withCredentials: true}); // Adjust the API endpoint
-    return response.data; // Return the data from the response
+    const response = await axios.get(`${SERVER_URL}/fetchBookingDetails/${userId}`);
+    console.log(response.data,'api call retuen');
+    
+    return response.data; 
   } catch (error) {
-    console.error("Error fetching booking data:", error);
+    console.error('Error fetching booking data:', error);
     throw error;
   }
 };

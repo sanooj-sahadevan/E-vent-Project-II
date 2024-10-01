@@ -2,7 +2,7 @@ import { Vendor } from "../models/vendorModel";
 import jwt from "jsonwebtoken";
 import {
   createVendor,findVendorByEmail,findVendorByIdInDb,updateVendor, 
-  vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium,
+  vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium,findDetailsByvendorId,
   findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb,softDeleteDishRepo,softDeleteAuditoriumRepo,
 } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
@@ -240,3 +240,12 @@ export const softDeleteAuditoriumService = async (auditoriumId: string) => {
   }
 };
 
+
+export const findBookingDetails = async (vendorId: string) => {
+  console.log('Fetching booking details for userId:', vendorId);
+
+  const bookingDetails = await findDetailsByvendorId(vendorId); // Use the repository function
+  console.log('Booking details:', bookingDetails);
+
+  return bookingDetails; // Return the booking details
+};

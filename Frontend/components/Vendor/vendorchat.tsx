@@ -1,58 +1,100 @@
 "use client";
 import { vendorChats, getMessages, messageSend } from "@/services/vendorAPI";
-import ChatBox from "@/components/Vendor/chatBox";
 import ChatSidebar from "@/components/Vendor/chatSideBar";
 import { useEffect, useState } from "react";
+import io, { Socket } from "socket.io-client";
 
-// Define interfaces for Vendor, Message, and ChatMessage
 interface Vendor {
   _id: string;
 }
 
+interface User {
+  _id: string;
+  username: string;
+}
+
 interface Message {
-  senderId: any;
+  senderId: string;
   _id: string;
   text: string;
   vendorId: string;
-  userId: {
-    _id: string;
-    username: string;
-  };
-  time: string;
-  senderModel: string;
-}
-
-interface ChatMessage {
-  text: string;
-  sender: string;
+  userId: User;
   time: string;
 }
 
 const ChatApp = () => {
   const [vendor, setVendor] = useState<Vendor | null>(null);
-  const [chats, setChats] = useState<Message[]>([]);
+  const [chatId, setChatId] = useState<Message[]>([]);
+  const [currChatId, setCurrChatId] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedMessages, setSelectedMessages] = useState<Message[]>([]);
+  const [vendorId, setVendorId] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>("");
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-  // Retrieve vendor data from local storage on component mount
+  useEffect(() => {
+    const socketInstance = io("http://localhost:5000", {
+      transports: ["websocket"],
+      withCredentials: true,
+    });
+
+    socketInstance.on("connect", () => {
+      alert("This is an  on");
+
+      console.log("Connected to WebSocket server vendor");
+    });
+
+    socketInstance.on("message", (newMessage: Message) => {
+
+      console.log("Vendor received message:", newMessage);
+      setSelectedMessages((prevMessages) => [...prevMessages, newMessage]);
+    });
+
+    setSocket(socketInstance);
+
+    return () => {
+      socketInstance.disconnect();
+      console.log("Disconnecting vendor socket");
+    };
+  }, []);
+
+
+
   useEffect(() => {
     const vendorData = localStorage.getItem("vendor");
     if (vendorData) {
-      const vendor = JSON.parse(vendorData);
-      setVendor(vendor);
+      const parsedVendor = JSON.parse(vendorData);
+      setVendor(parsedVendor);
+      setVendorId(parsedVendor._id);
     }
   }, []);
 
-  // Fetch chat users for the vendor
+  useEffect(() => {
+    if (socket && currChatId) {
+      console.log(`Joining chat room: ${currChatId}`);
+      socket.emit("joinRoom", currChatId);
+    }
+  }, [currChatId, socket]);
+
+
+
   useEffect(() => {
     const getChats = async () => {
       if (vendor) {
         try {
-          const { data } = await vendorChats(vendor._id);
-          setChats(data);
-        } catch (error: any) {
+          const response = await vendorChats(vendor._id);
+          const data = response?.data;
+          if (data) {
+            setChatId(data);
+            console.log(setChatId, 'jkwjsndjwndcjqwanshcn');
+
+          } else {
+            setError("No data found.");
+          }
+        } catch (error) {
           console.error(error);
           setError("Failed to load chats.");
         } finally {
@@ -63,19 +105,28 @@ const ChatApp = () => {
     getChats();
   }, [vendor]);
 
-  // Fetch chat messages when the selected user changes
+
+
   useEffect(() => {
+
     const fetchChatDetails = async () => {
       if (selectedUser && vendor) {
-        const selectedChat = chats.find(
+        const validChats = chatId.filter((chat) => chat?.userId?.username);
+        const selectedChat = validChats.find(
           (chat) => chat?.userId?.username === selectedUser
         );
+        setCurrChatId(selectedChat?._id)
+
         if (selectedChat) {
           try {
             const response = await getMessages(selectedChat._id);
-            setSelectedMessages(response?.data || []);
-            console.log({response});
-            
+            const data = response?.data;
+            if (data) {
+              setSelectedMessages(data);
+            } else {
+              setSelectedMessages([]);
+              setError("No messages found.");
+            }
           } catch (error) {
             console.error("Failed to fetch chat details:", error);
             setSelectedMessages([]);
@@ -84,67 +135,143 @@ const ChatApp = () => {
       }
     };
     fetchChatDetails();
-  }, [selectedUser, chats, vendor]);
+  }, [selectedUser, chatId, vendor]);
 
-  // Get unique users from chats
-  const uniqueUsers = Array.from(new Set(chats.map((chat) => chat?.userId?._id)))
-    .map((id) => {
-      const chat = chats.find((chat) => chat?.userId?._id === id);
-      return { _id: id, username: chat?.userId?.username };
-    })
-    .filter((user) => user?.username);
 
-  // Handle sending new messages
-  const handleNewMessage = async (message: ChatMessage) => {
-    const selectedChat = chats.find(
+
+
+
+
+
+  const uniqueUsers = Array.from(
+    new Set(
+      chatId
+        .filter((chat) => chat?.userId && chat.userId._id)
+        .map((chat) => chat.userId._id)
+    )
+  ).map((id) => {
+    const chat = chatId.find((chat) => chat?.userId?._id === id);
+    return { _id: id, username: chat?.userId?.username };
+  });
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!vendor?._id || !message.trim()) return;
+
+    const selectedChat = chatId.find(
       (chat) => chat?.userId?.username === selectedUser
     );
-    if (!vendor || !selectedChat) return;
+
+    if (!selectedChat) {
+      console.error("Selected chat not found.");
+      return;
+    }
 
     try {
       const response = await messageSend({
-        vendorId: vendor._id,
-        text: message.text,
+        text: message,
+        senderId: vendorId,
         userId: selectedChat.userId._id,
-        senderModel: "Vendor",
       });
-      setSelectedMessages((prev) => [...prev, response.data]);
+
+      if (response) {
+        const newMessage: Message = {
+          _id: response._id,
+          senderId: vendor._id,
+          text: response.text,
+          vendorId: vendor._id,
+          userId: selectedChat.userId,
+          time: response.createdAt,
+        };
+
+        setSelectedMessages((prevMessages) => [...prevMessages, newMessage]);
+        setMessage("");
+      } else {
+        console.error("Error saving message");
+      }
     } catch (error) {
-      console.error("Failed to send message:", error);
+      console.error("Network error:", error);
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
   };
 
   return (
     <div className="h-screen flex">
       <ChatSidebar
-        users={uniqueUsers.map((user) => user?.username!)}
+        users={uniqueUsers.map((user) => user.username)}
         selectedUser={selectedUser || ""}
         setSelectedUser={setSelectedUser}
       />
 
-      {selectedUser ? (
-        <ChatBox
-          messages={selectedMessages
-            .filter((chat) => chat && chat.text) // Filter out any undefined or invalid messages
-            .map((chat) => ({
-              text: chat.text,
-              sender: chat.senderId.username, // Ensure this points to the username
-              time: chat.time, // Adjust this if your API returns a different time format
-              isFromVendor: chat.senderId?._id === vendor?._id, // Check if the message is from the vendor
-              createdAt: chat.time, // Use time here, assuming it's in ISO format; otherwise format accordingly
-            }))} 
-          selectedUser={selectedUser}
-          senderId={vendor?._id || ""}
-          senderModel="Vendor"
-          onNewMessage={handleNewMessage}
-          companyName={""}
-        />
-      ) : (
-        <div className="w-3/4 h-full p-4">Select a user to view chats.</div>
-      )}
+      <div className="flex-1 overflow-y-auto bg-gray-200 p-6 space-y-4">
+        {selectedMessages.length > 0 ? (
+          selectedMessages.map((msg, index) => {
 
-      {loading && <div>Loading chats...</div>}
-      {error && <div>{error}</div>}
+            console.log({ msg });
+
+            return (
+              <div
+                key={index}
+                className={`flex ${msg.senderId === vendor?._id ? "justify-end" : "justify-start"
+                  }`}
+              >
+                <div
+                  className={`${msg.senderId === vendor?._id
+                    ? "bg-pink-400 text-white"
+                    : "bg-green-400 text-white"
+                    } rounded-lg p-3 max-w-xs break-words`}
+                >
+                  <p>{msg.text}</p>
+                  <span className="text-xs text-gray-500 block mt-1">
+                    {msg.senderId === vendor?._id
+                      ? "You"
+                      : msg?.userId?.username || "Unknown User"}
+                  </span>
+                  <span className="text-xs text-gray-500 block mt-1">
+                    {formatDate(msg.time)}
+                  </span>
+                </div>
+              </div>
+            )
+          })
+        ) : (
+          <p className="text-center text-gray-500">No messages available.</p>
+        )}
+        <form onSubmit={handleSendMessage} className="flex w-full">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:border-pink-500"
+          />
+          <button
+            type="submit"
+            className="bg-pink-500 text-white px-6 py-3 rounded-r-lg hover:bg-pink-600 focus:outline-none"
+          >
+            Send
+          </button>
+        </form>
+      </div>
+
+      {loading && (
+        <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
+          Loading chats...
+        </div>
+      )}
+      {error && (
+        <div className="absolute top-12 left-1/2 transform -translate-x-1/2 text-red-500">
+          {error}
+        </div>
+      )}
     </div>
   );
 };

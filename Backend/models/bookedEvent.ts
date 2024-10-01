@@ -1,70 +1,136 @@
+// import mongoose, { Document, Schema } from 'mongoose';
+
+// interface UserDetails {
+//     firstname: string;
+//     lastname: string;
+//     email: string;
+//     phone: string;
+//     city: string;
+//     state: string;
+//     country: string;
+//     zipcode: string;
+// }
+
+// interface Booking extends Document {
+//     productinfo: string;
+//     txnId: string;
+//     paymentStatus: string;
+//     totalAmount: number;
+//     payment_source: string;
+//     userDetails: UserDetails;
+//     createdAt: Date;
+// }
+
+// const bookingSchema = new Schema<Booking>({
+//     productinfo: {
+//         type: String,
+//         required: true,
+//     },
+//     txnId: {
+//         type: String,
+//         required: true,
+//     },
+//     paymentStatus: {
+//         type: String,
+//         required: true,
+//     },
+//     totalAmount: {
+//         type: Number,
+//         required: true,
+//     },
+//     payment_source: {
+//         type: String,
+//         required: true,
+//     },
+//     userDetails: {
+//         firstname: { type: String, required: true },
+//         lastname: { type: String, required: false },
+//         email: { type: String, required: true },
+//         phone: { type: String, required: true },
+//         city: { type: String, required: false },
+//         state: { type: String, required: false },
+//         country: { type: String, required: false },
+//         zipcode: { type: String, required: false },
+//     },
+//     createdAt: {
+//         type: Date,
+//         default: Date.now,
+//     },
+// });
+
+// export const bookedModel = mongoose.model<Booking>("Booked", bookingSchema);
+// export type { Booking };
+
 import mongoose, { Document, Schema } from 'mongoose';
 
 interface Booking extends Document {
-    dishesId?: mongoose.Schema.Types.ObjectId; // Make optional if not always required
-    auditoriumId?: mongoose.Schema.Types.ObjectId; // Make optional if not always required
-    vendorId?: mongoose.Schema.Types.ObjectId; // Make optional if not always required
-    userId: mongoose.Schema.Types.ObjectId; // Required for every booking
-    date: Date; // Required for the date of the booking
-    category: string; // Required category for the booking
-    totalAmount: number; // Required total amount for the booking
-    paymentType?: string; // Optional payment type
-    paymentStatus?: string; // Optional payment status
-    createdAt: Date; // Automatically set when booking is created
-    payment_source: string; // Required for source of payment
+    vendorId: mongoose.Schema.Types.ObjectId;
+    userId: mongoose.Schema.Types.ObjectId;
+    totalAmount: number;
+    paymentType?: string;
+    paymentStatus: string;
+    txnId?: string;
+    eventDate: Date;
+    eventType: string;
+    category: string;
+    occupancy: number;
+    dishesId?: mongoose.Schema.Types.ObjectId;
+    auditoriumId?: mongoose.Schema.Types.ObjectId;
 }
 
 const bookingSchema = new Schema<Booking>({
+    vendorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vendor",
+        required: true
+    },
     dishesId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Dishes",
-        required: false // Adjust based on your requirements
+        required: false
     },
     auditoriumId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Auditorium",
-        required: false // Adjust based on your requirements
+        required: false
     },
-    vendorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Vendor",
-        required: false // Adjust based on your requirements
+    eventType: {
+        type: String,
+        required: true
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: false // User ID should be required for every booking
-    },
-    date: {
-        type: Date,
-        required: false // Date should be required for every booking
+        required: true
     },
     category: {
         type: String,
-        required: false // Category should be required for every booking
+        required: true
+    },
+    occupancy: {
+        type: Number,
+        required: false
     },
     totalAmount: {
         type: Number,
-        required: false // Total amount should be required for every booking
+        required: true
     },
     paymentType: {
         type: String,
-        default: "online" // Default payment type is online
+        default: "online"
     },
     paymentStatus: {
         type: String,
-        default: "pending" // Default payment status is pending
+        required: true
     },
-    createdAt: {
-        type: Date,
-        default: Date.now // Automatically set to the current date
-    },
-    payment_source: {
+    txnId: {
         type: String,
-        required: false // Required for source of payment
+        default: null
+    },
+    eventDate: {
+        type: Date,
+        required: false
     }
-});
+}, { timestamps: true });
 
-// Create the Mongoose model
 export const bookedModel = mongoose.model<Booking>("Booked", bookingSchema);
-export type { Booking };

@@ -14,13 +14,13 @@ const TopNavBar = () => {
           </Link>
         </li>
         <li>
-          <Link href="/profile/booking-details" className="flex flex-col items-center text-gray-600 hover:text-pink-500">
+          <Link href="/bookingDetails" className="flex flex-col items-center text-gray-600 hover:text-pink-500">
             <FaLock size={24} />
             <span>Booking Details</span>
           </Link>
         </li>
         <li>
-          <Link href="/change-password" className="flex flex-col items-center text-gray-600 hover:text-pink-500">
+          <Link href="/changePassword" className="flex flex-col items-center text-gray-600 hover:text-pink-500">
             <FaLock size={24} />
             <span>Change Password</span>
           </Link>

@@ -3,7 +3,7 @@ import Otp from '@/components/vendorOTP'
 const page = () => {
   return (
     <div>
-      <Otp/>
+      <Otp />
     </div>
   )
 }

@@ -1,28 +1,28 @@
 import { Request, Response, NextFunction } from 'express';
-import { AdminService } from '../Service/adminService.js';
+import { loginUser } from '../Service/adminService.js';
 import { HttpStatus } from '../utils/httpStatus.js';
 
-export class AdminController {
-  private adminService: AdminService;
 
-  constructor() {
-    this.adminService = new AdminService();
-  }
+export const adminlogin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
 
-  async adminLogin(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const { email, password } = req.body;
-    
-    try {
-      const result = await this.adminService.loginUser(email, password);
+  console.log('admin login');
+  
+  const { email, password } = req.body;
+  try {
+    const result = await loginUser(email, password);
+    console.log(result);
 
-      if (result) {
-        res.cookie('adminToken', result.adminToken, { httpOnly: true });
-        res.status(HttpStatus.OK).json({ adminToken: result.adminToken, admin: result.admin });
-      } else {
-        res.status(HttpStatus.UNAUTHORIZED).json({ message: 'Login failed' });
-      }
-    } catch (error) {
-      next(error);
+    if (result) {
+      res.cookie("adminToken", result.adminToken);
+      res.json({ adminToken: result.adminToken, admin: result.admin });
+    } else {
+      res.status(401).json({ message: "Login failed" });
     }
+  } catch (error) {
+    next(error);
   }
-}
+};

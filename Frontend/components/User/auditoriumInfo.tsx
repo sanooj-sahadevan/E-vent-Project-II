@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
@@ -28,6 +29,10 @@ const FoodItemPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    console.log(auditoriumId, "this is audi");
+    console.log(vendorId, "this is vendor");
+
+
     const fetchAuditoriumDetails = async () => {
       if (auditoriumId) {
         try {
@@ -111,10 +116,10 @@ const FoodItemPage: React.FC = () => {
           </button> */}
 
           <button
-            onClick={() => router.push(`/auditoriuminfo?auditoriumId=${auditoriumId}&vendorId=${vendorId}`)}  // Pass vendorId along with dishesId
+            onClick={() => router.push(`/booknow?auditoriumId=${auditoriumId}&vendorId=${vendorId}`)}  
             className="mt-4 w-full bg-black text-white py-2 rounded-md"
           >
-            Find Dish
+             Add Item
           </button>
 
 

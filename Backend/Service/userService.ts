@@ -8,7 +8,7 @@ import {
   findUserByEmailupdate,fetchfromDBDishes,VendorRepository,
   fetchfromDBAuditorium,findVendorByIdInDb,findUserByEmail,
   findAuditoriumByIdInDb,getBookingDetail,findFoodVendorIdInDb,
-  findAuditoriumVendorIdInDb,finddishesByIdInDb,savechatDB,
+  findAuditoriumVendorIdInDb,finddishesByIdInDb,savechatDB,findDetailsByUserId,
 } from "../Repository/userReop.js";
 
 export const registerUser = async (user: User) => {
@@ -204,6 +204,8 @@ export const finddishesById = async (dishesId: string) => {
 
 export const findEvent = async (bookingId: string) => {
   try {
+    console.log('controler 2');
+
     const bookingDetails = await getBookingDetail(bookingId);
     return bookingDetails;
   } catch (error) {
@@ -268,21 +270,22 @@ export const addTransactionDetails = async (
   }
 }
 
-export const fetchbookingData = async (
-  txnid: string,
-  productinfo: string,
-  status: string
-) => {
-
+export const fetchbookingData = async (bookingData: any) => {
   console.log('service');
-  
-  const bookedTrip = await createBookedTrip(productinfo, txnid, status);
+  const bookedTrip = await createBookedTrip(bookingData);
   console.log(bookedTrip);
-  
   return bookedTrip;
-
 };
 
 
+
+export const findBookingDetails = async (userId: string) => {
+  console.log('Fetching booking details for userId:', userId);
+
+  const bookingDetails = await findDetailsByUserId(userId); // Use the repository function
+  console.log('Booking details:', bookingDetails);
+
+  return bookingDetails; // Return the booking details
+};
 
 

@@ -1,6 +1,6 @@
 import { 
 // googleLogin,
-getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, findFoodVendorById, findEvent } from "../Service/userService.js";
+getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, findFoodVendorById, findEvent, findBookingDetails } from "../Service/userService.js";
 import { findUserByEmail,
 // findUserById,
  } from "../Repository/userReop.js";
@@ -287,6 +287,8 @@ export const fetchdishes = async (req, res, next) => {
 export const fetchBookedData = async (req, res) => {
     const { id } = req.params;
     try {
+        console.log({ id });
+        console.log('controler 1');
         const booking = await findEvent(id);
         if (!booking) {
             return res.status(404).json({ message: "Booking not found" });
@@ -302,17 +304,20 @@ export const fetchBookedData = async (req, res) => {
 export const payment = async (req, res) => {
     try {
         console.log('hey paymeent');
-        const { txnid, amount, productinfo, username, email } = req.body;
-        console.log({ txnid, amount, productinfo, username, email });
-        if (!txnid || !amount || !productinfo || !username || !email) {
+        const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
+        console.log({ txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 });
+        console.log('hey paymeent1');
+        if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6) {
             res.status(400).send("Mandatory fields missing");
             return;
         }
-        // console.log({ process.env.PAYU_MERCHANT_KEY, PAYU_SALT, txnid });
-        const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|||||||||||${process.env.PAYU_SALT}`;
+        console.log('hey paymeent2');
+        const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}|${udf6}|||||${process.env.PAYU_SALT}`;
+        console.log('hey paymeent3');
         const sha = new jsSHA("SHA-512", "TEXT");
         sha.update(hashString);
         const hash = sha.getHash("HEX");
+        console.log('hash pokin');
         res.send({ hash: hash });
     }
     catch (error) {
@@ -322,7 +327,6 @@ export const payment = async (req, res) => {
 };
 export const addTransaction = async (req, res, next) => {
     try {
-        console.log('add transactionnnnnnnnnnnnnnnnnnnnnnnnnn');
         const { PayUOrderId, email, status } = req.body;
         console.log({ PayUOrderId, email, status });
         const transactionId = await addTransactionDetails(email, PayUOrderId, status);
@@ -334,12 +338,32 @@ export const addTransaction = async (req, res, next) => {
 };
 export const saveData = async (req, res) => {
     try {
-        console.log("save data   payament");
-        const { txnid, email, productinfo, status } = req.body;
-        console.log({ txnid, email, productinfo, status });
+        const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
+        const eventType = udf6;
+        // Map udf fields to meaningful names
+        const userId = udf1;
+        const auditoriumId = udf2;
+        const dishesId = udf3;
+        const date = udf4;
+        const category = udf5;
+        const vendorId = productinfo;
+        console.log('Received udf6 (eventType):', udf6);
         if (status === "success") {
-            const bookedTripId = await fetchbookingData(txnid, productinfo, status);
-            console.log({ bookedTripId });
+            // Call to service function to update booking
+            const bookedTripId = await fetchbookingData({
+                txnid,
+                email,
+                vendorId,
+                status,
+                amount,
+                userId,
+                auditoriumId,
+                dishesId,
+                date,
+                eventType, // Ensure this is passed correctly
+                category
+            });
+            console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, eventType, category });
             if (bookedTripId) {
                 res.status(200).json({ success: true, bookedTripId: bookedTripId._id });
             }
@@ -347,16 +371,25 @@ export const saveData = async (req, res) => {
                 res.status(500).json({ success: false, message: "Booking update failed" });
             }
         }
-        else if (status === "failure") {
-            res.status(400).json({ success: false, message: "Booking failed" });
-        }
         else {
-            res.status(400).json({ success: false, message: "Unknown status" });
+            res.status(400).json({ success: false, message: "Booking failed" });
         }
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ success: false, message: "Internal server error" });
     }
 };
-//Chat
+export const fetchBookingDetails = async (req, res) => {
+    const { userId } = req.params; // Extract userId from request parameters
+    try {
+        const booking = await findBookingDetails(userId); // Call the service function
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+        res.status(200).json(booking); // Return the booking details
+    }
+    catch (error) {
+        console.error("Error fetching booking data:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};

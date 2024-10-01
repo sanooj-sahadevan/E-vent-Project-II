@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 interface Auditorium {
     _id: string;
-    images?: string;  // Assuming images is a string; update if it's an array
+    images?: string; 
     auditoriumName: string;
     types: string;
     rating: number;
@@ -18,18 +18,19 @@ interface Auditorium {
 const AuditoriumPage: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const vendorId = searchParams.get("vendorId");  // Get vendorId from URL parameters
-    const [auditorium, setAuditorium] = useState<Auditorium[]>([]); // Initialize as an empty array
+    const vendorId = searchParams.get("vendorId");  
+    
+    const [auditorium, setAuditorium] = useState<Auditorium[]>([]); 
 
     useEffect(() => {
         const fetchAuditorium = async () => {
             if (!vendorId) {
                 toast.error("Vendor ID is missing. Please try again.");
-                return; // Exit if vendorId is null
+                return; 
             }
     
             try {
-                const response = await FetchAuditorium(vendorId); // Now it's safe to pass vendorId
+                const response = await FetchAuditorium(vendorId);
                 console.log("API Response:", response);
                 if (Array.isArray(response)) {
                     setAuditorium(response);
@@ -44,7 +45,6 @@ const AuditoriumPage: React.FC = () => {
             }
         };
     
-        // Pass vendorId to the fetchAuditorium function
         fetchAuditorium();
     }, [vendorId, router]);
     
@@ -68,7 +68,9 @@ const AuditoriumPage: React.FC = () => {
                                     <span className="ml-1 text-sm text-gray-600">{aud.types}</span>
                                 </div>
                                 <button
-                                    onClick={() => router.push(`/auditoriumInfo?auditoriumId=${aud._id,vendorId}&vendorId=${vendorId}`)}  
+                                //    onClick={() => router.push(`/dishesinfo?dishesId=${dish._id}&vendorId=${vendorId}`)}  // Pass vendorId along with dishesId
+
+                                    onClick={() => router.push(`/auditoriumInfo?auditoriumId=${aud._id}&vendorId=${vendorId}`)}  
                                     className="mt-4 w-full bg-black text-white py-2 rounded-md"
                                 >
                                     Find auditorium

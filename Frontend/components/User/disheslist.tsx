@@ -20,13 +20,12 @@ const DishesPage: React.FC = () => {
     const searchParams = useSearchParams();
     const vendorId = searchParams.get("vendorId");
 
-    const [dishes, setDishes] = useState<Dishes[]>([]); // Initialize as an empty array
-
+    const [dishes, setDishes] = useState<Dishes[]>([]);
     useEffect(() => {
         const fetchDishes = async () => {
             if (!vendorId) {
                 toast.error("Vendor ID is missing. Please try again.");
-                return; // Exit if vendorId is null
+                return;
             }
 
             try {
@@ -41,12 +40,12 @@ const DishesPage: React.FC = () => {
             } catch (error) {
                 console.error("Failed to fetch Dishes:", error);
                 toast.error("Error fetching dishes. Redirecting to login.");
-                router.push('/login');
+                // router.push('/login');
             }
         };
 
         fetchDishes();
-    }, [router, vendorId]);  // Added vendorId as a dependency
+    }, [router, vendorId]);
 
 
 

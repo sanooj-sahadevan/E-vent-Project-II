@@ -6,7 +6,7 @@ import {
     verifyOtp, vendorList,
     editUserDetails,
     forgottenPassword, dishlist,
-    updatePassword, auditoriumlist, fetchVendorDetails,
+    updatePassword, auditoriumlist, fetchVendorDetails,fetchBookingDetails,
     fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, saveData,
     payment, addTransaction,
 } from "../controller/userController.js";
@@ -54,8 +54,7 @@ router.post('/response/saveData', saveData);
 
 
 
-
-
+router.get('/fetchBookingDetails/:userId', fetchBookingDetails);
 
 
 export default router;

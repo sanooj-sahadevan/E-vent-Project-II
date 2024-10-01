@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import {
   loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes,
-  uploadImage, editVendor, findVendorById, uploadAuditorium,softDeleteDishService,
+  uploadImage, editVendor, findVendorById, uploadAuditorium,softDeleteDishService,findBookingDetails,
   findFoodVendorById, findAuditoriumVendorById, findDishesById, findAuditoriumById,softDeleteAuditoriumService
 } from "../Service/vendorService.js";
 
@@ -354,6 +354,20 @@ export const softDeleteAuditorium = async (req: Request, res: Response) => {
 };
 
 
+export const vendorBookingDetils = async (req: Request, res: Response) => {
+  const { vendorId } = req.params; // Extract userId from request parameters
+  try {
+    const booking = await findBookingDetails(vendorId); // Call the service function
 
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.status(200).json(booking); // Return the booking details
+  } catch (error) {
+    console.error("Error fetching booking data:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 

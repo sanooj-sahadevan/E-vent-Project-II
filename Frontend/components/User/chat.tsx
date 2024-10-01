@@ -1,8 +1,18 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import React, { useEffect, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 import { SaveChat, getMessages } from "@/services/chatApi";
 import { useSearchParams } from "next/navigation";
+import io, { Socket } from "socket.io-client";
+
+// Message type definition
+interface Message {
+    [x: string]: any;
+    text: string;
+    senderId: { _id: string };
+    createdAt: string;
+}
 
 const ChatPage = () => {
     const searchParams = useSearchParams();
@@ -10,16 +20,50 @@ const ChatPage = () => {
     const chatId = searchParams.get("chatId");
     const [message, setMessage] = useState<string>("");
     const [userId, setUserId] = useState<string | null>(null);
-    const [messages, setMessages] = useState<any[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [companyName, setCompanyName] = useState<string>("");
+    const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        // Fetch userId from localStorage
+        console.log('Connecting to local 5000');
+
+        const socket = io('http://localhost:5000', {
+            withCredentials: true,
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        socket.on('message', (message) => {
+            console.log('Received message:', message);
+            setMessages(prevState => [...prevState, message])
+        });
+
+        setSocket(socket)
+
+        return () => {
+            if (socket) {
+                console.log('Disconnecting socket');
+                socket.disconnect();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (socket && chatId) {
+            console.log(`Joining chat room: ${chatId}`);
+            socket.emit("joinRoom", chatId);
+        }
+    }, [chatId, socket]);
+
+
+    useEffect(() => {
         if (typeof window !== "undefined") {
             const user = localStorage.getItem("user");
             if (user) {
-                const senderId = JSON.parse(user);
-                setUserId(senderId?._id || null);
+                const parsedUser = JSON.parse(user);
+                setUserId(parsedUser?._id || null);
             }
         }
     }, []);
@@ -29,8 +73,7 @@ const ChatPage = () => {
             if (chatId) {
                 try {
                     const response = await getMessages(chatId);
-                    const messagesData = response?.data || [];
-                    console.log(messagesData,'------------------------------------------------');
+                    const messagesData: Message[] = response?.data || [];
                     setMessages(messagesData);
                     setCompanyName(messagesData[0]?.vendorId?.vendorname || "");
                 } catch (error) {
@@ -65,7 +108,7 @@ const ChatPage = () => {
             });
 
             if (response) {
-                setMessages([...messages, { text: message, senderId: userId, createdAt: new Date() }]);
+                setMessages([...messages, { text: message, senderId: { _id: userId }, createdAt: new Date().toISOString() }]);
                 setMessage("");
             } else {
                 console.error("Error saving message");
@@ -88,17 +131,16 @@ const ChatPage = () => {
     return (
         <div className="flex h-screen bg-gray-100">
             {/* Sidebar */}
-            <div className="w-1/4 h-full bg-gray-800 text-white p-4 border-r border-gray-700">
+            {/* <div className="w-1/4 h-full bg-gray-800 text-white p-4 border-r border-gray-700">
                 <h1 className="text-lg font-semibold mb-4">Chats</h1>
                 <div className="h-full overflow-y-auto space-y-2">
                     <div className="bg-gray-700 p-3 rounded hover:bg-gray-600 cursor-pointer">Chat 1</div>
                     <div className="bg-gray-700 p-3 rounded hover:bg-gray-600 cursor-pointer">Chat 2</div>
                     <div className="bg-gray-700 p-3 rounded hover:bg-gray-600 cursor-pointer">Chat 3</div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Main Chat Window */}
-
             <div className="flex-1 flex flex-col h-full p-6 bg-white">
                 {/* Chat Header */}
                 <div className="h-16 bg-gray-200 flex items-center px-4 border-b border-gray-300">
@@ -111,15 +153,15 @@ const ChatPage = () => {
                         messages.map((msg, index) => (
                             <div
                                 key={index}
-                                className={`flex ${msg.senderId === vendorId ? "justify-end" : "justify-start"}`}
+                                className={`flex ${msg.senderId._id === userId ? "justify-end" : "justify-start"}`}
                             >
                                 <div
-                                    className={`${msg.senderId === userId ? "bg-pink-400 text-white" : "bg-pink-400 text-white"
-                                        } rounded-lg p-3 max-w-xs break-words`}
+                                    className={`${msg.senderId._id === userId ? "bg-pink-400 text-white" : "bg-green-400 text-white"} 
+                                     rounded-lg p-3 max-w-xs break-words`}
                                 >
                                     <p>{msg.text}</p>
                                     <span className="text-xs text-gray-500 block mt-1">
-                                        {/* {msg.senderId === userId ? "You" : companyName} */}
+                                        {msg.senderId._id === userId ? "You" : companyName}
                                     </span>
                                     <span className="text-xs text-white-300 block mt-1">
                                         {formatDate(msg.createdAt)}
@@ -151,12 +193,6 @@ const ChatPage = () => {
                     </form>
                 </div>
             </div>
-
-
-
-
-
-
         </div>
     );
 };
