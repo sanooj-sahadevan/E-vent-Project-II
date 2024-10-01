@@ -8,10 +8,10 @@ import io, { Socket } from "socket.io-client";
 
 // Message type definition
 interface Message {
-  [x: string]: any;
-  text: string;
-  senderId: { _id: string };
-  createdAt: string;
+    [x: string]: any;
+    text: string;
+    senderId: { _id: string };
+    createdAt: string;
 }
 
 const ChatPage = () => {
@@ -27,18 +27,25 @@ const ChatPage = () => {
     useEffect(() => {
         console.log('Connecting to local 5000');
 
-        const socketConnection = io("http://localhost:5000", {
-            transports: ["websocket"],
-            autoConnect: false,
+        const socket = io('http://localhost:5000', {
+            withCredentials: true,
         });
 
-        socketConnection.connect();
-        setSocket(socketConnection);
+        socket.on('connect', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        socket.on('message', (message) => {
+            console.log('Received message:', message);
+            setMessages(prevState => [...prevState, message])
+        });
+
+        setSocket(socket)
 
         return () => {
-            if (socketConnection) {
+            if (socket) {
                 console.log('Disconnecting socket');
-                socketConnection.disconnect();
+                socket.disconnect();
             }
         };
     }, []);
@@ -50,21 +57,6 @@ const ChatPage = () => {
         }
     }, [chatId, socket]);
 
-    useEffect(() => {
-        if (socket) {
-            console.log('Listening for messages');
-            const messageListener = (newMessage: Message) => {
-                setMessages((prevMessages) => [...prevMessages, newMessage]);
-            };
-
-            socket.on("message", messageListener);
-
-            // Cleanup listener to prevent memory leaks
-            return () => {
-                socket.off("message", messageListener);
-            };
-        }
-    }, [socket]);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -115,8 +107,6 @@ const ChatPage = () => {
                 vendorId: vendorId,
             });
 
-            console.log(response, 'Message saved');
-
             if (response) {
                 setMessages([...messages, { text: message, senderId: { _id: userId }, createdAt: new Date().toISOString() }]);
                 setMessage("");
@@ -141,14 +131,14 @@ const ChatPage = () => {
     return (
         <div className="flex h-screen bg-gray-100">
             {/* Sidebar */}
-            <div className="w-1/4 h-full bg-gray-800 text-white p-4 border-r border-gray-700">
+            {/* <div className="w-1/4 h-full bg-gray-800 text-white p-4 border-r border-gray-700">
                 <h1 className="text-lg font-semibold mb-4">Chats</h1>
                 <div className="h-full overflow-y-auto space-y-2">
                     <div className="bg-gray-700 p-3 rounded hover:bg-gray-600 cursor-pointer">Chat 1</div>
                     <div className="bg-gray-700 p-3 rounded hover:bg-gray-600 cursor-pointer">Chat 2</div>
                     <div className="bg-gray-700 p-3 rounded hover:bg-gray-600 cursor-pointer">Chat 3</div>
                 </div>
-            </div>
+            </div> */}
 
             {/* Main Chat Window */}
             <div className="flex-1 flex flex-col h-full p-6 bg-white">
@@ -167,7 +157,7 @@ const ChatPage = () => {
                             >
                                 <div
                                     className={`${msg.senderId._id === userId ? "bg-pink-400 text-white" : "bg-green-400 text-white"} 
-                    rounded-lg p-3 max-w-xs break-words`}
+                                     rounded-lg p-3 max-w-xs break-words`}
                                 >
                                     <p>{msg.text}</p>
                                     <span className="text-xs text-gray-500 block mt-1">

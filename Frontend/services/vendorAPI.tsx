@@ -42,7 +42,7 @@ export const verifyOtp = async (data: any) => {
 export const addDishAPI = async (data: any) => {
   try {
     console.log('api dishe-------------------------s');
-    
+
     console.log('addDishApi');
     return await axios.post(`${SERVER_URL_vendor}/addDishes`, data, { withCredentials: true });
   } catch (error) {
@@ -104,13 +104,13 @@ export const VendorEdit = async (vendorData: any) => {
 export const fetchvendor = async (vendorId: string) => {
   try {
     console.log('rdyyyyy');
-    
-      const res = await axios.get(`${SERVER_URL_vendor}/fetchVendorDetails/${vendorId}`);
-      console.log(res);
-      return res;
+
+    const res = await axios.get(`${SERVER_URL_vendor}/fetchVendorDetails/${vendorId}`);
+    console.log(res);
+    return res;
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
@@ -120,13 +120,13 @@ export const fetchvendor = async (vendorId: string) => {
 export const fetchdishes = async (dishesId: string) => {
   try {
     console.log('rdyyyyy');
-    
-      const res = await axios.get(`${SERVER_URL_vendor}/fetchdishes/${dishesId}`);
-      console.log(res);
-      return res;
+
+    const res = await axios.get(`${SERVER_URL_vendor}/fetchdishes/${dishesId}`);
+    console.log(res);
+    return res;
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
@@ -135,7 +135,7 @@ export const fetchDetailsVendor = async (vendorId: string) => {
   try {
 
     console.log('pokunnu  detils ');
-    
+
     const res = await axios.get(`${SERVER_URL_vendor}/fetchDetailsVendor/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
@@ -151,7 +151,7 @@ export const FetchDishes = async (vendorId: string) => {
   try {
 
     console.log('pokunnu food');
-    
+
     const res = await axios.get(`${SERVER_URL_vendor}/fetchFoodDetails/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
@@ -166,7 +166,7 @@ export const FetchAuditorium = async (vendorId: string) => {
   try {
 
     console.log('pokunnu hall');
-    
+
     const res = await axios.get(`${SERVER_URL_vendor}/fetchAuditoriumDetails/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
@@ -180,42 +180,42 @@ export const FetchAuditorium = async (vendorId: string) => {
 export const fetchauditorium = async (auditoriumId: string) => {
   try {
     console.log('rdyyyy auditirum profie');
-    
-      const res = await axios.get(`${SERVER_URL_vendor}/fetchauditorium/${auditoriumId}`);
-      console.log(res);
-      return res;
+
+    const res = await axios.get(`${SERVER_URL_vendor}/fetchauditorium/${auditoriumId}`);
+    console.log(res);
+    return res;
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
 
 
-export const deleteDish = async (dishId: string,  ) => {
+export const deleteDish = async (dishId: string,) => {
   try {
-      console.log('Attempting to delete dish');
-      const response = await axios.patch(`${SERVER_URL_vendor}/dishes/${dishId}`, {
-          isDeleted: true,
-      });
-      return response.data;
+    console.log('Attempting to delete dish');
+    const response = await axios.patch(`${SERVER_URL_vendor}/dishes/${dishId}`, {
+      isDeleted: true,
+    });
+    return response.data;
   } catch (error) {
-      console.error('Error deleting dish:', error);
-      throw new Error('Failed to delete dish');
+    console.error('Error deleting dish:', error);
+    throw new Error('Failed to delete dish');
   }
 };
 
 
-export const deleteAuditorium = async (aditoriumId: string,  ) => {
+export const deleteAuditorium = async (aditoriumId: string,) => {
   try {
-      console.log('Attempting to delete dish');
-      const response = await axios.patch(`${SERVER_URL_vendor}/auditorium/${aditoriumId}`, {
-          isDeleted: true,
-      });
-      return response.data;
+    console.log('Attempting to delete dish');
+    const response = await axios.patch(`${SERVER_URL_vendor}/auditorium/${aditoriumId}`, {
+      isDeleted: true,
+    });
+    return response.data;
   } catch (error) {
-      console.error('Error deleting dish:', error);
-      throw new Error('Failed to delete dish');
+    console.error('Error deleting dish:', error);
+    throw new Error('Failed to delete dish');
   }
 };
 
@@ -227,12 +227,27 @@ export const vendorChats = (id: string) => {
 
 
 
+export const SaveChat = async (reqBody: { text: string; senderId: string | null; vendorId: string | null }) => {
+  try {
+    console.log('Sending request to save chat:', reqBody); // Debugging line
+    const response = await axios.post(`${server_URL_chat}/savechat`, reqBody, {
+      withCredentials: true,
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error saving chat:", error);
+    throw error;
+  }
+};
+
 
 export const getMessages = (id: string) => {
   try {
+    console.log(id, 'pp');
 
     console.log('okkkkkkkkkkkkkkkkkkkkokkkkkkkkkkkkkkkkkkkk');
-    
+
     return axios.get(`${server_URL_chat}/message/${id}`);
   } catch (error: any) {
     console.log(error);
@@ -241,12 +256,21 @@ export const getMessages = (id: string) => {
 
 
 
-export const messageSend = async (messageData: any) => {
-  try {
-    console.log({ messageData,}, "Sending message data to backend");
 
-    // Send the message data directly
-    const response = await axios.post(`${server_URL_chat}/message`, messageData);
+
+
+
+
+
+
+
+
+
+export const messageSend = async (reqBody: { text: string; senderId: string | null; userId: string | null }) => {
+  try {
+    const response = await axios.post(`${server_URL_chat}/message`, reqBody, {
+      withCredentials: true,
+    });
 
     return response.data;
   } catch (error: any) {
@@ -255,12 +279,31 @@ export const messageSend = async (messageData: any) => {
 };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const vendorBookingDetils = async (vendorId: string) => {
   try {
     const response = await axios.get(`${SERVER_URL_vendor}/vendorBookingDetils/${vendorId}`);
-    console.log(response.data,'api call retuen');
-    
-    return response.data; 
+    console.log(response.data, 'api call retuen');
+
+    return response.data;
   } catch (error) {
     console.error('Error fetching booking data:', error);
     throw error;

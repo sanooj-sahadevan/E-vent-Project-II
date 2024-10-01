@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-interface IMessage extends Document {
+export interface IMessage extends Document {
   chatId: mongoose.Schema.Types.ObjectId; // Reference to chat
   senderId: mongoose.Schema.Types.ObjectId; // Reference to the sender (User or Company)
   senderModel: "User" | "Vendor"; 

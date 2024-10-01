@@ -44,6 +44,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/multer-s3": "^3.0.3",
     "@types/node": "^22.5.1",
+    "@types/socket.io": "^3.0.2",
     "@types/uuid": "^10.0.0",
     "nodemon": "^3.1.4",
     "typescript": "^5.5.4"

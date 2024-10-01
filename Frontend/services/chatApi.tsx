@@ -57,7 +57,7 @@ export const sendMessage = async (
   
 
 
-  export const getMessages = (id: string, senderId: any) => {
+  export const getMessages = (id: string, ) => {
     try {
       return axios.get(`${server_URL_chat}/message/${id}`);
     } catch (error: any) {
