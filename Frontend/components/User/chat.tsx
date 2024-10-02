@@ -141,7 +141,9 @@ const ChatPage = () => {
             </div> */}
 
             {/* Main Chat Window */}
-            <div className="flex-1 flex flex-col h-full p-6 bg-white">
+
+
+            <div className="flex-1 flex flex-col h-full p-6 bg-white mt-20">
                 {/* Chat Header */}
                 <div className="h-16 bg-gray-200 flex items-center px-4 border-b border-gray-300">
                     <h2 className="text-xl font-semibold text-gray-800">{companyName || "Text"}</h2>
@@ -156,8 +158,10 @@ const ChatPage = () => {
                                 className={`flex ${msg.senderId._id === userId ? "justify-end" : "justify-start"}`}
                             >
                                 <div
-                                    className={`${msg.senderId._id === userId ? "bg-pink-400 text-white" : "bg-green-400 text-white"} 
-                                     rounded-lg p-3 max-w-xs break-words`}
+                                    className={`${msg.senderId._id === userId
+                                            ? "bg-pink-400 text-white"
+                                            : "bg-green-400 text-white"
+                                        } rounded-lg p-3 max-w-xs break-words`}
                                 >
                                     <p>{msg.text}</p>
                                     <span className="text-xs text-gray-500 block mt-1">
@@ -170,12 +174,12 @@ const ChatPage = () => {
                             </div>
                         ))
                     ) : (
-                        <p className="text-center text-gray-500">No messages available.</p>
+                        <p className="text-center text-gray-500 mt-6">No messages available.</p>
                     )}
                 </div>
 
                 {/* Message Input Area */}
-                <div className="bg-gray-100 flex items-center p-4 border-t border-gray-300">
+                <div className="bg-gray-100 flex items-center p-4 border-t border-gray-300 mt-4">
                     <form onSubmit={handleSendMessage} className="flex w-full">
                         <input
                             type="text"
@@ -193,6 +197,11 @@ const ChatPage = () => {
                     </form>
                 </div>
             </div>
+
+
+
+
+
         </div>
     );
 };

@@ -1,16 +1,36 @@
+/* eslint-disable react/jsx-no-undef */
 "use client";
 
 import { deleteCookie } from "@/utils/deleteCookie";
+import { getUnreadMessagesCountAPI } from "@/services/vendorAPI";
+import { Badge } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { io } from "socket.io-client";
 
 
 const Navbar: React.FC = () => {
+  const socket = io("http://localhost:5000");
+
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
+
+
+  useEffect(() => {
+    const fetchUnreadMessages = async () => {
+      const response = await getUnreadMessagesCountAPI();
+      socket.on("unreadCount", (response: any) => {
+        console.log("Unread count received:", response);
+        setUnreadMessagesCount(response.unreadCount);
+      });
+    };
+
+    fetchUnreadMessages();
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("vendorToken");
@@ -79,22 +99,46 @@ const Navbar: React.FC = () => {
         </svg>
 
         {/* Chat Icon */}
+
         <Link href="/vendorChat">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="white"
-            strokeWidth="2"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M7 8h10M7 12h4m1 8v2a2 2 0 01-2 2h-6a2 2 0 01-2-2v-2m10-4h4a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h4"
-            />
-          </svg>
+          <div className="relative">
+            <Badge
+              badgeContent={unreadMessagesCount}
+              color="secondary"
+              overlap="circular"
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="white"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7 8h10M7 12h4m1 8v2a2 2 0 01-2 2h-6a2 2 0 01-2-2v-2m10-4h4a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h4"
+                />
+              </svg>
+            </Badge>
+          </div>
         </Link>
+
+
+
+
+
+
+
+
+
+
+
 
         {/* Logout or Login */}
         {isAuthorized ? (
