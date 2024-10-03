@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import {
   loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes,
-  uploadImage, editVendor, findVendorById, uploadAuditorium,softDeleteDishService,findBookingDetails,
-  findFoodVendorById, findAuditoriumVendorById, findDishesById, findAuditoriumById,softDeleteAuditoriumService
+  uploadImage, editVendor, findVendorById, uploadAuditorium, softDeleteDishService, findBookingDetails,
+  findFoodVendorById, findAuditoriumVendorById, findDishesById, findAuditoriumById, softDeleteAuditoriumService
 } from "../Service/vendorService.js";
 
 import { otpGenerator } from "../utils/otpGenerator.js";
@@ -10,6 +10,9 @@ import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
 import { HttpStatus } from "../utils/httpStatus.js";
 import { IMulterFile } from "../utils/type.js";
+import { chatModel } from "../models/chatModel.js";
+import { messageModel } from "../models/messageModal.js";
+import { io } from "../index.js";
 
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -26,11 +29,11 @@ export const register = async (req: Request, res: Response, next: NextFunction):
           phone,
           email,
           password,
-          otp, 
-          reviews: "", 
-          address: "", 
-          district: "", 
-          state: "" 
+          otp,
+          reviews: "",
+          address: "",
+          district: "",
+          state: ""
         });
 
         // Send OTP to vendor's email
@@ -61,7 +64,7 @@ export const verifyOtp = async (req: Request, res: Response, next: NextFunction)
 
     if (!vendor) {
       res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
-      return;  
+      return;
     }
 
     if (vendor.otp === otp) {
@@ -85,7 +88,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     res.cookie("vendorToken", vendorToken,);
     res.status(HttpStatus.OK).json({ vendor, vendorToken });
   } catch (error: any) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message }); 
+    res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message });
   }
 };
 
@@ -98,9 +101,9 @@ export const fetchAddress = async (req: Request, res: Response, next: NextFuncti
     const vendorAddresses = await vendorAddress();
     console.log(vendorAddresses);
 
-    res.status(HttpStatus.OK).json(vendorAddresses); 
+    res.status(HttpStatus.OK).json(vendorAddresses);
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
 ;
@@ -113,11 +116,11 @@ export const editVendorDetails = async (req: Request, res: Response, next: NextF
     console.log('controller');
 
     const vendorDetails = req.body;
-    const file = req.file as unknown as IMulterFile; 
+    const file = req.file as unknown as IMulterFile;
 
     let imageUrl: string | undefined;
     if (file) {
-      imageUrl = await uploadImage(file); 
+      imageUrl = await uploadImage(file);
     }
     const updatedVendor = await editVendor(vendorDetails, imageUrl);
     res.status(200).json({ ...updatedVendor, imageUrl }); // Include imageUrl if available
@@ -147,15 +150,15 @@ export const fetchVendorDetails = async (req: Request, res: Response, next: Next
 export const fetchdishes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     console.log('controller');
-    const { dishesId } = req.params; 
-    const vendor = await findDishesById(dishesId); 
+    const { dishesId } = req.params;
+    const vendor = await findDishesById(dishesId);
     if (!vendor) {
       res.status(404).json({ message: "Vendor not found" });
     } else {
-      res.status(200).json(vendor); 
+      res.status(200).json(vendor);
     }
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
 
@@ -167,14 +170,14 @@ export const fetchauditorium = async (req: Request, res: Response, next: NextFun
     const { auditoriumId } = req.params;
     console.log(auditoriumId, '---------------------------------------------------------------------------------');
 
-    const vendor = await findAuditoriumById(auditoriumId); 
+    const vendor = await findAuditoriumById(auditoriumId);
     if (!vendor) {
       res.status(404).json({ message: "Vendor not found" });
     } else {
-      res.status(200).json(vendor); 
+      res.status(200).json(vendor);
     }
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
 
@@ -192,9 +195,9 @@ export const addDishes = async (req: ExtendedRequest, res: Response): Promise<Re
       return res.status(400).json({ error: "Vendor ID is required" });
     }
 
-    const file = req.file as unknown as IMulterFile; 
+    const file = req.file as unknown as IMulterFile;
 
-    let imageUrl: string | undefined = undefined; 
+    let imageUrl: string | undefined = undefined;
     if (file) {
       imageUrl = await uploadImage(file);
     }
@@ -272,13 +275,13 @@ export const fetchDetailsVendor = async (req: Request, res: Response, next: Next
 export const fetchFoodDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { vendorId } = req.params;
-    const dishes = await findFoodVendorById(vendorId); 
+    const dishes = await findFoodVendorById(vendorId);
 
     if (!dishes || dishes.length === 0) {
       res.status(404).json({ message: "No dishes found for this vendor" });
     } else {
       console.log(dishes, 'Fetched dishes for vendor');
-      res.status(200).json(dishes); 
+      res.status(200).json(dishes);
     }
 
   } catch (error) {
@@ -293,13 +296,13 @@ export const fetchAuditoriumDetails = async (req: Request, res: Response, next: 
     console.log('Controller invoked');
 
     const { vendorId } = req.params;
-    const auditorium = await findAuditoriumVendorById(vendorId); 
+    const auditorium = await findAuditoriumVendorById(vendorId);
 
     if (!auditorium || auditorium.length === 0) {
       res.status(404).json({ message: "No dishes found for this vendor" });
     } else {
       console.log(auditorium, 'Fetched dishes for vendor');
-      res.status(200).json(auditorium); 
+      res.status(200).json(auditorium);
     }
   } catch (error) {
     console.error('Error in fetchFoodDetails:', error);
@@ -315,21 +318,21 @@ export const softDeleteDish = async (req: Request, res: Response) => {
   try {
 
     console.log('delete');
-    
-      const { dishId } = req.params;  // Only dishId is needed
 
-      if (!dishId) {
-          return res.status(400).json({ message: 'Dish ID is missing' });
-      }
+    const { dishId } = req.params;  // Only dishId is needed
 
-      const updatedDish = await softDeleteDishService(dishId); // Call the service to soft delete the dish
-      if (!updatedDish) {
-          return res.status(404).json({ message: 'Dish not found or already deleted' });
-      }
+    if (!dishId) {
+      return res.status(400).json({ message: 'Dish ID is missing' });
+    }
 
-      res.status(200).json({ message: 'Dish deleted successfully', dish: updatedDish });
+    const updatedDish = await softDeleteDishService(dishId); // Call the service to soft delete the dish
+    if (!updatedDish) {
+      return res.status(404).json({ message: 'Dish not found or already deleted' });
+    }
+
+    res.status(200).json({ message: 'Dish deleted successfully', dish: updatedDish });
   } catch (error) {
-      res.status(500).json({ message: 'Server error', error });
+    res.status(500).json({ message: 'Server error', error });
   }
 };
 
@@ -371,3 +374,39 @@ export const vendorBookingDetils = async (req: Request, res: Response) => {
 };
 
 
+
+export const getUnreadMessagesCount = async (
+  req: any,
+  res: any
+): Promise<void> => {
+  const userId = req.vendorId;
+  console.log('ccccccccccccccccccccccccc', userId);
+
+  try {
+    console.log('11111111111111111111111111');
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+    console.log('2222222222222222222');
+
+    const chats = await chatModel.find({ userId: userId }).select('_id');
+    const chatIds = chats.map(chat => chat._id);
+    console.log('3333333333333333333333333333333333333');
+    console.log('aaaaaaaaaaaaaa', chats);
+    console.log('bbbbbbbbbbbbbbb', chatIds);
+
+    const unreadCount = await messageModel.countDocuments({
+      chatId: { $in: chatIds },
+      senderModel: "Vendor",
+      isRead: false,
+    });
+    console.log('4');
+
+    io.emit('unreadCount', { unreadCount });
+    res.status(200).json({ unreadCount });
+  } catch (error) {
+    console.error("Error fetching unread messages count:", error);
+    res.status(500).json({ error: "Error fetching unread messages count" });
+  }
+};

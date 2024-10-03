@@ -204,14 +204,14 @@ const ChatApp = () => {
   };
 
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex  mt">
       <ChatSidebar
         users={uniqueUsers.map((user) => user.username)}
         selectedUser={selectedUser || ""}
         setSelectedUser={setSelectedUser}
       />
 
-      <div className="flex-1 overflow-y-auto bg-gray-200 p-6 space-y-4">
+      {/* <div className="flex-1 overflow-y-auto bg-gray-200 p-6 space-y-4">
         {selectedMessages.length > 0 ? (
           selectedMessages.map((msg, index) => {
 
@@ -260,9 +260,9 @@ const ChatApp = () => {
             Send
           </button>
         </form>
-      </div>
+      </div> */}
 
-      {loading && (
+      {/* {loading && (
         <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
           Loading chats...
         </div>
@@ -271,7 +271,76 @@ const ChatApp = () => {
         <div className="absolute top-12 left-1/2 transform -translate-x-1/2 text-red-500">
           {error}
         </div>
-      )}
+      )} */}
+
+
+
+
+
+<div className="flex-1 flex flex-col h-full p-6 bg-white  ">
+                {/* Chat Header */}
+                <div className="h-16 bg-gray-200 flex items-center px-4 border-b border-gray-300">
+                    <h2 className="text-xl font-semibold text-gray-800">{ "Text"}</h2>
+                </div>
+
+                {/* Chat Messages Area */}
+                <div className="flex-1 overflow-y-auto bg-gray-200 p-6 space-y-4">
+                    {selectedMessages.length > 0 ? (
+                        selectedMessages.map((msg, index) => (
+                            <div
+                                key={index}
+                                className={`flex ${msg.senderId === vendorId ? "justify-end" : "justify-start"}`}
+                            >
+                                <div
+                                    className={`${msg.senderId === vendorId ? "bg-pink-400 text-white" : "bg-green-400 text-white"} 
+                                     rounded-lg p-3 max-w-xs break-words`}
+                                >
+                                    <p>{msg.text}</p>
+                                    <span className="text-xs text-gray-500 block mt-1">
+                                        {msg.senderId === vendorId ? "You":""}
+                                    </span>
+                                    <span className="text-xs text-white-300 block mt-1">
+                                        {formatDate(msg.time)}
+                                    </span>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-center text-gray-500">No messages available.</p>
+                    )}
+                </div>
+
+                {/* Message Input Area */}
+                <div className="bg-gray-100 flex items-center p-4 border-t border-gray-300">
+                    <form onSubmit={handleSendMessage} className="flex w-full">
+                        <input
+                            type="text"
+                            placeholder="Type a message..."
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:border-pink-500"
+                        />
+                        <button
+                            type="submit"
+                            className="bg-pink-500 text-white px-6 py-3 rounded-r-lg hover:bg-pink-600 focus:outline-none"
+                        >
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
   );
 };

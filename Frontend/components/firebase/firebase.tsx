@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { useEffect } from "react";
 
 
 const firebaseConfig = {
@@ -13,5 +14,16 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
+// export const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+
 export const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+const useFirebaseAnalytics = () => {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const analytics = getAnalytics(app);
+      console.log("Firebase Analytics initialized:", analytics);
+    }
+  }, []);
+};

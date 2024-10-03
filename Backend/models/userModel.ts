@@ -30,5 +30,7 @@ export interface User {
     address: string;
     state: string;
     pincode: number;
+    isBlocked?: boolean;
+
 }
 

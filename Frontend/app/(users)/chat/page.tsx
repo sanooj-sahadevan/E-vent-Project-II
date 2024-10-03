@@ -5,7 +5,7 @@ import Footer from '@/components/footer'
 const page = () => {
   return (
     <div>
-      {/* <Navbar/> */}
+      <Navbar/>
       <Chat/>
       {/* <Footer/> */}
     </div>

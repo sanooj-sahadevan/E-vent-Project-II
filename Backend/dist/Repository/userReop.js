@@ -18,7 +18,11 @@ const UserSchema = new Schema({
     state: { type: String },
     district: { type: String }, // Added 'district'
     pincode: { type: Number },
-    reviews: { type: [String] } // Added 'reviews'
+    reviews: { type: [String] }, // Added 'reviews'
+    isBlocked: {
+        type: Boolean,
+        default: false,
+    },
 });
 const UserModel = mongoose.model("User", UserSchema);
 export default UserModel;

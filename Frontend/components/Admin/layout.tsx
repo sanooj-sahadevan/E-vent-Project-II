@@ -51,7 +51,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <li className="px-5 py-3">
               <Link
                 href="/admin/adminUser"
-                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/approval")
+                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/adminUser")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
                   }`}
@@ -62,7 +62,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <li className="px-6 py-3">
               <Link
                 href="/admin/adminVendor"
-                className={`rounded-lg block text-xl p-3 font-semibold  ${isActive("/admin/transaction")
+                className={`rounded-lg block text-xl p-3 font-semibold  ${isActive("/admin/adminVendor")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
                   }`}
@@ -72,8 +72,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </li>
             <li className="px-6 py-3">
               <Link
-                href="/admin/adminVendor"
-                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/users")
+                href="/admin/salesReport"
+                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/salesReport")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
                   }`}
@@ -81,17 +81,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 Sales Report
               </Link>
             </li>
-            <li className="px-6 py-3">
+            {/* <li className="px-6 py-3">
               <Link
-                href="/admin/alesreport"
-                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/company")
+                href="/admin/transaction"
+                className={`rounded-lg block text-xl p-3 font-semibold ${isActive("/admin/transaction")
                     ? "bg-pink-700 text-white"
                     : "hover:bg-gray-200"
                   }`}
               >
                 Transaction
               </Link>
-            </li>
+            </li> */}
 
             <li className="px-6 py-3 mt-12">
               <button

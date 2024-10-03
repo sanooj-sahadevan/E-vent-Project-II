@@ -3,6 +3,9 @@ import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { findVendorByEmail } from "../Repository/vendorRepo.js";
 import { HttpStatus } from "../utils/httpStatus.js";
+import { chatModel } from "../models/chatModel.js";
+import { messageModel } from "../models/messageModal.js";
+import { io } from "../index.js";
 export const register = async (req, res, next) => {
     try {
         const { vendorname, email, phone, password } = req.body;
@@ -299,5 +302,33 @@ export const vendorBookingDetils = async (req, res) => {
     catch (error) {
         console.error("Error fetching booking data:", error);
         res.status(500).json({ message: "Internal server error" });
+    }
+};
+export const getUnreadMessagesCount = async (req, res) => {
+    const userId = req.vendorId;
+    console.log('ccccccccccccccccccccccccc', userId);
+    try {
+        console.log('11111111111111111111111111');
+        if (!userId) {
+            return res.status(400).json({ error: "User ID is required" });
+        }
+        console.log('2222222222222222222');
+        const chats = await chatModel.find({ userId: userId }).select('_id');
+        const chatIds = chats.map(chat => chat._id);
+        console.log('3333333333333333333333333333333333333');
+        console.log('aaaaaaaaaaaaaa', chats);
+        console.log('bbbbbbbbbbbbbbb', chatIds);
+        const unreadCount = await messageModel.countDocuments({
+            chatId: { $in: chatIds },
+            senderModel: "Vendor",
+            isRead: false,
+        });
+        console.log('4');
+        io.emit('unreadCount', { unreadCount });
+        res.status(200).json({ unreadCount });
+    }
+    catch (error) {
+        console.error("Error fetching unread messages count:", error);
+        res.status(500).json({ error: "Error fetching unread messages count" });
     }
 };

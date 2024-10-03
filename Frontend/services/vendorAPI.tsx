@@ -255,7 +255,10 @@ export const getMessages = (id: string) => {
 };
 
 
-
+export const getUnreadMessagesCountAPI = async () => {
+  const response = await axios.get(`${SERVER_URL_vendor}/unread-count`, {withCredentials: true });
+  return response.data;
+};
 
 
 
