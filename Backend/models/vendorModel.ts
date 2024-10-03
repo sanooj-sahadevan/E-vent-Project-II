@@ -13,4 +13,6 @@ export interface Vendor {
     otp?: string;
     otpVerified?: boolean;
     adminVerified?: boolean;
+    isBlocked?: boolean;
+
 }

@@ -16,6 +16,10 @@ const VendorSchema = new Schema({
     address: { type: String, default: '' },
     district: { type: String, default: '' },
     state: { type: String, default: '' },
+    isBlocked: {
+        type: Boolean,
+        default: false,
+    },
 });
 export const VendorModel = mongoose.model("Vendor", VendorSchema);
 export const createVendor = async (vendor) => {

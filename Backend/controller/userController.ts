@@ -19,6 +19,7 @@ import jsSHA from 'jssha';
 
 
 
+
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { username, email, phone, password } = req.body;
@@ -387,8 +388,8 @@ export const payment = async (req: Request, res: Response) => {
   try {
     console.log('hey paymeent');
 
-    const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5,udf6 } = req.body;
-    console.log({ txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5,udf6 });
+    const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
+    console.log({ txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 });
     console.log('hey paymeent1');
 
     if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6) {
@@ -441,14 +442,14 @@ export const saveData = async (req: Request, res: Response) => {
   try {
     const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
     const eventType = udf6;
-    
+
     // Map udf fields to meaningful names
     const userId = udf1;
     const auditoriumId = udf2;
     const dishesId = udf3;
     const date = udf4;
     const category = udf5;
-    const vendorId =  productinfo 
+    const vendorId = productinfo
     console.log('Received udf6 (eventType):', udf6);
 
     if (status === "success") {
@@ -499,3 +500,5 @@ export const fetchBookingDetails = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+

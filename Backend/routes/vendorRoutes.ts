@@ -4,7 +4,7 @@ import {
      register,
      verifyOtp,
      editVendorDetails,softDeleteAuditorium,vendorBookingDetils,
-      addDishes, addAuditorium, fetchDetailsVendor, fetchFoodDetails, fetchAuditoriumDetails,fetchdishes,fetchauditorium,softDeleteDish,
+      addDishes, addAuditorium, fetchDetailsVendor, fetchFoodDetails, fetchAuditoriumDetails,fetchdishes,fetchauditorium,softDeleteDish,getUnreadMessagesCount
 } from "../controller/vendorController.js";
 import upload from "../middleware/multer.js";
 import { verifyvendor } from "../middleware/vendorJWT.js";
@@ -41,6 +41,8 @@ router.patch('/auditorium/:auditoriumId',softDeleteAuditorium);
 
 router.get('/vendorBookingDetils/:vendorId', vendorBookingDetils);
 
+
+router.get('/unread-count',verifyvendor, getUnreadMessagesCount);
 
 
 export default router;

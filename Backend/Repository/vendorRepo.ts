@@ -18,15 +18,19 @@ const VendorSchema: Schema<VendorModel> = new Schema({
   vendorname: { type: String, required: true },
   phone: { type: Number, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: [true, 'Password is required'], select: false }, 
-  profileImage: { type: String, default: '' }, 
-  adminVerified: { type: Boolean, default: false }, 
-  otp: { type: String, required: false }, 
-  otpVerified: { type: Boolean, default: false }, 
-  reviews: { type: String, default: '' }, 
-  address: { type: String, default: '' }, 
-  district: { type: String, default: '' }, 
+  password: { type: String, required: [true, 'Password is required'], select: false },
+  profileImage: { type: String, default: '' },
+  adminVerified: { type: Boolean, default: false },
+  otp: { type: String, required: false },
+  otpVerified: { type: Boolean, default: false },
+  reviews: { type: String, default: '' },
+  address: { type: String, default: '' },
+  district: { type: String, default: '' },
   state: { type: String, default: '' },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const VendorModel = mongoose.model<VendorModel>("Vendor", VendorSchema);
@@ -37,9 +41,9 @@ export const createVendor = async (vendor: Vendor) => {
     return newVendor.save();
   } catch (error) {
     console.error(error);
-    
+
   }
- 
+
 };
 
 export const findVendorByEmail = async (email: string) => {
@@ -47,7 +51,7 @@ export const findVendorByEmail = async (email: string) => {
     return VendorModel.findOne({ email });
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
@@ -57,7 +61,7 @@ export const updateVendor = async (email: string, update: Partial<Vendor>) => {
     return VendorModel.findOneAndUpdate({ email }, update, { new: true });
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
@@ -71,9 +75,9 @@ export const findVendorByEmailAndPassword = async (
 
 export const vendorAddressFromDB = async () => {
   try {
-    return await VendorModel.find().sort({ createdAt: -1 }); 
+    return await VendorModel.find().sort({ createdAt: -1 });
   } catch (error) {
-    throw new Error('Database query failed'); 
+    throw new Error('Database query failed');
   }
 };
 
@@ -148,32 +152,32 @@ export const findDishesByIdInDb = async (dishesId: string) => {
   try {
     console.log('controller 3');
 
-  return await Dishes.findById(dishesId);
+    return await Dishes.findById(dishesId);
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
 export const findFoodVendorIdInDb = async (vendorId: string) => {
- try {
-  const result = await Dishes.find({ vendorId: vendorId }); 
-  return result
- } catch (error) {
-  console.error(error);
-  
- }
+  try {
+    const result = await Dishes.find({ vendorId: vendorId });
+    return result
+  } catch (error) {
+    console.error(error);
+
+  }
 };
 
 
 
 export const findAuditoriumVendorIdInDb = async (vendorId: string) => {
   try {
-    const res = await Auditorium.find({ vendorId: vendorId }); 
-  return res
+    const res = await Auditorium.find({ vendorId: vendorId });
+    return res
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
@@ -237,14 +241,14 @@ export const createAuditorium = async (auditoriumData: any) => {
 
 export const softDeleteDishRepo = async (dishId: string): Promise<DishDocument | null> => {
   try {
-    const dish = await Dishes.findById(dishId); 
+    const dish = await Dishes.findById(dishId);
 
     if (!dish || dish.isDeleted) {
-      return null; 
+      return null;
     }
 
-    dish.isDeleted = true; 
-    await dish.save(); 
+    dish.isDeleted = true;
+    await dish.save();
     return dish;
   } catch (error) {
     console.error(`Error soft-deleting dish: ${error}`);
@@ -256,21 +260,21 @@ export const softDeleteDishRepo = async (dishId: string): Promise<DishDocument |
 
 
 
-export const softDeleteAuditoriumRepo = async (auditoriumId: string)=> {
+export const softDeleteAuditoriumRepo = async (auditoriumId: string) => {
   try {
     console.log('delete repo');
 
     const auditorium = await Auditorium.findById(auditoriumId);
-console.log(auditorium);
+    console.log(auditorium);
 
     if (!auditorium || auditorium.isDeleted) {
       return null;
     }
 
-    auditorium.isDeleted = true; 
-    await auditorium.save(); 
+    auditorium.isDeleted = true;
+    await auditorium.save();
 
-    return auditorium; 
+    return auditorium;
   } catch (error) {
     console.error(`Error soft-deleting auditorium: ${error}`);
     throw error;
@@ -290,7 +294,7 @@ export const findDetailsByvendorId = async (vendorId: string) => {
       .populate('auditoriumId'); // Populate auditorium details
 
     console.log('Fetched Data with populated fields:', results);
-    
+
     return results; // Return the array of populated results
   } catch (error) {
     console.error("Database error:", error);
