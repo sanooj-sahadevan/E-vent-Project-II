@@ -287,15 +287,15 @@ export const softDeleteAuditoriumRepo = async (auditoriumId: string) => {
 export const findDetailsByvendorId = async (vendorId: string) => {
   try {
     const results = await bookedModel
-      .find({ userId: vendorId })  // Find all bookings that match the userId
-      .populate('dishesId')      // Populate dishes details
-      .populate('userId')        // Populate user details
-      .populate('vendorId')      // Populate vendor details
-      .populate('auditoriumId'); // Populate auditorium details
+      .find({ vendorId: vendorId })
+      .populate('dishesId')
+      .populate('userId')
+      .populate('vendorId')
+      .populate('auditoriumId');
 
     console.log('Fetched Data with populated fields:', results);
 
-    return results; // Return the array of populated results
+    return results;
   } catch (error) {
     console.error("Database error:", error);
     throw new Error("Database operation failed.");

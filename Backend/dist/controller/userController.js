@@ -249,7 +249,6 @@ export const fetchAuditoriumDetails = async (req, res, next) => {
         next(error);
     }
 };
-// infooo
 export const fetchauditorium = async (req, res, next) => {
     try {
         console.log('controller  indo audi ');
@@ -349,7 +348,6 @@ export const saveData = async (req, res) => {
         const vendorId = productinfo;
         console.log('Received udf6 (eventType):', udf6);
         if (status === "success") {
-            // Call to service function to update booking
             const bookedTripId = await fetchbookingData({
                 txnid,
                 email,
@@ -360,7 +358,7 @@ export const saveData = async (req, res) => {
                 auditoriumId,
                 dishesId,
                 date,
-                eventType, // Ensure this is passed correctly
+                eventType,
                 category
             });
             console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, eventType, category });
@@ -380,13 +378,13 @@ export const saveData = async (req, res) => {
     }
 };
 export const fetchBookingDetails = async (req, res) => {
-    const { userId } = req.params; // Extract userId from request parameters
+    const { userId } = req.params;
     try {
-        const booking = await findBookingDetails(userId); // Call the service function
+        const booking = await findBookingDetails(userId);
         if (!booking) {
             return res.status(404).json({ message: "Booking not found" });
         }
-        res.status(200).json(booking); // Return the booking details
+        res.status(200).json(booking);
     }
     catch (error) {
         console.error("Error fetching booking data:", error);

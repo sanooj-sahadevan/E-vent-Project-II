@@ -8,9 +8,9 @@ export const socketHandler = (io: SocketIOServer) => {
 
     console.log("New client connected");
 
-    socket.on("joinRoom", (chatId: string) => {
-      console.log(`User joined room: ${chatId}`);
-      socket.join(chatId);
+    socket.on("joinRoom", (id: string) => {
+      console.log(`User joined room: ${id}`);
+      socket.join(id);
     });
 
     socket.on("message", (messageData) => {
@@ -22,6 +22,7 @@ export const socketHandler = (io: SocketIOServer) => {
 
       io.to(messageData.chatId).emit("message", messageData);
     });
+
 
     socket.on("disconnect", () => {
       console.log("Client disconnected");

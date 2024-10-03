@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import {
-  savechatService,companyAddMessageService
+  savechatService, companyAddMessageService
 } from "../Service/chatService.js";
 
 import { HttpStatus } from '../utils/httpStatus.js'
@@ -34,19 +34,17 @@ export const savechat = async (req: Request, res: Response) => {
 
 export const getMessage = async (req: Request, res: Response) => {
   const { chatId } = req.params;
-  console.log('hry ');
 
   try {
     const messages = await messageModel.find({ chatId }).populate("senderId");
-
-    console.log(messages);
     if (!messages.length) {
       return res
         .status(404)
         .json({ message: "No messages found for this chat" });
     }
-
-    res.status(200).json(messages);
+    await messageModel.updateMany({ chatId }, { $set: { isRead: true } });
+    const updatedMessages = await messageModel.find({ chatId }).populate("senderId");
+    res.status(200).json(updatedMessages);
   } catch (error: any) {
     res
       .status(500)
@@ -54,8 +52,10 @@ export const getMessage = async (req: Request, res: Response) => {
   }
 };
 
+
 export const companyChat = async (req: Request, res: Response) => {
   try {
+    
 
     const chat = await chatModel.find({
       vendorId: req.params.companyId,
@@ -73,7 +73,6 @@ interface Ichat extends Document {
   _id: mongoose.Types.ObjectId;
   userId: string;
   vendorId: string;
-  // Add other fields from the chat schema here
 }
 
 
@@ -126,14 +125,13 @@ export const companyAddMessage = async (req: Request, res: Response) => {
   try {
     console.log('start vendor');
 
-    // const { text, userId, senderId } = req.body;  
     const { text } = req.body;
     const vendorId = req.body.senderId;
     const userId = req.body.userId;
     console.log(vendorId);
     console.log(userId);
 
-    
+
     console.log('start vendor 2');
 
     const result = await companyAddMessageService(text, userId, vendorId);

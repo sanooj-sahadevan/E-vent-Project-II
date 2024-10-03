@@ -5,7 +5,6 @@ import { adminlogin,getAllVendors,blockVendorController,getAllBookings,Dashboard
 
 const router = express.Router();
 
-// Login route for admin
 router.post("/login", adminlogin);
 
 router.get("/getAllVendors", getAllVendors);

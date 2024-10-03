@@ -317,7 +317,6 @@ export const fetchAuditoriumDetails = async (req: Request, res: Response, next: 
 };
 
 
-// infooo
 
 
 export const fetchauditorium = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -453,7 +452,6 @@ export const saveData = async (req: Request, res: Response) => {
     console.log('Received udf6 (eventType):', udf6);
 
     if (status === "success") {
-      // Call to service function to update booking
       const bookedTripId = await fetchbookingData({
         txnid,
         email,
@@ -464,11 +462,10 @@ export const saveData = async (req: Request, res: Response) => {
         auditoriumId,
         dishesId,
         date,
-        eventType, // Ensure this is passed correctly
+        eventType,
         category
       });
       console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, eventType, category });
-
 
       if (bookedTripId) {
         res.status(200).json({ success: true, bookedTripId: bookedTripId._id });
@@ -486,15 +483,13 @@ export const saveData = async (req: Request, res: Response) => {
 
 
 export const fetchBookingDetails = async (req: Request, res: Response) => {
-  const { userId } = req.params; // Extract userId from request parameters
+  const { userId } = req.params;
   try {
-    const booking = await findBookingDetails(userId); // Call the service function
-
+    const booking = await findBookingDetails(userId);
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
     }
-
-    res.status(200).json(booking); // Return the booking details
+    res.status(200).json(booking);
   } catch (error) {
     console.error("Error fetching booking data:", error);
     res.status(500).json({ message: "Internal server error" });

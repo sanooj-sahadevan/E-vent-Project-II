@@ -29,37 +29,75 @@ export const findUserByEmailAdmin = async (email) => {
 //   );
 // };
 export const getAllVendorsFromDB = async () => {
-    return VendorModel.find().sort({ createdAt: -1 });
+    try {
+        return VendorModel.find().sort({ createdAt: -1 });
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const getAllBookingsFromDB = async () => {
-    return bookedModel
-        .find()
-        .populate('vendorId') // Populating vendor details
-        .populate('userId') // Populating user details
-        .sort({ createdAt: -1 });
+    try {
+        return bookedModel
+            .find()
+            .populate('vendorId')
+            .populate('userId')
+            .sort({ createdAt: -1 });
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const findVendorById = async (vendorId) => {
-    return VendorModel.findById(vendorId);
+    try {
+        return VendorModel.findById(vendorId);
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const blockVendorById = async (vendorId) => {
-    return VendorModel.findByIdAndUpdate(vendorId, { isBlocked: true }, { new: true });
+    try {
+        return VendorModel.findByIdAndUpdate(vendorId, { isBlocked: true }, { new: true });
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const unblockVendorById = async (vendorId) => {
-    return VendorModel.findByIdAndUpdate(vendorId, { isBlocked: false }, { new: true });
+    try {
+        return VendorModel.findByIdAndUpdate(vendorId, { isBlocked: false }, { new: true });
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const findAllUsers = async () => {
     return UserModel.find();
 };
-// Function to block a user by ID
 export const blockUserById = async (userId) => {
-    return UserModel.findByIdAndUpdate(userId, { isBlocked: true }, { new: true });
+    try {
+        return UserModel.findByIdAndUpdate(userId, { isBlocked: true }, { new: true });
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
-// Function to unblock a user by ID
 export const unblockUserById = async (userId) => {
-    return UserModel.findByIdAndUpdate(userId, { isBlocked: false }, { new: true });
+    try {
+        return UserModel.findByIdAndUpdate(userId, { isBlocked: false }, { new: true });
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const findUserById = async (userId) => {
-    return UserModel.findById(userId);
+    try {
+        return UserModel.findById(userId);
+    }
+    catch (error) {
+        console.error(error);
+    }
 };
 export const getTotalEvents = async () => {
     try {

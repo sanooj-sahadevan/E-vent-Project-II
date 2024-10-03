@@ -5,7 +5,6 @@ import { Dishes } from "../models/dishesModel.js";
 import { Auditorium } from "../models/auditoriumModel.js";
 import { bookedModel } from "../models/bookedEvent.js";
 import { chatModel } from "../models/chatModel.js";
-// Define the Mongoose schema for the User
 const UserSchema = new Schema({
     username: { type: String, required: true },
     phone: { type: Number },
@@ -16,9 +15,9 @@ const UserSchema = new Schema({
     otpVerified: { type: Boolean, default: false },
     address: { type: String },
     state: { type: String },
-    district: { type: String }, // Added 'district'
+    district: { type: String },
     pincode: { type: Number },
-    reviews: { type: [String] }, // Added 'reviews'
+    reviews: { type: [String] },
     isBlocked: {
         type: Boolean,
         default: false,
@@ -183,17 +182,17 @@ export const findFoodVendorIdInDb = async (vendorId) => {
 export const findAuditoriumVendorIdInDb = async (vendorId) => {
     try {
         const objectId = new mongoose.Types.ObjectId(vendorId);
-        const result = await Auditorium.find({ vendorId: objectId }); // Query the Dishes collection
+        const result = await Auditorium.find({ vendorId: objectId });
         console.log('Result from database:', result);
         if (result.length === 0) {
             console.log('No dishes found for vendor:', vendorId);
-            return null; // Return null if no dishes found
+            return null;
         }
-        return result; // Return the found dishes
+        return result;
     }
     catch (error) {
         console.error('Error fetching dishes for vendor:', error);
-        throw new Error(`Error fetching dishes: ${error}`); // Return only the error message
+        throw new Error(`Error fetching dishes: ${error}`);
     }
 };
 export const findAuditoriumByIdInDb = async (auditoriumId) => {
@@ -223,11 +222,8 @@ export const finddishesByIdInDb = async (dishesId) => {
 };
 export const getBookingDetail = async (id) => {
     try {
-        console.log('controler 3');
         const bookedData = await bookedModel
             .findById(id);
-        // .populate("tripId")
-        // .populate("userId");
         if (!bookedData) {
             throw new Error(`Booking with id ${id} not found`);
         }
@@ -241,22 +237,16 @@ export const getBookingDetail = async (id) => {
 export const createBookedTrip = async (bookingData) => {
     try {
         console.log('save karo');
-        const { vendorId, txnid, status, amount, userId, // from udf1
-        auditoriumId, // from udf2
-        dishesId, // from udf3
-        date, // from udf4
-        category, eventType, // from udf5
-        payment_source } = bookingData;
-        // Create the booking record
+        const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, date, category, eventType, payment_source } = bookingData;
         const bookedData = await bookedModel.create({
             vendorId,
             txnId: txnid,
             paymentStatus: status,
             totalAmount: amount,
-            userId, // save userId in the model
-            auditoriumId, // save auditoriumId in the model
-            dishesId, // save dishesId in the model
-            date, // save date in the model
+            userId,
+            auditoriumId,
+            dishesId,
+            date,
             category,
             eventType,
             payment_source,
@@ -283,13 +273,13 @@ export const savechatDB = async (chat) => {
 export const findDetailsByUserId = async (userId) => {
     try {
         const results = await bookedModel
-            .find({ userId: userId }) // Find all bookings that match the userId
-            .populate('dishesId') // Populate dishes details
-            .populate('userId') // Populate user details
-            .populate('vendorId') // Populate vendor details
-            .populate('auditoriumId'); // Populate auditorium details
+            .find({ userId: userId })
+            .populate('dishesId')
+            .populate('userId')
+            .populate('vendorId')
+            .populate('auditoriumId');
         console.log('Fetched Data with populated fields:', results);
-        return results; // Return the array of populated results
+        return results;
     }
     catch (error) {
         console.error("Database error:", error);

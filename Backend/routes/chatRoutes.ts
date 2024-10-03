@@ -15,9 +15,6 @@ router.get('/message/:chatId', getMessage);
 
 router.get("/company/:companyId", companyChat);
 
-// router.get("/vendorChats/:vendorId", vendorChats);
-
-
 router.post("/message", companyAddMessage)
 
 
