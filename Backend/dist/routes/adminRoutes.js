@@ -1,7 +1,6 @@
 import express from 'express';
 import { adminlogin, getAllVendors, blockVendorController, getAllBookings, DashboardController, unblockVendorController, getUsersList, unblockUserController, blockUserController } from '../controller/adminController.js';
 const router = express.Router();
-// Login route for admin
 router.post("/login", adminlogin);
 router.get("/getAllVendors", getAllVendors);
 router.put("/vendor/blockUser/:id", blockVendorController);

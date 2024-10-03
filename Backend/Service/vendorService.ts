@@ -244,8 +244,8 @@ export const softDeleteAuditoriumService = async (auditoriumId: string) => {
 export const findBookingDetails = async (vendorId: string) => {
   console.log('Fetching booking details for userId:', vendorId);
 
-  const bookingDetails = await findDetailsByvendorId(vendorId); // Use the repository function
+  const bookingDetails = await findDetailsByvendorId(vendorId); 
   console.log('Booking details:', bookingDetails);
 
-  return bookingDetails; // Return the booking details
+  return bookingDetails; 
 };

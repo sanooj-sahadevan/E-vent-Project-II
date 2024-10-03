@@ -89,7 +89,6 @@ export const unblockVendorController = async (
 };
 
 
-// Get all users
 export const getUsersList = async (
   req: Request,
   res: Response,
@@ -103,7 +102,6 @@ export const getUsersList = async (
   }
 };
 
-// Block a user
 export const blockUserController = async (
   req: Request,
   res: Response,
@@ -122,7 +120,7 @@ export const blockUserController = async (
   }
 };
 
-// Unblock a user
+
 export const unblockUserController = async (
   req: Request,
   res: Response,

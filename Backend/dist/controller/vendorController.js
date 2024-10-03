@@ -259,7 +259,7 @@ export const fetchAuditoriumDetails = async (req, res, next) => {
 export const softDeleteDish = async (req, res) => {
     try {
         console.log('delete');
-        const { dishId } = req.params; // Only dishId is needed
+        const { dishId } = req.params;
         if (!dishId) {
             return res.status(400).json({ message: 'Dish ID is missing' });
         }
@@ -291,13 +291,13 @@ export const softDeleteAuditorium = async (req, res) => {
     }
 };
 export const vendorBookingDetils = async (req, res) => {
-    const { vendorId } = req.params; // Extract userId from request parameters
+    const { vendorId } = req.params;
     try {
-        const booking = await findBookingDetails(vendorId); // Call the service function
+        const booking = await findBookingDetails(vendorId);
         if (!booking) {
             return res.status(404).json({ message: "Booking not found" });
         }
-        res.status(200).json(booking); // Return the booking details
+        res.status(200).json(booking);
     }
     catch (error) {
         console.error("Error fetching booking data:", error);
@@ -305,26 +305,19 @@ export const vendorBookingDetils = async (req, res) => {
     }
 };
 export const getUnreadMessagesCount = async (req, res) => {
-    const userId = req.vendorId;
-    console.log('ccccccccccccccccccccccccc', userId);
+    const vendorId = req.vendorId;
     try {
-        console.log('11111111111111111111111111');
-        if (!userId) {
+        if (!vendorId) {
             return res.status(400).json({ error: "User ID is required" });
         }
-        console.log('2222222222222222222');
-        const chats = await chatModel.find({ userId: userId }).select('_id');
+        const chats = await chatModel.find({ vendorId: vendorId }).select('_id');
         const chatIds = chats.map(chat => chat._id);
-        console.log('3333333333333333333333333333333333333');
-        console.log('aaaaaaaaaaaaaa', chats);
-        console.log('bbbbbbbbbbbbbbb', chatIds);
         const unreadCount = await messageModel.countDocuments({
             chatId: { $in: chatIds },
-            senderModel: "Vendor",
+            senderModel: "User",
             isRead: false,
         });
-        console.log('4');
-        io.emit('unreadCount', { unreadCount });
+        io.to(vendorId).emit("unreadCount", { unreadCount });
         res.status(200).json({ unreadCount });
     }
     catch (error) {

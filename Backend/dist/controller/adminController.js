@@ -62,7 +62,6 @@ export const unblockVendorController = async (req, res, next) => {
         next(error);
     }
 };
-// Get all users
 export const getUsersList = async (req, res, next) => {
     try {
         const users = await getAllUsers();
@@ -72,7 +71,6 @@ export const getUsersList = async (req, res, next) => {
         next(error);
     }
 };
-// Block a user
 export const blockUserController = async (req, res, next) => {
     try {
         const userId = req.params.id;
@@ -86,7 +84,6 @@ export const blockUserController = async (req, res, next) => {
         next(error);
     }
 };
-// Unblock a user
 export const unblockUserController = async (req, res, next) => {
     try {
         const userId = req.params.id;

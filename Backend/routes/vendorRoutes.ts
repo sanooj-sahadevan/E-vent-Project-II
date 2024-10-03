@@ -41,7 +41,6 @@ router.patch('/auditorium/:auditoriumId',softDeleteAuditorium);
 
 router.get('/vendorBookingDetils/:vendorId', vendorBookingDetils);
 
-
 router.get('/unread-count',verifyvendor, getUnreadMessagesCount);
 
 

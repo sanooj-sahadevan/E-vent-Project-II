@@ -26,16 +26,3 @@ router.post('/addTransaction', addTransaction);
 router.post('/response/saveData', saveData);
 router.get('/fetchBookingDetails/:userId', fetchBookingDetails);
 export default router;
-// import { Router } from 'express';
-// import { LoginController, VendorController, UserController } from '../controller/userController.js';
-// import { verifyUser } from '../middleware/userJWT.js';
-// const router = Router();
-// // Instantiate controllers
-// const loginController = new LoginController();
-// const vendorController = new VendorController();
-// const userController = new UserController();
-// // Define routes
-// router.post('/login', loginController.login.bind(loginController));
-// router.get('/vendors', vendorController.getAllVendors.bind(vendorController));
-// // router.post('/signup', userController.register.bind(userController));
-// export default router;
