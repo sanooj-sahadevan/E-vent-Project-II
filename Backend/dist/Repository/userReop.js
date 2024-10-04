@@ -1,30 +1,11 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import UserModel from "../models/userModel.js";
 import { VendorModel } from "./vendorRepo.js";
 import { Dishes } from "../models/dishesModel.js";
 import { Auditorium } from "../models/auditoriumModel.js";
 import { bookedModel } from "../models/bookedEvent.js";
 import { chatModel } from "../models/chatModel.js";
-const UserSchema = new Schema({
-    username: { type: String, required: true },
-    phone: { type: Number },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: false },
-    profileImage: { type: String },
-    otp: { type: String },
-    otpVerified: { type: Boolean, default: false },
-    address: { type: String },
-    state: { type: String },
-    district: { type: String },
-    pincode: { type: Number },
-    reviews: { type: [String] },
-    isBlocked: {
-        type: Boolean,
-        default: false,
-    },
-});
-const UserModel = mongoose.model("User", UserSchema);
-export default UserModel;
 export const createUser = async (user) => {
     try {
         const newUser = new UserModel(user);
@@ -36,10 +17,11 @@ export const createUser = async (user) => {
 };
 export const findUserByEmail = async (email) => {
     try {
-        return UserModel.findOne({ email });
+        return await UserModel.findOne({ email, isBlocked: false }).exec();
     }
     catch (error) {
-        console.error(error);
+        console.error('Error finding user by email:', error);
+        throw new Error('Database Error');
     }
 };
 export const findUserById = async (userId) => {
@@ -284,5 +266,21 @@ export const findDetailsByUserId = async (userId) => {
     catch (error) {
         console.error("Database error:", error);
         throw new Error("Database operation failed.");
+    }
+};
+export const changepassword = async (userId, newPassword) => {
+    try {
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            throw new Error("User not found");
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+        return user;
+    }
+    catch (error) {
+        console.error(error);
+        throw error;
     }
 };

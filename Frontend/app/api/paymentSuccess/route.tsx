@@ -30,7 +30,7 @@ export async function POST(req: any, res: NextApiResponse) {
 
   // redirect(`/bookingSuccess?PayUOrderId=${PayUOrderId}`);
 
-  redirect(`/`);
+  redirect(`/bookingSucess`);
 
 
   // redirect(

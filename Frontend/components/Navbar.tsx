@@ -8,8 +8,16 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Navbar: React.FC = () => {
+  const [activePath, setActivePath] = useState<string | null>(null);
+
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setActivePath(window.location.pathname);
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -31,6 +39,8 @@ const Navbar: React.FC = () => {
     router.push("/");
   };
 
+  const isActive = (path: string) => activePath === path;
+
   return (
     <nav className="bg-black py-4 px-8 flex justify-between items-center fixed top-0 w-full z-10">
       {/* Logo Section */}
@@ -41,16 +51,36 @@ const Navbar: React.FC = () => {
       {/* Navigation Links */}
       <ul className="flex space-x-8 text-white">
         <li>
-          <Link href="/">Home</Link>
+          <Link
+            href="/"
+            className={`${isActive("/") ? "text-pink-500" : " text-white"}`}
+          >
+            Home
+          </Link>
         </li>
         <li>
-          <Link href="/vendor">Vendor</Link>
+          <Link
+            href="/vendor"
+            className={`${isActive("/vendor") ? "text-pink-500" : " text-white"}`}
+          >
+            Vendor
+          </Link>
         </li>
         <li>
-          <Link href="">About</Link>
+          <Link
+            href="/about"
+            className={`${isActive("/about") ? "text-pink-500" : " text-white"}`}
+          >
+            About
+          </Link>
         </li>
         <li>
-          <Link href="">Contact</Link>
+          <Link
+            href="/contact"
+            className={`${isActive("/contact") ? "text-pink-500" : " text-white"}`}
+          >
+            Contact
+          </Link>
         </li>
       </ul>
 
@@ -106,7 +136,6 @@ const Navbar: React.FC = () => {
         )}
       </div>
     </nav>
-
   );
 };
 

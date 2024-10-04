@@ -17,7 +17,7 @@ export const adminlogin = async (req, res, next) => {
         next(error);
     }
 };
-export const getAllVendors = async (req, res) => {
+export const getAllVendors = async (req, res, next) => {
     try {
         const allWorkers = await getAllVendorsService();
         res.status(200).json(allWorkers);
@@ -26,7 +26,7 @@ export const getAllVendors = async (req, res) => {
         res.status(500).json({ error: "Failed to retrieve workers" });
     }
 };
-export const getAllBookings = async (req, res) => {
+export const getAllBookings = async (req, res, next) => {
     try {
         const allBookings = await getAllBookingsService();
         res.status(200).json(allBookings);
@@ -96,12 +96,12 @@ export const unblockUserController = async (req, res, next) => {
         next(error);
     }
 };
-export const DashboardController = async (req, res) => {
+export const DashboardController = async (req, res, next) => {
     try {
         const dashboardData = await getDashboardData();
         return res.status(200).json(dashboardData);
     }
     catch (error) {
-        return res.status(500).json({ error: "Something went wrong" });
+        next(error);
     }
 };

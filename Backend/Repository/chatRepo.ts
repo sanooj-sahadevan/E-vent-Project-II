@@ -2,12 +2,9 @@ import mongoose, { Schema, Document } from "mongoose";
 import { chatModel } from "../models/chatModel.js";
 import { messageModel } from "../models/messageModal.js";
 import { io } from "../index.js"; 
+import { Ichat } from "../interfaces/chat.js";
 
-interface Ichat extends Document {
-  _id: mongoose.Types.ObjectId;  
-  userId: string;
-  vendorId: string;
-}
+
 
 export const savechatDB = async (text: string, userId: string, vendorId: string) => {
   try {

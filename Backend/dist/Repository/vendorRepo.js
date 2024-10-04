@@ -1,8 +1,9 @@
 import mongoose, { Schema } from "mongoose";
-import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 import { Dishes } from '../models/dishesModel.js';
 import { Auditorium } from "../models/auditoriumModel.js";
 import { bookedModel } from "../models/bookedEvent.js";
+import { chatModel } from "../models/chatModel.js";
+import { messageModel } from "../models/messageModal.js";
 const VendorSchema = new Schema({
     vendorname: { type: String, required: true },
     phone: { type: Number, required: true },
@@ -94,14 +95,12 @@ export const vendorEditFromDB = async (vendorDetails, imageUrl) => {
         throw new Error('Database operation failed');
     }
 };
-export const uploadImage = async function (imageFile) {
-    try {
-        return await uploadToS3Bucket([], imageFile);
-    }
-    catch (error) {
-        throw new Error(error.message);
-    }
-};
+// export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
+//   try {
+//   } catch (error: any) {
+//     throw new Error(error.message);
+//   }
+// };
 export const findVendorByIdInDb = async (vendorId) => {
     console.log('controller 3');
     return await VendorModel.findById(vendorId);
@@ -233,5 +232,29 @@ export const findDetailsByvendorId = async (vendorId) => {
     catch (error) {
         console.error("Database error:", error);
         throw new Error("Database operation failed.");
+    }
+};
+export const chatDB = async (vendorId) => {
+    try {
+        const chats = await chatModel.find({ vendorId }).select('_id');
+        return chats;
+    }
+    catch (error) {
+        console.error("Error fetching chats from the database:", error);
+        throw error;
+    }
+};
+export const messageDB = async (chatIds) => {
+    try {
+        const unreadCount = await messageModel.countDocuments({
+            chatId: { $in: chatIds },
+            senderModel: "User",
+            isRead: false,
+        });
+        return unreadCount;
+    }
+    catch (error) {
+        console.error("Error fetching unread messages count from the database:", error);
+        throw error;
     }
 };

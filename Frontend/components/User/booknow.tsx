@@ -52,6 +52,7 @@ const Booknow: React.FC = () => {
   };
 
   return (
+
     <div className="min-h-screen flex flex-col justify-center mt-[100px] items-center bg-gray-100 p-8">
       <div className="bg-white shadow-md rounded-lg overflow-hidden max-w-4xl w-full flex">
         {/* Form Section */}
@@ -123,12 +124,13 @@ const Booknow: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700" htmlFor="dishes">
                 Add Dishes
               </label>
-              <input
+              <button
                 type="button"
-                value="Click here"
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer"
+                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer flex justify-center items-center"
                 onClick={() => vendorId && router.push(`/dishesList?vendorId=${vendorId}`)}
-              />
+              >
+                <span className="text-2xl font-bold">+</span>
+              </button>
             </div>
 
             {/* Select Auditorium Button */}
@@ -136,12 +138,13 @@ const Booknow: React.FC = () => {
               <label className="block text-sm font-medium text-gray-700" htmlFor="auditorium">
                 Add Auditorium
               </label>
-              <input
+              <button
                 type="button"
-                value="Click here"
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer"
+                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer flex justify-center items-center"
                 onClick={() => vendorId && router.push(`/auditoriumList?vendorId=${vendorId}`)}
-              />
+              >
+                <span className="text-2xl font-bold">+</span>
+              </button>
             </div>
 
             {/* Submit Button */}
@@ -162,6 +165,8 @@ const Booknow: React.FC = () => {
         </div>
       </div>
     </div>
+
+
   );
 };
 

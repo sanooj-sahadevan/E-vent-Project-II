@@ -1,17 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { DishDocument } from '../interfaces/dishes';
 
-interface DishDocument extends Document {
-  vendorId: mongoose.Schema.Types.ObjectId;
-  dishesName: string;
-  description?: string;
-  menu: string;
-  types: string;
-  price: number;
-  category?: string;
-  status: string;
-  images?: string
-  isDeleted: boolean
-}
+
 
 const dishesSchema = new Schema<DishDocument>(
   {

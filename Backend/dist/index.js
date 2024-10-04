@@ -11,36 +11,32 @@ import { createServer } from 'http';
 import { Server as serverSocket } from 'socket.io';
 import chatRoutes from './routes/chatRoutes.js';
 import { socketHandler } from "./utils/socket/chat.js";
+import { errorHandler } from "./middleware/errorHandling.js";
 dotenv.config();
 const app = express();
 const PORT = 5000;
-// Connect to MongoDB
 connectToMongoDB();
 const httpServer = createServer(app);
 export const io = new serverSocket(httpServer, {
     cors: {
-        origin: "http://localhost:3000", // Ensure correct origin
+        origin: "http://localhost:3000",
         methods: ['GET', 'POST'],
-        credentials: true, // Allow credentials for Socket.IO
+        credentials: true,
     },
 });
-// Socket Handler
 socketHandler(io);
-// Middleware setup
 app.use(cors({
-    origin: 'http://localhost:3000', // Ensure exact origin
-    credentials: true, // Enable credentials
+    origin: 'http://localhost:3000',
+    credentials: true,
 }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('dev'));
-// Route setup
 app.use('/user', userRoutes);
 app.use('/vendor', vendorRoutes);
 app.use('/admin', adminRoutes);
 app.use('/chat', chatRoutes);
-// Create HTTP server
-// Start the server
+app.use(errorHandler);
 httpServer.listen(PORT, () => {
     console.log(`Server started running on http://localhost:${PORT}/`);
 });

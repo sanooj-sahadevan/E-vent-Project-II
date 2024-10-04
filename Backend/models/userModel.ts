@@ -1,36 +1,27 @@
-// import mongoose from 'mongoose';
-
-// const UserSchema = new mongoose.Schema({
-//   username: { type: String, required: true },
-//   phone: { type: Number, required: true },
-//   email: { type: String, required: true, unique: true },
-//   password: { type: String, required: true },
-//   profileImage: { type: String, default: '' },
-//   otp: { type: String, default: '' },
-//   otpVerified: { type: Boolean, default: false },
-// });
-
-// export const User = mongoose.model('User', UserSchema);
+import mongoose, { Schema } from "mongoose";
+import { User } from "../interfaces/user.js";
 
 
+const UserSchema = new Schema<User>({
+    username: { type: String, required: true },
+    phone: { type: Number },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: false },
+    profileImage: { type: String },
+    otp: { type: String },
+    otpVerified: { type: Boolean, default: false },
+    address: { type: String },
+    state: { type: String },
+    district: { type: String },
+    pincode: { type: Number },
+    reviews: { type: [String] },
+    isBlocked: {
+        type: Boolean,
+        default: false,
+    },
+});
 
+const UserModel = mongoose.model<User>("User", UserSchema);
+export default UserModel;
 
-export interface User {
-    reviews: any;
-    district: any;
-    _id: any;
-    save(): unknown;
-    username: string;
-    phone?: number;
-    email: string;
-    password: string;
-    profileImage?: string;
-    otp?: string;
-    otpVerified?: boolean;
-    address: string;
-    state: string;
-    pincode: number;
-    isBlocked?: boolean;
-
-}
 

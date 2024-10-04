@@ -14,6 +14,7 @@ interface User {
 }
 
 interface Message {
+  senderModel: string | null;
   senderId: string;
   _id: string;
   text: string;
@@ -42,13 +43,10 @@ const ChatApp = () => {
     });
 
     socketInstance.on("connect", () => {
-      alert("This is an  on");
-
       console.log("Connected to WebSocket server vendor");
     });
 
     socketInstance.on("message", (newMessage: Message) => {
-
       console.log("Vendor received message:", newMessage);
       setSelectedMessages((prevMessages) => [...prevMessages, newMessage]);
     });
@@ -60,8 +58,6 @@ const ChatApp = () => {
       console.log("Disconnecting vendor socket");
     };
   }, []);
-
-
 
   useEffect(() => {
     const vendorData = localStorage.getItem("vendor");
@@ -79,8 +75,6 @@ const ChatApp = () => {
     }
   }, [currChatId, socket]);
 
-
-
   useEffect(() => {
     const getChats = async () => {
       if (vendor) {
@@ -89,8 +83,6 @@ const ChatApp = () => {
           const data = response?.data;
           if (data) {
             setChatId(data);
-            console.log(setChatId, 'jkwjsndjwndcjqwanshcn');
-
           } else {
             setError("No data found.");
           }
@@ -105,17 +97,14 @@ const ChatApp = () => {
     getChats();
   }, [vendor]);
 
-
-
   useEffect(() => {
-
     const fetchChatDetails = async () => {
       if (selectedUser && vendor) {
         const validChats = chatId.filter((chat) => chat?.userId?.username);
         const selectedChat = validChats.find(
           (chat) => chat?.userId?.username === selectedUser
         );
-        setCurrChatId(selectedChat?._id)
+        setCurrChatId(selectedChat?._id);
 
         if (selectedChat) {
           try {
@@ -136,12 +125,6 @@ const ChatApp = () => {
     };
     fetchChatDetails();
   }, [selectedUser, chatId, vendor]);
-
-
-
-
-
-
 
   const uniqueUsers = Array.from(
     new Set(
@@ -175,17 +158,7 @@ const ChatApp = () => {
       });
 
       if (response) {
-        const newMessage: Message = {
-          _id: response._id,
-          senderId: vendor._id,
-          text: response.text,
-          vendorId: vendor._id,
-          userId: selectedChat.userId,
-          time: response.createdAt,
-        };
-
-        setSelectedMessages((prevMessages) => [...prevMessages, newMessage]);
-        setMessage("");
+        setMessage(""); // Clear the input after sending the message
       } else {
         console.error("Error saving message");
       }
@@ -202,145 +175,63 @@ const ChatApp = () => {
     };
     return new Date(dateString).toLocaleString(undefined, options);
   };
+  console.log({ selectedMessages });
 
   return (
-    <div className="h-screen flex  mt">
+    <div className="h-screen flex mt">
       <ChatSidebar
         users={uniqueUsers.map((user) => user.username)}
         selectedUser={selectedUser || ""}
         setSelectedUser={setSelectedUser}
       />
 
-      {/* <div className="flex-1 overflow-y-auto bg-gray-200 p-6 space-y-4">
-        {selectedMessages.length > 0 ? (
-          selectedMessages.map((msg, index) => {
-
-            console.log({ msg });
-
-            return (
+      <div className="flex-1 flex flex-col h-full p-6 bg-white">
+        <div className="flex-1 overflow-y-auto bg-gray-200 p-6 space-y-4">
+          {selectedMessages.length > 0 ? (
+            selectedMessages.map((msg, index) => (
               <div
                 key={index}
-                className={`flex ${msg.senderId === vendor?._id ? "justify-end" : "justify-start"
-                  }`}
+                className={`flex ${msg.senderModel === "Vendor" ? "justify-end" : "justify-start"}`}
               >
+
                 <div
-                  className={`${msg.senderId === vendor?._id
-                    ? "bg-pink-400 text-white"
-                    : "bg-green-400 text-white"
+                  className={`${msg.senderModel === "Vendor" ? "bg-pink-400 text-white" : "bg-gray-600 text-white"
                     } rounded-lg p-3 max-w-xs break-words`}
                 >
                   <p>{msg.text}</p>
                   <span className="text-xs text-gray-500 block mt-1">
-                    {msg.senderId === vendor?._id
-                      ? "You"
-                      : msg?.userId?.username || "Unknown User"}
+                    {msg.senderModel === "Vendor" ? "You" : "User"}
                   </span>
-                  <span className="text-xs text-gray-500 block mt-1">
+                  <span className="text-xs text-white-300 block mt-1">
                     {formatDate(msg.time)}
                   </span>
                 </div>
               </div>
-            )
-          })
-        ) : (
-          <p className="text-center text-gray-500">No messages available.</p>
-        )}
-        <form onSubmit={handleSendMessage} className="flex w-full">
-          <input
-            type="text"
-            placeholder="Type a message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:border-pink-500"
-          />
-          <button
-            type="submit"
-            className="bg-pink-500 text-white px-6 py-3 rounded-r-lg hover:bg-pink-600 focus:outline-none"
-          >
-            Send
-          </button>
-        </form>
-      </div> */}
-
-      {/* {loading && (
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
-          Loading chats...
+            ))
+          ) : (
+            <p className="text-center text-gray-500">No messages available.</p>
+          )}
         </div>
-      )}
-      {error && (
-        <div className="absolute top-12 left-1/2 transform -translate-x-1/2 text-red-500">
-          {error}
+
+
+        <div className="bg-gray-100 flex items-center p-4 border-t border-gray-300">
+          <form onSubmit={handleSendMessage} className="flex w-full">
+            <input
+              type="text"
+              placeholder="Type a message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:border-pink-500"
+            />
+            <button
+              type="submit"
+              className="bg-pink-500 text-white px-6 py-3 rounded-r-lg hover:bg-pink-600 focus:outline-none"
+            >
+              Send
+            </button>
+          </form>
         </div>
-      )} */}
-
-
-
-
-
-<div className="flex-1 flex flex-col h-full p-6 bg-white  ">
-                {/* Chat Header */}
-                <div className="h-16 bg-gray-200 flex items-center px-4 border-b border-gray-300">
-                    <h2 className="text-xl font-semibold text-gray-800">{ "Text"}</h2>
-                </div>
-
-                {/* Chat Messages Area */}
-                <div className="flex-1 overflow-y-auto bg-gray-200 p-6 space-y-4">
-                    {selectedMessages.length > 0 ? (
-                        selectedMessages.map((msg, index) => (
-                            <div
-                                key={index}
-                                className={`flex ${msg.senderId === vendorId ? "justify-end" : "justify-start"}`}
-                            >
-                                <div
-                                    className={`${msg.senderId === vendorId ? "bg-pink-400 text-white" : "bg-green-400 text-white"} 
-                                     rounded-lg p-3 max-w-xs break-words`}
-                                >
-                                    <p>{msg.text}</p>
-                                    <span className="text-xs text-gray-500 block mt-1">
-                                        {msg.senderId === vendorId ? "You":""}
-                                    </span>
-                                    <span className="text-xs text-white-300 block mt-1">
-                                        {formatDate(msg.time)}
-                                    </span>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-center text-gray-500">No messages available.</p>
-                    )}
-                </div>
-
-                {/* Message Input Area */}
-                <div className="bg-gray-100 flex items-center p-4 border-t border-gray-300">
-                    <form onSubmit={handleSendMessage} className="flex w-full">
-                        <input
-                            type="text"
-                            placeholder="Type a message..."
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            className="w-full p-3 border border-gray-300 rounded-l-lg focus:outline-none focus:border-pink-500"
-                        />
-                        <button
-                            type="submit"
-                            className="bg-pink-500 text-white px-6 py-3 rounded-r-lg hover:bg-pink-600 focus:outline-none"
-                        >
-                            Send
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-
+      </div>
     </div>
   );
 };

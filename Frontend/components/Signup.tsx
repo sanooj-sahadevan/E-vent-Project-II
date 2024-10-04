@@ -34,7 +34,7 @@ const SignupForm: React.FC = () => {
 
     const reqBody = {
       username,
-      phone: Number(phone), // Explicitly convert phone to a number
+      phone: Number(phone),
       email,
       password,
     };
@@ -158,7 +158,7 @@ const SignupForm: React.FC = () => {
                     value:
                       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&*()_+~`|}{[\]:;?><,./-]).{8,}$/,
                     message: "Password must be at least 6 characters",
-                  },
+                  }, 
                 })}
               />
               {errors.password && <p className="text-red-500">{errors.password.message}</p>}

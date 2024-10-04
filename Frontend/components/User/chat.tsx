@@ -24,6 +24,9 @@ const ChatPage = () => {
     const [companyName, setCompanyName] = useState<string>("");
     const [socket, setSocket] = useState<Socket | null>(null);
 
+    console.log(messages, '---------------');
+
+
     useEffect(() => {
         console.log('Connecting to local 5000');
 
@@ -127,6 +130,7 @@ const ChatPage = () => {
         };
         return new Date(dateString).toLocaleString(undefined, options);
     };
+    console.log({ companyName });
 
     return (
         <div className="flex h-screen bg-gray-100">
@@ -146,7 +150,7 @@ const ChatPage = () => {
             <div className="flex-1 flex flex-col h-full p-6 bg-white mt-20">
                 {/* Chat Header */}
                 <div className="h-16 bg-gray-200 flex items-center px-4 border-b border-gray-300">
-                    <h2 className="text-xl font-semibold text-gray-800">{companyName || "Text"}</h2>
+                    <h2 className="text-xl font-semibold text-gray-800">{companyName || "Vendor"}</h2>
                 </div>
 
                 {/* Chat Messages Area */}
@@ -159,8 +163,8 @@ const ChatPage = () => {
                             >
                                 <div
                                     className={`${msg.senderId._id === userId
-                                            ? "bg-pink-400 text-white"
-                                            : "bg-green-400 text-white"
+                                        ? "bg-pink-400 text-white"
+                                        : "bg-green-400 text-white"
                                         } rounded-lg p-3 max-w-xs break-words`}
                                 >
                                     <p>{msg.text}</p>

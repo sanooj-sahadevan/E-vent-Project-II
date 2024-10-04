@@ -9,29 +9,69 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { io } from "socket.io-client";
-
+import { io, Socket } from "socket.io-client";
 
 const Navbar: React.FC = () => {
-  const socket = io("http://localhost:5000");
-
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState<number>(0);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [vendorId, setVendorId] = useState<string | null>(null); // Store vendorId
+
+  useEffect(() => {
+    const vendorData = localStorage.getItem("vendor");
+    if (vendorData) {
+      const parsedVendor = JSON.parse(vendorData);
+      const vendorId = parsedVendor._id;
+      setVendorId(vendorId);
+    }
+  }, []);
+
+  useEffect(() => {
+    const newSocket = io("http://localhost:5000");
+    setSocket(newSocket);
+
+    newSocket.on("unreadCount", (response: any) => {
+      console.log("Unread count received:", response);
+      setUnreadMessagesCount(response.unreadCount);
+    });
+
+    return () => {
+      if (newSocket) {
+        newSocket.disconnect();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (socket && vendorId) {
+      console.log(`Joining vendor room: ${vendorId}`);
+      socket.emit("joinRoom", vendorId);
+    }
+  }, [vendorId, socket]);
+
+
 
 
   useEffect(() => {
     const fetchUnreadMessages = async () => {
-      const response = await getUnreadMessagesCountAPI();
-      socket.on("unreadCount", (response: any) => {
-        console.log("Unread count received:", response);
-        setUnreadMessagesCount(response.unreadCount);
-      });
+      try {
+        const response = await getUnreadMessagesCountAPI();
+        console.log(response);
+        
+        if (response && typeof response.unreadCount === 'number') {
+          setUnreadMessagesCount(response.unreadCount);
+        } else {
+          console.error("Unread count not available in response", response);
+        }
+      } catch (error) {
+        console.error("Failed to fetch unread messages:", error);
+      }
     };
-
+  
     fetchUnreadMessages();
   }, []);
-
+  
   useEffect(() => {
     const token = localStorage.getItem("vendorToken");
     const userData = localStorage.getItem("vendor");
@@ -62,16 +102,16 @@ const Navbar: React.FC = () => {
       {/* Navigation Links */}
       <ul className="flex space-x-8 text-white">
         <li>
-          <Link href="/">Home</Link>
+          <Link href="/vendordashboard" >Home</Link>
         </li>
         <li>
-          <Link href="/vendor">Vendor</Link>
+          <Link href="/vendordashboard">Vendor</Link>
         </li>
         <li>
-          <Link href="/about">About</Link>
+          <Link href="/">About</Link>
         </li>
         <li>
-          <Link href="/contact">Contact</Link>
+          <Link href="/">Contact</Link>
         </li>
       </ul>
 
@@ -99,7 +139,6 @@ const Navbar: React.FC = () => {
         </svg>
 
         {/* Chat Icon */}
-
         <Link href="/vendorChat">
           <div className="relative">
             <Badge
@@ -128,17 +167,6 @@ const Navbar: React.FC = () => {
             </Badge>
           </div>
         </Link>
-
-
-
-
-
-
-
-
-
-
-
 
         {/* Logout or Login */}
         {isAuthorized ? (

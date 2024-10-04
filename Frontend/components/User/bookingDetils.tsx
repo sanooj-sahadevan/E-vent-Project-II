@@ -7,13 +7,13 @@ import { fetchBookingDetilsProfile } from '@/services/userApi';
 interface Event {
   createdAt: string;
   vendorId: {
-    vendorname: string;  // Ensure this matches the backend model
+    vendorname: string; 
   };
   auditoriumId: {
-    auditoriumName: string;  // Ensure this matches the backend model
+    auditoriumName: string;  
   };
   dishesId: {
-    dishesName: string;  // Ensure this matches the backend model
+    dishesName: string; 
   };
   txnId: string;
   paymentStatus: string;

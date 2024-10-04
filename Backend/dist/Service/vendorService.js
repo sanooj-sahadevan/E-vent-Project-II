@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
-import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findDetailsByvendorId, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb, softDeleteDishRepo, softDeleteAuditoriumRepo, } from "../Repository/vendorRepo.js";
+import { createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, chatDB, vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findDetailsByvendorId, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb, softDeleteDishRepo, softDeleteAuditoriumRepo, messageDB, } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
+import { io } from "../index.js";
 export const registerVendor = async (vendor) => {
     try {
         const existingVendor = await findVendorByEmail(vendor.email);
@@ -66,7 +67,7 @@ export const editVendor = async (vendorDetails, imageUrl) => {
 export const uploadImage = async function (imageFile) {
     try {
         console.log('first step');
-        const uploadedUrl = await uploadToS3Bucket([imageFile], imageFile); // Pass both the array and file
+        const uploadedUrl = await uploadToS3Bucket([], imageFile);
         return uploadedUrl;
     }
     catch (error) {
@@ -150,7 +151,7 @@ export const findAuditoriumVendorById = async (vendorId) => {
 };
 export const softDeleteDishService = async (dishId) => {
     try {
-        const updatedDish = await softDeleteDishRepo(dishId); // Delegate the deletion to the repository
+        const updatedDish = await softDeleteDishRepo(dishId);
         return updatedDish;
     }
     catch (error) {
@@ -172,4 +173,34 @@ export const findBookingDetails = async (vendorId) => {
     const bookingDetails = await findDetailsByvendorId(vendorId);
     console.log('Booking details:', bookingDetails);
     return bookingDetails;
+};
+export const findVendorByEmailService = async (email) => {
+    try {
+        const vendor = await findVendorByEmail(email);
+        return vendor;
+    }
+    catch (error) {
+        console.error(error);
+    }
+};
+export const chatServices = async ({ vendorId }) => {
+    try {
+        const chats = await chatDB(vendorId);
+        return chats;
+    }
+    catch (error) {
+        console.error("Error fetching chats:", error);
+        throw error;
+    }
+};
+export const messageService = async ({ chatIds, vendorId, }) => {
+    try {
+        const unreadCount = await messageDB(chatIds);
+        io.to(vendorId).emit("unreadCount", { unreadCount });
+        return unreadCount;
+    }
+    catch (error) {
+        console.error("Error fetching unread messages:", error);
+        throw error;
+    }
 };

@@ -15,8 +15,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ users, selectedUser, setSelec
             <li
               key={index}
               onClick={() => setSelectedUser(name)}
-              className={`mb-4 cursor-pointer text-lg p-2 rounded-lg hover:bg-blue-200 
-              ${selectedUser === name ? 'bg-blue-500 text-white' : 'bg-gray-100 text-black'}`}
+              className={`mb-4 cursor-pointer text-lg p-2 rounded-lg hover:bg-pink-100 
+              ${selectedUser === name ? 'bg-pink-400 text-white' : 'bg-gray-100 text-black'}`}
             >
               {name}
             </li>
