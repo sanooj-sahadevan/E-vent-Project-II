@@ -7,7 +7,7 @@ const page = () => {
   return (
     <div>
       <Navbar/>
-      <ChangePassword/>
+      <ChangePassword userId={''}/>
       {/* <UserMain/> */}
       {/* <UserProfile/> */}
     </div>

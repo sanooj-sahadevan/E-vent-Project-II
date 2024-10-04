@@ -1,13 +1,18 @@
 import { Vendor } from "../models/vendorModel";
 import jwt from "jsonwebtoken";
 import {
-  createVendor,findVendorByEmail,findVendorByIdInDb,updateVendor, 
-  vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium,findDetailsByvendorId,
-  findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb,softDeleteDishRepo,softDeleteAuditoriumRepo,
+  createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, chatDB,
+  vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findDetailsByvendorId,
+  findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb,
+  softDeleteDishRepo, softDeleteAuditoriumRepo,
+  messageDB,
 } from "../Repository/vendorRepo.js";
 import { uploadToS3Bucket } from "../middleware/fileUpload.js";
 import { IMulterFile } from "../utils/type";
-import { DishDocument } from "../models/dishesModel";
+import { io } from "../index.js";
+
+
+
 
 export const registerVendor = async (vendor: Vendor) => {
   try {
@@ -66,9 +71,9 @@ export const loginVendor = async (email: string, password: string) => {
 
 export const vendorAddress = async () => {
   try {
-    return await vendorAddressFromDB(); 
+    return await vendorAddressFromDB();
   } catch (error) {
-    throw new Error('Failed to fetch vendor addresses'); 
+    throw new Error('Failed to fetch vendor addresses');
   }
 };
 
@@ -87,7 +92,7 @@ export const uploadImage = async function (imageFile: IMulterFile): Promise<stri
   try {
     console.log('first step');
 
-    const uploadedUrl = await uploadToS3Bucket([imageFile], imageFile); // Pass both the array and file
+    const uploadedUrl = await uploadToS3Bucket([], imageFile);
     return uploadedUrl;
   } catch (error: any) {
     throw new Error(error.message);
@@ -217,9 +222,9 @@ export const findAuditoriumVendorById = async (vendorId: string) => {
 
 
 
-export const softDeleteDishService = async (dishId: string): Promise<DishDocument | null> => {
+export const softDeleteDishService = async (dishId: string) => {
   try {
-    const updatedDish = await softDeleteDishRepo(dishId); // Delegate the deletion to the repository
+    const updatedDish = await softDeleteDishRepo(dishId); 
     return updatedDish;
   } catch (error) {
     throw new Error(`Error soft-deleting dish: ${error}`);
@@ -232,8 +237,8 @@ export const softDeleteDishService = async (dishId: string): Promise<DishDocumen
 export const softDeleteAuditoriumService = async (auditoriumId: string) => {
   try {
     console.log('delete service');
-    
-    const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId); 
+
+    const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId);
     return updatedAuditorium;
   } catch (error) {
     throw new Error(`Error soft-deleting auditorium: ${error}`);
@@ -244,8 +249,53 @@ export const softDeleteAuditoriumService = async (auditoriumId: string) => {
 export const findBookingDetails = async (vendorId: string) => {
   console.log('Fetching booking details for userId:', vendorId);
 
-  const bookingDetails = await findDetailsByvendorId(vendorId); 
+  const bookingDetails = await findDetailsByvendorId(vendorId);
   console.log('Booking details:', bookingDetails);
 
-  return bookingDetails; 
+  return bookingDetails;
+};
+
+
+
+export const findVendorByEmailService = async (email: string) => {
+  try {
+    const vendor = await findVendorByEmail(email);
+    return vendor
+  } catch (error) {
+    console.error(error);
+
+  }
+};
+
+
+
+
+
+export const chatServices = async ({ vendorId }: { vendorId: string }) => {
+  try {
+    const chats = await chatDB(vendorId);
+    return chats;
+  } catch (error) {
+    console.error("Error fetching chats:", error);
+    throw error;
+  }
+};
+
+export const messageService = async ({
+  chatIds,
+  vendorId,
+}: {
+  chatIds: string[];
+  vendorId: string;
+}) => {
+  try {
+    const unreadCount = await messageDB(chatIds);
+
+    io.to(vendorId).emit("unreadCount", { unreadCount });
+
+    return unreadCount;
+  } catch (error) {
+    console.error("Error fetching unread messages:", error);
+    throw error;
+  }
 };

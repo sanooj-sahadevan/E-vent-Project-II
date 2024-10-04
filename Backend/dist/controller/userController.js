@@ -1,73 +1,56 @@
-import { 
-// googleLogin,
-getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, findFoodVendorById, findEvent, findBookingDetails } from "../Service/userService.js";
-import { findUserByEmail,
-// findUserById,
- } from "../Repository/userReop.js";
-import { otpGenerator } from "../utils/otpGenerator.js";
-import { sendEmail } from "../utils/sendEmail.js";
+import { getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, generatePaymentHash, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, generatesendEmail, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, generateOtp, findFoodVendorById, findEvent, findBookingDetails, findchangePassword, findUserByEmailService } from "../Service/userService.js";
 import { HttpStatus } from '../utils/httpStatus.js';
-import jsSHA from 'jssha';
-export const register = async (req, res, next) => {
+export const proceedWithRegistration = async (req, res, next) => {
     try {
-        const { username, email, phone, password } = req.body;
-        console.log({ username, email, phone, password });
-        const proceedWithRegistration = async () => {
-            try {
-                const otp = otpGenerator();
-                console.log(otp);
-                await registerUser({
-                    username,
-                    phone,
-                    email,
-                    password, otp,
-                    _id: undefined,
-                    save: function () {
-                        throw new Error("Function not implemented.");
-                    },
-                    address: "",
-                    state: "",
-                    pincode: 0,
-                    reviews: undefined,
-                    district: undefined
-                });
-                await sendEmail(email, otp);
-                res.status(200).json("OTP sent to email");
-            }
-            catch (error) {
-                next(error);
-            }
-        };
-        await proceedWithRegistration();
+        const otp = generateOtp();
+        console.log('Generated OTP:', otp);
+        await registerUser({
+            username: req.body.username,
+            phone: req.body.phone,
+            email: req.body.email,
+            password: req.body.password,
+            otp,
+            _id: undefined,
+            address: "",
+            state: "",
+            pincode: 0,
+            reviews: undefined,
+            district: undefined
+        });
+        const sendMail = await generatesendEmail(req.body.email, otp); // Await the async email sending
+        console.log('Email sent:', sendMail);
+        res.status(200).json("OTP sent to email and saved in the database.");
     }
     catch (error) {
         next(error);
     }
 };
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const { user, token } = await loginUser(email, password);
         res.cookie("token", token, {
             sameSite: 'strict',
-            maxAge: 3600000
+            maxAge: 3600000,
         });
         res.status(HttpStatus.OK).json({ user, token });
     }
     catch (error) {
-        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+        next(error.message);
     }
 };
-export const verifyOtp = async (req, res) => {
+export const verifyOtp = async (req, res, next) => {
     try {
         const { email, otp } = req.body;
-        console.log(email, otp);
-        const user = await findUserByEmail(email);
-        if (!user) {
+        console.log(email, otp, '------------------------------------------');
+        const user = await findUserByEmailService(email);
+        console.log(user, email, '---------------------+++--------------------');
+        console.log(user);
+        if (!user?.user) {
             return res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
         }
-        console.log(user.otp, otp);
-        if (user.otp === otp) {
+        // console.log(user.otp, otp);
+        if (user.user.otp === otp) {
             await verifyAndSaveUser(email, otp);
             res.status(HttpStatus.OK).json("User registered successfully");
         }
@@ -76,12 +59,9 @@ export const verifyOtp = async (req, res) => {
         }
     }
     catch (error) {
-        next(Error);
+        next(error.message);
     }
 };
-function next(Error) {
-    throw new Error("Function not implemented.");
-}
 export const vendorList = async (req, res, next) => {
     try {
         console.log('list');
@@ -95,8 +75,6 @@ export const vendorList = async (req, res, next) => {
 export const dishlist = async (req, res, next) => {
     try {
         const { vendorId } = req.query;
-        console.log('Vendor ID:', vendorId);
-        console.log('Fetching dishes list');
         const dishes = await getAllDishes(vendorId);
         res.status(HttpStatus.OK).json(dishes);
     }
@@ -107,8 +85,6 @@ export const dishlist = async (req, res, next) => {
 export const auditoriumlist = async (req, res, next) => {
     try {
         const { vendorId } = req.query;
-        console.log('Vendor ID:', vendorId);
-        console.log('Fetching auditorium list');
         const auditorium = await getAllAuditorium(vendorId);
         res.status(HttpStatus.OK).json(auditorium);
     }
@@ -116,27 +92,22 @@ export const auditoriumlist = async (req, res, next) => {
         next(error);
     }
 };
-export const forgottenPassword = async (req, res) => {
+export const forgottenPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
-        const { user } = await checkEmail(email);
+        const { user, otp } = await checkEmail(email);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const otp = otpGenerator();
-        await sendEmail(email, otp);
         res.status(200).json({ message: 'OTP sent successfully', otp, email });
-        res.status(HttpStatus.OK).json({ message: 'OTP sent successfully', otp, email });
     }
     catch (error) {
-        res.status(400).json({ error: error.message });
-        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+        next(error.message);
     }
 };
 export const updatePassword = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-        console.log(email, password + ' main content ithil ind');
         const user = await update(email, password);
         if (!user) {
             res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
@@ -148,37 +119,6 @@ export const updatePassword = async (req, res, next) => {
         next(error);
     }
 };
-// export class VendorController {
-//     private vendorService: VendorService;
-//     constructor() {
-//         this.vendorService = new VendorService(); // Instantiate service in the constructor
-//     }
-//     // Fetch all vendors
-//     public async getAllVendors(req: Request, res: Response, next: NextFunction): Promise<void> {
-//         try {
-//             const vendors = await this.vendorService.getAllVendors(); // Call the service method
-//             res.status(200).json(vendors); // Return vendors
-//         } catch (error) {
-//             next(error); // Handle error
-//         }
-//     }
-// }
-// export class userController {
-//   private vendorService: VendorService;
-//   constructor() {
-//       this.vendorService = new VendorService(); // Instantiate service in the constructor
-//   }
-//   // Fetch all vendors
-//   public async getAllVendors(req: Request, res: Response, next: NextFunction): Promise<void> {
-//       try {
-//           const vendors = await this.vendorService.getAllVendors(); // Call the service method
-//           res.status(200).json(vendors); // Return vendors
-//       } catch (error) {
-//           next(error); // Handle error
-//       }
-//   }
-// }
-// // import { UserService } from '../Service/userService.js'; // Import the service
 export const editUserDetails = async (req, res, next) => {
     try {
         console.log('Controller: Edit User Details');
@@ -283,7 +223,7 @@ export const fetchdishes = async (req, res, next) => {
         next(error);
     }
 };
-export const fetchBookedData = async (req, res) => {
+export const fetchBookedData = async (req, res, next) => {
     const { id } = req.params;
     try {
         console.log({ id });
@@ -295,33 +235,25 @@ export const fetchBookedData = async (req, res) => {
         res.status(200).json(booking);
     }
     catch (error) {
-        console.error("Error fetching booking data:", error);
-        res.status(500).json({ message: "Internal server error" });
+        next(error);
     }
 };
-// PAYMENT
-export const payment = async (req, res) => {
+export const payment = async (req, res, next) => {
     try {
-        console.log('hey paymeent');
         const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
-        console.log({ txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 });
-        console.log('hey paymeent1');
+        // Validate mandatory fields
         if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6) {
-            res.status(400).send("Mandatory fields missing");
-            return;
+            return res.status(400).send("Mandatory fields missing");
         }
-        console.log('hey paymeent2');
-        const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}|${udf6}|||||${process.env.PAYU_SALT}`;
-        console.log('hey paymeent3');
-        const sha = new jsSHA("SHA-512", "TEXT");
-        sha.update(hashString);
-        const hash = sha.getHash("HEX");
-        console.log('hash pokin');
-        res.send({ hash: hash });
+        // Call the service to generate hash
+        const hash = await generatePaymentHash({
+            txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6
+        });
+        // Send the generated hash as response
+        res.send({ hash });
     }
     catch (error) {
-        console.log("error payment:", error);
-        res.status(500).send("Internal server error");
+        next(error);
     }
 };
 export const addTransaction = async (req, res, next) => {
@@ -335,11 +267,10 @@ export const addTransaction = async (req, res, next) => {
         next(error);
     }
 };
-export const saveData = async (req, res) => {
+export const saveData = async (req, res, next) => {
     try {
         const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
         const eventType = udf6;
-        // Map udf fields to meaningful names
         const userId = udf1;
         const auditoriumId = udf2;
         const dishesId = udf3;
@@ -374,10 +305,10 @@ export const saveData = async (req, res) => {
         }
     }
     catch (error) {
-        res.status(500).json({ success: false, message: "Internal server error" });
+        next(error);
     }
 };
-export const fetchBookingDetails = async (req, res) => {
+export const fetchBookingDetails = async (req, res, next) => {
     const { userId } = req.params;
     try {
         const booking = await findBookingDetails(userId);
@@ -387,7 +318,21 @@ export const fetchBookingDetails = async (req, res) => {
         res.status(200).json(booking);
     }
     catch (error) {
-        console.error("Error fetching booking data:", error);
-        res.status(500).json({ message: "Internal server error" });
+        next(error);
+    }
+};
+export const changePassword = async (req, res, next) => {
+    const { id } = req.params;
+    const { newPassword } = req.body;
+    console.log('chage password');
+    try {
+        const updatedPassword = await findchangePassword(id, newPassword);
+        if (!updatedPassword) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.status(200).json(updatedPassword);
+    }
+    catch (error) {
+        next(error);
     }
 };

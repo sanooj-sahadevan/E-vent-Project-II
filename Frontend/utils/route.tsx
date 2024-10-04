@@ -1,26 +1,25 @@
-
-// Routes Logic
-
 // User Routes
-// const protectedRoutes = new Set(["/trips"]);
-const changeToHomeRoutes = new Set(["/login", "/signup"]);
+const protectedUserRoutes = new Set([
+  "/profilee", "/auditoriumInfo", "/auditoriumList",
+  "/bookingSucess", "/booknow", "/chat", "/checkout",
+  "/dishesinfo", "/vendor", "/googlemap", "/updatePassword", '/vendorProfile'
+]);
 
-// export function isProtectedRoute(pathname: string): boolean {
-//   return protectedRoutes.has(pathname);
-// }
+export function isProtectedUserRoute(pathname: string): boolean {
+  return protectedUserRoutes.has(pathname);
+}
 
 export function toBeRedirectedRoutes(pathname: string): boolean {
-  console.log(pathname+'pathnaaaame');
-  
+  const changeToHomeRoutes = new Set(["/login", "/signup"]);
   return changeToHomeRoutes.has(pathname);
 }
 
 // Admin Routes
-const protectedAdminRoutes = new Set(["/admin/dashboard"]);
+const protectedAdminRoutes = /^\/admin\/.*$/;
 const changeToAdminRoutes = new Set(["/admin"]);
 
 export function isProtectedAdminRoute(pathname: string): boolean {
-  return protectedAdminRoutes.has(pathname);
+  return protectedAdminRoutes.test(pathname);
 }
 
 export function toBeRedirectedAdminRoutes(pathname: string): boolean {
@@ -28,13 +27,16 @@ export function toBeRedirectedAdminRoutes(pathname: string): boolean {
 }
 
 // Vendor Routes
-const protectedVendorRoutes = new Set(["/vendordashboard"]);
-const changeToVendorRoutes = new Set(["/vendorSignup","/vendorLogin"]);
+const protectedVendorRoutes = new Set([
+  "/vendordashboard", "/vendorAddAuditoriums", "/vendorAddDishes",
+  "/vendorBookingDetails", "/vendorChat", "/vendorEditProfile"
+]);
 
 export function isProtectedVendorRoute(pathname: string): boolean {
   return protectedVendorRoutes.has(pathname);
 }
 
 export function toBeRedirectedVendorRoutes(pathname: string): boolean {
+  const changeToVendorRoutes = new Set(["/vendorSignup", "/vendorLogin"]);
   return changeToVendorRoutes.has(pathname);
 }

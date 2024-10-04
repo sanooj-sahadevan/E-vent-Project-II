@@ -41,7 +41,6 @@ export const verifyOtp = async (data: any) => {
 
 export const addDishAPI = async (data: any) => {
   try {
-    console.log('api dishe-------------------------s');
 
     console.log('addDishApi');
     return await axios.post(`${SERVER_URL_vendor}/addDishes`, data, { withCredentials: true });
@@ -69,7 +68,7 @@ export const vendorDetails = async (): Promise<AxiosResponse<any>> => {
     return await axios.get(`${SERVER_URL_vendor}/getAddress`);
   } catch (error) {
     console.error('Error fetching vendor details:', error);
-    throw error; // Rethrow the error to handle it in the component
+    throw error; 
   }
 }
 
@@ -78,7 +77,6 @@ export const vendorDetails = async (): Promise<AxiosResponse<any>> => {
 export const editDetails = async (vendorData: any) => {
   try {
     console.log('Editing vendor details');
-    // Use PUT or POST depending on the API
     return await axios.put(`${SERVER_URL_vendor}/editVendor`, vendorData);
   } catch (error) {
     console.error('Error updating vendor details:', error);
@@ -89,10 +87,7 @@ export const editDetails = async (vendorData: any) => {
 export const VendorEdit = async (vendorData: any) => {
 
   try {
-    console.log('Editing vendor details -------------------------------');
-    // Use PUT or POST depending on the API
     return await axios.patch(`${SERVER_URL_vendor}/editVendorDetails`, vendorData);
-
   } catch (error) {
     console.error('Error updating vendor details:', error);
     throw error;
@@ -256,13 +251,16 @@ export const getMessages = (id: string) => {
 
 
 export const getUnreadMessagesCountAPI = async () => {
-  const response = await axios.get(`${SERVER_URL_vendor}/unread-count`, {withCredentials: true });
+  try {
+    const response = await axios.get(`${SERVER_URL_vendor}/unread-count`, {withCredentials: true });
+  console.log(response.data);
+  
   return response.data;
+  } catch (error) {
+    console.error(error);
+    
+  }
 };
-
-
-
-
 
 
 
@@ -280,19 +278,6 @@ export const messageSend = async (reqBody: { text: string; senderId: string | nu
     throw new Error(error.response?.data?.message || "Failed to send message");
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

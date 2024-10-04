@@ -1,11 +1,7 @@
-import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes, uploadImage, editVendor, findVendorById, uploadAuditorium, softDeleteDishService, findBookingDetails, findFoodVendorById, findAuditoriumVendorById, findDishesById, findAuditoriumById, softDeleteAuditoriumService } from "../Service/vendorService.js";
+import { loginVendor, registerVendor, verifyAndSaveVendor, vendorAddress, uploadDishes, findVendorByEmailService, uploadImage, editVendor, findVendorById, uploadAuditorium, softDeleteDishService, findBookingDetails, chatServices, findFoodVendorById, findAuditoriumVendorById, findDishesById, findAuditoriumById, softDeleteAuditoriumService, messageService, } from "../Service/vendorService.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import { sendEmail } from "../utils/sendEmail.js";
-import { findVendorByEmail } from "../Repository/vendorRepo.js";
 import { HttpStatus } from "../utils/httpStatus.js";
-import { chatModel } from "../models/chatModel.js";
-import { messageModel } from "../models/messageModal.js";
-import { io } from "../index.js";
 export const register = async (req, res, next) => {
     try {
         const { vendorname, email, phone, password } = req.body;
@@ -25,7 +21,6 @@ export const register = async (req, res, next) => {
                     district: "",
                     state: ""
                 });
-                // Send OTP to vendor's email
                 await sendEmail(email, otp);
                 res.status(HttpStatus.OK).json("OTP sent to email");
             }
@@ -34,17 +29,17 @@ export const register = async (req, res, next) => {
                 res.status(HttpStatus.BAD_REQUEST).json({ error: "Registration failed: " + error.message });
             }
         };
-        await proceedWithRegistration(); // Properly handle the async function
+        await proceedWithRegistration();
     }
     catch (error) {
-        next(error); // Forward any unexpected errors to the error-handling middleware
+        next(error);
     }
 };
 export const verifyOtp = async (req, res, next) => {
     try {
         const { email, otp } = req.body;
         console.log(email, otp);
-        const vendor = await findVendorByEmail(email);
+        const vendor = await findVendorByEmailService(email);
         console.log(vendor);
         if (!vendor) {
             res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
@@ -71,7 +66,7 @@ export const login = async (req, res, next) => {
         res.status(HttpStatus.OK).json({ vendor, vendorToken });
     }
     catch (error) {
-        res.status(HttpStatus.BAD_REQUEST).json({ error: "Error: " + error.message });
+        next(error);
     }
 };
 export const fetchAddress = async (req, res, next) => {
@@ -85,8 +80,6 @@ export const fetchAddress = async (req, res, next) => {
         next(error);
     }
 };
-;
-// Edit vendor details
 export const editVendorDetails = async (req, res, next) => {
     try {
         console.log('controller');
@@ -97,10 +90,10 @@ export const editVendorDetails = async (req, res, next) => {
             imageUrl = await uploadImage(file);
         }
         const updatedVendor = await editVendor(vendorDetails, imageUrl);
-        res.status(200).json({ ...updatedVendor, imageUrl }); // Include imageUrl if available
+        res.status(200).json({ ...updatedVendor, imageUrl });
     }
     catch (error) {
-        next(error); // Pass error to the error handler middleware
+        next(error);
     }
 };
 export const fetchVendorDetails = async (req, res, next) => {
@@ -112,11 +105,11 @@ export const fetchVendorDetails = async (req, res, next) => {
             res.status(404).json({ message: "Vendor not found" });
         }
         else {
-            res.status(200).json(vendor); // Return vendor details
+            res.status(200).json(vendor);
         }
     }
     catch (error) {
-        next(error); // Pass error to error handler middleware
+        next(error);
     }
 };
 export const fetchdishes = async (req, res, next) => {
@@ -152,7 +145,7 @@ export const fetchauditorium = async (req, res, next) => {
         next(error);
     }
 };
-export const addDishes = async (req, res) => {
+export const addDishes = async (req, res, next) => {
     try {
         const { body } = req;
         const vendorId = req.vendorId;
@@ -164,7 +157,6 @@ export const addDishes = async (req, res) => {
         if (file) {
             imageUrl = await uploadImage(file);
         }
-        // Passing the vendorId and body to the service function
         const dishesData = await uploadDishes(vendorId, body, imageUrl);
         if (dishesData) {
             return res.status(200).json("Dishes added successfully");
@@ -175,10 +167,10 @@ export const addDishes = async (req, res) => {
     }
     catch (error) {
         console.error("Error adding dishes: ", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        next(error);
     }
 };
-export const addAuditorium = async (req, res) => {
+export const addAuditorium = async (req, res, next) => {
     try {
         const { body } = req;
         const vendorId = req.vendorId;
@@ -200,7 +192,7 @@ export const addAuditorium = async (req, res) => {
     }
     catch (error) {
         console.error("Error adding auditorium: ", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        next(error);
     }
 };
 export const fetchDetailsVendor = async (req, res, next) => {
@@ -256,7 +248,7 @@ export const fetchAuditoriumDetails = async (req, res, next) => {
         next(error);
     }
 };
-export const softDeleteDish = async (req, res) => {
+export const softDeleteDish = async (req, res, next) => {
     try {
         console.log('delete');
         const { dishId } = req.params;
@@ -270,10 +262,10 @@ export const softDeleteDish = async (req, res) => {
         res.status(200).json({ message: 'Dish deleted successfully', dish: updatedDish });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        next(error);
     }
 };
-export const softDeleteAuditorium = async (req, res) => {
+export const softDeleteAuditorium = async (req, res, next) => {
     try {
         console.log('delete');
         const { auditoriumId } = req.params;
@@ -287,10 +279,10 @@ export const softDeleteAuditorium = async (req, res) => {
         res.status(200).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
     }
     catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        next(error);
     }
 };
-export const vendorBookingDetils = async (req, res) => {
+export const vendorBookingDetils = async (req, res, next) => {
     const { vendorId } = req.params;
     try {
         const booking = await findBookingDetails(vendorId);
@@ -300,28 +292,24 @@ export const vendorBookingDetils = async (req, res) => {
         res.status(200).json(booking);
     }
     catch (error) {
-        console.error("Error fetching booking data:", error);
-        res.status(500).json({ message: "Internal server error" });
+        next(error);
     }
 };
-export const getUnreadMessagesCount = async (req, res) => {
+export const getUnreadMessagesCount = async (req, res, next) => {
     const vendorId = req.vendorId;
     try {
         if (!vendorId) {
-            return res.status(400).json({ error: "User ID is required" });
+            return res.status(400).json({ error: "Vendor ID is required" });
         }
-        const chats = await chatModel.find({ vendorId: vendorId }).select('_id');
-        const chatIds = chats.map(chat => chat._id);
-        const unreadCount = await messageModel.countDocuments({
-            chatId: { $in: chatIds },
-            senderModel: "User",
-            isRead: false,
-        });
-        io.to(vendorId).emit("unreadCount", { unreadCount });
+        const chatServiceData = await chatServices({ vendorId });
+        const chatIds = chatServiceData.map((chat) => chat._id);
+        if (chatIds.length === 0) {
+            return res.status(200).json({ unreadCount: 0 });
+        }
+        const unreadCount = await messageService({ chatIds, vendorId });
         res.status(200).json({ unreadCount });
     }
     catch (error) {
-        console.error("Error fetching unread messages count:", error);
-        res.status(500).json({ error: "Error fetching unread messages count" });
+        next(error);
     }
 };

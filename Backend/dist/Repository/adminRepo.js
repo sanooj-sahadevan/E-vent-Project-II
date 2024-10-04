@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { VendorModel } from "./vendorRepo.js";
-import UserModel from "./userReop.js";
 import { bookedModel } from "../models/bookedEvent.js";
+import UserModel from "../models/userModel.js";
 // Define the Mongoose schema for the User
 const AdminSchema = new Schema({
     adminName: { type: String, required: true },

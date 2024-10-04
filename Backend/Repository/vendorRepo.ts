@@ -1,39 +1,16 @@
-import mongoose, { Schema, Document } from "mongoose";
-import { Vendor } from "../models/vendorModel.js";
-import jwt from "jsonwebtoken";
-import { uploadToS3Bucket } from "../middleware/fileUpload.js";
-import { IMulterFile } from "../utils/type.js";
+import mongoose, { Document } from "mongoose";
 import { DishDocument, Dishes } from '../models/dishesModel.js';
 import { Auditorium } from "../models/auditoriumModel.js";
 import { bookedModel } from "../models/bookedEvent.js";
+import { chatModel } from "../models/chatModel.js";
+import { messageModel } from "../models/messageModal.js";
+import { VendorModel } from "../models/vendorModel.js";
+import { Vendor } from '../interfaces/vendor.js'
 
 
 
 
-interface VendorModel extends Vendor, Document {
-  otp?: string;
-  otpVerified?: boolean;
-}
-const VendorSchema: Schema<VendorModel> = new Schema({
-  vendorname: { type: String, required: true },
-  phone: { type: Number, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: [true, 'Password is required'], select: false },
-  profileImage: { type: String, default: '' },
-  adminVerified: { type: Boolean, default: false },
-  otp: { type: String, required: false },
-  otpVerified: { type: Boolean, default: false },
-  reviews: { type: String, default: '' },
-  address: { type: String, default: '' },
-  district: { type: String, default: '' },
-  state: { type: String, default: '' },
-  isBlocked: {
-    type: Boolean,
-    default: false,
-  },
-});
 
-export const VendorModel = mongoose.model<VendorModel>("Vendor", VendorSchema);
 
 export const createVendor = async (vendor: Vendor) => {
   try {
@@ -124,13 +101,12 @@ export const vendorEditFromDB = async (vendorDetails: Vendor, imageUrl: string |
 };
 
 
-export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
-  try {
-    return await uploadToS3Bucket([], imageFile);
-  } catch (error: any) {
-    throw new Error(error.message);
-  }
-};
+// export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
+//   try {
+//   } catch (error: any) {
+//     throw new Error(error.message);
+//   }
+// };
 
 
 export const findVendorByIdInDb = async (vendorId: string) => {
@@ -301,3 +277,33 @@ export const findDetailsByvendorId = async (vendorId: string) => {
     throw new Error("Database operation failed.");
   }
 };
+
+
+
+
+export const chatDB = async (vendorId: string) => {
+  try {
+    const chats = await chatModel.find({ vendorId }).select('_id');
+    return chats;
+  } catch (error) {
+    console.error("Error fetching chats from the database:", error);
+    throw error;
+  }
+};
+
+export const messageDB = async (chatIds: string[]) => {
+  try {
+    const unreadCount = await messageModel.countDocuments({
+      chatId: { $in: chatIds },
+      senderModel: "User",
+      isRead: false,
+    });
+
+    return unreadCount;
+  } catch (error) {
+    console.error("Error fetching unread messages count from the database:", error);
+    throw error;
+  }
+};
+export { VendorModel };
+

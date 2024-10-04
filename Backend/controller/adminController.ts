@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import { loginUser,getAllVendorsService,unblockVendor,blockVendor,getAllBookingsService,getDashboardData,
-  getAllUsers,blockUser,unblockUser } from '../Service/adminService.js';
+import {
+  loginUser, getAllVendorsService, unblockVendor, blockVendor,
+  getAllBookingsService, getDashboardData,
+  getAllUsers, blockUser, unblockUser
+}
+  from '../Service/adminService.js';
+
+
 import { HttpStatus } from '../utils/httpStatus.js';
 
 
@@ -11,7 +17,7 @@ export const adminlogin = async (
 ): Promise<void> => {
 
   console.log('admin login');
-  
+
   const { email, password } = req.body;
   try {
     const result = await loginUser(email, password);
@@ -28,7 +34,7 @@ export const adminlogin = async (
   }
 };
 
-export const getAllVendors = async (req: Request, res: Response) => {
+export const getAllVendors = async (req: Request, res: Response,next: NextFunction) => {
   try {
     const allWorkers = await getAllVendorsService();
     res.status(200).json(allWorkers);
@@ -38,7 +44,7 @@ export const getAllVendors = async (req: Request, res: Response) => {
 };
 
 
-export const getAllBookings = async (req: Request, res: Response) => {
+export const getAllBookings = async (req: Request, res: Response,next: NextFunction) => {
   try {
     const allBookings = await getAllBookingsService();
     res.status(200).json(allBookings);
@@ -145,12 +151,11 @@ export const unblockUserController = async (
 
 
 
-export const DashboardController = async (req: any, res: any) => {
+export const DashboardController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    
     const dashboardData = await getDashboardData();
     return res.status(200).json(dashboardData);
-  } catch (error) {
-    return res.status(500).json({ error: "Something went wrong" });
+  } catch (error: any) {
+    next(error); 
   }
 };

@@ -20,18 +20,6 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 
 
 
-// export const LoginAPI = async (reqBody: any) => {
-//   console.log('LoginAPI - Request Body:', reqBody);
-
-//   try {
-//     const response = await commonAPI("POST", `${SERVER_URL}/login`, reqBody, { credentials: 'include' });
-//     console.log('LoginAPI - Success:', response);
-//     return response;
-//   } catch (error) {
-//     console.error('LoginAPI - Error:', error);
-//     throw error;
-//   }
-// };
 
 
 
@@ -301,3 +289,29 @@ export const fetchBookingDetilsProfile = async (userId: string) => {
 
 
 
+
+
+export const changePassword = async (userId: string, newPassword: string) => {
+  try {
+    console.log('ijjijijijij');
+    
+    const response = await axios.patch(`${SERVER_URL}/changePassword/${userId}`, { newPassword });
+    return response.data; 
+  } catch (error) {
+    console.error('Error updating password:', error);
+    throw error;
+  }
+};
+
+
+// export const BookingFetchData = async (userId: string,) => {
+//   try {
+//     console.log('nook fetchuing data ');
+    
+//     const response = await axios.patch(`${SERVER_URL}/BookingFetchData/${userId}`);
+//     return response; 
+//   } catch (error) {
+//     console.error('Error updating password:', error);
+//     throw error;
+//   }
+// };

@@ -1,16 +1,21 @@
 import jwt from 'jsonwebtoken';
 import { getAllVendorsFromDB, findVendorById, blockVendorById, getTotalVendors, unblockVendorById, getAllBookingsFromDB, getTotalEvents, getTotalRevenue, getTotalUsers, findAllUsers, findUserById, blockUserById, unblockUserById } from '../Repository/adminRepo.js';
 export const loginUser = async (email, password) => {
-    if (process.env.ADMIN_EMAIL !== email) {
-        console.error(Error);
+    try {
+        if (process.env.ADMIN_EMAIL !== email) {
+            console.error(Error);
+        }
+        if (process.env.ADMIN_PASS !== password) {
+            console.error(Error);
+        }
+        const adminToken = jwt.sign({
+            AdminEmail: email,
+        }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        return { adminToken, admin: email };
     }
-    if (process.env.ADMIN_PASS !== password) {
-        console.error(Error);
+    catch (error) {
+        console.error(error);
     }
-    const adminToken = jwt.sign({
-        AdminEmail: email,
-    }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    return { adminToken, admin: email };
 };
 export const getAllVendorsService = async () => {
     try {
@@ -55,7 +60,6 @@ export const unblockVendor = async (vendorId) => {
 export const getAllUsers = async () => {
     return findAllUsers();
 };
-/// Function to block a user
 export const blockUser = async (userId) => {
     const user = await findUserById(userId); // Ensure this uses the User model
     if (!user) {
@@ -64,18 +68,17 @@ export const blockUser = async (userId) => {
     if (user.isBlocked) {
         throw new Error("User is already blocked");
     }
-    return blockUserById(userId); // This should operate on the UserModel, not VendorModel
+    return blockUserById(userId);
 };
-// Function to unblock a user
 export const unblockUser = async (userId) => {
-    const user = await findUserById(userId); // Ensure this uses the User model
+    const user = await findUserById(userId);
     if (!user) {
         throw new Error("User not found");
     }
     if (!user.isBlocked) {
         throw new Error("User is already unblocked");
     }
-    return unblockUserById(userId); // This should operate on the UserModel, not VendorModel
+    return unblockUserById(userId);
 };
 export const getDashboardData = async () => {
     try {

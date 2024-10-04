@@ -1,11 +1,8 @@
 
 import mongoose, { Document, Schema } from "mongoose";
+import { Ichat } from "../interfaces/chat";
 
-interface Ichat extends Document {
-  // members: String[];
-  userId: mongoose.Schema.Types.ObjectId;
-  vendorId: mongoose.Schema.Types.ObjectId;
-}
+
 
 const ChatSchema = new Schema<Ichat>(
   {

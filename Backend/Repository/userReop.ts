@@ -1,51 +1,16 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { User } from "../models/userModel.js"; // Assuming this is the full User interface
 import bcrypt from "bcrypt";
+
+
+
+import UserModel from "../models/userModel.js"; 
 import { VendorModel } from "./vendorRepo.js";
 import { Dishes } from "../models/dishesModel.js";
 import { Auditorium } from "../models/auditoriumModel.js";
 import { bookedModel } from "../models/bookedEvent.js";
 import { chatModel } from "../models/chatModel.js";
+import { User } from '../interfaces/user.js';
 
-// Extend Mongoose's Document interface
-interface IUserModel extends Document {
-  username: string;
-  phone?: number;
-  email: string;
-  password: string;
-  profileImage?: string;
-  otp?: string;
-  otpVerified?: boolean;
-  address?: string;
-  state?: string;
-  district?: string; 
-  pincode?: number;
-  reviews?: string[]; 
-  isBlocked?: boolean;
-
-}
-
-const UserSchema = new Schema<IUserModel>({
-  username: { type: String, required: true },
-  phone: { type: Number },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: false },
-  profileImage: { type: String },
-  otp: { type: String },
-  otpVerified: { type: Boolean, default: false },
-  address: { type: String },
-  state: { type: String },
-  district: { type: String }, 
-  pincode: { type: Number },
-  reviews: { type: [String] },
-  isBlocked: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-const UserModel = mongoose.model<IUserModel>("User", UserSchema);
-export default UserModel;
 
 
 
@@ -60,14 +25,17 @@ export const createUser = async (user: User) => {
   }
 };
 
+
+
 export const findUserByEmail = async (email: string) => {
   try {
-    return UserModel.findOne({ email });
+    return await UserModel.findOne({ email, isBlocked: false }).exec();
   } catch (error) {
-    console.error(error);
-
+    console.error('Error finding user by email:', error);
+    throw new Error('Database Error');
   }
 };
+
 
 
 export const findUserById = async (userId: string) => {
@@ -80,7 +48,7 @@ export const findUserById = async (userId: string) => {
 };
 
 
-export const userEditFromDB = async (userDetails: User): Promise<IUserModel> => {
+export const userEditFromDB = async (userDetails: User): Promise<User> => {
   try {
     const existingUser = await UserModel.findOne({ email: userDetails.email });
 
@@ -240,18 +208,18 @@ export const findAuditoriumVendorIdInDb = async (vendorId: string) => {
   try {
     const objectId = new mongoose.Types.ObjectId(vendorId);
 
-    const result = await Auditorium.find({ vendorId: objectId });  
+    const result = await Auditorium.find({ vendorId: objectId });
     console.log('Result from database:', result);
 
     if (result.length === 0) {
       console.log('No dishes found for vendor:', vendorId);
-      return null;  
+      return null;
     }
 
-    return result;  
+    return result;
   } catch (error) {
     console.error('Error fetching dishes for vendor:', error);
-    throw new Error(`Error fetching dishes: ${error}`);  
+    throw new Error(`Error fetching dishes: ${error}`);
   }
 };
 
@@ -298,7 +266,7 @@ export const getBookingDetail = async (id: string) => {
 
     const bookedData = await bookedModel
       .findById(id)
-      
+
 
     if (!bookedData) {
       throw new Error(`Booking with id ${id} not found`);
@@ -322,12 +290,12 @@ export const createBookedTrip = async (bookingData: any) => {
       txnid,
       status,
       amount,
-      userId,       
-      auditoriumId, 
-      dishesId,     
-      date,        
+      userId,
+      auditoriumId,
+      dishesId,
+      date,
       category,
-      eventType,  
+      eventType,
       payment_source
     } = bookingData;
 
@@ -336,12 +304,12 @@ export const createBookedTrip = async (bookingData: any) => {
       txnId: txnid,
       paymentStatus: status,
       totalAmount: amount,
-      userId,          
-      auditoriumId,    
-      dishesId,        
-      date,            
+      userId,
+      auditoriumId,
+      dishesId,
+      date,
       category,
-      eventType,  
+      eventType,
       payment_source,
       createdAt: new Date(),
     });
@@ -371,19 +339,38 @@ export const savechatDB = async (chat: string) => {
 export const findDetailsByUserId = async (userId: string) => {
   try {
     const results = await bookedModel
-      .find({ userId: userId }) 
-      .populate('dishesId')      
-      .populate('userId')       
-      .populate('vendorId')      
-      .populate('auditoriumId'); 
+      .find({ userId: userId })
+      .populate('dishesId')
+      .populate('userId')
+      .populate('vendorId')
+      .populate('auditoriumId');
     console.log('Fetched Data with populated fields:', results);
-    
-    return results; 
+
+    return results;
   } catch (error) {
     console.error("Database error:", error);
     throw new Error("Database operation failed.");
   }
 };
 
+
+export const changepassword = async (userId: string, newPassword: string) => {
+  try {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    await user.save();
+    return user;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 
