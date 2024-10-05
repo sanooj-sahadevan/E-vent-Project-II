@@ -8,8 +8,8 @@ import jsSHA from "jssha";
 
 import {
   createUser, userEditFromDB, updateUser, createBookedTrip,
-  findUserByEmailupdate, fetchfromDBDishes, VendorRepository,
-  fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail,
+  findUserByEmailupdate, fetchfromDBDishes, VendorRepository, verifyAndSaveUserRepo,
+  fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findVendor,
   findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb,
   findAuditoriumVendorIdInDb, finddishesByIdInDb, findDetailsByUserId, changepassword,
 } from "../Repository/userReop.js";
@@ -18,28 +18,18 @@ import {
 
 export const registerUser = async (user: any) => {
   try {
-    console.log('Service register:', user.email);
-
-    // Check if the user already exists in the database
     const existingUser = await findUserByEmail(user.email);
-
     if (existingUser) {
       if (existingUser.otpVerified) {
         throw new Error("User already exists and is verified.");
       } else {
-        // Update the user's OTP and other fields if they exist but are not verified
         console.log('Updating existing user with new OTP:', user.otp);
         await updateUser(existingUser.email, { otp: user.otp, ...user });
         return existingUser;
       }
     }
-
-    // Hash the password for a new user
     const hashedPassword = await bcrypt.hash(user.password, 10);
     user.password = hashedPassword;
-
-    // Save the new user with the generated OTP
-    console.log('Creating new user with OTP:', user.otp);
     return await createUser(user);
   } catch (error) {
     console.error("Error during user registration:", error);
@@ -80,15 +70,18 @@ export const checkEmail = async (email: string) => {
 
 
 
-export const verifyAndSaveUser = async (email: string, otp: string) => {
+export const verifyOtpService = async (email: string, otp: string) => {
   const user = await findUserByEmail(email);
-  if (user && user.otp === otp) {
-    user.otp = undefined;
-    user.otpVerified = true;
-    await user.save();
-    return user;
+  if (!user) {
+    throw new Error("User not found");
   }
-  throw new Error("Invalid OTP");
+
+  if (user.otp === otp) {
+    await verifyAndSaveUserRepo(email, otp);
+    return "User registered successfully";
+  } else {
+    throw new Error("Invalid OTP");
+  }
 };
 
 
@@ -117,7 +110,6 @@ export const getAllVendors = async (): Promise<any[]> => {
 
 export const getAllDishes = async (vendorId: string): Promise<any[]> => {
   try {
-    console.log('Service: Fetching dishes');
     const result = await fetchfromDBDishes(vendorId);
     return result;
   } catch (error) {
@@ -148,23 +140,25 @@ export const editUser = async (userDetails: any) => {
 
 export const findVendorById = async (vendorId: string, userId: string) => {
   try {
-    const { vendor, chatId } = await findVendorByIdInDb(vendorId, userId);  // Fetch vendor and chatId from DB
-    return {
-      vendor,
-      chatId
-    };
+    const vendor = await findVendor(vendorId); // Fetch the vendor details
+    const chat = await findVendorByIdInDb(vendorId, userId); // Fetch or create chat details
+    return { vendor, chatId: chat.chatId }; // Return both vendor and chat ID
   } catch (error) {
     throw new Error(`Error finding vendor: ${error}`);
   }
 };
 
 
-
 export const findFoodVendorById = async (vendorId: string) => {
   try {
     console.log('Service invoked to find dishes for vendor:', vendorId);
-    const dishes = await findFoodVendorIdInDb(vendorId);  // Call the repo to fetch dishes
-    return dishes;
+    const dishes = await findFoodVendorIdInDb(vendorId);
+    if (!dishes || dishes.length === 0) {
+      throw new Error(`Error finding vendor dishes`);
+    } else {
+      return dishes;
+
+    }
   } catch (error) {
     throw new Error(`Error finding vendor dishes: ${error}`);
   }
@@ -174,7 +168,12 @@ export const findAuditoriumVendorById = async (vendorId: string) => {
   try {
     console.log('Service invoked to find dishes for vendor:', vendorId);
     const dishes = await findAuditoriumVendorIdInDb(vendorId);
-    return dishes;
+    if (!dishes || dishes.length === 0) {
+      throw new Error(`Error finding vendor dishes`);
+    } else {
+      return dishes;
+    }
+
   } catch (error) {
     throw new Error(`Error finding vendor dishes: ${error}`);
   }
@@ -183,9 +182,12 @@ export const findAuditoriumVendorById = async (vendorId: string) => {
 
 export const findAuditoriumById = async (auditoriumId: string) => {
   try {
-    console.log('controller 2');
     const vendor = await findAuditoriumByIdInDb(auditoriumId);
-    return vendor;
+    if (!vendor) {
+      throw new Error(`Error finding vendor dishes`);
+    } else {
+      return vendor;
+    }
   } catch (error) {
     throw new Error(`Error finding vendor: ${error}`);
   }
@@ -195,9 +197,11 @@ export const findAuditoriumById = async (auditoriumId: string) => {
 
 export const finddishesById = async (dishesId: string) => {
   try {
-    console.log('controller 2');
     const vendor = await finddishesByIdInDb(dishesId);
-    return vendor;
+    if (!vendor) {
+      throw new Error(`Error finding vendor`);
+    }
+    return vendor
   } catch (error) {
     throw new Error(`Error finding vendor: ${error}`);
   }
@@ -210,9 +214,11 @@ export const finddishesById = async (dishesId: string) => {
 
 export const findEvent = async (bookingId: string) => {
   try {
-    console.log('controler 2');
 
     const bookingDetails = await getBookingDetail(bookingId);
+    if (!bookingDetails) {
+      throw new Error(`Booking with id not found`);
+    }
     return bookingDetails;
   } catch (error) {
     console.error("Error fetching booking details:", error);
@@ -277,7 +283,6 @@ export const addTransactionDetails = async (
 }
 
 export const fetchbookingData = async (bookingData: any) => {
-  console.log('service');
   const bookedTrip = await createBookedTrip(bookingData);
   console.log(bookedTrip);
   return bookedTrip;
@@ -286,12 +291,11 @@ export const fetchbookingData = async (bookingData: any) => {
 
 
 export const findBookingDetails = async (userId: string) => {
-  console.log('Fetching booking details for userId:', userId);
-
-  const bookingDetails = await findDetailsByUserId(userId); // Use the repository function
-  console.log('Booking details:', bookingDetails);
-
-  return bookingDetails; // Return the booking details
+  const bookingDetails = await findDetailsByUserId(userId); 
+  if (!bookingDetails) {
+    throw new Error(`Booking with id not found`);
+  }
+  return bookingDetails; 
 };
 
 
@@ -317,16 +321,16 @@ export const findUserByEmailService = async (email: string) => {
 
 
 export const generateOtp = () => {
-  const otp = otpGenerator();  // Assuming this is synchronous
+  const otp = otpGenerator();
   console.log(otp, "OTP-------------------");
   return otp;
 };
 
 
 
-export const generatesendEmail= async (email:string,otp:any) => {
+export const generatesendEmail = async (email: string, otp: any) => {
   try {
-    const result = sendEmail(email,otp);
+    const result = sendEmail(email, otp);
     console.log(result);
 
   } catch (error) {
@@ -354,7 +358,6 @@ export const generatePaymentHash = async ({
   try {
     const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}|${udf6}|||||${process.env.PAYU_SALT}`;
 
-    // Generate hash using SHA-512
     const sha = new jsSHA("SHA-512", "TEXT");
     sha.update(hashString);
     const hash = sha.getHash("HEX");
@@ -364,5 +367,7 @@ export const generatePaymentHash = async ({
     throw new Error("Error generating payment hash");
   }
 };
+
+
 
 

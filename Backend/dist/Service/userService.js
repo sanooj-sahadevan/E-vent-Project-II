@@ -3,28 +3,22 @@ import bcrypt from "bcrypt";
 import { sendEmail } from "../utils/sendEmail.js";
 import { otpGenerator } from "../utils/otpGenerator.js";
 import jsSHA from "jssha";
-import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, findDetailsByUserId, changepassword, } from "../Repository/userReop.js";
+import { createUser, userEditFromDB, updateUser, createBookedTrip, findUserByEmailupdate, fetchfromDBDishes, VendorRepository, verifyAndSaveUserRepo, fetchfromDBAuditorium, findVendorByIdInDb, findUserByEmail, findVendor, findAuditoriumByIdInDb, getBookingDetail, findFoodVendorIdInDb, findAuditoriumVendorIdInDb, finddishesByIdInDb, findDetailsByUserId, changepassword, } from "../Repository/userReop.js";
 export const registerUser = async (user) => {
     try {
-        console.log('Service register:', user.email);
-        // Check if the user already exists in the database
         const existingUser = await findUserByEmail(user.email);
         if (existingUser) {
             if (existingUser.otpVerified) {
                 throw new Error("User already exists and is verified.");
             }
             else {
-                // Update the user's OTP and other fields if they exist but are not verified
                 console.log('Updating existing user with new OTP:', user.otp);
                 await updateUser(existingUser.email, { otp: user.otp, ...user });
                 return existingUser;
             }
         }
-        // Hash the password for a new user
         const hashedPassword = await bcrypt.hash(user.password, 10);
         user.password = hashedPassword;
-        // Save the new user with the generated OTP
-        console.log('Creating new user with OTP:', user.otp);
         return await createUser(user);
     }
     catch (error) {
@@ -55,15 +49,18 @@ export const checkEmail = async (email) => {
     await sendEmail(email, otp);
     return { user, otp };
 };
-export const verifyAndSaveUser = async (email, otp) => {
+export const verifyOtpService = async (email, otp) => {
     const user = await findUserByEmail(email);
-    if (user && user.otp === otp) {
-        user.otp = undefined;
-        user.otpVerified = true;
-        await user.save();
-        return user;
+    if (!user) {
+        throw new Error("User not found");
     }
-    throw new Error("Invalid OTP");
+    if (user.otp === otp) {
+        await verifyAndSaveUserRepo(email, otp);
+        return "User registered successfully";
+    }
+    else {
+        throw new Error("Invalid OTP");
+    }
 };
 export const update = async (email, password) => {
     try {
@@ -86,7 +83,6 @@ export const getAllVendors = async () => {
 };
 export const getAllDishes = async (vendorId) => {
     try {
-        console.log('Service: Fetching dishes');
         const result = await fetchfromDBDishes(vendorId);
         return result;
     }
@@ -114,11 +110,9 @@ export const editUser = async (userDetails) => {
 };
 export const findVendorById = async (vendorId, userId) => {
     try {
-        const { vendor, chatId } = await findVendorByIdInDb(vendorId, userId); // Fetch vendor and chatId from DB
-        return {
-            vendor,
-            chatId
-        };
+        const vendor = await findVendor(vendorId); // Fetch the vendor details
+        const chat = await findVendorByIdInDb(vendorId, userId); // Fetch or create chat details
+        return { vendor, chatId: chat.chatId }; // Return both vendor and chat ID
     }
     catch (error) {
         throw new Error(`Error finding vendor: ${error}`);
@@ -127,8 +121,13 @@ export const findVendorById = async (vendorId, userId) => {
 export const findFoodVendorById = async (vendorId) => {
     try {
         console.log('Service invoked to find dishes for vendor:', vendorId);
-        const dishes = await findFoodVendorIdInDb(vendorId); // Call the repo to fetch dishes
-        return dishes;
+        const dishes = await findFoodVendorIdInDb(vendorId);
+        if (!dishes || dishes.length === 0) {
+            throw new Error(`Error finding vendor dishes`);
+        }
+        else {
+            return dishes;
+        }
     }
     catch (error) {
         throw new Error(`Error finding vendor dishes: ${error}`);
@@ -249,7 +248,7 @@ export const findUserByEmailService = async (email) => {
     }
 };
 export const generateOtp = () => {
-    const otp = otpGenerator(); // Assuming this is synchronous
+    const otp = otpGenerator();
     console.log(otp, "OTP-------------------");
     return otp;
 };

@@ -1,4 +1,5 @@
 export interface User {
+    save(): unknown;
     username: string;
     phone?: number;
     email: string;

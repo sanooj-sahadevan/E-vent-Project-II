@@ -1,8 +1,8 @@
-import express from "express";
+import { Router } from "express";
 import {
     // googleLoginHandler,
     login,
-    proceedWithRegistration,
+    register,
     verifyOtp, vendorList,
     editUserDetails,
     forgottenPassword, dishlist,
@@ -12,14 +12,13 @@ import {
 } from "../controller/userController.js";
 // import { verifyUser } from "../middleware/userJWT.js";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/signup", proceedWithRegistration);
-
+router.post("/signup", register);
 router.post("/verifyOtp", verifyOtp);
-
 router.post("/login", login);
 router.get('/vendors', vendorList);
+
 
 router.get('/dishlist', dishlist);
 router.get('/auditoriumlist', auditoriumlist);

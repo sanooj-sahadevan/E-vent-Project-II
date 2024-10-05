@@ -1,9 +1,8 @@
-import { getAllVendors, registerUser, verifyAndSaveUser, update, loginUser, editUser, generatePaymentHash, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, generatesendEmail, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, generateOtp, findFoodVendorById, findEvent, findBookingDetails, findchangePassword, findUserByEmailService } from "../Service/userService.js";
+import { getAllVendors, registerUser, verifyOtpService, update, loginUser, editUser, generatePaymentHash, checkEmail, getAllDishes, getAllAuditorium, findVendorById, findAuditoriumVendorById, generatesendEmail, findAuditoriumById, finddishesById, addTransactionDetails, fetchbookingData, generateOtp, findFoodVendorById, findEvent, findBookingDetails, findchangePassword } from "../Service/userService.js";
 import { HttpStatus } from '../utils/httpStatus.js';
-export const proceedWithRegistration = async (req, res, next) => {
+export const register = async (req, res, next) => {
     try {
         const otp = generateOtp();
-        console.log('Generated OTP:', otp);
         await registerUser({
             username: req.body.username,
             phone: req.body.phone,
@@ -17,8 +16,7 @@ export const proceedWithRegistration = async (req, res, next) => {
             reviews: undefined,
             district: undefined
         });
-        const sendMail = await generatesendEmail(req.body.email, otp); // Await the async email sending
-        console.log('Email sent:', sendMail);
+        const sendMail = await generatesendEmail(req.body.email, otp);
         res.status(200).json("OTP sent to email and saved in the database.");
     }
     catch (error) {
@@ -42,29 +40,15 @@ export const login = async (req, res, next) => {
 export const verifyOtp = async (req, res, next) => {
     try {
         const { email, otp } = req.body;
-        console.log(email, otp, '------------------------------------------');
-        const user = await findUserByEmailService(email);
-        console.log(user, email, '---------------------+++--------------------');
-        console.log(user);
-        if (!user?.user) {
-            return res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
-        }
-        // console.log(user.otp, otp);
-        if (user.user.otp === otp) {
-            await verifyAndSaveUser(email, otp);
-            res.status(HttpStatus.OK).json("User registered successfully");
-        }
-        else {
-            res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
-        }
+        const result = await verifyOtpService(email, otp);
+        res.status(HttpStatus.OK).json(result);
     }
     catch (error) {
-        next(error.message);
+        res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
     }
 };
 export const vendorList = async (req, res, next) => {
     try {
-        console.log('list');
         const vendors = await getAllVendors();
         res.status(HttpStatus.OK).json(vendors);
     }
@@ -109,10 +93,6 @@ export const updatePassword = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const user = await update(email, password);
-        if (!user) {
-            res.status(HttpStatus.BAD_REQUEST).json({ error: "User not found" });
-            return;
-        }
         res.status(HttpStatus.OK).json({ message: "Password updated successfully", user });
     }
     catch (error) {
@@ -121,33 +101,20 @@ export const updatePassword = async (req, res, next) => {
 };
 export const editUserDetails = async (req, res, next) => {
     try {
-        console.log('Controller: Edit User Details');
         const userDetails = req.body;
         console.log('Request Body:', userDetails);
         const updatedUser = await editUser(userDetails);
         res.status(HttpStatus.OK).json(updatedUser);
     }
     catch (error) {
-        console.error('Error in editUserDetails controller:', error);
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: 'Internal Server Error' });
         next(error);
     }
 };
 export const fetchVendorDetails = async (req, res, next) => {
     try {
-        console.log('controller: fetchVendorDetails');
         const { vendorId, userId } = req.query;
-        if (!vendorId || !userId) {
-            res.status(400).json({ message: "Missing vendorId or userId" });
-            return;
-        }
         const result = await findVendorById(vendorId, userId);
-        if (!result.vendor) {
-            res.status(404).json({ message: "Vendor not found" });
-        }
-        else {
-            res.status(200).json(result);
-        }
+        res.status(200).json(result);
     }
     catch (error) {
         next(error);
@@ -155,16 +122,9 @@ export const fetchVendorDetails = async (req, res, next) => {
 };
 export const fetchFoodDetails = async (req, res, next) => {
     try {
-        console.log('Controller invoked');
         const { vendorId } = req.params;
         const dishes = await findFoodVendorById(vendorId);
-        if (!dishes || dishes.length === 0) {
-            res.status(200).json(null);
-        }
-        else {
-            console.log('Fetched dishes for vendor:', dishes);
-            res.status(200).json(dishes);
-        }
+        res.status(200).json(dishes);
     }
     catch (error) {
         console.error('Error in fetchFoodDetails:', error);

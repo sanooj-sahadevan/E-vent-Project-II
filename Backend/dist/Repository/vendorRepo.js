@@ -1,28 +1,9 @@
-import mongoose, { Schema } from "mongoose";
 import { Dishes } from '../models/dishesModel.js';
 import { Auditorium } from "../models/auditoriumModel.js";
 import { bookedModel } from "../models/bookedEvent.js";
 import { chatModel } from "../models/chatModel.js";
 import { messageModel } from "../models/messageModal.js";
-const VendorSchema = new Schema({
-    vendorname: { type: String, required: true },
-    phone: { type: Number, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: [true, 'Password is required'], select: false },
-    profileImage: { type: String, default: '' },
-    adminVerified: { type: Boolean, default: false },
-    otp: { type: String, required: false },
-    otpVerified: { type: Boolean, default: false },
-    reviews: { type: String, default: '' },
-    address: { type: String, default: '' },
-    district: { type: String, default: '' },
-    state: { type: String, default: '' },
-    isBlocked: {
-        type: Boolean,
-        default: false,
-    },
-});
-export const VendorModel = mongoose.model("Vendor", VendorSchema);
+import { VendorModel } from "../models/vendorModel.js";
 export const createVendor = async (vendor) => {
     try {
         const newVendor = new VendorModel(vendor);
@@ -258,3 +239,4 @@ export const messageDB = async (chatIds) => {
         throw error;
     }
 };
+export { VendorModel };

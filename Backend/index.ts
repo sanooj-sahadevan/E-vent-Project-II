@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import http, { createServer } from 'http';
-import { Server as serverSocket } from 'socket.io';
+import { Server as serverSocket} from 'socket.io';
 import chatRoutes from './routes/chatRoutes.js';
 import { socketHandler } from "./utils/socket/chat.js";
 import { errorHandler } from "./middleware/errorHandling.js";

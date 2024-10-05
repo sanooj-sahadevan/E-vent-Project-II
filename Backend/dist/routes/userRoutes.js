@@ -1,10 +1,10 @@
-import express from "express";
+import { Router } from "express";
 import { 
 // googleLoginHandler,
-login, proceedWithRegistration, verifyOtp, vendorList, editUserDetails, forgottenPassword, dishlist, updatePassword, auditoriumlist, fetchVendorDetails, fetchBookingDetails, fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, saveData, payment, addTransaction, changePassword, } from "../controller/userController.js";
+login, register, verifyOtp, vendorList, editUserDetails, forgottenPassword, dishlist, updatePassword, auditoriumlist, fetchVendorDetails, fetchBookingDetails, fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, saveData, payment, addTransaction, changePassword, } from "../controller/userController.js";
 // import { verifyUser } from "../middleware/userJWT.js";
-const router = express.Router();
-router.post("/signup", proceedWithRegistration);
+const router = Router();
+router.post("/signup", register);
 router.post("/verifyOtp", verifyOtp);
 router.post("/login", login);
 router.get('/vendors', vendorList);

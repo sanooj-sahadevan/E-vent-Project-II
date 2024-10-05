@@ -1,33 +1,13 @@
-import mongoose, { Schema } from "mongoose";
+import { AdminModel } from "../models/adminModel.js";
+// import { Vendor } from "../models/vendorModel";
 import { VendorModel } from "./vendorRepo.js";
 import { bookedModel } from "../models/bookedEvent.js";
 import UserModel from "../models/userModel.js";
 // Define the Mongoose schema for the User
-const AdminSchema = new Schema({
-    adminName: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-});
-export const AdminModel = mongoose.model("Admin", AdminSchema);
 export const findUserByEmailAdmin = async (email) => {
     const admin = await AdminModel.findOne({ email });
     return admin ? admin : null;
 };
-// export const getAllUnapprovalFromDB = async () => {
-//   return await VendorModel.find({ adminVerified: false }).sort({
-//     createdAt: -1,
-//   });
-// };
-// export const updateVendorFromDB = async (id: string) => {
-//   return await VendorModel.findOneAndUpdate(
-//     { _id: id },
-//     { $set: { adminVerified: true } },
-//     {
-//       returnOriginal: false,
-//       upsert: false,
-//     }
-//   );
-// };
 export const getAllVendorsFromDB = async () => {
     try {
         return VendorModel.find().sort({ createdAt: -1 });

@@ -4,11 +4,13 @@
   "description": "",
   "type": "module",
   "main": "index.ts",
-  "scripts": {
-    "dev": "nodemon",
-    "build": "tsc",
-    "start": "node ./dist/index.js"
-  },
+"scripts": {
+  "build": "tsc",
+  "start": "npm run build && node ./dist/index.js", 
+  "dev": "nodemon --watch './**/*.ts' --exec 'tsc && node ./dist/index.js'", 
+  "test": "echo \"Error: no test specified\" && exit 1"
+},
+
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -22,10 +24,10 @@
     "aws-sdk": "^2.1691.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
-    "cookie-parser": "^1.4.6",
+    "cookie-parser": "^1.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "jose": "^5.8.0",
     "jsonwebtoken": "^9.0.2",
     "jssha": "^3.3.1",
@@ -34,6 +36,7 @@
     "multer": "^1.4.5-lts.1",
     "multer-s3": "^3.0.1",
     "nodemailer": "^6.9.14",
+    "nodemon": "^3.1.7",
     "rotating-file-stream": "^3.2.3",
     "socket.io": "^4.8.0"
   },
@@ -44,9 +47,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/multer-s3": "^3.0.3",
     "@types/node": "^22.5.1",
-    "@types/socket.io": "^3.0.2",
     "@types/uuid": "^10.0.0",
-    "nodemon": "^3.1.4",
     "typescript": "^5.5.4"
   }
 }

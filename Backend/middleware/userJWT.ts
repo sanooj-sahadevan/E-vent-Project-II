@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import UserModel from "../Repository/userReop.js"; // Adjust the import path if needed
+// import UserModel from "../Repository/userReop.js"; // Adjust the import path if needed
 
 // Verify JWT and user middleware
 export async function verifyUser(req: Request, res: Response, next: NextFunction) {

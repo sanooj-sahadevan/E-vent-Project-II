@@ -15,6 +15,22 @@ export const createUser = async (user) => {
         console.error(error);
     }
 };
+export const verifyAndSaveUserRepo = async (email, otp) => {
+    try {
+        const user = await findUserByEmail(email);
+        if (user && user.otp === otp) {
+            user.otp = undefined;
+            user.otpVerified = true;
+            await user.save();
+            return user;
+        }
+        throw new Error("Invalid OTP");
+    }
+    catch (error) {
+        console.error('Error saving user:', error);
+        throw new Error('Database Error');
+    }
+};
 export const findUserByEmail = async (email) => {
     try {
         return await UserModel.findOne({ email, isBlocked: false }).exec();
@@ -85,7 +101,7 @@ export const findUserByEmailupdate = async (email, password) => {
 export class VendorRepository {
     async getAllVendors() {
         try {
-            return await VendorModel.find().sort({ createdAt: -1 }); // Fetch vendors sorted by creation date
+            return await VendorModel.find().sort({ createdAt: -1 });
         }
         catch (error) {
             throw new Error('Error fetching vendors from the database');
@@ -94,11 +110,8 @@ export class VendorRepository {
 }
 export const fetchfromDBDishes = async (vendorId) => {
     try {
-        console.log('Fetching Dishes for vendor ID:', vendorId);
         const objectId = new mongoose.Types.ObjectId(vendorId);
-        console.log(objectId);
         const result = await Auditorium.find(objectId);
-        console.log('Fetched Dishes:', result);
         return result;
     }
     catch (error) {
@@ -120,13 +133,21 @@ export const fetchfromDBAuditorium = async (vendorId) => {
         throw new Error('Error fetching auditorium from the database');
     }
 };
-export const findVendorByIdInDb = async (vendorId, userId) => {
+export const findVendor = async (vendorId) => {
     try {
-        // Find the vendor by ID
         const vendor = await VendorModel.findById(vendorId);
         if (!vendor) {
             throw new Error("Vendor not found");
         }
+        return vendor;
+    }
+    catch (error) {
+        console.error("Error in repository:", error);
+        throw error;
+    }
+};
+export const findVendorByIdInDb = async (vendorId, userId) => {
+    try {
         let chat = await chatModel.findOne({ userId, vendorId });
         if (!chat) {
             chat = new chatModel({
@@ -135,10 +156,7 @@ export const findVendorByIdInDb = async (vendorId, userId) => {
             });
             await chat.save();
         }
-        return {
-            vendor,
-            chatId: chat._id
-        };
+        return { chatId: chat._id };
     }
     catch (error) {
         console.error("Error in repository:", error);
@@ -150,10 +168,6 @@ export const findFoodVendorIdInDb = async (vendorId) => {
         const objectId = new mongoose.Types.ObjectId(vendorId);
         const result = await Dishes.find({ vendorId: objectId });
         console.log('Result from database:', result);
-        if (result.length === 0) {
-            console.log('No dishes found for vendor:', vendorId);
-            return null;
-        }
         return result;
     }
     catch (error) {

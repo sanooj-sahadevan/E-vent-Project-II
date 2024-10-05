@@ -1,9 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
 
-
-
-import UserModel from "../models/userModel.js"; 
+import UserModel from "../models/userModel.js";
 import { VendorModel } from "./vendorRepo.js";
 import { Dishes } from "../models/dishesModel.js";
 import { Auditorium } from "../models/auditoriumModel.js";
@@ -25,6 +23,21 @@ export const createUser = async (user: User) => {
   }
 };
 
+export const verifyAndSaveUserRepo = async (email: string, otp: string) => {
+  try {
+    const user = await findUserByEmail(email);
+    if (user && user.otp === otp) {
+      user.otp = undefined;
+      user.otpVerified = true;
+      await user.save();
+      return user;
+    }
+    throw new Error("Invalid OTP");
+  } catch (error) {
+    console.error('Error saving user:', error);
+    throw new Error('Database Error');
+  }
+};
 
 
 export const findUserByEmail = async (email: string) => {
@@ -51,7 +64,6 @@ export const findUserById = async (userId: string) => {
 export const userEditFromDB = async (userDetails: User): Promise<User> => {
   try {
     const existingUser = await UserModel.findOne({ email: userDetails.email });
-
     if (existingUser) {
       existingUser.username = userDetails.username;
       existingUser.phone = userDetails.phone;
@@ -61,7 +73,6 @@ export const userEditFromDB = async (userDetails: User): Promise<User> => {
       existingUser.district = userDetails.district;
       existingUser.pincode = userDetails.pincode;
       existingUser.reviews = userDetails.reviews;
-
       await existingUser.save();
       return existingUser;
     } else {
@@ -84,6 +95,9 @@ export const updateUser = async (email: string, update: Partial<User>) => {
   }
 };
 
+
+
+
 export const findUserByEmailupdate = async (email: string, password: string) => {
   try {
     const user = await UserModel.findOne({ email });
@@ -94,7 +108,6 @@ export const findUserByEmailupdate = async (email: string, password: string) => 
     console.log(user.email);
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
-
     await user.save();
     return user;
   } catch (error) {
@@ -107,7 +120,7 @@ export const findUserByEmailupdate = async (email: string, password: string) => 
 export class VendorRepository {
   public async getAllVendors(): Promise<any[]> {
     try {
-      return await VendorModel.find().sort({ createdAt: -1 }); // Fetch vendors sorted by creation date
+      return await VendorModel.find().sort({ createdAt: -1 });
     } catch (error) {
       throw new Error('Error fetching vendors from the database');
     }
@@ -116,15 +129,8 @@ export class VendorRepository {
 
 export const fetchfromDBDishes = async (vendorId: string): Promise<any | null> => {
   try {
-    console.log('Fetching Dishes for vendor ID:', vendorId);
-
     const objectId = new mongoose.Types.ObjectId(vendorId);
-    console.log(objectId);
-
     const result = await Auditorium.find(objectId);
-
-    console.log('Fetched Dishes:', result);
-
     return result;
   } catch (error) {
     console.error('Error fetching Dishes from the database:', error);
@@ -152,19 +158,22 @@ export const fetchfromDBAuditorium = async (vendorId: string): Promise<any | nul
   }
 };
 
-
-
-export const findVendorByIdInDb = async (vendorId: string, userId: string) => {
+export const findVendor = async (vendorId: string) => {
   try {
-    // Find the vendor by ID
     const vendor = await VendorModel.findById(vendorId);
     if (!vendor) {
       throw new Error("Vendor not found");
     }
+    return vendor; 
+  } catch (error) {
+    console.error("Error in repository:", error);
+    throw error;
+  }
+};
 
-
+export const findVendorByIdInDb = async (vendorId: string, userId: string) => {
+  try {
     let chat = await chatModel.findOne({ userId, vendorId });
-
     if (!chat) {
       chat = new chatModel({
         userId,
@@ -172,11 +181,7 @@ export const findVendorByIdInDb = async (vendorId: string, userId: string) => {
       });
       await chat.save();
     }
-
-    return {
-      vendor,
-      chatId: chat._id
-    };
+    return { chatId: chat._id }; 
   } catch (error) {
     console.error("Error in repository:", error);
     throw error;
@@ -185,17 +190,10 @@ export const findVendorByIdInDb = async (vendorId: string, userId: string) => {
 
 
 
-
 export const findFoodVendorIdInDb = async (vendorId: string) => {
   try {
     const objectId = new mongoose.Types.ObjectId(vendorId);
     const result = await Dishes.find({ vendorId: objectId });
-    console.log('Result from database:', result);
-    if (result.length === 0) {
-      console.log('No dishes found for vendor:', vendorId);
-      return null;
-    }
-
     return result;
   } catch (error) {
     console.error('Error fetching dishes for vendor:', error);
@@ -204,19 +202,11 @@ export const findFoodVendorIdInDb = async (vendorId: string) => {
 };
 
 export const findAuditoriumVendorIdInDb = async (vendorId: string) => {
-
   try {
     const objectId = new mongoose.Types.ObjectId(vendorId);
 
     const result = await Auditorium.find({ vendorId: objectId });
-    console.log('Result from database:', result);
-
-    if (result.length === 0) {
-      console.log('No dishes found for vendor:', vendorId);
-      return null;
-    }
-
-    return result;
+    return result
   } catch (error) {
     console.error('Error fetching dishes for vendor:', error);
     throw new Error(`Error fetching dishes: ${error}`);
@@ -225,15 +215,9 @@ export const findAuditoriumVendorIdInDb = async (vendorId: string) => {
 
 
 export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
-  console.log('repoo vann auditorum1');
 
   try {
-    console.log('repoo vann auditorum2');
-
     let result = await Auditorium.findById(auditoriumId);
-    console.log('repoo vann auditorum3');
-
-    console.log(result);
     return result
   } catch (error) {
     console.error(error);
@@ -244,13 +228,8 @@ export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
 
 
 export const finddishesByIdInDb = async (dishesId: string) => {
-  console.log('repo van');
-
   try {
-    console.log('repo van');
-
-    let result = await Dishes.findById(dishesId);
-    console.log(result, 'resulty ann ');
+     let result = await Dishes.findById(dishesId);
     return result
   } catch (error) {
     console.error(error);
@@ -266,11 +245,6 @@ export const getBookingDetail = async (id: string) => {
 
     const bookedData = await bookedModel
       .findById(id)
-
-
-    if (!bookedData) {
-      throw new Error(`Booking with id ${id} not found`);
-    }
     return bookedData;
   } catch (error) {
     console.error("Error fetching booking details:", error);
@@ -344,8 +318,6 @@ export const findDetailsByUserId = async (userId: string) => {
       .populate('userId')
       .populate('vendorId')
       .populate('auditoriumId');
-    console.log('Fetched Data with populated fields:', results);
-
     return results;
   } catch (error) {
     console.error("Database error:", error);
