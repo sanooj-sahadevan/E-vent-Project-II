@@ -51,7 +51,7 @@ const CheckoutPage: React.FC = () => {
       dishesId: searchParams.get("dishesId") || '',
     };
 
-    let advanceAmount = 10000; // Default amount
+    let advanceAmount = 10000;
     if (params.category === 'platinum') {
       advanceAmount = 20000;
     } else if (params.category === 'gold') {

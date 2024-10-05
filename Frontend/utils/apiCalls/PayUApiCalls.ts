@@ -53,6 +53,9 @@ export default {
           "Content-Type": "application/json",
         },
       });
+
+      console.log(response,'ooooooooooooooooooooooooooooooooooooooo');
+      
       return response.data;
     } catch (error: any) {
       throw new Error(error.message);

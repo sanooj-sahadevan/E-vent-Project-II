@@ -8,14 +8,10 @@ import { Ichat } from "../interfaces/chat.js";
 
 export const savechatDB = async (text: string, userId: string, vendorId: string) => {
   try {
-    console.log('Saving chat to DB');
-
     const chatDocument = await chatModel.findOne({ userId, vendorId }) as Ichat;  
-
     if (!chatDocument) {
       throw new Error("Chat not found for the given user and vendor.");
     }
-
     const result = new messageModel({
       chatId: chatDocument._id,  
       senderId: userId,          
@@ -59,15 +55,10 @@ export const savechatDB = async (text: string, userId: string, vendorId: string)
 
 export const companyAddMessageDB = async (text: string, userId: string, vendorId: string) => {
   try {
-    console.log('Saving chat to DB,vendor');
-
     const chatDocument = await chatModel.findOne({ userId, vendorId }) as Ichat;
-    console.log(chatDocument, 'iddddddddddddddddddddd');
-
     if (!chatDocument) {
       throw new Error("Chat not found for the given user and vendor.");
     }
-
     const result = new messageModel({
       chatId: chatDocument._id,
       senderId: vendorId,        

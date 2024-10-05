@@ -40,29 +40,40 @@ export const vendorAddressFromDB = async () => {
         throw new Error('Database query failed');
     }
 };
-export const vendorEditFromDB = async (vendorDetails, imageUrl) => {
+export const findVendorByEmailRepo = async (email) => {
     try {
-        const existingVendor = await VendorModel.findOne({ email: vendorDetails.email });
+        return await VendorModel.findOne({ email });
+    }
+    catch (error) {
+        console.error('Error finding vendor by email:', error);
+        throw new Error('Database operation failed');
+    }
+};
+// Edit or create vendor in the database
+export const editVendorRepo = async (existingVendor, vendorDetails, imageUrl) => {
+    try {
         if (existingVendor) {
+            // Update existing vendor details
             existingVendor.vendorname = vendorDetails.vendorname;
             existingVendor.phone = vendorDetails.phone;
             existingVendor.address = vendorDetails.address;
             existingVendor.district = vendorDetails.district;
             existingVendor.state = vendorDetails.state;
             existingVendor.reviews = vendorDetails.reviews;
-            // Update profile image if a new one is uploaded
+            // Update profile image if new image is uploaded
             if (imageUrl) {
                 existingVendor.profileImage = imageUrl;
             }
-            // Only update password if provided
+            // Update password if provided
             if (vendorDetails.password) {
                 existingVendor.password = vendorDetails.password;
             }
-            // Save the updated vendor
+            // Save updated vendor
             await existingVendor.save();
             return existingVendor;
         }
         else {
+            // If vendor doesn't exist, create a new one
             const newVendor = new VendorModel({
                 ...vendorDetails,
                 profileImage: imageUrl || vendorDetails.profileImage
@@ -83,7 +94,6 @@ export const vendorEditFromDB = async (vendorDetails, imageUrl) => {
 //   }
 // };
 export const findVendorByIdInDb = async (vendorId) => {
-    console.log('controller 3');
     return await VendorModel.findById(vendorId);
 };
 export const findAuditoriumByIdInDb = async (auditoriumId) => {
@@ -94,7 +104,6 @@ export const findAuditoriumByIdInDb = async (auditoriumId) => {
 };
 export const findDishesByIdInDb = async (dishesId) => {
     try {
-        console.log('controller 3');
         return await Dishes.findById(dishesId);
     }
     catch (error) {
@@ -184,7 +193,6 @@ export const softDeleteDishRepo = async (dishId) => {
 };
 export const softDeleteAuditoriumRepo = async (auditoriumId) => {
     try {
-        console.log('delete repo');
         const auditorium = await Auditorium.findById(auditoriumId);
         console.log(auditorium);
         if (!auditorium || auditorium.isDeleted) {

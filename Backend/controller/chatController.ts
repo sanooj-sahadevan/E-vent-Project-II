@@ -15,8 +15,6 @@ import mongoose from "mongoose";
 
 export const savechat = async (req: Request, res: Response) => {
   try {
-    console.log('start');
-
     const { text } = req.body;
     const userId = req.body.senderId;
     const vendorId = req.body.vendorId;
@@ -76,64 +74,13 @@ interface Ichat extends Document {
 }
 
 
-// export const companyAddMessage = async (req: Request, res: Response) => {
-//   console.log('controller save chat');
-
-//   const { vendorId, text, userId, senderModel } = req.body;
-//   console.log(req.body);
-
-//   if (!vendorId || !text || !userId || !senderModel) {
-//     return res.status(400).json({ message: "All fields are required" });
-//   }
-
-//   if (!["User", "Vendor"].includes(senderModel)) {
-//     return res.status(400).json({ message: "Invalid sender model" });
-//   }
-
-//   try {
-//     let chatDocument = await chatModel.findOne({ userId, vendorId }) as Ichat;
-
-//     const message = new messageModel({
-//       chatId: chatDocument._id,
-//       text,
-//       senderId: vendorId,
-//       senderModel,
-//     });
-
-//     const result = await message.save();
-
-//     // Emit the message to the specific chat room
-//     io.to(chatDocument._id.toString()).emit("message", {
-//       _id: result._id,
-//       chatId: result.chatId,
-//       senderId: result.senderId,
-//       senderModel: result.senderModel,
-//       text: result.text,
-//       isRead: result.isRead || false,
-//       createdAt: result.createdAt,
-//     });
-//     console.log('Message emitted successfully');
-
-//     res.status(200).json(result);
-//   } catch (error) {
-//     console.error('Error while saving the message:', error);
-//     res.status(500).json({ message: "Failed to add message", error });
-//   }
-// };
 
 export const companyAddMessage = async (req: Request, res: Response) => {
   try {
-    console.log('start vendor');
 
     const { text } = req.body;
     const vendorId = req.body.senderId;
     const userId = req.body.userId;
-    console.log(vendorId);
-    console.log(userId);
-
-
-    console.log('start vendor 2');
-
     const result = await companyAddMessageService(text, userId, vendorId);
 
     res.status(HttpStatus.OK).json(result);

@@ -1,8 +1,8 @@
 import { Vendor } from "../models/vendorModel";
 import jwt from "jsonwebtoken";
 import {
-  createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, chatDB,
-  vendorAddressFromDB, vendorEditFromDB, createDishes, createAuditorium, findDetailsByvendorId,
+  createVendor, findVendorByEmail, findVendorByIdInDb, updateVendor, chatDB, editVendorRepo,
+  vendorAddressFromDB, findVendorByEmailRepo, createDishes, createAuditorium, findDetailsByvendorId,
   findFoodVendorIdInDb, findAuditoriumVendorIdInDb, findDishesByIdInDb, findAuditoriumByIdInDb,
   softDeleteDishRepo, softDeleteAuditoriumRepo,
   messageDB,
@@ -51,12 +51,6 @@ export const loginVendor = async (email: string, password: string) => {
   if (!vendor) {
     throw new Error("Invalid Email/Password");
   }
-  // const isPasswordValid = await bcrypt.compare(password, vendor.password);
-  // if (!isPasswordValid) {
-  //   throw new Error("Invalid Email/Password");
-  // }
-
-  console.log('jwt');
 
   const vendorToken = jwt.sign(
     { vendorId: vendor._id },
@@ -78,14 +72,23 @@ export const vendorAddress = async () => {
 };
 
 
-export const editVendor = async (vendorDetails: Vendor, imageUrl: string | undefined) => {
+// service/vendorService.ts
+
+
+export const editVendorService = async (vendorDetails: Vendor, imageUrl: string | undefined) => {
   try {
-    console.log('service');
-    return await vendorEditFromDB(vendorDetails, imageUrl);
+    const existingVendor = await findVendorByEmailRepo(vendorDetails.email);
+
+    if (existingVendor) {
+      return await editVendorRepo(existingVendor, vendorDetails, imageUrl);
+    } else {
+      return await editVendorRepo(null, vendorDetails, imageUrl);
+    }
   } catch (error) {
     throw new Error('Failed to update vendor details');
   }
 };
+
 
 
 export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
@@ -102,8 +105,10 @@ export const uploadImage = async function (imageFile: IMulterFile): Promise<stri
 
 export const findVendorById = async (vendorId: string) => {
   try {
-    console.log('controller 2');
     const vendor = await findVendorByIdInDb(vendorId);
+    if (!vendor) {
+      throw new Error(`Error finding vendor`);
+    }
     return vendor;
   } catch (error) {
     throw new Error(`Error finding vendor: ${error}`);
@@ -114,6 +119,9 @@ export const findAuditoriumById = async (auditoriumId: string) => {
   try {
     console.log('controller 2');
     const vendor = await findAuditoriumByIdInDb(auditoriumId);
+    if(!vendor){
+      throw new Error(`Error finding vendor`);
+    }
     return vendor;
   } catch (error) {
     throw new Error(`Error finding vendor: ${error}`);
@@ -123,8 +131,11 @@ export const findAuditoriumById = async (auditoriumId: string) => {
 
 export const findDishesById = async (dishesId: string) => {
   try {
-    console.log('controller 2');
+    
     const vendor = await findDishesByIdInDb(dishesId);
+    if(!vendor){
+      throw new Error(`Error finding vendor`);
+    }
     return vendor;
   } catch (error) {
     throw new Error(`Error finding vendor: ${error}`);
@@ -224,7 +235,10 @@ export const findAuditoriumVendorById = async (vendorId: string) => {
 
 export const softDeleteDishService = async (dishId: string) => {
   try {
-    const updatedDish = await softDeleteDishRepo(dishId); 
+    const updatedDish = await softDeleteDishRepo(dishId);
+    if(!updatedDish){
+      throw new Error(`Error soft-deleting dish`);
+    }
     return updatedDish;
   } catch (error) {
     throw new Error(`Error soft-deleting dish: ${error}`);
@@ -236,9 +250,10 @@ export const softDeleteDishService = async (dishId: string) => {
 
 export const softDeleteAuditoriumService = async (auditoriumId: string) => {
   try {
-    console.log('delete service');
-
     const updatedAuditorium = await softDeleteAuditoriumRepo(auditoriumId);
+    if(!updatedAuditorium){
+      throw new Error(`Error soft-deleting auditorium`);
+    }
     return updatedAuditorium;
   } catch (error) {
     throw new Error(`Error soft-deleting auditorium: ${error}`);
@@ -247,13 +262,18 @@ export const softDeleteAuditoriumService = async (auditoriumId: string) => {
 
 
 export const findBookingDetails = async (vendorId: string) => {
-  console.log('Fetching booking details for userId:', vendorId);
+  try {
+    const bookingDetails = await findDetailsByvendorId(vendorId);
+    if(!bookingDetails){
+      throw new Error(`Error soft-deleting auditorium`);
+    }
+      return bookingDetails
+  } catch (error) {
+    throw new Error(`Error soft-deleting auditorium: ${error}`);
 
-  const bookingDetails = await findDetailsByvendorId(vendorId);
-  console.log('Booking details:', bookingDetails);
+  }
+}
 
-  return bookingDetails;
-};
 
 
 

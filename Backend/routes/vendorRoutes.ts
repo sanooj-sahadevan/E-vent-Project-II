@@ -1,7 +1,6 @@
 import express from "express";
 import {
-     login,
-     register,
+login,register,
      verifyOtp,
      editVendorDetails,softDeleteAuditorium,vendorBookingDetils,
       addDishes, addAuditorium, fetchDetailsVendor, fetchFoodDetails, fetchAuditoriumDetails,fetchdishes,fetchauditorium,softDeleteDish,getUnreadMessagesCount
@@ -17,13 +16,10 @@ router.post("/login", login);
 router.patch('/editVendorDetails', upload.single('image'), editVendorDetails);
 router.post('/addDishes', verifyvendor, upload.single('image'), addDishes);
 router.post('/addAuditorium', verifyvendor, upload.single('image'), addAuditorium);
+
+
 router.get('/fetchDetailsVendor/:vendorId', fetchDetailsVendor);
-
-
-
 router.get('/fetchFoodDetails/:vendorId', fetchFoodDetails);
-
-
 router.get('/fetchAuditoriumDetails/:vendorId', fetchAuditoriumDetails);
 
 
@@ -38,9 +34,7 @@ router.get('/fetchdishes/:dishesId', fetchdishes);
 
 router.patch('/dishes/:dishId',softDeleteDish);
 router.patch('/auditorium/:auditoriumId',softDeleteAuditorium);
-
 router.get('/vendorBookingDetils/:vendorId', vendorBookingDetils);
-
 
 router.get('/unread-count',verifyvendor, getUnreadMessagesCount);
 

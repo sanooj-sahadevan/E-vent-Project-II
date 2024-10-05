@@ -61,11 +61,26 @@ export const vendorAddressFromDB = async () => {
 
 
 
-export const vendorEditFromDB = async (vendorDetails: Vendor, imageUrl: string | undefined): Promise<Vendor> => {
-  try {
-    const existingVendor = await VendorModel.findOne({ email: vendorDetails.email });
 
+
+export const findVendorByEmailRepo = async (email: string): Promise<Vendor | null> => {
+  try {
+    return await VendorModel.findOne({ email });
+  } catch (error) {
+    console.error('Error finding vendor by email:', error);
+    throw new Error('Database operation failed');
+  }
+};
+
+// Edit or create vendor in the database
+export const editVendorRepo = async (
+  existingVendor: Vendor | null,
+  vendorDetails: Vendor,
+  imageUrl: string | undefined
+): Promise<Vendor> => {
+  try {
     if (existingVendor) {
+      // Update existing vendor details
       existingVendor.vendorname = vendorDetails.vendorname;
       existingVendor.phone = vendorDetails.phone;
       existingVendor.address = vendorDetails.address;
@@ -73,20 +88,21 @@ export const vendorEditFromDB = async (vendorDetails: Vendor, imageUrl: string |
       existingVendor.state = vendorDetails.state;
       existingVendor.reviews = vendorDetails.reviews;
 
-      // Update profile image if a new one is uploaded
+      // Update profile image if new image is uploaded
       if (imageUrl) {
         existingVendor.profileImage = imageUrl;
       }
 
-      // Only update password if provided
+      // Update password if provided
       if (vendorDetails.password) {
         existingVendor.password = vendorDetails.password;
       }
 
-      // Save the updated vendor
+      // Save updated vendor
       await existingVendor.save();
       return existingVendor;
     } else {
+      // If vendor doesn't exist, create a new one
       const newVendor = new VendorModel({
         ...vendorDetails,
         profileImage: imageUrl || vendorDetails.profileImage
@@ -110,8 +126,6 @@ export const vendorEditFromDB = async (vendorDetails: Vendor, imageUrl: string |
 
 
 export const findVendorByIdInDb = async (vendorId: string) => {
-  console.log('controller 3');
-
   return await VendorModel.findById(vendorId);
 };
 
@@ -126,12 +140,9 @@ export const findAuditoriumByIdInDb = async (auditoriumId: string) => {
 
 export const findDishesByIdInDb = async (dishesId: string) => {
   try {
-    console.log('controller 3');
-
     return await Dishes.findById(dishesId);
   } catch (error) {
     console.error(error);
-
   }
 };
 
@@ -218,11 +229,9 @@ export const createAuditorium = async (auditoriumData: any) => {
 export const softDeleteDishRepo = async (dishId: string): Promise<DishDocument | null> => {
   try {
     const dish = await Dishes.findById(dishId);
-
     if (!dish || dish.isDeleted) {
       return null;
     }
-
     dish.isDeleted = true;
     await dish.save();
     return dish;
@@ -238,18 +247,13 @@ export const softDeleteDishRepo = async (dishId: string): Promise<DishDocument |
 
 export const softDeleteAuditoriumRepo = async (auditoriumId: string) => {
   try {
-    console.log('delete repo');
-
     const auditorium = await Auditorium.findById(auditoriumId);
     console.log(auditorium);
-
     if (!auditorium || auditorium.isDeleted) {
       return null;
     }
-
     auditorium.isDeleted = true;
     await auditorium.save();
-
     return auditorium;
   } catch (error) {
     console.error(`Error soft-deleting auditorium: ${error}`);
@@ -268,9 +272,7 @@ export const findDetailsByvendorId = async (vendorId: string) => {
       .populate('userId')
       .populate('vendorId')
       .populate('auditoriumId');
-
     console.log('Fetched Data with populated fields:', results);
-
     return results;
   } catch (error) {
     console.error("Database error:", error);

@@ -96,7 +96,7 @@ const bookingSchema = new Schema<Booking>({
     },
     eventType: {
         type: String,
-        required: true
+        required: false
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
