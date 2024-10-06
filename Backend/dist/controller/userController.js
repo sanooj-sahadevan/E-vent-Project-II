@@ -204,15 +204,13 @@ export default {
     },
     saveData: async (req, res, next) => {
         try {
-            const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
-            const eventType = udf6;
+            const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, } = req.body;
             const userId = udf1;
             const auditoriumId = udf2;
             const dishesId = udf3;
             const date = udf4;
             const category = udf5;
             const vendorId = productinfo;
-            console.log('Received udf6 (eventType):', udf6);
             if (status === "success") {
                 const bookedTripId = await userService.fetchbookingData({
                     txnid,
@@ -224,10 +222,9 @@ export default {
                     auditoriumId,
                     dishesId,
                     date,
-                    eventType,
                     category
                 });
-                console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, eventType, category });
+                console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, category });
                 if (bookedTripId) {
                     res.status(200).json({ success: true, bookedTripId: bookedTripId._id });
                 }

@@ -249,7 +249,6 @@ getBookingDetail : async (id: string) => {
       dishesId,
       date,
       category,
-      eventType,
       payment_source
     } = bookingData;
 
@@ -263,7 +262,6 @@ getBookingDetail : async (id: string) => {
       dishesId,
       date,
       category,
-      eventType,
       payment_source,
       createdAt: new Date(),
     });

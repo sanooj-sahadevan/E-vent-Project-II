@@ -216,7 +216,7 @@ export default {
     createBookedTrip: async (bookingData) => {
         try {
             console.log('save karo');
-            const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, date, category, eventType, payment_source } = bookingData;
+            const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, date, category, payment_source } = bookingData;
             const bookedData = await bookedModel.create({
                 vendorId,
                 txnId: txnid,
@@ -227,7 +227,6 @@ export default {
                 dishesId,
                 date,
                 category,
-                eventType,
                 payment_source,
                 createdAt: new Date(),
             });

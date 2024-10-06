@@ -7,7 +7,7 @@
 "scripts": {
   "build": "tsc",
   "start": "npm run build && node ./dist/index.js", 
-  "dev": "nodemon --watch './**/*.ts' --exec 'tsc && node ./dist/index.js'", 
+  "dev": "nodemon --watch './**/*.ts' --exec 'tsc && node ./index.ts'", 
   "test": "echo \"Error: no test specified\" && exit 1"
 },
 

@@ -15,6 +15,7 @@ import { errorHandler } from "./middleware/errorHandling.js";
 dotenv.config();
 const app = express();
 const PORT = 5000;
+const morganFormat = ":method :url :status :response-time ms";
 connectToMongoDB();
 const httpServer = createServer(app);
 export const io = new serverSocket(httpServer, {
@@ -31,7 +32,20 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(morgan('dev'));
+app.use(morgan(morganFormat, {
+    stream: {
+        write: (message) => {
+            const logObject = {
+                method: message.split(" ")[0],
+                url: message.split(" ")[1],
+                status: message.split(" ")[2],
+                responseTime: message.split(" ")[3],
+            };
+            // logger.info(JSON.stringify(logObject));
+        },
+    },
+}));
+// app.use(morgan('dev'));
 app.use('/user', userRoutes);
 app.use('/vendor', vendorRoutes);
 app.use('/admin', adminRoutes);

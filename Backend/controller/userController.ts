@@ -240,8 +240,7 @@ export default {
 
   saveData: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
-      const eventType = udf6;
+      const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5,  } = req.body;
 
       const userId = udf1;
       const auditoriumId = udf2;
@@ -261,10 +260,9 @@ export default {
           auditoriumId,
           dishesId,
           date,
-          eventType,
           category
         });
-        console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, eventType, category });
+        console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, category });
 
         if (bookedTripId) {
           res.status(200).json({ success: true, bookedTripId: bookedTripId._id });
