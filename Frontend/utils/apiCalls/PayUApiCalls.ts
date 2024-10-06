@@ -17,17 +17,17 @@ export const PayUUrl = {
 };
 
 export default {
-    
+
   paymentReq: async function (data: any) {
     console.log('routikii');
-    
+
     try {
       const reshash = await apiClient.post("/payment", JSON.stringify(data), {
         headers: {
           "Content-Type": "application/json",
         },
       });
-      console.log({reshash})
+      console.log({ reshash })
       return reshash.data;
     } catch (error: any) {
       throw new Error(error.message);
@@ -40,7 +40,7 @@ export default {
           "Content-Type": "application/json",
         },
       });
-      console.log({response})
+      console.log({ response })
       return response.data;
     } catch (error: any) {
       throw new Error(error.message);
@@ -53,6 +53,9 @@ export default {
           "Content-Type": "application/json",
         },
       });
+
+      console.log(response, 'ooooooooooooooooooooooooooooooooooooooo');
+
       return response.data;
     } catch (error: any) {
       throw new Error(error.message);

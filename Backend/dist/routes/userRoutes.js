@@ -1,30 +1,37 @@
-import express from "express";
-import { 
-// googleLoginHandler,
-login, proceedWithRegistration, verifyOtp, vendorList, editUserDetails, forgottenPassword, dishlist, updatePassword, auditoriumlist, fetchVendorDetails, fetchBookingDetails, fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, saveData, payment, addTransaction, changePassword, } from "../controller/userController.js";
-// import { verifyUser } from "../middleware/userJWT.js";
-const router = express.Router();
-router.post("/signup", proceedWithRegistration);
-router.post("/verifyOtp", verifyOtp);
-router.post("/login", login);
-router.get('/vendors', vendorList);
-router.get('/dishlist', dishlist);
-router.get('/auditoriumlist', auditoriumlist);
-router.patch('/edituserDetails', editUserDetails);
-router.post('/forgottenpassword', forgottenPassword);
-router.post('/updatePassword', updatePassword);
-router.get('/fetchVendorDetails', fetchVendorDetails);
-router.get('/fetchFoodDetails/:vendorId', fetchFoodDetails);
-router.get('/fetchAuditoriumDetails/:vendorId', fetchAuditoriumDetails);
+import { Router } from "express";
+// import {
+//         login,
+//     register,
+//     verifyOtp, vendorList,
+//     editUserDetails,
+//     forgottenPassword, dishlist,
+//     updatePassword, auditoriumlist, fetchVendorDetails, fetchBookingDetails,
+//     fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, saveData,
+//     payment, addTransaction, changePassword,
+// } from "../controller/userController.js";
+import userController from "../controller/userController.js";
+const router = Router();
+router.post("/signup", userController.register);
+router.post("/verifyOtp", userController.verifyOtp);
+router.post("/login", userController.login);
+router.get('/vendors', userController.vendorList);
+router.get('/dishlist', userController.dishlist);
+router.get('/auditoriumlist', userController.auditoriumlist);
+router.patch('/edituserDetails', userController.editUserDetails);
+router.post('/forgottenpassword', userController.forgottenPassword);
+router.post('/updatePassword', userController.updatePassword);
+router.get('/fetchVendorDetails', userController.fetchVendorDetails);
+router.get('/fetchFoodDetails/:vendorId', userController.fetchFoodDetails);
+router.get('/fetchAuditoriumDetails/:vendorId', userController.fetchAuditoriumDetails);
 //book event
-router.get("/bookEvent/:id", fetchBookedData);
+router.get("/bookEvent/:id", userController.fetchBookedData);
 // info
-router.get('/fetchauditorium/:auditoriumId', fetchauditorium);
-router.get('/fetchdishes/:dishesId', fetchdishes);
+router.get('/fetchauditorium/:auditoriumId', userController.fetchauditorium);
+router.get('/fetchdishes/:dishesId', userController.fetchdishes);
 // payment
-router.post('/payment', payment);
-router.post('/addTransaction', addTransaction);
-router.post('/response/saveData', saveData);
-router.get('/fetchBookingDetails/:userId', fetchBookingDetails);
-router.patch('/changePassword/:id', changePassword);
+router.post('/payment', userController.payment);
+router.post('/addTransaction', userController.addTransaction);
+router.post('/response/saveData', userController.saveData);
+router.get('/fetchBookingDetails/:userId', userController.fetchBookingDetails);
+router.patch('/changePassword/:id', userController.changePassword);
 export default router;

@@ -1,28 +1,32 @@
 import express from 'express';
 import cors from 'cors';
-import { connectToMongoDB } from './config/config.js';
-import userRoutes from './routes/userRoutes.js';
-import vendorRoutes from './routes/vendorRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
+import { connectToMongoDB } from './src/config/config.js';
+import userRoutes from './src/routes/userRoutes.js';
+import vendorRoutes from './src/routes/vendorRoutes.js';
+import adminRoutes from './src/routes/adminRoutes.js';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
-import http, { createServer } from 'http';
-import { Server as serverSocket } from 'socket.io';
-import chatRoutes from './routes/chatRoutes.js';
-import { socketHandler } from "./utils/socket/chat.js";
-import { errorHandler } from "./middleware/errorHandling.js";
+import { createServer } from 'http';
+import { Server as serverSocket} from 'socket.io';
+import chatRoutes from './src/routes/chatRoutes.js';
+import { socketHandler } from "./src/utils/socket/chat.js";
+import { errorHandler } from "./src/middleware/errorHandling.js";
+import logger from "./src/utils/logger.js";
+
 
 
 dotenv.config();
 
 const app = express();
 const PORT = 5000;
+const morganFormat = ":method :url :status :response-time ms";
 
 
 connectToMongoDB();
 
 const httpServer = createServer(app);
+
 
 export const io = new serverSocket(httpServer, {
   cors: {
@@ -40,7 +44,22 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(morgan('dev'));
+app.use(
+  morgan(morganFormat, {
+    stream: {
+      write: (message:string) => {
+        const logObject = {
+          method: message.split(" ")[0],
+          url: message.split(" ")[1],
+          status: message.split(" ")[2],
+          responseTime: message.split(" ")[3],
+        };
+        logger.info(JSON.stringify(logObject));
+      },
+    },
+  })
+);
+// app.use(morgan('dev'));
 
 app.use('/user', userRoutes);
 app.use('/vendor', vendorRoutes);

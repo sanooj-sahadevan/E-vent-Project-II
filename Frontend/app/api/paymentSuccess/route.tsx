@@ -16,6 +16,7 @@ export async function POST(req: any, res: NextApiResponse) {
     data[key] = value;
   });
   console.log(data, 'this and all things')
+
   let PayUOrderId
   try {
     PayUOrderId = await PayUApiCalls.saveData(data);
@@ -24,16 +25,10 @@ export async function POST(req: any, res: NextApiResponse) {
   } catch (error: any) {
     console.log(error.message);
   }
-  // redirect(
-  //   `users/paymentt/${PayUOrderId}`
-  // );
-
-  // redirect(`/bookingSuccess?PayUOrderId=${PayUOrderId}`);
-
+  
   redirect(`/bookingSucess`);
 
 
-  // redirect(
-  //   `/bookingSucess/${PayUOrderId}`
-  // );
+
+
 }
