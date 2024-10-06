@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 import { chatModel } from "../models/chatModel.js";
 import { messageModel } from "../models/messageModal.js";
-import { io } from "../index.js"; 
+import { io } from '../../index.js'; 
 import { Ichat } from "../interfaces/chat.js";
 
 

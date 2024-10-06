@@ -3,18 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "index.ts",
-"scripts": {
-  "build": "tsc",
-  "start": "npm run build && node ./dist/index.js", 
-  "dev": "nodemon --watch './**/*.ts' --exec 'tsc && node ./index.ts'", 
-  "test": "echo \"Error: no test specified\" && exit 1"
-},
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run build && node ./dist/index.js",
+    "build": "tsc",
+    "dev": "nodemon  src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
 
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.651.1",
+    "@aws-sdk/client-s3": "^3.665.0",
+    "@aws-sdk/s3-request-presigner": "^3.665.0",
     "@types/bcrypt": "^5.0.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
@@ -38,7 +39,8 @@
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.7",
     "rotating-file-stream": "^3.2.3",
-    "socket.io": "^4.8.0"
+    "socket.io": "^4.8.0",
+    "winston": "^3.15.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",

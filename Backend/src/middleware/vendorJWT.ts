@@ -1,6 +1,7 @@
 
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { HttpStatus } from "../utils/httpStatus.js";
 
 export function verifyvendor(req: any, res: Response, next: NextFunction) {
     
@@ -8,12 +9,12 @@ export function verifyvendor(req: any, res: Response, next: NextFunction) {
     console.log(vendorToken);
     
   if (!vendorToken) {
-    return res.status(401).send("JWT not found in the cookies");
+    return res.status(HttpStatus.UNAUTHORIZED).send("JWT not found in the cookies");
   }
 
   const secret = process.env.JWT_SECRET || "";
   if (!secret) {
-    return res.status(500).json("JWT secret not found in the env");
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json("JWT secret not found in the env");
   }
 
   try {
@@ -28,6 +29,6 @@ export function verifyvendor(req: any, res: Response, next: NextFunction) {
   } catch (err: any) {
     console.log(err);
     
-    return res.status(401).send("Invalid JWT");
+    return res.status(HttpStatus.UNAUTHORIZED).send("Invalid JWT");
   }
 }

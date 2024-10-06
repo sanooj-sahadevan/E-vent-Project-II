@@ -1,13 +1,11 @@
-import { Vendor } from "../models/vendorModel";
 import jwt from "jsonwebtoken";
-
-import { uploadToS3Bucket } from "../middleware/fileUpload.js";
-import { IMulterFile } from "../utils/type";
-import { io } from "../index.js";
-
 import vendorRepositary from "../Repository/vendorRepo.js"
-import { DishDocument } from "../interfaces/dishes";
-import { AuditoriumDocument } from "../models/auditoriumModel";
+import { Vendor } from "../interfaces/vendor.js";
+import { uploadToS3Bucket } from "../middleware/fileUpload.js";
+import { IMulterFile } from "../utils/type.js";
+import { io } from "../../index.js";
+import { DishDocument } from "../interfaces/dishes.js";
+import { AuditoriumDocument } from "../models/auditoriumModel.js";
 
 
 export default {
@@ -142,11 +140,14 @@ uploadImage : async function (imageFile: IMulterFile): Promise<string> {
     images?: string
   ) => {
     try {
+      console.log('duisg servuive');
+      
       const dishesData = { vendorId, data, images };
   
       dishesData.data.price = Number(dishesData.data.price);
   
       const newDish = await vendorRepositary.createDishes(dishesData);
+  console.log(newDish);
   
       return newDish;
     } catch (error) {

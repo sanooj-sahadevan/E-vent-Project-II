@@ -175,13 +175,14 @@ findAuditoriumVendorIdInDb : async (vendorId: string) => {
         status: dishesData.data.status,
         images: dishesData.images,
       });
-  
-      // Save the Dishes to the database
-      const savedDish = await dish.save();
+        const savedDish = await dish.save();
       console.log("Saved Dish: ", savedDish);
   
-      return savedDish;
-    } catch (error) {
+      return {
+        savedDish,
+        vendorId: dishesData.vendorId,
+      };   
+     } catch (error) {
       console.error("Error saving dish: ", error);
       throw error;
     }

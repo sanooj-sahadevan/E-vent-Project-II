@@ -12,7 +12,6 @@ const api = axios.create({
   },
 });
 
-// SignUp API
 export const SignUpAPI = async (
   reqBody: any,
   reqHeader: { "Content-Type": string } | undefined
@@ -22,28 +21,24 @@ export const SignUpAPI = async (
   return await commonAPI("POST", `${SERVER_URL_vendor}/signup`, reqBody, reqHeader);
 };
 
-// Login API
 export const LoginAPI = async (reqBody: any) => {
-  // return await commonAPI("POST", `${SERVER_URL_COMPANY}/login`, reqBody);
   console.log('vendor login');
-
   const response = await axios.post(`${SERVER_URL_vendor}/login`, reqBody, { withCredentials: true });
   return response.data
 };
 
-// verfy otp Api
 export const verifyOtp = async (data: any) => {
   console.log("comming: " + data);
-
   return api.post("/verifyOtp", data);
 };
 
 
 export const addDishAPI = async (data: any) => {
   try {
-
     console.log('addDishApi');
-    return await axios.post(`${SERVER_URL_vendor}/addDishes`, data, { withCredentials: true });
+    let res = await axios.post(`${SERVER_URL_vendor}/addDishes`, data, { withCredentials: true });
+    console.log(res);
+    return res
   } catch (error) {
     console.error('error');
 
@@ -68,7 +63,7 @@ export const vendorDetails = async (): Promise<AxiosResponse<any>> => {
     return await axios.get(`${SERVER_URL_vendor}/getAddress`);
   } catch (error) {
     console.error('Error fetching vendor details:', error);
-    throw error; 
+    throw error;
   }
 }
 
@@ -252,13 +247,13 @@ export const getMessages = (id: string) => {
 
 export const getUnreadMessagesCountAPI = async () => {
   try {
-    const response = await axios.get(`${SERVER_URL_vendor}/unread-count`, {withCredentials: true });
-  console.log(response.data);
-  
-  return response.data;
+    const response = await axios.get(`${SERVER_URL_vendor}/unread-count`, { withCredentials: true });
+    console.log(response.data);
+
+    return response.data;
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 

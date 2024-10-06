@@ -142,10 +142,12 @@ export default {
                 status: dishesData.data.status,
                 images: dishesData.images,
             });
-            // Save the Dishes to the database
             const savedDish = await dish.save();
             console.log("Saved Dish: ", savedDish);
-            return savedDish;
+            return {
+                savedDish,
+                vendorId: dishesData.vendorId,
+            };
         }
         catch (error) {
             console.error("Error saving dish: ", error);

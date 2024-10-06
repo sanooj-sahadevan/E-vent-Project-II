@@ -2,11 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import {
   savechatService, companyAddMessageService
 } from "../Service/chatService.js";
-
 import { HttpStatus } from '../utils/httpStatus.js'
 import { messageModel } from "../models/messageModal.js";
 import { chatModel } from "../models/chatModel.js";
-import { io } from "../index.js"; // Import the Socket.IO instance
+import { io } from "../../index.js"; 
 import mongoose from "mongoose";
 
 
@@ -37,15 +36,15 @@ export const getMessage = async (req: Request, res: Response) => {
     const messages = await messageModel.find({ chatId }).populate("senderId");
     if (!messages.length) {
       return res
-        .status(404)
+        .status(HttpStatus.NOT_FOUND)
         .json({ message: "No messages found for this chat" });
     }
     await messageModel.updateMany({ chatId }, { $set: { isRead: true } });
     const updatedMessages = await messageModel.find({ chatId }).populate("senderId");
-    res.status(200).json(updatedMessages);
+    res.status(HttpStatus.OK).json(updatedMessages);
   } catch (error: any) {
     res
-      .status(500)
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
       .json({ message: "Failed to retrieve messages", error: error.message });
   }
 };
@@ -59,10 +58,10 @@ export const companyChat = async (req: Request, res: Response) => {
       vendorId: req.params.companyId,
     }).populate("userId");
 
-    res.status(200).json(chat);
+    res.status(HttpStatus.OK).json(chat);
   } catch (error: any) {
-    res.status(500).json(error);
-  }
+next(error)  
+}
 };
 
 
@@ -88,3 +87,7 @@ export const companyAddMessage = async (req: Request, res: Response) => {
     res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
   }
 };
+function next(error: any) {
+  throw new Error("Function not implemented.");
+}
+

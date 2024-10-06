@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { HttpStatus } from "../utils/httpStatus.js";
 // import UserModel from "../Repository/userReop.js"; // Adjust the import path if needed
 
 // Verify JWT and user middleware
@@ -12,13 +13,13 @@ export async function verifyUser(req: Request, res: Response, next: NextFunction
   if (!token) {
     console.log('toke error');
 
-    return res.status(401).json("JWT token not found in the request");
+    return res.status(HttpStatus.UNAUTHORIZED).json("JWT token not found in the request");
   }
 
   if (!secret) {
     console.log('screte error');
 
-    return res.status(500).json("JWT secret not found in the environment");
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json("JWT secret not found in the environment");
   }
 
   try {
@@ -46,7 +47,6 @@ export async function verifyUser(req: Request, res: Response, next: NextFunction
 
     next();
   } catch (err: any) {
-    console.log("JWT verification failed:", err.message);
-    return res.status(401).json("Invalid or expired JWT");
+    return res.status(HttpStatus.UNAUTHORIZED).json("Invalid or expired JWT");
   }
 }

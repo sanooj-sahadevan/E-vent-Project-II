@@ -1,15 +1,4 @@
 import { Router } from "express";
-// import {
-//         login,
-//     register,
-//     verifyOtp, vendorList,
-//     editUserDetails,
-//     forgottenPassword, dishlist,
-//     updatePassword, auditoriumlist, fetchVendorDetails, fetchBookingDetails,
-//     fetchFoodDetails, fetchAuditoriumDetails, fetchauditorium, fetchdishes, fetchBookedData, saveData,
-//     payment, addTransaction, changePassword,
-// } from "../controller/userController.js";
-
 import userController from "../controller/userController.js"
 
 const router = Router();

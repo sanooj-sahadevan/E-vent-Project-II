@@ -18,11 +18,14 @@ export const sendEmail = async (to: string, otp: string, p0?: string) => {
             subject: 'Your OTP Code',
             text: `Your OTP code is ${otp}`
         };
-    
+
         await transporter.sendMail(mailOptions);
     } catch (error) {
-       console.error(error);
-        
+        next(error)
     }
-    
+
 };
+function next(error: unknown) {
+    throw new Error("Function not implemented.");
+}
+

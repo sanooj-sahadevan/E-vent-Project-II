@@ -33,8 +33,7 @@ export default {
         await sendEmail(email, otp);
         res.status(HttpStatus.OK).json("OTP sent to email");
       } catch (error: any) {
-        console.error('Error during registration:', error.message);
-        res.status(HttpStatus.BAD_REQUEST).json({ error: "Registration failed: " + error.message });
+        next(error);
       }
     };
 
@@ -105,7 +104,7 @@ export default {
       imageUrl = await userService.uploadImage(file);
     }
     const updatedVendor = await userService.editVendorService(vendorDetails, imageUrl);
-    res.status(200).json({ ...updatedVendor, imageUrl }); 
+    res.status(HttpStatus.OK).json({ ...updatedVendor, imageUrl }); 
 
   } catch (error) {
     next(error); 
@@ -119,9 +118,9 @@ fetchVendorDetails : async (req: Request, res: Response, next: NextFunction): Pr
     const { vendorId } = req.params; // Extract vendorId from request params
     const vendor = await userService.findVendorById(vendorId); // Fetch vendor details
     if (!vendor) {
-      res.status(404).json({ message: "Vendor not found" });
+      res.status(HttpStatus.NOT_FOUND).json({ message: "Vendor not found" });
     } else {
-      res.status(200).json(vendor);
+      res.status(HttpStatus.OK).json(vendor);
     }
   } catch (error) {
     next(error);
@@ -133,7 +132,7 @@ fetchdishes : async (req: Request, res: Response, next: NextFunction): Promise<v
  
     const { dishesId } = req.params;
     const vendor = await userService.findDishesById(dishesId);
-      res.status(200).json(vendor);
+      res.status(HttpStatus.OK).json(vendor);
   } catch (error) {
     next(error);
   }
@@ -144,7 +143,7 @@ fetchdishes : async (req: Request, res: Response, next: NextFunction): Promise<v
   try {
     const { auditoriumId } = req.params;
     const vendor = await  userService.findAuditoriumById(auditoriumId);
-      res.status(200).json(vendor);
+      res.status(HttpStatus.OK).json(vendor);
   } catch (error) {
     next(error);
   }
@@ -156,8 +155,10 @@ addDishes :async (req: Request & { vendorId?: string }, res: Response, next: Nex
   try {
     const { body } = req;
     const vendorId = req.vendorId
+    console.log(vendorId,'vendorId-----------------------------------------------------');
+    
     if (!vendorId) {
-      return res.status(400).json({ error: "Vendor ID is required" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
     const file = req.file as unknown as IMulterFile;
     let imageUrl: string | undefined = undefined;
@@ -166,7 +167,7 @@ addDishes :async (req: Request & { vendorId?: string }, res: Response, next: Nex
     }
     await  userService.uploadDishes(vendorId, body, imageUrl);
 
-    return res.status(400).json({ error: "Dishes not added: something went wrong" });
+    return res.status(HttpStatus.OK).json("Dishes added successfully");
 
   } catch (error) {
     console.error("Error adding dishes: ", error);
@@ -181,7 +182,7 @@ addDishes :async (req: Request & { vendorId?: string }, res: Response, next: Nex
     const vendorId = req.vendorId;
 
     if (!vendorId) {
-      return res.status(400).json({ error: "Vendor ID is required" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
 
     const file = req.file as unknown as IMulterFile;
@@ -195,9 +196,9 @@ addDishes :async (req: Request & { vendorId?: string }, res: Response, next: Nex
     const auditoriumData = await  userService.uploadAuditorium(vendorId, body, imageUrl);
 
     if (auditoriumData) {
-      return res.status(200).json("Auditorium added successfully");
+      return res.status(HttpStatus.OK).json("Auditorium added successfully");
     } else {
-      return res.status(400).json({ error: "Auditorium not added: something went wrong" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: "Auditorium not added: something went wrong" });
     }
   } catch (error) {
     console.error("Error adding auditorium: ", error);
@@ -210,7 +211,7 @@ fetchDetailsVendor : async (req: Request, res: Response, next: NextFunction): Pr
   try {
     const { vendorId } = req.params;
     const vendor = await  userService.findVendorById(vendorId);
-      res.status(200).json(vendor);
+      res.status(HttpStatus.OK).json(vendor);
 
   } catch (error) {
     console.error('Error in fetchDetailsVendor:', error);
@@ -225,10 +226,10 @@ fetchFoodDetails : async (req: Request, res: Response, next: NextFunction): Prom
     const { vendorId } = req.params;
     const dishes = await  userService.findFoodVendorById(vendorId);
     if (!dishes || dishes.length === 0) {
-      res.status(404).json({ message: "No dishes found for this vendor" });
+      res.status(HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
     } else {
       console.log(dishes, 'Fetched dishes for vendor');
-      res.status(200).json(dishes);
+      res.status(HttpStatus.OK).json(dishes);
     }
 
   } catch (error) {
@@ -243,10 +244,10 @@ fetchAuditoriumDetails :async (req: Request, res: Response, next: NextFunction):
     const auditorium = await  userService.findAuditoriumVendorById(vendorId);
 
     if (!auditorium || auditorium.length === 0) {
-      res.status(404).json({ message: "No dishes found for this vendor" });
+      res.status(HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
     } else {
       console.log(auditorium, 'Fetched dishes for vendor');
-      res.status(200).json(auditorium);
+      res.status(HttpStatus.OK).json(auditorium);
     }
   } catch (error) {
     console.error('Error in fetchFoodDetails:', error);
@@ -261,10 +262,10 @@ softDeleteDish : async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { dishId } = req.params;
     if (!dishId) {
-      return res.status(400).json({ message: 'Dish ID is missing' });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Dish ID is missing' });
     }
     const updatedDish = await  userService.softDeleteDishService(dishId); 
-    res.status(200).json({ message: 'Dish deleted successfully', dish: updatedDish });
+    res.status(HttpStatus.OK).json({ message: 'Dish deleted successfully', dish: updatedDish });
   } catch (error) {
     next(error);
   }
@@ -275,10 +276,10 @@ softDeleteAuditorium : async (req: Request, res: Response, next: NextFunction) =
   try {
     const { auditoriumId } = req.params;
     if (!auditoriumId) {
-      return res.status(400).json({ message: 'Auditorium ID is missing' });
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Auditorium ID is missing' });
     }
     const updatedAuditorium = await  userService.softDeleteAuditoriumService(auditoriumId); 
-    res.status(200).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
+    res.status(HttpStatus.OK).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
   } catch (error) {
     next(error);
   }
@@ -289,7 +290,7 @@ vendorBookingDetils : async (req: Request, res: Response, next: NextFunction) =>
   const { vendorId } = req.params;
   try {
     const booking = await  userService.findBookingDetails(vendorId)
-    res.status(200).json(booking);
+    res.status(HttpStatus.OK).json(booking);
   } catch (error) {
     next(error);
 
@@ -305,7 +306,7 @@ getUnreadMessagesCount : async (
 
   try {
     if (!vendorId) {
-      return res.status(400).json({ error: "Vendor ID is required" });
+      return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
 
     const chatServiceData = await  userService.chatServices({ vendorId });
@@ -313,11 +314,11 @@ getUnreadMessagesCount : async (
     const chatIds = chatServiceData.map((chat: any) => chat._id);
 
     if (chatIds.length === 0) {
-      return res.status(200).json({ unreadCount: 0 });
+      return res.status(HttpStatus.OK).json({ unreadCount: 0 });
     }
 
     const unreadCount = await  userService.messageService({ chatIds, vendorId });
-    res.status(200).json({ unreadCount });
+    res.status(HttpStatus.OK).json({ unreadCount });
   } catch (error) {
     next(error);
 

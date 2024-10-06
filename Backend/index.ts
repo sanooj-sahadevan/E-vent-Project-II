@@ -1,17 +1,19 @@
 import express from 'express';
 import cors from 'cors';
-import { connectToMongoDB } from './config/config.js';
-import userRoutes from './routes/userRoutes.js';
-import vendorRoutes from './routes/vendorRoutes.js';
-import adminRoutes from './routes/adminRoutes.js';
+import { connectToMongoDB } from './src/config/config.js';
+import userRoutes from './src/routes/userRoutes.js';
+import vendorRoutes from './src/routes/vendorRoutes.js';
+import adminRoutes from './src/routes/adminRoutes.js';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
-import http, { createServer } from 'http';
+import { createServer } from 'http';
 import { Server as serverSocket} from 'socket.io';
-import chatRoutes from './routes/chatRoutes.js';
-import { socketHandler } from "./utils/socket/chat.js";
-import { errorHandler } from "./middleware/errorHandling.js";
+import chatRoutes from './src/routes/chatRoutes.js';
+import { socketHandler } from "./src/utils/socket/chat.js";
+import { errorHandler } from "./src/middleware/errorHandling.js";
+import logger from "./src/utils/logger.js";
+
 
 
 dotenv.config();
@@ -52,7 +54,7 @@ app.use(
           status: message.split(" ")[2],
           responseTime: message.split(" ")[3],
         };
-        // logger.info(JSON.stringify(logObject));
+        logger.info(JSON.stringify(logObject));
       },
     },
   })

@@ -1,10 +1,4 @@
 import express from "express";
-// import {
-// login,register,
-//      verifyOtp,
-//      editVendorDetails,softDeleteAuditorium,vendorBookingDetils,
-//       addDishes, addAuditorium, fetchDetailsVendor, fetchFoodDetails, fetchAuditoriumDetails,fetchdishes,fetchauditorium,softDeleteDish,getUnreadMessagesCount
-// } from "../controller/vendorController.js";
 import upload from "../middleware/multer.js";
 import { verifyvendor } from "../middleware/vendorJWT.js";
 import vendorController from "../controller/vendorController.js";

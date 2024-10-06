@@ -133,6 +133,7 @@ export default {
         try {
             const { body } = req;
             const vendorId = req.vendorId;
+            console.log(vendorId, 'vendorId-----------------------------------------------------');
             if (!vendorId) {
                 return res.status(400).json({ error: "Vendor ID is required" });
             }
@@ -142,7 +143,7 @@ export default {
                 imageUrl = await userService.uploadImage(file);
             }
             await userService.uploadDishes(vendorId, body, imageUrl);
-            return res.status(400).json({ error: "Dishes not added: something went wrong" });
+            return res.status(200).json("Dishes added successfully");
         }
         catch (error) {
             console.error("Error adding dishes: ", error);

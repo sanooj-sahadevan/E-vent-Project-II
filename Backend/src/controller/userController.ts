@@ -71,9 +71,9 @@ export default {
       const { email } = req.body;
       const { user, otp } = await userService.checkEmail(email);
       if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+        return res.status(HttpStatus.NOT_FOUND).json({ error: 'User not found' });
       }
-      res.status(200).json({ message: 'OTP sent successfully', otp, email });
+      res.status(HttpStatus.OK).json({ message: 'OTP sent successfully', otp, email });
     } catch (error: any) {
       next(error.message);
     }
@@ -111,7 +111,7 @@ export default {
     try {
       const { vendorId, userId } = req.query;
       const result = await userService.findVendorById(vendorId as string, userId as string);
-      res.status(200).json(result);
+      res.status(HttpStatus.OK).json(result);
     } catch (error) {
       next(error);
     }
@@ -123,7 +123,7 @@ export default {
       const { vendorId } = req.params;
       const dishes = await userService.findFoodVendorById(vendorId);
 
-      res.status(200).json(dishes);
+      res.status(HttpStatus.OK).json(dishes);
 
     } catch (error) {
       console.error('Error in fetchFoodDetails:', error);
@@ -139,7 +139,7 @@ export default {
       const { vendorId } = req.params;
       const dishes = await userService.findAuditoriumVendorById(vendorId);
 
-      res.status(200).json(dishes);
+      res.status(HttpStatus.OK).json(dishes);
     } catch (error) {
       console.error('Error in fetchFoodDetails:', error);
       next(error);
@@ -150,7 +150,7 @@ export default {
     try {
       const { auditoriumId } = req.params;
       const vendor = await userService.findAuditoriumById(auditoriumId);
-      res.status(200).json(vendor);
+      res.status(HttpStatus.OK).json(vendor);
     } catch (error) {
       next(error);
     }
@@ -160,7 +160,7 @@ export default {
     try {
       const { dishesId } = req.params;
       const vendor = await userService.finddishesById(dishesId);
-      res.status(200).json(vendor);
+      res.status(HttpStatus.OK).json(vendor);
     } catch (error) {
       next(error);
     }
@@ -172,7 +172,7 @@ export default {
     try {
 
       const booking: any = await userService.findEvent(id);
-      res.status(200).json(booking);
+      res.status(HttpStatus.OK).json(booking);
     } catch (error) {
       next(error);
     }
@@ -209,7 +209,7 @@ export default {
         district: undefined
       });
       await sendEmail(req.body.email, otp);
-      res.status(200).json("OTP sent to email and saved in the database.");
+      res.status(HttpStatus.OK).json("OTP sent to email and saved in the database.");
     } catch (error) {
       next(error);
     }
@@ -231,7 +231,7 @@ export default {
         status
       );
 
-      res.status(200).send(transactionId);
+      res.status(HttpStatus.OK).send(transactionId);
     } catch (error) {
       next(error);
     }
@@ -265,12 +265,12 @@ export default {
         console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, category });
 
         if (bookedTripId) {
-          res.status(200).json({ success: true, bookedTripId: bookedTripId._id });
+          res.status(HttpStatus.OK).json({ success: true, bookedTripId: bookedTripId._id });
         } else {
-          res.status(500).json({ success: false, message: "Booking update failed" });
+          res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Booking update failed" });
         }
       } else {
-        res.status(400).json({ success: false, message: "Booking failed" });
+        res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: "Booking failed" });
       }
     } catch (error) {
       next(error);
@@ -283,7 +283,7 @@ export default {
     const { userId } = req.params;
     try {
       const booking = await userService.findBookingDetails(userId);
-      res.status(200).json(booking);
+      res.status(HttpStatus.OK).json(booking);
     } catch (error) {
       next(error);
 
@@ -295,7 +295,7 @@ export default {
     const { newPassword } = req.body;
     try {
       const updatedPassword = await userService.findchangePassword(id, newPassword);
-      res.status(200).json(updatedPassword);
+      res.status(HttpStatus.OK).json(updatedPassword);
     } catch (error) {
       next(error);
 

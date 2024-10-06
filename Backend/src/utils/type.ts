@@ -7,6 +7,6 @@ export interface IMulterFile {
     encoding: string;
     mimetype: string;
     size: number;
-    buffer: Buffer; // For memory storage
-    stream?: ReadStream; // Optional, used with disk storage
+    buffer: Buffer;
+    stream?: ReadStream;
 }

@@ -114,9 +114,11 @@ export default {
     },
     uploadDishes: async (vendorId, data, images) => {
         try {
+            console.log('duisg servuive');
             const dishesData = { vendorId, data, images };
             dishesData.data.price = Number(dishesData.data.price);
             const newDish = await vendorRepositary.createDishes(dishesData);
+            console.log(newDish);
             return newDish;
         }
         catch (error) {

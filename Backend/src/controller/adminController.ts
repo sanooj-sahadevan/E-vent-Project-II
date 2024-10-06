@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import adminService from "../Service/adminService.js";
-
+import { HttpStatus } from "../utils/httpStatus.js";
 
 export default {
   adminlogin: async (
@@ -17,7 +17,7 @@ export default {
         res.cookie("adminToken", result.adminToken);
         res.json({ adminToken: result.adminToken, admin: result.admin });
       } else {
-        res.status(401).json({ message: "Login failed" });
+        res.status(HttpStatus.UNAUTHORIZED).json({ message: "Login failed" });
       }
     } catch (error) {
       next(error);
@@ -27,18 +27,18 @@ export default {
   getAllVendors: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const allWorkers = await adminService.getAllVendorsService();
-      res.status(200).json(allWorkers);
+      res.status(HttpStatus.OK).json(allWorkers);
     } catch (err) {
-      res.status(500).json({ error: "Failed to retrieve workers" });
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "Failed to retrieve workers" });
     }
   },
 
   getAllBookings: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const allBookings = await adminService.getAllBookingsService();
-      res.status(200).json(allBookings);
+      res.status(HttpStatus.OK).json(allBookings);
     } catch (err) {
-      res.status(500).json({ error: "Failed to retrieve workers" });
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "Failed to retrieve workers" });
     }
   },
 
@@ -53,7 +53,7 @@ export default {
 
       const blockedCompany = await adminService.blockVendor(vendorId);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         message: "Vendor blocked successfully",
         vendor: blockedCompany,
       });
@@ -71,7 +71,7 @@ export default {
 
       const unblockedVendor = await adminService.unblockVendor(vendorId);
 
-      res.status(200).json({
+      res.status(HttpStatus.OK).json({
         message: "Vendor unblocked successfully",
         vendor: unblockedVendor,
       });
@@ -87,7 +87,7 @@ export default {
   ): Promise<void> => {
     try {
       const users = await adminService.getAllUsers();
-      res.status(200).json(users);
+      res.status(HttpStatus.OK).json(users);
     } catch (error) {
       next(error);
     }
@@ -103,7 +103,7 @@ export default {
 
       const blockedUser = await adminService.blockUser(userId);
       res
-        .status(200)
+        .status(HttpStatus.OK)
         .json({ message: "User blocked successfully", user: blockedUser });
     } catch (error) {
       next(error);
@@ -119,7 +119,7 @@ export default {
 
       const unblockedUser = await adminService.unblockUser(userId);
       res
-        .status(200)
+        .status(HttpStatus.OK)
         .json({ message: "User unblocked successfully", user: unblockedUser });
     } catch (error) {
       next(error);
@@ -133,7 +133,7 @@ export default {
   ) => {
     try {
       const dashboardData = await adminService.getDashboardData();
-      return res.status(200).json(dashboardData);
+      return res.status(HttpStatus.OK).json(dashboardData);
     } catch (error: any) {
       next(error);
     }

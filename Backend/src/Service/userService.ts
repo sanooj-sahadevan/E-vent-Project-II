@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { HttpStatus } from '../utils/httpStatus.js'
 import jsSHA from "jssha";
 
 import userRepositary from "../Repository/userReop.js"
