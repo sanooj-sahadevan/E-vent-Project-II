@@ -2,8 +2,8 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
-  "main": "index.js",
+  "type": "module.cjs",
+  "main": "./dist/index.js",
   "scripts": {
     "start": "npm run build && node ./dist/index.js",
     "build": "tsc",

@@ -1,10 +1,10 @@
 import mongoose, { Schema, Document } from "mongoose";
-import { AdminModel } from "../models/adminModel.js";
-import { bookedModel } from "../models/bookedEvent.js";
-import { User } from "../interfaces/user.js";
-import UserModel from "../models/userModel.js";
-import {Admin} from "../interfaces/admin.js"
-import { VendorModel } from "../models/vendorModel.js";
+import { AdminModel } from "../models/adminModel";
+import { bookedModel } from "../models/bookedEvent";
+import { User } from "../interfaces/user";
+import UserModel from "../models/userModel";
+import {Admin} from "../interfaces/admin"
+import { VendorModel } from "../models/vendorModel";
 
 
 

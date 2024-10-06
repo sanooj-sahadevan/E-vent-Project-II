@@ -1,23 +1,37 @@
-import { AdminModel } from "../models/adminModel.js";
-import { bookedModel } from "../models/bookedEvent.js";
-import UserModel from "../models/userModel.js";
-import { VendorModel } from "../models/vendorModel.js";
-export default {
-    findUserByEmailAdmin: async (email) => {
-        const admin = await AdminModel.findOne({ email });
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const adminModel_js_1 = require("../models/adminModel.js");
+const bookedEvent_js_1 = require("../models/bookedEvent.js");
+const userModel_js_1 = __importDefault(require("../models/userModel.js"));
+const vendorModel_js_1 = require("../models/vendorModel.js");
+exports.default = {
+    findUserByEmailAdmin: (email) => __awaiter(void 0, void 0, void 0, function* () {
+        const admin = yield adminModel_js_1.AdminModel.findOne({ email });
         return admin ? admin : null;
-    },
-    getAllVendorsFromDB: async () => {
+    }),
+    getAllVendorsFromDB: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return VendorModel.find().sort({ createdAt: -1 });
+            return vendorModel_js_1.VendorModel.find().sort({ createdAt: -1 });
         }
         catch (error) {
             console.error(error);
         }
-    },
-    getAllBookingsFromDB: async () => {
+    }),
+    getAllBookingsFromDB: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return bookedModel
+            return bookedEvent_js_1.bookedModel
                 .find()
                 .populate('vendorId')
                 .populate('userId')
@@ -26,61 +40,61 @@ export default {
         catch (error) {
             console.error(error);
         }
-    },
-    findVendorById: async (vendorId) => {
+    }),
+    findVendorById: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return VendorModel.findById(vendorId);
+            return vendorModel_js_1.VendorModel.findById(vendorId);
         }
         catch (error) {
             console.error(error);
         }
-    },
-    blockVendorById: async (vendorId) => {
+    }),
+    blockVendorById: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return VendorModel.findByIdAndUpdate(vendorId, { isBlocked: true }, { new: true });
+            return vendorModel_js_1.VendorModel.findByIdAndUpdate(vendorId, { isBlocked: true }, { new: true });
         }
         catch (error) {
             console.error(error);
         }
-    },
-    unblockVendorById: async (vendorId) => {
+    }),
+    unblockVendorById: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return VendorModel.findByIdAndUpdate(vendorId, { isBlocked: false }, { new: true });
+            return vendorModel_js_1.VendorModel.findByIdAndUpdate(vendorId, { isBlocked: false }, { new: true });
         }
         catch (error) {
             console.error(error);
         }
-    },
-    findAllUsers: async () => {
-        return UserModel.find();
-    },
-    blockUserById: async (userId) => {
+    }),
+    findAllUsers: () => __awaiter(void 0, void 0, void 0, function* () {
+        return userModel_js_1.default.find();
+    }),
+    blockUserById: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return UserModel.findByIdAndUpdate(userId, { isBlocked: true }, { new: true });
+            return userModel_js_1.default.findByIdAndUpdate(userId, { isBlocked: true }, { new: true });
         }
         catch (error) {
             console.error(error);
         }
-    },
-    unblockUserById: async (userId) => {
+    }),
+    unblockUserById: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return UserModel.findByIdAndUpdate(userId, { isBlocked: false }, { new: true });
+            return userModel_js_1.default.findByIdAndUpdate(userId, { isBlocked: false }, { new: true });
         }
         catch (error) {
             console.error(error);
         }
-    },
-    findUserById: async (userId) => {
+    }),
+    findUserById: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return UserModel.findById(userId);
+            return userModel_js_1.default.findById(userId);
         }
         catch (error) {
             console.error(error);
         }
-    },
-    getTotalEvents: async () => {
+    }),
+    getTotalEvents: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const res = await bookedModel.countDocuments();
+            const res = yield bookedEvent_js_1.bookedModel.countDocuments();
             console.log(res);
             return res;
         }
@@ -88,23 +102,24 @@ export default {
             console.error("Error getting total trips", error);
             throw error;
         }
-    },
-    getTotalRevenue: async () => {
+    }),
+    getTotalRevenue: () => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         try {
-            const result = await bookedModel.aggregate([
+            const result = yield bookedEvent_js_1.bookedModel.aggregate([
                 { $group: { _id: null, totalRevenue: { $sum: "$totalAmount" } } },
             ]);
             console.log(result);
-            return result[0]?.totalRevenue || 0;
+            return ((_a = result[0]) === null || _a === void 0 ? void 0 : _a.totalRevenue) || 0;
         }
         catch (error) {
             console.error("Error getting total revenue", error);
             throw error;
         }
-    },
-    getTotalVendors: async () => {
+    }),
+    getTotalVendors: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const res = await VendorModel.countDocuments({});
+            const res = yield vendorModel_js_1.VendorModel.countDocuments({});
             console.log(res);
             return res;
         }
@@ -112,10 +127,10 @@ export default {
             console.error("Error getting total companies", error);
             throw error;
         }
-    },
-    getTotalUsers: async () => {
+    }),
+    getTotalUsers: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const res = await UserModel.countDocuments({});
+            const res = yield userModel_js_1.default.countDocuments({});
             console.log(res);
             return res;
         }
@@ -123,7 +138,7 @@ export default {
             console.error("Error getting total users", error);
             throw error;
         }
-    },
+    }),
 };
 // export const findUserByEmailAdmin = async (
 //   email: string

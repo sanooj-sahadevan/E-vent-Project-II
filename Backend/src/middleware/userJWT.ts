@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { HttpStatus } from "../utils/httpStatus.js";
+import { HttpStatus } from "../utils/httpStatus";
 // import UserModel from "../Repository/userReop.js"; // Adjust the import path if needed
 
 // Verify JWT and user middleware

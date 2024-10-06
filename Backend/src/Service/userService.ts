@@ -2,9 +2,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import jsSHA from "jssha";
 
-import userRepositary from "../Repository/userReop.js"
-import { otpGenerator } from "../utils/otpGenerator.js";
-import { sendEmail } from "../utils/sendEmail.js";
+import userRepositary from "../Repository/userReop"
+import { otpGenerator } from "../utils/otpGenerator";
+import { sendEmail } from "../utils/sendEmail";
 
 
 export default {

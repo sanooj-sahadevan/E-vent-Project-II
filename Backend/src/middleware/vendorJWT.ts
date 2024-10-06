@@ -1,7 +1,7 @@
 
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { HttpStatus } from "../utils/httpStatus.js";
+import { HttpStatus } from "../utils/httpStatus";
 
 export function verifyvendor(req: any, res: Response, next: NextFunction) {
     

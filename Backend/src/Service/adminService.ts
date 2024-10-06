@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import adminRepositary from "../Repository/adminRepo.js";
+import adminRepositary from "../Repository/adminRepo";
 
 
 export default {

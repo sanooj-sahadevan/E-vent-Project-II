@@ -1,5 +1,8 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HttpStatus = void 0;
 // src/utils/HttpStatus.ts
-export var HttpStatus;
+var HttpStatus;
 (function (HttpStatus) {
     HttpStatus[HttpStatus["OK"] = 200] = "OK";
     HttpStatus[HttpStatus["CREATED"] = 201] = "CREATED";
@@ -8,4 +11,4 @@ export var HttpStatus;
     HttpStatus[HttpStatus["FORBIDDEN"] = 403] = "FORBIDDEN";
     HttpStatus[HttpStatus["NOT_FOUND"] = 404] = "NOT_FOUND";
     HttpStatus[HttpStatus["INTERNAL_SERVER_ERROR"] = 500] = "INTERNAL_SERVER_ERROR";
-})(HttpStatus || (HttpStatus = {}));
+})(HttpStatus || (exports.HttpStatus = HttpStatus = {}));

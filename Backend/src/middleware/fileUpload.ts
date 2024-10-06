@@ -39,7 +39,7 @@
 
 
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { IMulterFile } from '../utils/type.js';  
+import { IMulterFile } from '../utils/type';  
 export async function uploadToS3Bucket(p0: any[], file: IMulterFile): Promise<string> {
   try {
     if (!file) {

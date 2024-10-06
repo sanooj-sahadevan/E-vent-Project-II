@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import userService from "../Service/userService.js"
+import userService from "../Service/userService"
 
-import { otpGenerator } from "../utils/otpGenerator.js";
-import { sendEmail } from "../utils/sendEmail.js";
-import { HttpStatus } from '../utils/httpStatus.js'
+import { otpGenerator } from "../utils/otpGenerator";
+import { sendEmail } from "../utils/sendEmail";
+import { HttpStatus } from '../utils/httpStatus'
 
 export default {
 

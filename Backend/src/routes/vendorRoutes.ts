@@ -1,7 +1,7 @@
 import express from "express";
-import upload from "../middleware/multer.js";
-import { verifyvendor } from "../middleware/vendorJWT.js";
-import vendorController from "../controller/vendorController.js"
+import upload from "../middleware/multer";
+import { verifyvendor } from "../middleware/vendorJWT";
+import vendorController from "../controller/vendorController"
 
 
 const router = express.Router();

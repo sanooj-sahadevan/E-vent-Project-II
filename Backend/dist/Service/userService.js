@@ -1,126 +1,140 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import jsSHA from "jssha";
-import userRepositary from "../Repository/userReop.js";
-import { otpGenerator } from "../utils/otpGenerator.js";
-import { sendEmail } from "../utils/sendEmail.js";
-export default {
-    registerUser: async (user) => {
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jssha_1 = __importDefault(require("jssha"));
+const userReop_js_1 = __importDefault(require("../Repository/userReop.js"));
+const otpGenerator_js_1 = require("../utils/otpGenerator.js");
+const sendEmail_js_1 = require("../utils/sendEmail.js");
+exports.default = {
+    registerUser: (user) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const existingUser = await userRepositary.findUserByEmail(user.email);
+            const existingUser = yield userReop_js_1.default.findUserByEmail(user.email);
             if (existingUser) {
                 if (existingUser.otpVerified) {
                     throw new Error("User already exists and is verified.");
                 }
                 else {
-                    await userRepositary.updateUser(existingUser.email, { otp: user.otp, ...user });
+                    yield userReop_js_1.default.updateUser(existingUser.email, Object.assign({ otp: user.otp }, user));
                     return existingUser;
                 }
             }
-            const hashedPassword = await bcrypt.hash(user.password, 10);
+            const hashedPassword = yield bcrypt_1.default.hash(user.password, 10);
             user.password = hashedPassword;
-            return await userRepositary.createUser(user);
+            return yield userReop_js_1.default.createUser(user);
         }
         catch (error) {
             console.error("Error during user registration:", error);
             throw new Error(`Registration error: ${error.message}`);
         }
-    },
-    loginUser: async (email, password) => {
-        const user = await userRepositary.findUserByEmail(email);
+    }),
+    loginUser: (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield userReop_js_1.default.findUserByEmail(email);
         if (!user) {
             throw new Error("Invalid Email/Password");
         }
-        const isPasswordValid = await bcrypt.compare(password, user.password);
+        const isPasswordValid = yield bcrypt_1.default.compare(password, user.password);
         if (!isPasswordValid) {
             throw new Error("Invalid Email/Password");
         }
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+        const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET, {
             expiresIn: "1h",
         });
         return { user, token };
-    },
-    checkEmail: async (email) => {
-        const user = await userRepositary.findUserByEmail(email);
+    }),
+    checkEmail: (email) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield userReop_js_1.default.findUserByEmail(email);
         if (!user) {
             throw new Error('User not found');
         }
-        const otp = otpGenerator();
-        await sendEmail(email, otp);
+        const otp = (0, otpGenerator_js_1.otpGenerator)();
+        yield (0, sendEmail_js_1.sendEmail)(email, otp);
         return { user, otp };
-    },
-    verifyOtpService: async (email, otp) => {
-        const user = await userRepositary.findUserByEmail(email);
+    }),
+    verifyOtpService: (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield userReop_js_1.default.findUserByEmail(email);
         if (!user) {
             throw new Error("User not found");
         }
         if (user.otp === otp) {
-            await userRepositary.verifyAndSaveUserRepo(email, otp);
+            yield userReop_js_1.default.verifyAndSaveUserRepo(email, otp);
             return "User registered successfully";
         }
         else {
             throw new Error("Invalid OTP");
         }
-    },
-    update: async (email, password) => {
+    }),
+    update: (email, password) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log('Service: Calling repository to update password');
-            const user = await userRepositary.findUserByEmailupdate(email, password);
+            const user = yield userReop_js_1.default.findUserByEmailupdate(email, password);
             return user;
         }
         catch (error) {
             console.error(error);
         }
-    },
-    getAllVendors: async () => {
+    }),
+    getAllVendors: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return await userRepositary.getAllVendors();
+            return yield userReop_js_1.default.getAllVendors();
         }
         catch (error) {
             throw new Error('Error fetching vendors');
         }
-    },
-    getAllDishes: async (vendorId) => {
+    }),
+    getAllDishes: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const result = await userRepositary.fetchfromDBDishes(vendorId);
+            const result = yield userReop_js_1.default.fetchfromDBDishes(vendorId);
             return result;
         }
         catch (error) {
             throw new Error('Error fetching dishes');
         }
-    },
-    getAllAuditorium: async (vendorId) => {
+    }),
+    getAllAuditorium: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log('Service: Fetching auditoriums for vendor:', vendorId);
-            const result = await userRepositary.fetchfromDBAuditorium(vendorId);
+            const result = yield userReop_js_1.default.fetchfromDBAuditorium(vendorId);
             return result;
         }
         catch (error) {
             throw new Error('Error fetching auditoriums');
         }
-    },
-    editUser: async (userDetails) => {
+    }),
+    editUser: (userDetails) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return await userRepositary.userEditFromDB(userDetails);
+            return yield userReop_js_1.default.userEditFromDB(userDetails);
         }
         catch (error) {
             throw new Error('Failed to update user details');
         }
-    },
-    findVendorById: async (vendorId, userId) => {
+    }),
+    findVendorById: (vendorId, userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const vendor = await userRepositary.findVendor(vendorId); // Fetch the vendor details
-            const chat = await userRepositary.findVendorByIdInDb(vendorId, userId); // Fetch or create chat details
+            const vendor = yield userReop_js_1.default.findVendor(vendorId); // Fetch the vendor details
+            const chat = yield userReop_js_1.default.findVendorByIdInDb(vendorId, userId); // Fetch or create chat details
             return { vendor, chatId: chat.chatId }; // Return both vendor and chat ID
         }
         catch (error) {
             throw new Error(`Error finding vendor: ${error}`);
         }
-    },
-    findFoodVendorById: async (vendorId) => {
+    }),
+    findFoodVendorById: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log('Service invoked to find dishes for vendor:', vendorId);
-            const dishes = await userRepositary.findFoodVendorIdInDb(vendorId);
+            const dishes = yield userReop_js_1.default.findFoodVendorIdInDb(vendorId);
             if (!dishes || dishes.length === 0) {
                 throw new Error(`Error finding vendor dishes`);
             }
@@ -131,11 +145,11 @@ export default {
         catch (error) {
             throw new Error(`Error finding vendor dishes: ${error}`);
         }
-    },
-    findAuditoriumVendorById: async (vendorId) => {
+    }),
+    findAuditoriumVendorById: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log('Service invoked to find dishes for vendor:', vendorId);
-            const dishes = await userRepositary.findAuditoriumVendorIdInDb(vendorId);
+            const dishes = yield userReop_js_1.default.findAuditoriumVendorIdInDb(vendorId);
             if (!dishes || dishes.length === 0) {
                 throw new Error(`Error finding vendor dishes`);
             }
@@ -146,10 +160,10 @@ export default {
         catch (error) {
             throw new Error(`Error finding vendor dishes: ${error}`);
         }
-    },
-    findAuditoriumById: async (auditoriumId) => {
+    }),
+    findAuditoriumById: (auditoriumId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const vendor = await userRepositary.findAuditoriumByIdInDb(auditoriumId);
+            const vendor = yield userReop_js_1.default.findAuditoriumByIdInDb(auditoriumId);
             if (!vendor) {
                 throw new Error(`Error finding vendor dishes`);
             }
@@ -160,10 +174,10 @@ export default {
         catch (error) {
             throw new Error(`Error finding vendor: ${error}`);
         }
-    },
-    finddishesById: async (dishesId) => {
+    }),
+    finddishesById: (dishesId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const vendor = await userRepositary.finddishesByIdInDb(dishesId);
+            const vendor = yield userReop_js_1.default.finddishesByIdInDb(dishesId);
             if (!vendor) {
                 throw new Error(`Error finding vendor`);
             }
@@ -172,10 +186,10 @@ export default {
         catch (error) {
             throw new Error(`Error finding vendor: ${error}`);
         }
-    },
-    findEvent: async (bookingId) => {
+    }),
+    findEvent: (bookingId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const bookingDetails = await userRepositary.getBookingDetail(bookingId);
+            const bookingDetails = yield userReop_js_1.default.getBookingDetail(bookingId);
             if (!bookingDetails) {
                 throw new Error(`Booking with id not found`);
             }
@@ -185,8 +199,8 @@ export default {
             console.error("Error fetching booking details:", error);
             throw error;
         }
-    },
-    addTransactionDetails: async (email, PayUOrderId, status) => {
+    }),
+    addTransactionDetails: (email, PayUOrderId, status) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             // const PayUOrderData = await PayURepository.getPayUOrder(PayUOrderId);
             // if (!PayUOrderData) throw new Error("PayU Order Data not found");
@@ -231,40 +245,40 @@ export default {
         catch (error) {
             throw new Error(error.message);
         }
-    },
-    fetchbookingData: async (bookingData) => {
-        const bookedTrip = await userRepositary.createBookedTrip(bookingData);
+    }),
+    fetchbookingData: (bookingData) => __awaiter(void 0, void 0, void 0, function* () {
+        const bookedTrip = yield userReop_js_1.default.createBookedTrip(bookingData);
         console.log(bookedTrip);
         return bookedTrip;
-    },
-    findBookingDetails: async (userId) => {
-        const bookingDetails = await userRepositary.findDetailsByUserId(userId);
+    }),
+    findBookingDetails: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const bookingDetails = yield userReop_js_1.default.findDetailsByUserId(userId);
         if (!bookingDetails) {
             throw new Error(`Booking with id not found`);
         }
         return bookingDetails;
-    },
-    findchangePassword: async (userId, newPassword) => {
+    }),
+    findchangePassword: (userId, newPassword) => __awaiter(void 0, void 0, void 0, function* () {
         console.log('Updating password for userId:', userId);
-        const updatedPassword = await userRepositary.changepassword(userId, newPassword);
+        const updatedPassword = yield userReop_js_1.default.changepassword(userId, newPassword);
         if (!updatedPassword)
             throw new Error(`Booking with id not found`);
         return updatedPassword;
-    },
-    findUserByEmailService: async (email) => {
+    }),
+    findUserByEmailService: (email) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = await userRepositary.findUserByEmail(email);
+            const user = yield userReop_js_1.default.findUserByEmail(email);
             console.log('otp service');
             return { user, email };
         }
         catch (error) {
             console.error(error);
         }
-    },
-    generatePaymentHash: async ({ txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 }) => {
+    }),
+    generatePaymentHash: (_a) => __awaiter(void 0, [_a], void 0, function* ({ txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 }) {
         try {
             const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}|${udf6}|||||${process.env.PAYU_SALT}`;
-            const sha = new jsSHA("SHA-512", "TEXT");
+            const sha = new jssha_1.default("SHA-512", "TEXT");
             sha.update(hashString);
             const hash = sha.getHash("HEX");
             return hash;
@@ -272,7 +286,7 @@ export default {
         catch (error) {
             throw new Error("Error generating payment hash");
         }
-    }
+    })
 };
 // export const registerUser = async (user: any) => {
 //   try {

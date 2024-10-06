@@ -1,18 +1,18 @@
 import express from 'express';
 import cors from 'cors';
-import { connectToMongoDB } from './src/config/config.js';
-import userRoutes from './src/routes/userRoutes.js';
-import vendorRoutes from './src/routes/vendorRoutes.js';
-import adminRoutes from './src/routes/adminRoutes.js';
+import { connectToMongoDB } from './config/config';
+import userRoutes from './routes/userRoutes';
+import vendorRoutes from './routes/vendorRoutes';
+import adminRoutes from './routes/adminRoutes';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import { createServer } from 'http';
 import { Server as serverSocket} from 'socket.io';
-import chatRoutes from './src/routes/chatRoutes.js';
-import { socketHandler } from "./src/utils/socket/chat.js";
-import { errorHandler } from "./src/middleware/errorHandling.js";
-import logger from "./src/utils/logger.js";
+import chatRoutes from './routes/chatRoutes';
+import { socketHandler } from "./utils/socket/chat";
+import { errorHandler } from "./middleware/errorHandling";
+import logger from "./utils/logger";
 
 
 

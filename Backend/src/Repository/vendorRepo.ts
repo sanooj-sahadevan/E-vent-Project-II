@@ -1,11 +1,11 @@
 import mongoose, { Document } from "mongoose";
-import { DishDocument, Dishes } from '../models/dishesModel.js';
-import { Auditorium } from "../models/auditoriumModel.js";
-import { bookedModel } from "../models/bookedEvent.js";
-import { chatModel } from "../models/chatModel.js";
-import { messageModel } from "../models/messageModal.js";
-import { VendorModel } from "../models/vendorModel.js";
-import { Vendor } from '../interfaces/vendor.js'
+import { DishDocument, Dishes } from '../models/dishesModel';
+import { Auditorium } from "../models/auditoriumModel";
+import { bookedModel } from "../models/bookedEvent";
+import { chatModel } from "../models/chatModel";
+import { messageModel } from "../models/messageModal";
+import { VendorModel } from "../models/vendorModel";
+import { Vendor } from '../interfaces/vendor'
 
 
 

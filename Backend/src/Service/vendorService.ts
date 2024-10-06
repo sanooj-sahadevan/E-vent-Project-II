@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
-import vendorRepositary from "../Repository/vendorRepo.js"
-import { Vendor } from "../interfaces/vendor.js";
-import { uploadToS3Bucket } from "../middleware/fileUpload.js";
-import { IMulterFile } from "../utils/type.js";
-import { io } from "../../index.js";
-import { DishDocument } from "../interfaces/dishes.js";
-import { AuditoriumDocument } from "../models/auditoriumModel.js";
+import vendorRepositary from "../Repository/vendorRepo"
+import { Vendor } from "../interfaces/vendor";
+import { uploadToS3Bucket } from "../middleware/fileUpload";
+import { IMulterFile } from "../utils/type";
+import { io } from "../index";
+import { DishDocument } from "../interfaces/dishes";
+import { AuditoriumDocument } from "../models/auditoriumModel";
 
 
 export default {

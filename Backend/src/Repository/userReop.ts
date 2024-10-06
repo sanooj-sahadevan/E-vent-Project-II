@@ -1,12 +1,12 @@
 import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
-import UserModel from "../models/userModel.js";
-import { Dishes } from "../models/dishesModel.js";
-import { Auditorium } from "../models/auditoriumModel.js";
-import { bookedModel } from "../models/bookedEvent.js";
-import { chatModel } from "../models/chatModel.js";
-import { User } from '../interfaces/user.js';
-import { VendorModel } from "../models/vendorModel.js";
+import UserModel from "../models/userModel";
+import { Dishes } from "../models/dishesModel";
+import { Auditorium } from "../models/auditoriumModel";
+import { bookedModel } from "../models/bookedEvent";
+import { chatModel } from "../models/chatModel";
+import { User } from '../interfaces/user';
+import { VendorModel } from "../models/vendorModel";
 
 
 export default {

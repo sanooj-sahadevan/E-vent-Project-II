@@ -1,57 +1,68 @@
-import { Dishes } from '../models/dishesModel.js';
-import { Auditorium } from "../models/auditoriumModel.js";
-import { bookedModel } from "../models/bookedEvent.js";
-import { chatModel } from "../models/chatModel.js";
-import { messageModel } from "../models/messageModal.js";
-import { VendorModel } from "../models/vendorModel.js";
-export default {
-    createVendor: async (vendor) => {
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const dishesModel_js_1 = require("../models/dishesModel.js");
+const auditoriumModel_js_1 = require("../models/auditoriumModel.js");
+const bookedEvent_js_1 = require("../models/bookedEvent.js");
+const chatModel_js_1 = require("../models/chatModel.js");
+const messageModal_js_1 = require("../models/messageModal.js");
+const vendorModel_js_1 = require("../models/vendorModel.js");
+exports.default = {
+    createVendor: (vendor) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const newVendor = new VendorModel(vendor);
+            const newVendor = new vendorModel_js_1.VendorModel(vendor);
             return newVendor.save();
         }
         catch (error) {
             console.error(error);
         }
-    },
-    findVendorByEmail: async (email) => {
+    }),
+    findVendorByEmail: (email) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return VendorModel.findOne({ email });
+            return vendorModel_js_1.VendorModel.findOne({ email });
         }
         catch (error) {
             console.error(error);
         }
-    },
-    updateVendor: async (email, update) => {
+    }),
+    updateVendor: (email, update) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return VendorModel.findOneAndUpdate({ email }, update, { new: true });
+            return vendorModel_js_1.VendorModel.findOneAndUpdate({ email }, update, { new: true });
         }
         catch (error) {
             console.error(error);
         }
-    },
-    findVendorByEmailAndPassword: async (email, password) => {
-        return VendorModel.findOne({ email, password });
-    },
-    vendorAddressFromDB: async () => {
+    }),
+    findVendorByEmailAndPassword: (email, password) => __awaiter(void 0, void 0, void 0, function* () {
+        return vendorModel_js_1.VendorModel.findOne({ email, password });
+    }),
+    vendorAddressFromDB: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return await VendorModel.find().sort({ createdAt: -1 });
+            return yield vendorModel_js_1.VendorModel.find().sort({ createdAt: -1 });
         }
         catch (error) {
             throw new Error('Database query failed');
         }
-    },
-    findVendorByEmailRepo: async (email) => {
+    }),
+    findVendorByEmailRepo: (email) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return await VendorModel.findOne({ email });
+            return yield vendorModel_js_1.VendorModel.findOne({ email });
         }
         catch (error) {
             console.error('Error finding vendor by email:', error);
             throw new Error('Database operation failed');
         }
-    },
+    }),
     // Edit or create vendor in the database
-    editVendorRepo: async (existingVendor, vendorDetails, imageUrl) => {
+    editVendorRepo: (existingVendor, vendorDetails, imageUrl) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             if (existingVendor) {
                 // Update existing vendor details
@@ -70,16 +81,13 @@ export default {
                     existingVendor.password = vendorDetails.password;
                 }
                 // Save updated vendor
-                await existingVendor.save();
+                yield existingVendor.save();
                 return existingVendor;
             }
             else {
                 // If vendor doesn't exist, create a new one
-                const newVendor = new VendorModel({
-                    ...vendorDetails,
-                    profileImage: imageUrl || vendorDetails.profileImage
-                });
-                await newVendor.save();
+                const newVendor = new vendorModel_js_1.VendorModel(Object.assign(Object.assign({}, vendorDetails), { profileImage: imageUrl || vendorDetails.profileImage }));
+                yield newVendor.save();
                 return newVendor;
             }
         }
@@ -87,51 +95,51 @@ export default {
             console.error('Error updating vendor:', error);
             throw new Error('Database operation failed');
         }
-    },
+    }),
     // export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
     //   try {
     //   } catch (error: any) {
     //     throw new Error(error.message);
     //   }
     // };
-    findVendorByIdInDb: async (vendorId) => {
-        return await VendorModel.findById(vendorId);
-    },
-    findAuditoriumByIdInDb: async (auditoriumId) => {
+    findVendorByIdInDb: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
+        return yield vendorModel_js_1.VendorModel.findById(vendorId);
+    }),
+    findAuditoriumByIdInDb: (auditoriumId) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(auditoriumId);
-        let result = await Auditorium.findById(auditoriumId);
+        let result = yield auditoriumModel_js_1.Auditorium.findById(auditoriumId);
         console.log(result);
         return result;
-    },
-    findDishesByIdInDb: async (dishesId) => {
+    }),
+    findDishesByIdInDb: (dishesId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return await Dishes.findById(dishesId);
+            return yield dishesModel_js_1.Dishes.findById(dishesId);
         }
         catch (error) {
             console.error(error);
         }
-    },
-    findFoodVendorIdInDb: async (vendorId) => {
+    }),
+    findFoodVendorIdInDb: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const result = await Dishes.find({ vendorId: vendorId });
+            const result = yield dishesModel_js_1.Dishes.find({ vendorId: vendorId });
             return result;
         }
         catch (error) {
             console.error(error);
         }
-    },
-    findAuditoriumVendorIdInDb: async (vendorId) => {
+    }),
+    findAuditoriumVendorIdInDb: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const res = await Auditorium.find({ vendorId: vendorId });
+            const res = yield auditoriumModel_js_1.Auditorium.find({ vendorId: vendorId });
             return res;
         }
         catch (error) {
             console.error(error);
         }
-    },
-    createDishes: async (dishesData) => {
+    }),
+    createDishes: (dishesData) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const dish = new Dishes({
+            const dish = new dishesModel_js_1.Dishes({
                 vendorId: dishesData.vendorId,
                 dishesName: dishesData.data.dishesName,
                 description: dishesData.data.description,
@@ -142,7 +150,7 @@ export default {
                 status: dishesData.data.status,
                 images: dishesData.images,
             });
-            const savedDish = await dish.save();
+            const savedDish = yield dish.save();
             console.log("Saved Dish: ", savedDish);
             return {
                 savedDish,
@@ -153,10 +161,10 @@ export default {
             console.error("Error saving dish: ", error);
             throw error;
         }
-    },
-    createAuditorium: async (auditoriumData) => {
+    }),
+    createAuditorium: (auditoriumData) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const auditorium = new Auditorium({
+            const auditorium = new auditoriumModel_js_1.Auditorium({
                 vendorId: auditoriumData.vendorId,
                 auditoriumName: auditoriumData.data.auditoriumName,
                 description: auditoriumData.data.description,
@@ -167,7 +175,7 @@ export default {
                 images: auditoriumData.image ? [auditoriumData.image] : [], // Handle single image as array
                 capacity: auditoriumData.data.capacity,
             });
-            const savedAuditorium = await auditorium.save();
+            const savedAuditorium = yield auditorium.save();
             console.log("Saved Auditorium: ", savedAuditorium);
             return {
                 savedAuditorium,
@@ -178,41 +186,41 @@ export default {
             console.error("Error saving auditorium: ", error);
             throw error;
         }
-    },
-    softDeleteDishRepo: async (dishId) => {
+    }),
+    softDeleteDishRepo: (dishId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const dish = await Dishes.findById(dishId);
+            const dish = yield dishesModel_js_1.Dishes.findById(dishId);
             if (!dish || dish.isDeleted) {
                 return null;
             }
             dish.isDeleted = true;
-            await dish.save();
+            yield dish.save();
             return dish;
         }
         catch (error) {
             console.error(`Error soft-deleting dish: ${error}`);
             throw error;
         }
-    },
-    softDeleteAuditoriumRepo: async (auditoriumId) => {
+    }),
+    softDeleteAuditoriumRepo: (auditoriumId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const auditorium = await Auditorium.findById(auditoriumId);
+            const auditorium = yield auditoriumModel_js_1.Auditorium.findById(auditoriumId);
             console.log(auditorium);
             if (!auditorium || auditorium.isDeleted) {
                 return null;
             }
             auditorium.isDeleted = true;
-            await auditorium.save();
+            yield auditorium.save();
             return auditorium;
         }
         catch (error) {
             console.error(`Error soft-deleting auditorium: ${error}`);
             throw error;
         }
-    },
-    findDetailsByvendorId: async (vendorId) => {
+    }),
+    findDetailsByvendorId: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const results = await bookedModel
+            const results = yield bookedEvent_js_1.bookedModel
                 .find({ vendorId: vendorId })
                 .populate('dishesId')
                 .populate('userId')
@@ -225,20 +233,20 @@ export default {
             console.error("Database error:", error);
             throw new Error("Database operation failed.");
         }
-    },
-    chatDB: async (vendorId) => {
+    }),
+    chatDB: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const chats = await chatModel.find({ vendorId }).select('_id');
+            const chats = yield chatModel_js_1.chatModel.find({ vendorId }).select('_id');
             return chats;
         }
         catch (error) {
             console.error("Error fetching chats from the database:", error);
             throw error;
         }
-    },
-    messageDB: async (chatIds) => {
+    }),
+    messageDB: (chatIds) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const unreadCount = await messageModel.countDocuments({
+            const unreadCount = yield messageModal_js_1.messageModel.countDocuments({
                 chatId: { $in: chatIds },
                 senderModel: "User",
                 isRead: false,
@@ -249,7 +257,7 @@ export default {
             console.error("Error fetching unread messages count from the database:", error);
             throw error;
         }
-    },
+    }),
 };
 // export const createVendor = async (vendor: Vendor) => {
 //   try {

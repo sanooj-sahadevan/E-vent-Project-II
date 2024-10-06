@@ -1,28 +1,42 @@
-import mongoose from "mongoose";
-import bcrypt from "bcrypt";
-import UserModel from "../models/userModel.js";
-import { Dishes } from "../models/dishesModel.js";
-import { Auditorium } from "../models/auditoriumModel.js";
-import { bookedModel } from "../models/bookedEvent.js";
-import { chatModel } from "../models/chatModel.js";
-import { VendorModel } from "../models/vendorModel.js";
-export default {
-    createUser: async (user) => {
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const mongoose_1 = __importDefault(require("mongoose"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const userModel_js_1 = __importDefault(require("../models/userModel.js"));
+const dishesModel_js_1 = require("../models/dishesModel.js");
+const auditoriumModel_js_1 = require("../models/auditoriumModel.js");
+const bookedEvent_js_1 = require("../models/bookedEvent.js");
+const chatModel_js_1 = require("../models/chatModel.js");
+const vendorModel_js_1 = require("../models/vendorModel.js");
+exports.default = {
+    createUser: (user) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const newUser = new UserModel(user);
+            const newUser = new userModel_js_1.default(user);
             return newUser.save();
         }
         catch (error) {
             console.error(error);
         }
-    },
-    verifyAndSaveUserRepo: async (email, otp) => {
+    }),
+    verifyAndSaveUserRepo: (email, otp) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = await UserModel.findOne({ email, isBlocked: false }).exec();
+            const user = yield userModel_js_1.default.findOne({ email, isBlocked: false }).exec();
             if (user && user.otp === otp) {
                 user.otp = undefined;
                 user.otpVerified = true;
-                await user.save();
+                yield user.save();
                 return user;
             }
             throw new Error("Invalid OTP");
@@ -31,27 +45,27 @@ export default {
             console.error('Error saving user:', error);
             throw new Error('Database Error');
         }
-    },
-    findUserByEmail: async (email) => {
+    }),
+    findUserByEmail: (email) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return await UserModel.findOne({ email, isBlocked: false }).exec();
+            return yield userModel_js_1.default.findOne({ email, isBlocked: false }).exec();
         }
         catch (error) {
             console.error('Error finding user by email:', error);
             throw new Error('Database Error');
         }
-    },
-    findUserById: async (userId) => {
+    }),
+    findUserById: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return UserModel.findById(userId);
+            return userModel_js_1.default.findById(userId);
         }
         catch (error) {
             console.error(error);
         }
-    },
-    userEditFromDB: async (userDetails) => {
+    }),
+    userEditFromDB: (userDetails) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const existingUser = await UserModel.findOne({ email: userDetails.email });
+            const existingUser = yield userModel_js_1.default.findOne({ email: userDetails.email });
             if (existingUser) {
                 existingUser.username = userDetails.username;
                 existingUser.phone = userDetails.phone;
@@ -61,12 +75,12 @@ export default {
                 existingUser.district = userDetails.district;
                 existingUser.pincode = userDetails.pincode;
                 existingUser.reviews = userDetails.reviews;
-                await existingUser.save();
+                yield existingUser.save();
                 return existingUser;
             }
             else {
-                const newUser = new UserModel(userDetails);
-                await newUser.save();
+                const newUser = new userModel_js_1.default(userDetails);
+                yield newUser.save();
                 return newUser;
             }
         }
@@ -74,56 +88,56 @@ export default {
             console.error('Error updating user:', error);
             throw new Error('Database operation failed');
         }
-    },
-    updateUser: async (email, update) => {
+    }),
+    updateUser: (email, update) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return UserModel.findOneAndUpdate({ email }, update, { new: true });
+            return userModel_js_1.default.findOneAndUpdate({ email }, update, { new: true });
         }
         catch (error) {
             console.error(error);
         }
-    },
-    findUserByEmailupdate: async (email, password) => {
+    }),
+    findUserByEmailupdate: (email, password) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = await UserModel.findOne({ email });
+            const user = yield userModel_js_1.default.findOne({ email });
             if (!user) {
                 throw new Error("User not found");
             }
             console.log(user.email);
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = yield bcrypt_1.default.hash(password, 10);
             user.password = hashedPassword;
-            await user.save();
+            yield user.save();
             return user;
         }
         catch (error) {
             console.error(error);
         }
-    },
-    getAllVendors: async () => {
+    }),
+    getAllVendors: () => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            return await VendorModel.find().sort({ createdAt: -1 });
+            return yield vendorModel_js_1.VendorModel.find().sort({ createdAt: -1 });
         }
         catch (error) {
             throw new Error('Error fetching vendors from the database');
         }
-    },
-    fetchfromDBDishes: async (vendorId) => {
+    }),
+    fetchfromDBDishes: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const objectId = new mongoose.Types.ObjectId(vendorId);
-            const result = await Auditorium.find(objectId);
+            const objectId = new mongoose_1.default.Types.ObjectId(vendorId);
+            const result = yield auditoriumModel_js_1.Auditorium.find(objectId);
             return result;
         }
         catch (error) {
             console.error('Error fetching Dishes from the database:', error);
             throw new Error('Error fetching Dishes from the database');
         }
-    },
-    fetchfromDBAuditorium: async (vendorId) => {
+    }),
+    fetchfromDBAuditorium: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log('Fetching auditorium for vendor ID:', vendorId);
-            const objectId = new mongoose.Types.ObjectId(vendorId);
+            const objectId = new mongoose_1.default.Types.ObjectId(vendorId);
             console.log(objectId);
-            const result = await Auditorium.findById(objectId);
+            const result = yield auditoriumModel_js_1.Auditorium.findById(objectId);
             console.log('Fetched auditorium:', result);
             return result;
         }
@@ -131,10 +145,10 @@ export default {
             console.error('Error fetching auditorium from the database:', error);
             throw new Error('Error fetching auditorium from the database');
         }
-    },
-    findVendor: async (vendorId) => {
+    }),
+    findVendor: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const vendor = await VendorModel.findById(vendorId);
+            const vendor = yield vendorModel_js_1.VendorModel.findById(vendorId);
             if (!vendor) {
                 throw new Error("Vendor not found");
             }
@@ -144,16 +158,16 @@ export default {
             console.error("Error in repository:", error);
             throw error;
         }
-    },
-    findVendorByIdInDb: async (vendorId, userId) => {
+    }),
+    findVendorByIdInDb: (vendorId, userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let chat = await chatModel.findOne({ userId, vendorId });
+            let chat = yield chatModel_js_1.chatModel.findOne({ userId, vendorId });
             if (!chat) {
-                chat = new chatModel({
+                chat = new chatModel_js_1.chatModel({
                     userId,
                     vendorId,
                 });
-                await chat.save();
+                yield chat.save();
             }
             return { chatId: chat._id };
         }
@@ -161,50 +175,50 @@ export default {
             console.error("Error in repository:", error);
             throw error;
         }
-    },
-    findFoodVendorIdInDb: async (vendorId) => {
+    }),
+    findFoodVendorIdInDb: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const objectId = new mongoose.Types.ObjectId(vendorId);
-            const result = await Dishes.find({ vendorId: objectId });
+            const objectId = new mongoose_1.default.Types.ObjectId(vendorId);
+            const result = yield dishesModel_js_1.Dishes.find({ vendorId: objectId });
             return result;
         }
         catch (error) {
             console.error('Error fetching dishes for vendor:', error);
             throw new Error(`Error fetching dishes: ${error}`);
         }
-    },
-    findAuditoriumVendorIdInDb: async (vendorId) => {
+    }),
+    findAuditoriumVendorIdInDb: (vendorId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const objectId = new mongoose.Types.ObjectId(vendorId);
-            const result = await Auditorium.find({ vendorId: objectId });
+            const objectId = new mongoose_1.default.Types.ObjectId(vendorId);
+            const result = yield auditoriumModel_js_1.Auditorium.find({ vendorId: objectId });
             return result;
         }
         catch (error) {
             console.error('Error fetching dishes for vendor:', error);
             throw new Error(`Error fetching dishes: ${error}`);
         }
-    },
-    findAuditoriumByIdInDb: async (auditoriumId) => {
+    }),
+    findAuditoriumByIdInDb: (auditoriumId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let result = await Auditorium.findById(auditoriumId);
+            let result = yield auditoriumModel_js_1.Auditorium.findById(auditoriumId);
             return result;
         }
         catch (error) {
             console.error(error);
         }
-    },
-    finddishesByIdInDb: async (dishesId) => {
+    }),
+    finddishesByIdInDb: (dishesId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            let result = await Dishes.findById(dishesId);
+            let result = yield dishesModel_js_1.Dishes.findById(dishesId);
             return result;
         }
         catch (error) {
             console.error(error);
         }
-    },
-    getBookingDetail: async (id) => {
+    }),
+    getBookingDetail: (id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const bookedData = await bookedModel
+            const bookedData = yield bookedEvent_js_1.bookedModel
                 .findById(id);
             return bookedData;
         }
@@ -212,12 +226,12 @@ export default {
             console.error("Error fetching booking details:", error);
             throw error;
         }
-    },
-    createBookedTrip: async (bookingData) => {
+    }),
+    createBookedTrip: (bookingData) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log('save karo');
             const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, date, category, payment_source } = bookingData;
-            const bookedData = await bookedModel.create({
+            const bookedData = yield bookedEvent_js_1.bookedModel.create({
                 vendorId,
                 txnId: txnid,
                 paymentStatus: status,
@@ -236,21 +250,21 @@ export default {
             console.error(error);
             return null;
         }
-    },
-    savechatDB: async (chat) => {
+    }),
+    savechatDB: (chat) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log('Saving chat to DB');
-            const newChat = new chatModel({ message: chat });
-            return await newChat.save();
+            const newChat = new chatModel_js_1.chatModel({ message: chat });
+            return yield newChat.save();
         }
         catch (error) {
             console.error("Database error:", error);
             throw new Error("Database operation failed.");
         }
-    },
-    findDetailsByUserId: async (userId) => {
+    }),
+    findDetailsByUserId: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const results = await bookedModel
+            const results = yield bookedEvent_js_1.bookedModel
                 .find({ userId: userId })
                 .populate('dishesId')
                 .populate('userId')
@@ -262,23 +276,23 @@ export default {
             console.error("Database error:", error);
             throw new Error("Database operation failed.");
         }
-    },
-    changepassword: async (userId, newPassword) => {
+    }),
+    changepassword: (userId, newPassword) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const user = await UserModel.findById(userId);
+            const user = yield userModel_js_1.default.findById(userId);
             if (!user) {
                 throw new Error("User not found");
             }
-            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            const hashedPassword = yield bcrypt_1.default.hash(newPassword, 10);
             user.password = hashedPassword;
-            await user.save();
+            yield user.save();
             return user;
         }
         catch (error) {
             console.error(error);
             throw error;
         }
-    }
+    })
 };
 // export const createUser = async (user: User) => {
 //   try {

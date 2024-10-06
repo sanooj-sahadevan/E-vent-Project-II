@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import userService from "../Service/vendorService.js"
+import userService from "../Service/vendorService"
 
-import { HttpStatus } from "../utils/httpStatus.js";
-import { IMulterFile } from "../utils/type.js";
-import { otpGenerator } from "../utils/otpGenerator.js";
-import { sendEmail } from "../utils/sendEmail.js";
+import { HttpStatus } from "../utils/httpStatus";
+import { IMulterFile } from "../utils/type";
+import { otpGenerator } from "../utils/otpGenerator";
+import { sendEmail } from "../utils/sendEmail";
 
 
 

@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import {
   savechatService, companyAddMessageService
-} from "../Service/chatService.js";
-import { HttpStatus } from '../utils/httpStatus.js'
-import { messageModel } from "../models/messageModal.js";
-import { chatModel } from "../models/chatModel.js";
-import { io } from "../../index.js"; 
+} from "../Service/chatService";
+import { HttpStatus } from '../utils/httpStatus'
+import { messageModel } from "../models/messageModal";
+import { chatModel } from "../models/chatModel";
+import { io } from "../index.js"; 
 import mongoose from "mongoose";
 
 

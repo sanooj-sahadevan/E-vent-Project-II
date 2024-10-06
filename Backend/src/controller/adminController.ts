@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import adminService from "../Service/adminService.js";
-import { HttpStatus } from "../utils/httpStatus.js";
+import adminService from "../Service/adminService";
+import { HttpStatus } from "../utils/httpStatus";
 
 export default {
   adminlogin: async (
