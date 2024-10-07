@@ -6,15 +6,14 @@ import { IAdminRepository } from '../interfaces/repository/adminRepository';
 export class AdminService {
 
   private adminRepository: IAdminRepository
-
   constructor(adminRepository: IAdminRepository) {
     this.adminRepository = adminRepository
   }
 
-  async loginUser (
+  async loginUser(
     email: string,
     password: string
-  )  {
+  ) {
     try {
       if (process.env.ADMIN_EMAIL !== email) {
         console.error(Error);
@@ -38,7 +37,7 @@ export class AdminService {
     }
   }
 
-  async getAllVendorsService ()  {
+  async getAllVendorsService() {
     try {
       return await this.adminRepository.getAllVendorsFromDB();
     } catch (error) {
@@ -46,7 +45,7 @@ export class AdminService {
     }
   }
 
-  async getAllBookingsService ()  {
+  async getAllBookingsService() {
     try {
       return await this.adminRepository.getAllBookingsFromDB();
     } catch (error) {
@@ -54,7 +53,7 @@ export class AdminService {
     }
   }
 
-  async blockVendor (
+  async blockVendor(
     vendorId: string
   ) {
     const vendor = await this.adminRepository.findVendorById(vendorId);
@@ -70,9 +69,9 @@ export class AdminService {
     return this.adminRepository.blockVendorById(vendorId);
   }
 
-  async unblockVendor (
+  async unblockVendor(
     vendorId: string
-  )  {
+  ) {
     const vendor = await this.adminRepository.findVendorById(vendorId);
     if (!vendor) {
       console.error(`Vendor with ID ${vendorId} not found`);
@@ -87,12 +86,12 @@ export class AdminService {
     return this.adminRepository.unblockVendorById(vendorId);
   }
 
-  async getAllUsers ()  {
+  async getAllUsers() {
     return this.adminRepository.findAllUsers();
   }
 
-  async blockUser (userId: string)  {
-    const user = await this.adminRepository.findUserById(userId); 
+  async blockUser(userId: string) {
+    const user = await this.adminRepository.findUserById(userId);
     if (!user) {
       throw new Error("User not found");
     }
@@ -104,7 +103,7 @@ export class AdminService {
     return this.adminRepository.blockUserById(userId);
   }
 
-  async unblockUser (userId: string)  {
+  async unblockUser(userId: string) {
     const user = await this.adminRepository.findUserById(userId);
     if (!user) {
       throw new Error("User not found");
@@ -117,7 +116,7 @@ export class AdminService {
     return this.adminRepository.unblockUserById(userId);
   }
 
-  async getDashboardData () {
+  async getDashboardData() {
     try {
 
       const totalEvents = await this.adminRepository.getTotalEvents();

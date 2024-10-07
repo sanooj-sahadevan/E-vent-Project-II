@@ -9,7 +9,7 @@ export const savechatService = async (text: string, userId: string, vendorId: st
       return chatService;  
   } catch (error) {
       console.error("Service error:", error);
-      throw new Error("Could not save chat.");  // Throw an error if there's an issue
+      throw new Error("Could not save chat."); 
   }
 };
 
