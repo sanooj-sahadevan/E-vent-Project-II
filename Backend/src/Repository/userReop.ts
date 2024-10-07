@@ -7,8 +7,342 @@ import { bookedModel } from "../models/bookedEvent";
 import { chatModel } from "../models/chatModel";
 import { User } from '../interfaces/user';
 import { VendorModel } from "../models/vendorModel";
+import { IUserRepository } from "../interfaces/repository/userRepository";
+
+export class UserRepository implements IUserRepository {
+  constructor() {
+  }
+
+  async createUser(user: User): Promise<any> {
+    try {
+      const newUser = new UserModel(user);
+      return await newUser.save();
+    } catch (error) {
+      throw new Error('Database Error');
+    }
+  }
+
+  async findUserByEmail(email: string) {
+    try {
+      return await UserModel.findOne({ email, isBlocked: false }).exec();
+    } catch (error) {
+      console.error('Error finding user by email:', error);
+      throw new Error('Database Error');
+    }
+  }
+
+  async verifyAndSaveUserRepo(email: string, otp: string) {
+    try {
+      const user = await UserModel.findOne({ email, isBlocked: false }).exec();
+      if (user && user.otp === otp) {
+        user.otp = undefined;
+        user.otpVerified = true;
+        await user.save();
+        return user;
+      }
+      throw new Error("Invalid OTP");
+    } catch (error) {
+      console.error('Error saving user:', error);
+      throw new Error('Database Error');
+    }
+  }
+
+  async findUserById(userId: string) {
+    try {
+      return UserModel.findById(userId);
+    } catch (error) {
+      console.error(error);
+
+    }
+  }
+
+  async userEditFromDB(userDetails: User): Promise<User> {
+    try {
+      const existingUser = await UserModel.findOne({ email: userDetails.email });
+      if (existingUser) {
+        existingUser.username = userDetails.username;
+        existingUser.phone = userDetails.phone;
+        existingUser.profileImage = userDetails.profileImage;
+        existingUser.address = userDetails.address;
+        existingUser.state = userDetails.state;
+        existingUser.district = userDetails.district;
+        existingUser.pincode = userDetails.pincode;
+        existingUser.reviews = userDetails.reviews;
+        await existingUser.save();
+        return existingUser;
+      } else {
+        const newUser = new UserModel(userDetails);
+        await newUser.save();
+        return newUser;
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+      throw new Error('Database operation failed');
+    }
+  }
 
 
+  async updateUser(email: string, update: Partial<User>) {
+    try {
+      return UserModel.findOneAndUpdate({ email }, update, { new: true });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async findUserByEmailupdate(email: string, password: string) {
+    try {
+      const user = await UserModel.findOne({ email });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+      console.log(user.email);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+      await user.save();
+      return user;
+    } catch (error) {
+      console.error(error);
+
+    }
+  }
+
+  async getAllVendors() {
+    try {
+      return await VendorModel.find().sort({ createdAt: -1 });
+    } catch (error) {
+      throw new Error('Error fetching vendors from the database');
+    }
+  }
+
+
+
+
+
+  async fetchfromDBDishes(vendorId: string): Promise<any | null> {
+    try {
+      const objectId = new mongoose.Types.ObjectId(vendorId);
+      const result = await Auditorium.find(objectId);
+      return result;
+    } catch (error) {
+      console.error('Error fetching Dishes from the database:', error);
+      throw new Error('Error fetching Dishes from the database');
+    }
+
+  }
+
+  async fetchfromDBAuditorium(vendorId: string): Promise<any | null> {
+    try {
+      console.log('Fetching auditorium for vendor ID:', vendorId);
+
+      const objectId = new mongoose.Types.ObjectId(vendorId);
+      console.log(objectId);
+
+      const result = await Auditorium.findById(objectId);
+
+      console.log('Fetched auditorium:', result);
+
+      return result;
+    } catch (error) {
+      console.error('Error fetching auditorium from the database:', error);
+      throw new Error('Error fetching auditorium from the database');
+    }
+  }
+
+  async findVendor(vendorId: string) {
+    try {
+      const vendor = await VendorModel.findById(vendorId);
+      if (!vendor) {
+        throw new Error("Vendor not found");
+      }
+      return vendor;
+    } catch (error) {
+      console.error("Error in repository:", error);
+      throw error;
+    }
+  }
+
+
+  async findVendorByIdInDb(vendorId: string, userId: string) {
+    try {
+      let chat = await chatModel.findOne({ userId, vendorId });
+      if (!chat) {
+        chat = new chatModel({
+          userId,
+          vendorId,
+        });
+        await chat.save();
+      }
+      return { chatId: chat._id };
+    } catch (error) {
+      console.error("Error in repository:", error);
+      throw error;
+    }
+  }
+
+
+
+  async findFoodVendorIdInDb(vendorId: string) {
+    try {
+      const objectId = new mongoose.Types.ObjectId(vendorId);
+      const result = await Dishes.find({ vendorId: objectId });
+      return result;
+    } catch (error) {
+      console.error('Error fetching dishes for vendor:', error);
+      throw new Error(`Error fetching dishes: ${error}`);
+    }
+  }
+
+  async findAuditoriumVendorIdInDb(vendorId: string) {
+    try {
+      const objectId = new mongoose.Types.ObjectId(vendorId);
+
+      const result = await Auditorium.find({ vendorId: objectId });
+      return result
+    } catch (error) {
+      console.error('Error fetching dishes for vendor:', error);
+      throw new Error(`Error fetching dishes: ${error}`);
+    }
+  }
+
+
+  async findAuditoriumByIdInDb(auditoriumId: string) {
+
+    try {
+      let result = await Auditorium.findById(auditoriumId);
+      return result
+    } catch (error) {
+      console.error(error);
+
+    }
+  }
+
+  async finddishesByIdInDb(dishesId: string) {
+    try {
+      let result = await Dishes.findById(dishesId);
+      return result
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async getBookingDetail(id: string) {
+    try {
+
+      const bookedData = await bookedModel
+        .findById(id)
+      return bookedData;
+    } catch (error) {
+      console.error("Error fetching booking details:", error);
+      throw error;
+    }
+  }
+
+
+  async createBookedTrip(bookingData: any) {
+    try {
+      console.log('save karo');
+
+      const {
+        vendorId,
+        txnid,
+        status,
+        amount,
+        userId,
+        auditoriumId,
+        dishesId,
+        date,
+        category,
+        payment_source
+      } = bookingData;
+
+      const bookedData = await bookedModel.create({
+        vendorId,
+        txnId: txnid,
+        paymentStatus: status,
+        totalAmount: amount,
+        userId,
+        auditoriumId,
+        dishesId,
+        date,
+        category,
+        payment_source,
+        createdAt: new Date(),
+      });
+
+      return bookedData;
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  async savechatDB(chat: string) {
+    try {
+      console.log('Saving chat to DB');
+
+      const newChat = new chatModel({ message: chat });
+      return await newChat.save();
+    } catch (error) {
+      console.error("Database error:", error);
+      throw new Error("Database operation failed.");
+    }
+  }
+
+
+  async findDetailsByUserId(userId: string) {
+    try {
+      const results = await bookedModel
+        .find({ userId: userId })
+        .populate('dishesId')
+        .populate('userId')
+        .populate('vendorId')
+        .populate('auditoriumId');
+      return results;
+    } catch (error) {
+      console.error("Database error:", error);
+      throw new Error("Database operation failed.");
+    }
+  }
+
+
+  async changepassword(userId: string, newPassword: string) {
+    try {
+      const user = await UserModel.findById(userId);
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+
+      await user.save();
+      return user;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 export default {
  createUser : async (user: User) => {
   try {
@@ -115,6 +449,18 @@ getAllVendors : async () => {
     }
   },
 
+
+
+
+
+
+
+
+
+
+
+
+
  fetchfromDBDishes : async (vendorId: string): Promise<any | null> => {
   try {
     const objectId = new mongoose.Types.ObjectId(vendorId);
@@ -152,7 +498,7 @@ fetchfromDBAuditorium : async (vendorId: string): Promise<any | null> => {
     if (!vendor) {
       throw new Error("Vendor not found");
     }
-    return vendor; 
+    return vendor;
   } catch (error) {
     console.error("Error in repository:", error);
     throw error;
@@ -169,7 +515,7 @@ fetchfromDBAuditorium : async (vendorId: string): Promise<any | null> => {
       });
       await chat.save();
     }
-    return { chatId: chat._id }; 
+    return { chatId: chat._id };
   } catch (error) {
     console.error("Error in repository:", error);
     throw error;
@@ -321,6 +667,27 @@ changepassword : async (userId: string, newPassword: string) => {
   }
 }
 }
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // export const createUser = async (user: User) => {
@@ -474,7 +841,7 @@ changepassword : async (userId: string, newPassword: string) => {
 //     if (!vendor) {
 //       throw new Error("Vendor not found");
 //     }
-//     return vendor; 
+//     return vendor;
 //   } catch (error) {
 //     console.error("Error in repository:", error);
 //     throw error;
@@ -491,7 +858,7 @@ changepassword : async (userId: string, newPassword: string) => {
 //       });
 //       await chat.save();
 //     }
-//     return { chatId: chat._id }; 
+//     return { chatId: chat._id };
 //   } catch (error) {
 //     console.error("Error in repository:", error);
 //     throw error;

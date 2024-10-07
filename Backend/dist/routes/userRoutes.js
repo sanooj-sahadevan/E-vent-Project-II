@@ -1,32 +1,34 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const userController_1 = __importDefault(require("../controller/userController"));
+const userController_1 = require("../controller/userController");
+const userService_1 = require("../Service/userService");
+const userReop_1 = require("../Repository/userReop");
 const router = (0, express_1.Router)();
-router.post("/signup", userController_1.default.register);
-router.post("/verifyOtp", userController_1.default.verifyOtp);
-router.post("/login", userController_1.default.login);
-router.get('/vendors', userController_1.default.vendorList);
-router.get('/dishlist', userController_1.default.dishlist);
-router.get('/auditoriumlist', userController_1.default.auditoriumlist);
-router.patch('/edituserDetails', userController_1.default.editUserDetails);
-router.post('/forgottenpassword', userController_1.default.forgottenPassword);
-router.post('/updatePassword', userController_1.default.updatePassword);
-router.get('/fetchVendorDetails', userController_1.default.fetchVendorDetails);
-router.get('/fetchFoodDetails/:vendorId', userController_1.default.fetchFoodDetails);
-router.get('/fetchAuditoriumDetails/:vendorId', userController_1.default.fetchAuditoriumDetails);
+const userRepository = new userReop_1.UserRepository();
+const userService = new userService_1.UserService(userRepository);
+const userController = new userController_1.UserController(userService);
+router.post("/signup", userController.register.bind(userController));
+router.post("/verifyOtp", userController.verifyOtp.bind(userController));
+router.post("/login", userController.login.bind(userController));
+router.get('/vendors', userController.vendorList.bind(userController));
+router.get('/dishlist', userController.dishlist.bind(userController));
+router.get('/auditoriumlist', userController.auditoriumlist.bind(userController));
+router.patch('/edituserDetails', userController.editUserDetails.bind(userController));
+router.post('/forgottenpassword', userController.forgottenPassword.bind(userController));
+router.post('/updatePassword', userController.updatePassword.bind(userController));
+router.get('/fetchVendorDetails', userController.fetchVendorDetails.bind(userController));
+router.get('/fetchFoodDetails/:vendorId', userController.fetchFoodDetails.bind(userController));
+router.get('/fetchAuditoriumDetails/:vendorId', userController.fetchAuditoriumDetails.bind(userController));
 //book event
-router.get("/bookEvent/:id", userController_1.default.fetchBookedData);
+router.get("/bookEvent/:id", userController.fetchBookedData.bind(userController));
 // info
-router.get('/fetchauditorium/:auditoriumId', userController_1.default.fetchauditorium);
-router.get('/fetchdishes/:dishesId', userController_1.default.fetchdishes);
+router.get('/fetchauditorium/:auditoriumId', userController.fetchauditorium.bind(userController));
+router.get('/fetchdishes/:dishesId', userController.fetchdishes.bind(userController));
 // payment
-router.post('/payment', userController_1.default.payment);
-router.post('/addTransaction', userController_1.default.addTransaction);
-router.post('/response/saveData', userController_1.default.saveData);
-router.get('/fetchBookingDetails/:userId', userController_1.default.fetchBookingDetails);
-router.patch('/changePassword/:id', userController_1.default.changePassword);
+router.post('/payment', userController.payment.bind(userController));
+router.post('/addTransaction', userController.addTransaction.bind(userController));
+router.post('/response/saveData', userController.saveData.bind(userController));
+router.get('/fetchBookingDetails/:userId', userController.fetchBookingDetails.bind(userController));
+router.patch('/changePassword/:id', userController.changePassword.bind(userController));
 exports.default = router;

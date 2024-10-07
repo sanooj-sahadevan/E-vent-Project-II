@@ -5,19 +5,24 @@ import { User } from "../interfaces/user";
 import UserModel from "../models/userModel";
 import {Admin} from "../interfaces/admin"
 import { VendorModel } from "../models/vendorModel";
+import { IAdminRepository } from "../interfaces/repository/adminRepository";
 
 
 
-export default {
-findUserByEmailAdmin : async (
+export class AdminRepository implements IAdminRepository {
+  constructor() {
+  }
+  
+  
+  async findUserByEmailAdmin  (
     email: string
-  ): Promise<Admin | null> => {
+  ): Promise<Admin | null>  {
     const admin = await AdminModel.findOne({ email });
     return admin ? admin : null;
-  },
+  }
   
   
-  getAllVendorsFromDB : async () => {
+  async getAllVendorsFromDB  () {
     try {
       return VendorModel.find().sort({ createdAt: -1 })
   
@@ -25,10 +30,9 @@ findUserByEmailAdmin : async (
       console.error(error);
   
     }
-  },
+  }
   
-  
-  getAllBookingsFromDB : async () => {
+  async getAllBookingsFromDB  (){
   
     try {
       return bookedModel
@@ -41,24 +45,24 @@ findUserByEmailAdmin : async (
   
     }
   
-  },
+  }
   
   
   
   
-  findVendorById : async (vendorId: string) => {
+  async findVendorById  (vendorId: string)  {
     try {
       return VendorModel.findById(vendorId);
     } catch (error) {
       console.error(error);
   
     }
-  },
+  }
   
   
   
   
-  blockVendorById : async (vendorId: string) => {
+  async  blockVendorById  (vendorId: string)  {
     try {
       return VendorModel.findByIdAndUpdate(vendorId, { isBlocked: true }, { new: true });
   
@@ -66,9 +70,9 @@ findUserByEmailAdmin : async (
       console.error(error);
       
     }
-  },
+  }
   
-  unblockVendorById : async (vendorId: string) => {
+  async unblockVendorById  (vendorId: string)  {
     try {
       return VendorModel.findByIdAndUpdate(vendorId, { isBlocked: false }, { new: true });
   
@@ -76,14 +80,14 @@ findUserByEmailAdmin : async (
       console.error(error);
       
     }
-  },
+  }
   
   
-  findAllUsers : async (): Promise<User[]> => {
+  async findAllUsers  (): Promise<User[]>  {
     return UserModel.find();
-  },
+  }
   
-  blockUserById : async (userId: string) => {
+  async blockUserById  (userId: string)  {
     try {
       return UserModel.findByIdAndUpdate(userId, { isBlocked: true }, { new: true });
   
@@ -91,9 +95,9 @@ findUserByEmailAdmin : async (
       console.error(error);
       
     }
-  },
+  }
   
-   unblockUserById :async (userId: string) => {
+  async unblockUserById  (userId: string)  {
     try {
       return UserModel.findByIdAndUpdate(userId, { isBlocked: false }, { new: true });
   
@@ -101,8 +105,9 @@ findUserByEmailAdmin : async (
       console.error(error);
       
     }
-  },
-   findUserById : async (userId: string) => {
+  }
+
+  async findUserById  (userId: string)  {
     try {
       return UserModel.findById(userId);
   
@@ -110,10 +115,10 @@ findUserByEmailAdmin : async (
       console.error(error);
       
     }
-  },
+  }
   
   
-  getTotalEvents : async () => {
+  async getTotalEvents  ()  {
     try {
       const res = await bookedModel.countDocuments();
       console.log(res);
@@ -123,10 +128,10 @@ findUserByEmailAdmin : async (
       console.error("Error getting total trips", error);
       throw error;
     }
-  },
+  }
   
   
-   getTotalRevenue :async () => {
+  async  getTotalRevenue  ()  {
     try {
       const result = await bookedModel.aggregate([
         { $group: { _id: null, totalRevenue: { $sum: "$totalAmount" } } },
@@ -138,9 +143,9 @@ findUserByEmailAdmin : async (
       console.error("Error getting total revenue", error);
       throw error;
     }
-  },
+  }
   
-  getTotalVendors : async () => {
+  async getTotalVendors  ()  {
     try {
   
       const res = await VendorModel.countDocuments({});
@@ -150,9 +155,9 @@ findUserByEmailAdmin : async (
       console.error("Error getting total companies", error);
       throw error;
     }
-  },
+  }
   
-   getTotalUsers : async () => {
+  async  getTotalUsers  ()  {
     try {
       const res = await UserModel.countDocuments({});
       console.log(res);
@@ -161,7 +166,7 @@ findUserByEmailAdmin : async (
       console.error("Error getting total users", error);
       throw error;
     }
-  },
+  }
 
 
 

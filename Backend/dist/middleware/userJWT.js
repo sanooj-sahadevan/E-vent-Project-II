@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyUser = verifyUser;
-const httpStatus_js_1 = require("../utils/httpStatus.js");
+const httpStatus_1 = require("../utils/httpStatus");
 // import UserModel from "../Repository/userReop.js"; // Adjust the import path if needed
 // Verify JWT and user middleware
 function verifyUser(req, res, next) {
@@ -21,11 +21,11 @@ function verifyUser(req, res, next) {
         const secret = process.env.JWT_SECRET;
         if (!token) {
             console.log('toke error');
-            return res.status(httpStatus_js_1.HttpStatus.UNAUTHORIZED).json("JWT token not found in the request");
+            return res.status(httpStatus_1.HttpStatus.UNAUTHORIZED).json("JWT token not found in the request");
         }
         if (!secret) {
             console.log('screte error');
-            return res.status(httpStatus_js_1.HttpStatus.INTERNAL_SERVER_ERROR).json("JWT secret not found in the environment");
+            return res.status(httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR).json("JWT secret not found in the environment");
         }
         try {
             // Verify the JWT token
@@ -47,7 +47,7 @@ function verifyUser(req, res, next) {
             next();
         }
         catch (err) {
-            return res.status(httpStatus_js_1.HttpStatus.UNAUTHORIZED).json("Invalid or expired JWT");
+            return res.status(httpStatus_1.HttpStatus.UNAUTHORIZED).json("Invalid or expired JWT");
         }
     });
 }
