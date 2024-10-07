@@ -1,21 +1,29 @@
-import express from 'express';
-import adminController from "../controller/adminController.js";
+import { Router } from "express";
+import { AdminRepository } from "../Repository/adminRepo";
+import { AdminService } from "../Service/adminService";
+import { AdminController } from "../controller/adminController";
+// import adminController from "../controller/adminController";
 
-const router = express.Router();
+const router = Router();
 
-router.post("/login", adminController.adminlogin);
+const adminRepository = new AdminRepository()
+const adminService = new AdminService(adminRepository)
 
-router.get("/getAllVendors", adminController.getAllVendors);
-router.put("/vendor/blockUser/:id", adminController.blockVendorController);
-router.put("/vendor/unblockUser/:id",  adminController.unblockVendorController);
+const adminController = new AdminController(adminService)
+
+router.post("/login", adminController.adminlogin.bind(adminController));
+
+router.get("/getAllVendors", adminController.getAllVendors.bind(adminController));
+router.put("/vendor/blockUser/:id", adminController.blockVendorController.bind(adminController));
+router.put("/vendor/unblockUser/:id",  adminController.unblockVendorController.bind(adminController));
 
 
-router.get("/getAllUsers",  adminController.getUsersList);
-router.put("/blockUser/:id", adminController.blockUserController);
-router.put("/unblockUser/:id",  adminController.unblockUserController);
+router.get("/getAllUsers",  adminController.getUsersList.bind(adminController));
+router.put("/blockUser/:id", adminController.blockUserController.bind(adminController));
+router.put("/unblockUser/:id",  adminController.unblockUserController.bind(adminController));
 
-router.get("/getAllBookings",  adminController.getAllBookings);
-router.get("/dashboard",  adminController.DashboardController);
+router.get("/getAllBookings",  adminController.getAllBookings.bind(adminController));
+router.get("/dashboard",  adminController.DashboardController.bind(adminController));
 
 
 

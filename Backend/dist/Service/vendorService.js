@@ -1,230 +1,286 @@
-import jwt from "jsonwebtoken";
-import { uploadToS3Bucket } from "../middleware/fileUpload.js";
-import { io } from "../index.js";
-import vendorRepositary from "../Repository/vendorRepo.js";
-export default {
-    registerVendor: async (vendor) => {
-        try {
-            const existingVendor = await vendorRepositary.findVendorByEmail(vendor.email);
-            console.log(existingVendor);
-            if (existingVendor) {
-                if (existingVendor.otpVerified) {
-                    throw new Error("User already exists");
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VendorService = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const fileUpload_1 = require("../middleware/fileUpload");
+const index_1 = require("../index");
+class VendorService {
+    constructor(vendorRepository) {
+        this.vendorRepository = vendorRepository;
+    }
+    registerVendor(vendor) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const existingVendor = yield this.vendorRepository.findVendorByEmail(vendor.email);
+                console.log(existingVendor);
+                if (existingVendor) {
+                    if (existingVendor.otpVerified) {
+                        throw new Error("User already exists");
+                    }
+                    else {
+                        yield this.vendorRepository.updateVendor(existingVendor.email, vendor);
+                        return existingVendor;
+                    }
+                }
+                return yield this.vendorRepository.createVendor(vendor);
+            }
+            catch (error) {
+                console.error("Error during user registration:", error);
+                throw error;
+            }
+        });
+    }
+    verifyAndSaveVendor(email, otp) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const vendor = yield this.vendorRepository.findVendorByEmail(email);
+            if (vendor && vendor.otp === otp) {
+                vendor.otp = undefined;
+                vendor.otpVerified = true;
+                yield vendor.save();
+                return vendor;
+            }
+            throw new Error("Invalid OTP");
+        });
+    }
+    loginVendor(email, password) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const vendor = yield this.vendorRepository.findVendorByEmail(email);
+            if (!vendor) {
+                throw new Error("Invalid Email/Password");
+            }
+            const vendorToken = jsonwebtoken_1.default.sign({ vendorId: vendor._id }, process.env.JWT_SECRET, {
+                expiresIn: "1h",
+            });
+            return { vendor, vendorToken };
+        });
+    }
+    vendorAddress() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.vendorRepository.vendorAddressFromDB();
+            }
+            catch (error) {
+                throw new Error('Failed to fetch vendor addresses');
+            }
+        });
+    }
+    editVendorService(vendorDetails, imageUrl) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const existingVendor = yield this.vendorRepository.findVendorByEmailRepo(vendorDetails.email);
+                if (existingVendor) {
+                    return yield this.vendorRepository.editVendorRepo(existingVendor, vendorDetails, imageUrl);
                 }
                 else {
-                    await vendorRepositary.updateVendor(existingVendor.email, vendor);
-                    return existingVendor;
+                    return yield this.vendorRepository.editVendorRepo(null, vendorDetails, imageUrl);
                 }
             }
-            return await vendorRepositary.createVendor(vendor);
-        }
-        catch (error) {
-            console.error("Error during user registration:", error);
-            throw error;
-        }
-    },
-    verifyAndSaveVendor: async (email, otp) => {
-        const vendor = await vendorRepositary.findVendorByEmail(email);
-        if (vendor && vendor.otp === otp) {
-            vendor.otp = undefined;
-            vendor.otpVerified = true;
-            await vendor.save();
-            return vendor;
-        }
-        throw new Error("Invalid OTP");
-    },
-    loginVendor: async (email, password) => {
-        const vendor = await vendorRepositary.findVendorByEmail(email);
-        if (!vendor) {
-            throw new Error("Invalid Email/Password");
-        }
-        const vendorToken = jwt.sign({ vendorId: vendor._id }, process.env.JWT_SECRET, {
-            expiresIn: "1h",
+            catch (error) {
+                throw new Error('Failed to update vendor details');
+            }
         });
-        return { vendor, vendorToken };
-    },
-    vendorAddress: async () => {
-        try {
-            return await vendorRepositary.vendorAddressFromDB();
-        }
-        catch (error) {
-            throw new Error('Failed to fetch vendor addresses');
-        }
-    },
-    editVendorService: async (vendorDetails, imageUrl) => {
-        try {
-            const existingVendor = await vendorRepositary.findVendorByEmailRepo(vendorDetails.email);
-            if (existingVendor) {
-                return await vendorRepositary.editVendorRepo(existingVendor, vendorDetails, imageUrl);
+    }
+    uploadImage(imageFile) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('first step');
+                const uploadedUrl = yield (0, fileUpload_1.uploadToS3Bucket)([], imageFile);
+                return uploadedUrl;
             }
-            else {
-                return await vendorRepositary.editVendorRepo(null, vendorDetails, imageUrl);
+            catch (error) {
+                throw new Error(error.message);
             }
-        }
-        catch (error) {
-            throw new Error('Failed to update vendor details');
-        }
-    },
-    uploadImage: async function (imageFile) {
-        try {
-            console.log('first step');
-            const uploadedUrl = await uploadToS3Bucket([], imageFile);
-            return uploadedUrl;
-        }
-        catch (error) {
-            throw new Error(error.message);
-        }
-    },
-    findVendorById: async (vendorId) => {
-        try {
-            const vendor = await vendorRepositary.findVendorByIdInDb(vendorId);
-            if (!vendor) {
-                throw new Error(`Error finding vendor`);
+        });
+    }
+    findVendorById(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vendor = yield this.vendorRepository.findVendorByIdInDb(vendorId);
+                if (!vendor) {
+                    throw new Error(`Error finding vendor`);
+                }
+                return vendor;
             }
-            return vendor;
-        }
-        catch (error) {
-            throw new Error(`Error finding vendor: ${error}`);
-        }
-    },
-    findAuditoriumById: async (auditoriumId) => {
-        try {
-            console.log('controller 2');
-            const vendor = await vendorRepositary.findAuditoriumByIdInDb(auditoriumId);
-            if (!vendor) {
-                throw new Error(`Error finding vendor`);
+            catch (error) {
+                throw new Error(`Error finding vendor: ${error}`);
             }
-            return vendor;
-        }
-        catch (error) {
-            throw new Error(`Error finding vendor: ${error}`);
-        }
-    },
-    findDishesById: async (dishesId) => {
-        try {
-            const vendor = await vendorRepositary.findDishesByIdInDb(dishesId);
-            if (!vendor) {
-                throw new Error(`Error finding vendor`);
+        });
+    }
+    findAuditoriumById(auditoriumId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('controller 2');
+                const vendor = yield this.vendorRepository.findAuditoriumByIdInDb(auditoriumId);
+                if (!vendor) {
+                    throw new Error(`Error finding vendor`);
+                }
+                return vendor;
             }
-            return vendor;
-        }
-        catch (error) {
-            throw new Error(`Error finding vendor: ${error}`);
-        }
-    },
-    uploadDishes: async (vendorId, data, images) => {
-        try {
-            console.log('duisg servuive');
-            const dishesData = { vendorId, data, images };
-            dishesData.data.price = Number(dishesData.data.price);
-            const newDish = await vendorRepositary.createDishes(dishesData);
-            console.log(newDish);
-            return newDish;
-        }
-        catch (error) {
-            console.error("Error in uploadDishes: ", error);
-            console.error();
-        }
-    },
-    uploadAuditorium: async (vendorId, data, image) => {
-        try {
-            const auditoriumData = { vendorId, data, image };
-            auditoriumData.data.price = Number(auditoriumData.data.price);
-            const newAuditorium = await vendorRepositary.createAuditorium(auditoriumData);
-            return newAuditorium;
-        }
-        catch (error) {
-            console.error("Error in uploadAuditorium: ", error);
-            throw error;
-        }
-    },
-    findFoodVendorById: async (vendorId) => {
-        try {
-            console.log('Service invoked to find dishes for vendor:', vendorId);
-            const dishes = await vendorRepositary.findFoodVendorIdInDb(vendorId);
-            return dishes;
-        }
-        catch (error) {
-            throw new Error(`Error finding vendor dishes: ${error}`);
-        }
-    },
-    findAuditoriumVendorById: async (vendorId) => {
-        try {
-            console.log('Service invoked to find auditorium for vendor:', vendorId);
-            const Auditorium = await vendorRepositary.findAuditoriumVendorIdInDb(vendorId);
-            return Auditorium;
-        }
-        catch (error) {
-            throw new Error(`Error finding vendor dishes: ${error}`);
-        }
-    },
-    softDeleteDishService: async (dishId) => {
-        try {
-            const updatedDish = await vendorRepositary.softDeleteDishRepo(dishId);
-            if (!updatedDish) {
-                throw new Error(`Error soft-deleting dish`);
+            catch (error) {
+                throw new Error(`Error finding vendor: ${error}`);
             }
-            return updatedDish;
-        }
-        catch (error) {
-            throw new Error(`Error soft-deleting dish: ${error}`);
-        }
-    },
-    softDeleteAuditoriumService: async (auditoriumId) => {
-        try {
-            const updatedAuditorium = await vendorRepositary.softDeleteAuditoriumRepo(auditoriumId);
-            if (!updatedAuditorium) {
-                throw new Error(`Error soft-deleting auditorium`);
+        });
+    }
+    findDishesById(dishesId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vendor = yield this.vendorRepository.findDishesByIdInDb(dishesId);
+                if (!vendor) {
+                    throw new Error(`Error finding vendor`);
+                }
+                return vendor;
             }
-            return updatedAuditorium;
-        }
-        catch (error) {
-            throw new Error(`Error soft-deleting auditorium: ${error}`);
-        }
-    },
-    findBookingDetails: async (vendorId) => {
-        try {
-            const bookingDetails = await vendorRepositary.findDetailsByvendorId(vendorId);
-            if (!bookingDetails) {
-                throw new Error(`Error soft-deleting auditorium`);
+            catch (error) {
+                throw new Error(`Error finding vendor: ${error}`);
             }
-            return bookingDetails;
-        }
-        catch (error) {
-            throw new Error(`Error soft-deleting auditorium: ${error}`);
-        }
-    },
-    findVendorByEmailService: async (email) => {
-        try {
-            const vendor = await vendorRepositary.findVendorByEmail(email);
-            return vendor;
-        }
-        catch (error) {
-            console.error(error);
-        }
-    },
-    chatServices: async ({ vendorId }) => {
-        try {
-            const chats = await vendorRepositary.chatDB(vendorId);
-            return chats;
-        }
-        catch (error) {
-            console.error("Error fetching chats:", error);
-            throw error;
-        }
-    },
-    messageService: async ({ chatIds, vendorId, }) => {
-        try {
-            const unreadCount = await vendorRepositary.messageDB(chatIds);
-            io.to(vendorId).emit("unreadCount", { unreadCount });
-            return unreadCount;
-        }
-        catch (error) {
-            console.error("Error fetching unread messages:", error);
-            throw error;
-        }
-    },
-};
+        });
+    }
+    uploadDishes(vendorId, data, images) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('duisg servuive');
+                const dishesData = { vendorId, data, images };
+                dishesData.data.price = Number(dishesData.data.price);
+                const newDish = yield this.vendorRepository.createDishes(dishesData);
+                console.log(newDish);
+                return newDish;
+            }
+            catch (error) {
+                console.error("Error in uploadDishes: ", error);
+                console.error();
+            }
+        });
+    }
+    uploadAuditorium(vendorId, data, image) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const auditoriumData = { vendorId, data, image };
+                auditoriumData.data.price = Number(auditoriumData.data.price);
+                const newAuditorium = yield this.vendorRepository.createAuditorium(auditoriumData);
+                return newAuditorium;
+            }
+            catch (error) {
+                console.error("Error in uploadAuditorium: ", error);
+                throw error;
+            }
+        });
+    }
+    findFoodVendorById(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Service invoked to find dishes for vendor:', vendorId);
+                const dishes = yield this.vendorRepository.findFoodVendorIdInDb(vendorId);
+                return dishes;
+            }
+            catch (error) {
+                throw new Error(`Error finding vendor dishes: ${error}`);
+            }
+        });
+    }
+    findAuditoriumVendorById(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Service invoked to find auditorium for vendor:', vendorId);
+                const Auditorium = yield this.vendorRepository.findAuditoriumVendorIdInDb(vendorId);
+                return Auditorium;
+            }
+            catch (error) {
+                throw new Error(`Error finding vendor dishes: ${error}`);
+            }
+        });
+    }
+    softDeleteDishService(dishId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedDish = yield this.vendorRepository.softDeleteDishRepo(dishId);
+                if (!updatedDish) {
+                    throw new Error(`Error soft-deleting dish`);
+                }
+                return updatedDish;
+            }
+            catch (error) {
+                throw new Error(`Error soft-deleting dish: ${error}`);
+            }
+        });
+    }
+    softDeleteAuditoriumService(auditoriumId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedAuditorium = yield this.vendorRepository.softDeleteAuditoriumRepo(auditoriumId);
+                if (!updatedAuditorium) {
+                    throw new Error(`Error soft-deleting auditorium`);
+                }
+                return updatedAuditorium;
+            }
+            catch (error) {
+                throw new Error(`Error soft-deleting auditorium: ${error}`);
+            }
+        });
+    }
+    findBookingDetails(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const bookingDetails = yield this.vendorRepository.findDetailsByvendorId(vendorId);
+                if (!bookingDetails) {
+                    throw new Error(`Error soft-deleting auditorium`);
+                }
+                return bookingDetails;
+            }
+            catch (error) {
+                throw new Error(`Error soft-deleting auditorium: ${error}`);
+            }
+        });
+    }
+    findVendorByEmailService(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vendor = yield this.vendorRepository.findVendorByEmail(email);
+                return vendor;
+            }
+            catch (error) {
+                console.error(error);
+            }
+        });
+    }
+    chatServices(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ vendorId }) {
+            try {
+                const chats = yield this.vendorRepository.chatDB(vendorId);
+                return chats;
+            }
+            catch (error) {
+                console.error("Error fetching chats:", error);
+                throw error;
+            }
+        });
+    }
+    messageService(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ chatIds, vendorId, }) {
+            try {
+                const unreadCount = yield this.vendorRepository.messageDB(chatIds);
+                index_1.io.to(vendorId).emit("unreadCount", { unreadCount });
+                return unreadCount;
+            }
+            catch (error) {
+                console.error("Error fetching unread messages:", error);
+                throw error;
+            }
+        });
+    }
+}
+exports.VendorService = VendorService;
 // export const registerVendor = async (vendor: Vendor) => {
 //   try {
 //     const existingVendor = await findVendorByEmail(vendor.email);

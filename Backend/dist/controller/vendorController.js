@@ -1,280 +1,328 @@
-import userService from "../Service/vendorService.js";
-import { HttpStatus } from "../utils/httpStatus.js";
-import { otpGenerator } from "../utils/otpGenerator.js";
-import { sendEmail } from "../utils/sendEmail.js";
-export default {
-    register: async (req, res, next) => {
-        try {
-            const { vendorname, email, phone, password } = req.body;
-            const proceedWithRegistration = async () => {
-                try {
-                    const otp = otpGenerator();
-                    await userService.registerVendor({
-                        vendorname,
-                        phone,
-                        email,
-                        password,
-                        otp,
-                        reviews: "",
-                        address: "",
-                        district: "",
-                        state: ""
-                    });
-                    await sendEmail(email, otp);
-                    res.status(HttpStatus.OK).json("OTP sent to email");
-                }
-                catch (error) {
-                    console.error('Error during registration:', error.message);
-                    res.status(HttpStatus.BAD_REQUEST).json({ error: "Registration failed: " + error.message });
-                }
-            };
-            await proceedWithRegistration();
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    verifyOtp: async (req, res, next) => {
-        try {
-            const { email, otp } = req.body;
-            console.log(email, otp);
-            const vendor = await userService.findVendorByEmailService(email);
-            console.log(vendor);
-            if (!vendor) {
-                res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
-                return;
-            }
-            if (vendor.otp === otp) {
-                await userService.verifyAndSaveVendor(email, otp);
-                res.status(HttpStatus.OK).json("Vendor registered successfully");
-            }
-            else {
-                res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
-            }
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    login: async (req, res, next) => {
-        try {
-            const { email, password } = req.body;
-            const { vendor, vendorToken } = await userService.loginVendor(email, password);
-            res.cookie("vendorToken", vendorToken);
-            res.status(HttpStatus.OK).json({ vendor, vendorToken });
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    fetchAddress: async (req, res, next) => {
-        try {
-            console.log("vann ta");
-            const vendorAddresses = await userService.vendorAddress();
-            console.log(vendorAddresses);
-            res.status(HttpStatus.OK).json(vendorAddresses);
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    editVendorDetails: async (req, res, next) => {
-        try {
-            const vendorDetails = req.body;
-            const file = req.file;
-            let imageUrl;
-            if (file) {
-                imageUrl = await userService.uploadImage(file);
-            }
-            const updatedVendor = await userService.editVendorService(vendorDetails, imageUrl);
-            res.status(200).json({ ...updatedVendor, imageUrl });
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    fetchVendorDetails: async (req, res, next) => {
-        try {
-            console.log('controller');
-            const { vendorId } = req.params; // Extract vendorId from request params
-            const vendor = await userService.findVendorById(vendorId); // Fetch vendor details
-            if (!vendor) {
-                res.status(404).json({ message: "Vendor not found" });
-            }
-            else {
-                res.status(200).json(vendor);
-            }
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    fetchdishes: async (req, res, next) => {
-        try {
-            const { dishesId } = req.params;
-            const vendor = await userService.findDishesById(dishesId);
-            res.status(200).json(vendor);
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    fetchauditorium: async (req, res, next) => {
-        try {
-            const { auditoriumId } = req.params;
-            const vendor = await userService.findAuditoriumById(auditoriumId);
-            res.status(200).json(vendor);
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    addDishes: async (req, res, next) => {
-        try {
-            const { body } = req;
-            const vendorId = req.vendorId;
-            console.log(vendorId, 'vendorId-----------------------------------------------------');
-            if (!vendorId) {
-                return res.status(400).json({ error: "Vendor ID is required" });
-            }
-            const file = req.file;
-            let imageUrl = undefined;
-            if (file) {
-                imageUrl = await userService.uploadImage(file);
-            }
-            await userService.uploadDishes(vendorId, body, imageUrl);
-            return res.status(200).json("Dishes added successfully");
-        }
-        catch (error) {
-            console.error("Error adding dishes: ", error);
-            next(error);
-        }
-    },
-    addAuditorium: async (req, res, next) => {
-        try {
-            const { body } = req;
-            const vendorId = req.vendorId;
-            if (!vendorId) {
-                return res.status(400).json({ error: "Vendor ID is required" });
-            }
-            const file = req.file;
-            let imageUrl = undefined;
-            if (file) {
-                imageUrl = await userService.uploadImage(file);
-            }
-            const auditoriumData = await userService.uploadAuditorium(vendorId, body, imageUrl);
-            if (auditoriumData) {
-                return res.status(200).json("Auditorium added successfully");
-            }
-            else {
-                return res.status(400).json({ error: "Auditorium not added: something went wrong" });
-            }
-        }
-        catch (error) {
-            console.error("Error adding auditorium: ", error);
-            next(error);
-        }
-    },
-    fetchDetailsVendor: async (req, res, next) => {
-        try {
-            const { vendorId } = req.params;
-            const vendor = await userService.findVendorById(vendorId);
-            res.status(200).json(vendor);
-        }
-        catch (error) {
-            console.error('Error in fetchDetailsVendor:', error);
-            next(error);
-        }
-    },
-    fetchFoodDetails: async (req, res, next) => {
-        try {
-            const { vendorId } = req.params;
-            const dishes = await userService.findFoodVendorById(vendorId);
-            if (!dishes || dishes.length === 0) {
-                res.status(404).json({ message: "No dishes found for this vendor" });
-            }
-            else {
-                console.log(dishes, 'Fetched dishes for vendor');
-                res.status(200).json(dishes);
-            }
-        }
-        catch (error) {
-            console.error('Error in fetchFoodDetails:', error);
-            next(error);
-        }
-    },
-    fetchAuditoriumDetails: async (req, res, next) => {
-        try {
-            const { vendorId } = req.params;
-            const auditorium = await userService.findAuditoriumVendorById(vendorId);
-            if (!auditorium || auditorium.length === 0) {
-                res.status(404).json({ message: "No dishes found for this vendor" });
-            }
-            else {
-                console.log(auditorium, 'Fetched dishes for vendor');
-                res.status(200).json(auditorium);
-            }
-        }
-        catch (error) {
-            console.error('Error in fetchFoodDetails:', error);
-            next(error);
-        }
-    },
-    softDeleteDish: async (req, res, next) => {
-        try {
-            const { dishId } = req.params;
-            if (!dishId) {
-                return res.status(400).json({ message: 'Dish ID is missing' });
-            }
-            const updatedDish = await userService.softDeleteDishService(dishId);
-            res.status(200).json({ message: 'Dish deleted successfully', dish: updatedDish });
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    softDeleteAuditorium: async (req, res, next) => {
-        try {
-            const { auditoriumId } = req.params;
-            if (!auditoriumId) {
-                return res.status(400).json({ message: 'Auditorium ID is missing' });
-            }
-            const updatedAuditorium = await userService.softDeleteAuditoriumService(auditoriumId);
-            res.status(200).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    vendorBookingDetils: async (req, res, next) => {
-        const { vendorId } = req.params;
-        try {
-            const booking = await userService.findBookingDetails(vendorId);
-            res.status(200).json(booking);
-        }
-        catch (error) {
-            next(error);
-        }
-    },
-    getUnreadMessagesCount: async (req, res, next) => {
-        const vendorId = req.vendorId;
-        try {
-            if (!vendorId) {
-                return res.status(400).json({ error: "Vendor ID is required" });
-            }
-            const chatServiceData = await userService.chatServices({ vendorId });
-            const chatIds = chatServiceData.map((chat) => chat._id);
-            if (chatIds.length === 0) {
-                return res.status(200).json({ unreadCount: 0 });
-            }
-            const unreadCount = await userService.messageService({ chatIds, vendorId });
-            res.status(200).json({ unreadCount });
-        }
-        catch (error) {
-            next(error);
-        }
-    },
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VendorController = void 0;
+// import userService from "../Service/vendorService"
+const httpStatus_1 = require("../utils/httpStatus");
+const otpGenerator_1 = require("../utils/otpGenerator");
+const sendEmail_1 = require("../utils/sendEmail");
+class VendorController {
+    constructor(vendorService) {
+        this.vendorService = vendorService;
+    }
+    register(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { vendorname, email, phone, password } = req.body;
+                const proceedWithRegistration = () => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        const otp = (0, otpGenerator_1.otpGenerator)();
+                        yield this.vendorService.registerVendor({
+                            vendorname,
+                            phone,
+                            email,
+                            password,
+                            otp,
+                            reviews: "",
+                            address: "",
+                            district: "",
+                            state: ""
+                        });
+                        yield (0, sendEmail_1.sendEmail)(email, otp);
+                        res.status(httpStatus_1.HttpStatus.OK).json("OTP sent to email");
+                    }
+                    catch (error) {
+                        next(error);
+                    }
+                });
+                yield proceedWithRegistration();
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    verifyOtp(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email, otp } = req.body;
+                console.log(email, otp);
+                const vendor = yield this.vendorService.findVendorByEmailService(email);
+                console.log(vendor);
+                if (!vendor) {
+                    res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
+                    return;
+                }
+                if (vendor.otp === otp) {
+                    yield this.vendorService.verifyAndSaveVendor(email, otp);
+                    res.status(httpStatus_1.HttpStatus.OK).json("Vendor registered successfully");
+                }
+                else {
+                    res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
+                }
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    login(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { email, password } = req.body;
+                const { vendor, vendorToken } = yield this.vendorService.loginVendor(email, password);
+                res.cookie("vendorToken", vendorToken);
+                res.status(httpStatus_1.HttpStatus.OK).json({ vendor, vendorToken });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    fetchAddress(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log("vann ta");
+                const vendorAddresses = yield this.vendorService.vendorAddress();
+                console.log(vendorAddresses);
+                res.status(httpStatus_1.HttpStatus.OK).json(vendorAddresses);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    editVendorDetails(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vendorDetails = req.body;
+                const file = req.file;
+                let imageUrl;
+                if (file) {
+                    imageUrl = yield this.vendorService.uploadImage(file);
+                }
+                const updatedVendor = yield this.vendorService.editVendorService(vendorDetails, imageUrl);
+                res.status(httpStatus_1.HttpStatus.OK).json(Object.assign(Object.assign({}, updatedVendor), { imageUrl }));
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    fetchVendorDetails(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('controller');
+                const { vendorId } = req.params; // Extract vendorId from request params
+                const vendor = yield this.vendorService.findVendorById(vendorId); // Fetch vendor details
+                if (!vendor) {
+                    res.status(httpStatus_1.HttpStatus.NOT_FOUND).json({ message: "Vendor not found" });
+                }
+                else {
+                    res.status(httpStatus_1.HttpStatus.OK).json(vendor);
+                }
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    fetchdishes(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { dishesId } = req.params;
+                const vendor = yield this.vendorService.findDishesById(dishesId);
+                res.status(httpStatus_1.HttpStatus.OK).json(vendor);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    fetchauditorium(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { auditoriumId } = req.params;
+                const vendor = yield this.vendorService.findAuditoriumById(auditoriumId);
+                res.status(httpStatus_1.HttpStatus.OK).json(vendor);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    addDishes(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { body } = req;
+                const vendorId = req.vendorId;
+                if (!vendorId) {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
+                }
+                const file = req.file;
+                let imageUrl = undefined;
+                if (file) {
+                    imageUrl = yield this.vendorService.uploadImage(file);
+                }
+                yield this.vendorService.uploadDishes(vendorId, body, imageUrl);
+                return res.status(httpStatus_1.HttpStatus.OK).json("Dishes added successfully");
+            }
+            catch (error) {
+                console.error("Error adding dishes: ", error);
+                next(error);
+            }
+        });
+    }
+    addAuditorium(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { body } = req;
+                const vendorId = req.vendorId;
+                if (!vendorId) {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
+                }
+                const file = req.file;
+                let imageUrl = undefined;
+                if (file) {
+                    imageUrl = yield this.vendorService.uploadImage(file);
+                }
+                const auditoriumData = yield this.vendorService.uploadAuditorium(vendorId, body, imageUrl);
+                if (auditoriumData) {
+                    return res.status(httpStatus_1.HttpStatus.OK).json("Auditorium added successfully");
+                }
+                else {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Auditorium not added: something went wrong" });
+                }
+            }
+            catch (error) {
+                console.error("Error adding auditorium: ", error);
+                next(error);
+            }
+        });
+    }
+    fetchDetailsVendor(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { vendorId } = req.params;
+                const vendor = yield this.vendorService.findVendorById(vendorId);
+                res.status(httpStatus_1.HttpStatus.OK).json(vendor);
+            }
+            catch (error) {
+                console.error('Error in fetchDetailsVendor:', error);
+                next(error);
+            }
+        });
+    }
+    fetchFoodDetails(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { vendorId } = req.params;
+                const dishes = yield this.vendorService.findFoodVendorById(vendorId);
+                if (!dishes || dishes.length === 0) {
+                    res.status(httpStatus_1.HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
+                }
+                else {
+                    console.log(dishes, 'Fetched dishes for vendor');
+                    res.status(httpStatus_1.HttpStatus.OK).json(dishes);
+                }
+            }
+            catch (error) {
+                console.error('Error in fetchFoodDetails:', error);
+                next(error);
+            }
+        });
+    }
+    fetchAuditoriumDetails(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { vendorId } = req.params;
+                const auditorium = yield this.vendorService.findAuditoriumVendorById(vendorId);
+                if (!auditorium || auditorium.length === 0) {
+                    res.status(httpStatus_1.HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
+                }
+                else {
+                    console.log(auditorium, 'Fetched dishes for vendor');
+                    res.status(httpStatus_1.HttpStatus.OK).json(auditorium);
+                }
+            }
+            catch (error) {
+                console.error('Error in fetchFoodDetails:', error);
+                next(error);
+            }
+        });
+    }
+    softDeleteDish(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { dishId } = req.params;
+                if (!dishId) {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ message: 'Dish ID is missing' });
+                }
+                const updatedDish = yield this.vendorService.softDeleteDishService(dishId);
+                res.status(httpStatus_1.HttpStatus.OK).json({ message: 'Dish deleted successfully', dish: updatedDish });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    softDeleteAuditorium(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { auditoriumId } = req.params;
+                if (!auditoriumId) {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ message: 'Auditorium ID is missing' });
+                }
+                const updatedAuditorium = yield this.vendorService.softDeleteAuditoriumService(auditoriumId);
+                res.status(httpStatus_1.HttpStatus.OK).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    vendorBookingDetils(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { vendorId } = req.params;
+            try {
+                const booking = yield this.vendorService.findBookingDetails(vendorId);
+                res.status(httpStatus_1.HttpStatus.OK).json(booking);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    getUnreadMessagesCount(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const vendorId = req.vendorId;
+            try {
+                if (!vendorId) {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
+                }
+                const chatServiceData = yield this.vendorService.chatServices({ vendorId });
+                const chatIds = chatServiceData.map((chat) => chat._id);
+                if (chatIds.length === 0) {
+                    return res.status(httpStatus_1.HttpStatus.OK).json({ unreadCount: 0 });
+                }
+                const unreadCount = yield this.vendorService.messageService({ chatIds, vendorId });
+                res.status(httpStatus_1.HttpStatus.OK).json({ unreadCount });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+}
+exports.VendorController = VendorController;
 // export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
 //   try {
 //     const { vendorname, email, phone, password } = req.body;

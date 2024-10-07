@@ -1,39 +1,45 @@
-import express from 'express';
-import cors from 'cors';
-import { connectToMongoDB } from './src/config/config.js';
-import userRoutes from './src/routes/userRoutes.js';
-import vendorRoutes from './src/routes/vendorRoutes.js';
-import adminRoutes from './src/routes/adminRoutes.js';
-import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
-import morgan from 'morgan';
-import { createServer } from 'http';
-import { Server as serverSocket } from 'socket.io';
-import chatRoutes from './src/routes/chatRoutes.js';
-import { socketHandler } from "./src/utils/socket/chat.js";
-import { errorHandler } from "./src/middleware/errorHandling.js";
-import logger from "./src/utils/logger.js";
-dotenv.config();
-const app = express();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.io = void 0;
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const config_1 = require("./config/config");
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const vendorRoutes_1 = __importDefault(require("./routes/vendorRoutes"));
+const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const dotenv_1 = __importDefault(require("dotenv"));
+const morgan_1 = __importDefault(require("morgan"));
+const http_1 = require("http");
+const socket_io_1 = require("socket.io");
+const chatRoutes_1 = __importDefault(require("./routes/chatRoutes"));
+const chat_1 = require("./utils/socket/chat");
+const errorHandling_1 = require("./middleware/errorHandling");
+const logger_1 = __importDefault(require("./utils/logger"));
+dotenv_1.default.config();
+const app = (0, express_1.default)();
 const PORT = 5000;
 const morganFormat = ":method :url :status :response-time ms";
-connectToMongoDB();
-const httpServer = createServer(app);
-export const io = new serverSocket(httpServer, {
+(0, config_1.connectToMongoDB)();
+const httpServer = (0, http_1.createServer)(app);
+exports.io = new socket_io_1.Server(httpServer, {
     cors: {
         origin: "http://localhost:3000",
         methods: ['GET', 'POST'],
         credentials: true,
     },
 });
-socketHandler(io);
-app.use(cors({
+(0, chat_1.socketHandler)(exports.io);
+app.use((0, cors_1.default)({
     origin: 'http://localhost:3000',
     credentials: true,
 }));
-app.use(express.json());
-app.use(cookieParser());
-app.use(morgan(morganFormat, {
+app.use(express_1.default.json());
+app.use((0, cookie_parser_1.default)());
+app.use((0, morgan_1.default)(morganFormat, {
     stream: {
         write: (message) => {
             const logObject = {
@@ -42,16 +48,16 @@ app.use(morgan(morganFormat, {
                 status: message.split(" ")[2],
                 responseTime: message.split(" ")[3],
             };
-            logger.info(JSON.stringify(logObject));
+            logger_1.default.info(JSON.stringify(logObject));
         },
     },
 }));
 // app.use(morgan('dev'));
-app.use('/user', userRoutes);
-app.use('/vendor', vendorRoutes);
-app.use('/admin', adminRoutes);
-app.use('/chat', chatRoutes);
-app.use(errorHandler);
+app.use('/user', userRoutes_1.default);
+app.use('/vendor', vendorRoutes_1.default);
+app.use('/admin', adminRoutes_1.default);
+app.use('/chat', chatRoutes_1.default);
+app.use(errorHandling_1.errorHandler);
 httpServer.listen(PORT, () => {
     console.log(`Server started running on http://localhost:${PORT}/`);
 });

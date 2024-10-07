@@ -1,13 +1,20 @@
 import jwt from 'jsonwebtoken';
-import adminRepositary from "../Repository/adminRepo.js";
+import { IAdminRepository } from '../interfaces/repository/adminRepository';
+// import adminRepositary from "../Repository/adminRepo";
 
 
-export default {
+export class AdminService {
 
-  loginUser: async (
+  private adminRepository: IAdminRepository
+
+  constructor(adminRepository: IAdminRepository) {
+    this.adminRepository = adminRepository
+  }
+
+  async loginUser (
     email: string,
     password: string
-  ) => {
+  )  {
     try {
       if (process.env.ADMIN_EMAIL !== email) {
         console.error(Error);
@@ -29,27 +36,28 @@ export default {
       console.error(error);
 
     }
-  },
-  getAllVendorsService: async () => {
+  }
+
+  async getAllVendorsService ()  {
     try {
-      return await adminRepositary.getAllVendorsFromDB();
+      return await this.adminRepository.getAllVendorsFromDB();
     } catch (error) {
       console.error(error);
     }
-  },
+  }
 
-  getAllBookingsService: async () => {
+  async getAllBookingsService ()  {
     try {
-      return await adminRepositary.getAllBookingsFromDB();
+      return await this.adminRepository.getAllBookingsFromDB();
     } catch (error) {
       console.error(error);
     }
-  },
+  }
 
-  blockVendor: async (
+  async blockVendor (
     vendorId: string
-  ) => {
-    const vendor = await adminRepositary.findVendorById(vendorId);
+  ) {
+    const vendor = await this.adminRepository.findVendorById(vendorId);
     if (!vendor) {
       console.error(`Vendor with ID ${vendorId} not found`);
       throw new Error("Vendor not found");
@@ -59,12 +67,13 @@ export default {
       throw new Error("Vendor is already blocked");
     }
 
-    return adminRepositary.blockVendorById(vendorId);
-  },
-  unblockVendor: async (
+    return this.adminRepository.blockVendorById(vendorId);
+  }
+
+  async unblockVendor (
     vendorId: string
-  ) => {
-    const vendor = await adminRepositary.findVendorById(vendorId);
+  )  {
+    const vendor = await this.adminRepository.findVendorById(vendorId);
     if (!vendor) {
       console.error(`Vendor with ID ${vendorId} not found`);
       throw new Error("Vendor not found");
@@ -75,15 +84,15 @@ export default {
       throw new Error("Vendor is already unblocked");
     }
 
-    return adminRepositary.unblockVendorById(vendorId);
-  },
+    return this.adminRepository.unblockVendorById(vendorId);
+  }
 
-  getAllUsers: async () => {
-    return adminRepositary.findAllUsers();
-  },
+  async getAllUsers ()  {
+    return this.adminRepository.findAllUsers();
+  }
 
-  blockUser: async (userId: string) => {
-    const user = await adminRepositary.findUserById(userId); 
+  async blockUser (userId: string)  {
+    const user = await this.adminRepository.findUserById(userId); 
     if (!user) {
       throw new Error("User not found");
     }
@@ -92,11 +101,11 @@ export default {
       throw new Error("User is already blocked");
     }
 
-    return adminRepositary.blockUserById(userId);
-  },
+    return this.adminRepository.blockUserById(userId);
+  }
 
-  unblockUser: async (userId: string) => {
-    const user = await adminRepositary.findUserById(userId);
+  async unblockUser (userId: string)  {
+    const user = await this.adminRepository.findUserById(userId);
     if (!user) {
       throw new Error("User not found");
     }
@@ -105,22 +114,21 @@ export default {
       throw new Error("User is already unblocked");
     }
 
-    return adminRepositary.unblockUserById(userId);
-  },
+    return this.adminRepository.unblockUserById(userId);
+  }
 
-
-  getDashboardData: async () => {
+  async getDashboardData () {
     try {
 
-      const totalEvents = await adminRepositary.getTotalEvents();
+      const totalEvents = await this.adminRepository.getTotalEvents();
 
-      const totalRevenueResult = await adminRepositary.getTotalRevenue();
+      const totalRevenueResult = await this.adminRepository.getTotalRevenue();
 
       const totalRevenue = totalRevenueResult || 0;
 
-      const totalVendors = await adminRepositary.getTotalVendors();
+      const totalVendors = await this.adminRepository.getTotalVendors();
 
-      const totalUsers = await adminRepositary.getTotalUsers();
+      const totalUsers = await this.adminRepository.getTotalUsers();
 
       return {
         totalEvents,
@@ -131,7 +139,7 @@ export default {
     } catch (error: any) {
       console.log("error in admin service: ", error);
     }
-  },
+  }
 }
 
 

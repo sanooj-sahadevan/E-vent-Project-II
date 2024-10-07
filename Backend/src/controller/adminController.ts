@@ -1,16 +1,24 @@
 import { Request, Response, NextFunction } from "express";
-import adminService from "../Service/adminService.js";
-import { HttpStatus } from "../utils/httpStatus.js";
+// import adminService from "../Service/adminService";
+import { HttpStatus } from "../utils/httpStatus";
 
-export default {
-  adminlogin: async (
+export class AdminController {
+
+  private adminService
+
+  constructor(adminService: any) {
+    this.adminService = adminService
+  }
+
+
+  async adminlogin(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> => {
+  ): Promise<void> {
     const { email, password } = req.body;
     try {
-      const result = await adminService.loginUser(email, password);
+      const result = await this.adminService.loginUser(email, password);
       console.log(result);
 
       if (result) {
@@ -22,36 +30,36 @@ export default {
     } catch (error) {
       next(error);
     }
-  },
+  }
 
-  getAllVendors: async (req: Request, res: Response, next: NextFunction) => {
+  async getAllVendors(req: Request, res: Response, next: NextFunction) {
     try {
-      const allWorkers = await adminService.getAllVendorsService();
+      const allWorkers = await this.adminService.getAllVendorsService();
       res.status(HttpStatus.OK).json(allWorkers);
     } catch (err) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "Failed to retrieve workers" });
     }
-  },
+  }
 
-  getAllBookings: async (req: Request, res: Response, next: NextFunction) => {
+  async getAllBookings(req: Request, res: Response, next: NextFunction) {
     try {
-      const allBookings = await adminService.getAllBookingsService();
+      const allBookings = await this.adminService.getAllBookingsService();
       res.status(HttpStatus.OK).json(allBookings);
     } catch (err) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: "Failed to retrieve workers" });
     }
-  },
+  }
 
-  blockVendorController: async (
+  async blockVendorController(
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ) {
     try {
       const vendorId = req.params.id;
       console.log("backend", vendorId);
 
-      const blockedCompany = await adminService.blockVendor(vendorId);
+      const blockedCompany = await this.adminService.blockVendor(vendorId);
 
       res.status(HttpStatus.OK).json({
         message: "Vendor blocked successfully",
@@ -60,16 +68,17 @@ export default {
     } catch (error) {
       next(error);
     }
-  },
-  unblockVendorController: async (
+  }
+
+  async unblockVendorController(
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ) {
     try {
       const vendorId = req.params.id;
 
-      const unblockedVendor = await adminService.unblockVendor(vendorId);
+      const unblockedVendor = await this.adminService.unblockVendor(vendorId);
 
       res.status(HttpStatus.OK).json({
         message: "Vendor unblocked successfully",
@@ -78,66 +87,68 @@ export default {
     } catch (error) {
       next(error);
     }
-  },
+  }
 
-  getUsersList: async (
+  async getUsersList(
     req: Request,
     res: Response,
     next: NextFunction
-  ): Promise<void> => {
+  ): Promise<void> {
     try {
-      const users = await adminService.getAllUsers();
+      const users = await this.adminService.getAllUsers();
       res.status(HttpStatus.OK).json(users);
     } catch (error) {
       next(error);
     }
-  },
-  blockUserController: async (
+  }
+
+  async blockUserController(
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ) {
     try {
       const userId = req.params.id;
       console.log("backend", userId);
 
-      const blockedUser = await adminService.blockUser(userId);
+      const blockedUser = await this.adminService.blockUser(userId);
       res
         .status(HttpStatus.OK)
         .json({ message: "User blocked successfully", user: blockedUser });
     } catch (error) {
       next(error);
     }
-  },
-  unblockUserController: async (
+  }
+
+  async unblockUserController(
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ) {
     try {
       const userId = req.params.id;
 
-      const unblockedUser = await adminService.unblockUser(userId);
+      const unblockedUser = await this.adminService.unblockUser(userId);
       res
         .status(HttpStatus.OK)
         .json({ message: "User unblocked successfully", user: unblockedUser });
     } catch (error) {
       next(error);
     }
-  },
+  }
 
-  DashboardController: async (
+  async DashboardController(
     req: Request,
     res: Response,
     next: NextFunction
-  ) => {
+  ) {
     try {
-      const dashboardData = await adminService.getDashboardData();
+      const dashboardData = await this.adminService.getDashboardData();
       return res.status(HttpStatus.OK).json(dashboardData);
     } catch (error: any) {
       next(error);
     }
-  },
+  }
 };
 
 // export const adminlogin = async (

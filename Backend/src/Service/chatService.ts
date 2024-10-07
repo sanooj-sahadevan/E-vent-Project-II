@@ -1,6 +1,6 @@
 import {
   savechatDB,companyAddMessageDB
-} from "../Repository/chatRepo.js";
+} from "../Repository/chatRepo";
 
 
 export const savechatService = async (text: string, userId: string, vendorId: string) => {

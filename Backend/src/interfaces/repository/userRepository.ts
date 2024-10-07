@@ -1,0 +1,26 @@
+import { User } from "../user";
+
+export interface IUserRepository{
+    createUser (user: User) : Promise<any>
+    findUserByEmail (email: string): Promise<any>
+    verifyAndSaveUserRepo(email: string, otp: string):Promise<any>
+    findUserById (userId: string): Promise<any>
+    userEditFromDB (userDetails: User): Promise<any>
+    updateUser (email: string, update: Partial<User>): Promise<any>
+    findUserByEmailupdate (email: string, password: string): Promise<any>
+    getAllVendors ():Promise<any>
+    fetchfromDBDishes (vendorId: string): Promise<any>
+    fetchfromDBAuditorium (vendorId: string): Promise<any>
+    findVendor (vendorId: string): Promise<any>
+    findVendorByIdInDb (vendorId: string, userId: string): Promise<any>
+    findAuditoriumVendorIdInDb (vendorId: string): Promise<any>
+    findAuditoriumByIdInDb (auditoriumId: string): Promise<any>
+    finddishesByIdInDb (dishesId: string): Promise<any>
+    getBookingDetail (id: string): Promise<any>
+    createBookedTrip (bookingData: any): Promise<any>
+    savechatDB (chat: string): Promise<any>
+    findDetailsByUserId (userId: string): Promise<any>
+    changepassword (userId: string, newPassword: string): Promise<any>
+    findFoodVendorIdInDb(vendorId:string): Promise<any>
+
+}

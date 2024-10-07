@@ -1,38 +1,44 @@
 import jwt from "jsonwebtoken";
-import vendorRepositary from "../Repository/vendorRepo.js"
-import { Vendor } from "../interfaces/vendor.js";
-import { uploadToS3Bucket } from "../middleware/fileUpload.js";
-import { IMulterFile } from "../utils/type.js";
-import { io } from "../../index.js";
-import { DishDocument } from "../interfaces/dishes.js";
-import { AuditoriumDocument } from "../models/auditoriumModel.js";
+// import vendorRepositary from "../Repository/vendorRepo"
+import { Vendor } from "../interfaces/vendor";
+import { uploadToS3Bucket } from "../middleware/fileUpload";
+import { IMulterFile } from "../utils/type";
+import { io } from "../index";
+import { DishDocument } from "../interfaces/dishes";
+import { AuditoriumDocument } from "../models/auditoriumModel";
+import { IVendorRepository } from "../interfaces/repository/vendorRepository";
 
 
-export default {
+export class VendorService{
+  private vendorRepository: IVendorRepository
 
-registerVendor : async (vendor: Vendor) => {
+  constructor(vendorRepository:IVendorRepository){
+    this.vendorRepository = vendorRepository
+  }
+
+  async registerVendor(vendor: Vendor)  {
     try {
-      const existingVendor = await vendorRepositary.findVendorByEmail(vendor.email);
+      const existingVendor = await this.vendorRepository.findVendorByEmail(vendor.email);
       console.log(existingVendor);
   
       if (existingVendor) {
         if (existingVendor.otpVerified) {
           throw new Error("User already exists");
         } else {
-          await vendorRepositary.updateVendor(existingVendor.email, vendor);
+          await this.vendorRepository.updateVendor(existingVendor.email, vendor);
           return existingVendor;
         }
       }
-      return await vendorRepositary.createVendor(vendor);
+      return await this.vendorRepository.createVendor(vendor);
     } catch (error) {
       console.error("Error during user registration:", error);
   
       throw error;
     }
-  },
+  }
   
-  verifyAndSaveVendor : async (email: string, otp: string) => {
-    const vendor = await vendorRepositary.findVendorByEmail(email);
+  async verifyAndSaveVendor  (email: string, otp: string)  {
+    const vendor = await this.vendorRepository.findVendorByEmail(email);
     if (vendor && vendor.otp === otp) {
       vendor.otp = undefined;
       vendor.otpVerified = true;
@@ -40,10 +46,10 @@ registerVendor : async (vendor: Vendor) => {
       return vendor;
     }
     throw new Error("Invalid OTP");
-  },
+  }
 
-  loginVendor : async (email: string, password: string) => {
-    const vendor = await vendorRepositary.findVendorByEmail(email);
+ async loginVendor  (email: string, password: string)  {
+    const vendor = await this.vendorRepository.findVendorByEmail(email);
     if (!vendor) {
       throw new Error("Invalid Email/Password");
     }
@@ -57,33 +63,32 @@ registerVendor : async (vendor: Vendor) => {
       }
     );
     return { vendor, vendorToken };
-  },
-
-  vendorAddress : async () => {
+  }
+  async  vendorAddress  () {
     try {
-      return await vendorRepositary.vendorAddressFromDB();
+      return await this.vendorRepository.vendorAddressFromDB();
     } catch (error) {
       throw new Error('Failed to fetch vendor addresses');
     }
-  },
+  }
   
   
-  editVendorService : async (vendorDetails: Vendor, imageUrl: string | undefined) => {
+  async editVendorService (vendorDetails: Vendor, imageUrl: string | undefined) {
     try {
-      const existingVendor = await vendorRepositary.findVendorByEmailRepo(vendorDetails.email);
+      const existingVendor = await this.vendorRepository.findVendorByEmailRepo(vendorDetails.email);
   
       if (existingVendor) {
-        return await vendorRepositary.editVendorRepo(existingVendor, vendorDetails, imageUrl);
+        return await this.vendorRepository.editVendorRepo(existingVendor, vendorDetails, imageUrl);
       } else {
-        return await vendorRepositary.editVendorRepo(null, vendorDetails, imageUrl);
+        return await this.vendorRepository.editVendorRepo(null, vendorDetails, imageUrl);
       }
     } catch (error) {
       throw new Error('Failed to update vendor details');
     }
-  },
+  }
   
   
-uploadImage : async function (imageFile: IMulterFile): Promise<string> {
+  async uploadImage  (imageFile: IMulterFile): Promise<string> {
     try {
       console.log('first step');
   
@@ -92,12 +97,11 @@ uploadImage : async function (imageFile: IMulterFile): Promise<string> {
     } catch (error: any) {
       throw new Error(error.message);
     }
-  },
+  }
   
-  
-  findVendorById : async (vendorId: string) => {
+  async  findVendorById  (vendorId: string)  {
     try {
-      const vendor = await vendorRepositary.findVendorByIdInDb(vendorId);
+      const vendor = await this.vendorRepository.findVendorByIdInDb(vendorId);
       if (!vendor) {
         throw new Error(`Error finding vendor`);
       }
@@ -105,12 +109,12 @@ uploadImage : async function (imageFile: IMulterFile): Promise<string> {
     } catch (error) {
       throw new Error(`Error finding vendor: ${error}`);
     }
-  },
+  }
 
- findAuditoriumById : async (auditoriumId: string) => {
+  async findAuditoriumById  (auditoriumId: string)  {
     try {
       console.log('controller 2');
-      const vendor = await vendorRepositary.findAuditoriumByIdInDb(auditoriumId);
+      const vendor = await this.vendorRepository.findAuditoriumByIdInDb(auditoriumId);
       if(!vendor){
         throw new Error(`Error finding vendor`);
       }
@@ -118,13 +122,13 @@ uploadImage : async function (imageFile: IMulterFile): Promise<string> {
     } catch (error) {
       throw new Error(`Error finding vendor: ${error}`);
     }
-  },
+  }
   
   
-   findDishesById : async (dishesId: string) => {
+  async findDishesById  (dishesId: string)  {
     try {
       
-      const vendor = await vendorRepositary.findDishesByIdInDb(dishesId);
+      const vendor = await this.vendorRepository.findDishesByIdInDb(dishesId);
       if(!vendor){
         throw new Error(`Error finding vendor`);
       }
@@ -132,13 +136,13 @@ uploadImage : async function (imageFile: IMulterFile): Promise<string> {
     } catch (error) {
       throw new Error(`Error finding vendor: ${error}`);
     }
-  },
+  }
   
-   uploadDishes : async (
+  async  uploadDishes  (
     vendorId: string,
     data: DishDocument,
     images?: string
-  ) => {
+  ) {
     try {
       console.log('duisg servuive');
       
@@ -146,7 +150,7 @@ uploadImage : async function (imageFile: IMulterFile): Promise<string> {
   
       dishesData.data.price = Number(dishesData.data.price);
   
-      const newDish = await vendorRepositary.createDishes(dishesData);
+      const newDish = await this.vendorRepository.createDishes(dishesData);
   console.log(newDish);
   
       return newDish;
@@ -154,57 +158,54 @@ uploadImage : async function (imageFile: IMulterFile): Promise<string> {
       console.error("Error in uploadDishes: ", error);
       console.error();
     }
-  },
+  }
   
   
- uploadAuditorium : async (
+  async uploadAuditorium  (
     vendorId: string,
     data: AuditoriumDocument,
     image?: string
-  ) => {
+  ) {
     try {
       const auditoriumData = { vendorId, data, image };
       auditoriumData.data.price = Number(auditoriumData.data.price);
   
-      const newAuditorium = await vendorRepositary.createAuditorium(auditoriumData);
+      const newAuditorium = await this.vendorRepository.createAuditorium(auditoriumData);
   
       return newAuditorium;
     } catch (error) {
       console.error("Error in uploadAuditorium: ", error);
       throw error;
     }
-  },
+  }
   
   
-  findFoodVendorById : async (vendorId: string) => {
+  async findFoodVendorById (vendorId: string) {
     try {
       console.log('Service invoked to find dishes for vendor:', vendorId);
-      const dishes = await vendorRepositary.findFoodVendorIdInDb(vendorId);
+      const dishes = await this.vendorRepository.findFoodVendorIdInDb(vendorId);
       return dishes;
     } catch (error) {
       throw new Error(`Error finding vendor dishes: ${error}`);
     }
-  },
+  }
   
   
   
-  findAuditoriumVendorById : async (vendorId: string) => {
+  async findAuditoriumVendorById  (vendorId: string) {
     try {
       console.log('Service invoked to find auditorium for vendor:', vendorId);
-      const Auditorium = await vendorRepositary.findAuditoriumVendorIdInDb(vendorId);
+      const Auditorium = await this.vendorRepository.findAuditoriumVendorIdInDb(vendorId);
       return Auditorium;
     } catch (error) {
       throw new Error(`Error finding vendor dishes: ${error}`);
     }
-  },
+  }
   
   
-  
-  
-  
-softDeleteDishService :async (dishId: string) => {
+  async softDeleteDishService  (dishId: string) {
     try {
-      const updatedDish = await vendorRepositary.softDeleteDishRepo(dishId);
+      const updatedDish = await this.vendorRepository.softDeleteDishRepo(dishId);
       if(!updatedDish){
         throw new Error(`Error soft-deleting dish`);
       }
@@ -212,13 +213,12 @@ softDeleteDishService :async (dishId: string) => {
     } catch (error) {
       throw new Error(`Error soft-deleting dish: ${error}`);
     }
-  },
+  }
   
   
-  
-  softDeleteAuditoriumService : async (auditoriumId: string) => {
+  async  softDeleteAuditoriumService  (auditoriumId: string)  {
     try {
-      const updatedAuditorium = await vendorRepositary.softDeleteAuditoriumRepo(auditoriumId);
+      const updatedAuditorium = await this.vendorRepository.softDeleteAuditoriumRepo(auditoriumId);
       if(!updatedAuditorium){
         throw new Error(`Error soft-deleting auditorium`);
       }
@@ -226,12 +226,12 @@ softDeleteDishService :async (dishId: string) => {
     } catch (error) {
       throw new Error(`Error soft-deleting auditorium: ${error}`);
     }
-  },
+  }
   
   
-  findBookingDetails : async (vendorId: string) => {
+  async findBookingDetails  (vendorId: string)  {
     try {
-      const bookingDetails = await vendorRepositary.findDetailsByvendorId(vendorId);
+      const bookingDetails = await this.vendorRepository.findDetailsByvendorId(vendorId);
       if(!bookingDetails){
         throw new Error(`Error soft-deleting auditorium`);
       }
@@ -240,42 +240,41 @@ softDeleteDishService :async (dishId: string) => {
       throw new Error(`Error soft-deleting auditorium: ${error}`);
   
     }
-  },
+  }
   
   
   
   
-  findVendorByEmailService : async (email: string) => {
+  async findVendorByEmailService (email: string)  {
     try {
-      const vendor = await vendorRepositary.findVendorByEmail(email);
+      const vendor = await this.vendorRepository.findVendorByEmail(email);
       return vendor
     } catch (error) {
       console.error(error);
   
     }
-  },
+  }
   
   
-  
-chatServices : async ({ vendorId }: { vendorId: string }) => {
+  async chatServices  ({ vendorId }: { vendorId: string })  {
     try {
-      const chats = await vendorRepositary.chatDB(vendorId);
+      const chats = await this.vendorRepository.chatDB(vendorId);
       return chats;
     } catch (error) {
       console.error("Error fetching chats:", error);
       throw error;
     }
-  },
+  }
 
-  messageService : async ({
+  async messageService  ({
     chatIds,
     vendorId,
   }: {
     chatIds: string[];
     vendorId: string;
-  }) => {
+  })  {
     try {
-      const unreadCount = await vendorRepositary.messageDB(chatIds);
+      const unreadCount = await this.vendorRepository.messageDB(chatIds);
   
       io.to(vendorId).emit("unreadCount", { unreadCount });
   
@@ -284,9 +283,9 @@ chatServices : async ({ vendorId }: { vendorId: string }) => {
       console.error("Error fetching unread messages:", error);
       throw error;
     }
-  },
-  
+  }  
 }
+
 // export const registerVendor = async (vendor: Vendor) => {
 //   try {
 //     const existingVendor = await findVendorByEmail(vendor.email);

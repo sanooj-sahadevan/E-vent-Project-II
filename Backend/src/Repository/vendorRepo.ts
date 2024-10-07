@@ -1,77 +1,81 @@
 import mongoose, { Document } from "mongoose";
-import { DishDocument, Dishes } from '../models/dishesModel.js';
-import { Auditorium } from "../models/auditoriumModel.js";
-import { bookedModel } from "../models/bookedEvent.js";
-import { chatModel } from "../models/chatModel.js";
-import { messageModel } from "../models/messageModal.js";
-import { VendorModel } from "../models/vendorModel.js";
-import { Vendor } from '../interfaces/vendor.js'
+import { DishDocument, Dishes } from '../models/dishesModel';
+import { Auditorium } from "../models/auditoriumModel";
+import { bookedModel } from "../models/bookedEvent";
+import { chatModel } from "../models/chatModel";
+import { messageModel } from "../models/messageModal";
+import { VendorModel } from "../models/vendorModel";
+import { Vendor } from '../interfaces/vendor'
+import { IVendorRepository } from "../interfaces/repository/vendorRepository";
 
 
 
 
-export default {
-   createVendor : async (vendor: Vendor) => {
+export class VendorRepository implements IVendorRepository {
+  constructor() {
+  }
+
+  async createVendor(vendor: Vendor) : Promise<any>{
     try {
       const newVendor = new VendorModel(vendor);
       return newVendor.save();
     } catch (error) {
-      console.error(error);
-  
+      throw new Error('Database Error');
+
     }
-  
-  },
-  
-  findVendorByEmail : async (email: string) => {
+
+  }
+
+  async findVendorByEmail(email: string) {
     try {
       return VendorModel.findOne({ email });
     } catch (error) {
       console.error(error);
-  
+
     }
-  },
-  
-  
-  updateVendor : async (email: string, update: Partial<Vendor>) => {
+  }
+
+
+  async updateVendor(email: string, update: Partial<Vendor>) {
     try {
       return VendorModel.findOneAndUpdate({ email }, update, { new: true });
     } catch (error) {
       console.error(error);
-  
-    }
-  },
 
-  findVendorByEmailAndPassword : async (
+    }
+  }
+
+  async findVendorByEmailAndPassword(
     email: string,
     password: string
-  ) => {
+  ) {
     return VendorModel.findOne({ email, password });
-  },
-  
-  
-  vendorAddressFromDB : async () => {
+  }
+
+
+  async vendorAddressFromDB() {
     try {
       return await VendorModel.find().sort({ createdAt: -1 });
     } catch (error) {
       throw new Error('Database query failed');
     }
-  },
-    
-   findVendorByEmailRepo : async (email: string): Promise<Vendor | null> => {
+  }
+
+  async findVendorByEmailRepo(email: string): Promise<Vendor | null> {
     try {
       return await VendorModel.findOne({ email });
     } catch (error) {
       console.error('Error finding vendor by email:', error);
       throw new Error('Database operation failed');
     }
-  },
-  
+  }
+
   // Edit or create vendor in the database
-   editVendorRepo : async (
+  async editVendorRepo(
     existingVendor: Vendor | null,
     vendorDetails: Vendor,
     imageUrl: string | undefined
-  ): Promise<Vendor> => {
+  ): Promise<Vendor> {
     try {
       if (existingVendor) {
         // Update existing vendor details
@@ -81,17 +85,17 @@ export default {
         existingVendor.district = vendorDetails.district;
         existingVendor.state = vendorDetails.state;
         existingVendor.reviews = vendorDetails.reviews;
-  
+
         // Update profile image if new image is uploaded
         if (imageUrl) {
           existingVendor.profileImage = imageUrl;
         }
-  
+
         // Update password if provided
         if (vendorDetails.password) {
           existingVendor.password = vendorDetails.password;
         }
-  
+
         // Save updated vendor
         await existingVendor.save();
         return existingVendor;
@@ -108,61 +112,61 @@ export default {
       console.error('Error updating vendor:', error);
       throw new Error('Database operation failed');
     }
-  },
-  
-  
+  }
+
+
   // export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
   //   try {
   //   } catch (error: any) {
   //     throw new Error(error.message);
   //   }
   // };
-  
-  
-   findVendorByIdInDb : async (vendorId: string) => {
+
+
+  async findVendorByIdInDb(vendorId: string) {
     return await VendorModel.findById(vendorId);
-  },
-  
- findAuditoriumByIdInDb :async (auditoriumId: string) => {
+  }
+
+  async findAuditoriumByIdInDb(auditoriumId: string) {
     console.log(auditoriumId);
-  
+
     let result = await Auditorium.findById(auditoriumId);
     console.log(result);
     return result
-  },
-  
-   findDishesByIdInDb :async (dishesId: string) => {
+  }
+
+  async findDishesByIdInDb(dishesId: string) {
     try {
       return await Dishes.findById(dishesId);
     } catch (error) {
       console.error(error);
     }
-  },
-  
- findFoodVendorIdInDb : async (vendorId: string) => {
+  }
+
+  async findFoodVendorIdInDb(vendorId: string) {
     try {
       const result = await Dishes.find({ vendorId: vendorId });
       return result
     } catch (error) {
       console.error(error);
-  
+
     }
-  },
-  
-  
-  
-findAuditoriumVendorIdInDb : async (vendorId: string) => {
+  }
+
+
+
+  async findAuditoriumVendorIdInDb(vendorId: string) {
     try {
       const res = await Auditorium.find({ vendorId: vendorId });
       return res
     } catch (error) {
       console.error(error);
-  
+
     }
-  },
-  
-  
-   createDishes : async (dishesData: any) => {
+  }
+
+
+  async createDishes(dishesData: any) {
     try {
       const dish = new Dishes({
         vendorId: dishesData.vendorId,
@@ -175,22 +179,22 @@ findAuditoriumVendorIdInDb : async (vendorId: string) => {
         status: dishesData.data.status,
         images: dishesData.images,
       });
-        const savedDish = await dish.save();
+      const savedDish = await dish.save();
       console.log("Saved Dish: ", savedDish);
-  
+
       return {
         savedDish,
         vendorId: dishesData.vendorId,
-      };   
-     } catch (error) {
+      };
+    } catch (error) {
       console.error("Error saving dish: ", error);
       throw error;
     }
-  },
-  
-  
-  
-  createAuditorium : async (auditoriumData: any) => {
+  }
+
+
+
+  async createAuditorium(auditoriumData: any) {
     try {
       const auditorium = new Auditorium({
         vendorId: auditoriumData.vendorId,
@@ -203,10 +207,10 @@ findAuditoriumVendorIdInDb : async (vendorId: string) => {
         images: auditoriumData.image ? [auditoriumData.image] : [], // Handle single image as array
         capacity: auditoriumData.data.capacity,
       });
-  
+
       const savedAuditorium = await auditorium.save();
       console.log("Saved Auditorium: ", savedAuditorium);
-  
+
       return {
         savedAuditorium,
         vendorId: auditoriumData.vendorId,
@@ -215,12 +219,12 @@ findAuditoriumVendorIdInDb : async (vendorId: string) => {
       console.error("Error saving auditorium: ", error);
       throw error;
     }
-  },
-  
-  
-  
-  
-softDeleteDishRepo : async (dishId: string): Promise<DishDocument | null> => {
+  }
+
+
+
+
+  async softDeleteDishRepo(dishId: string): Promise<DishDocument | null> {
     try {
       const dish = await Dishes.findById(dishId);
       if (!dish || dish.isDeleted) {
@@ -233,13 +237,13 @@ softDeleteDishRepo : async (dishId: string): Promise<DishDocument | null> => {
       console.error(`Error soft-deleting dish: ${error}`);
       throw error;
     }
-  },
-  
-  
-  
-  
-  
-  softDeleteAuditoriumRepo :async (auditoriumId: string) => {
+  }
+
+
+
+
+
+  async softDeleteAuditoriumRepo(auditoriumId: string) {
     try {
       const auditorium = await Auditorium.findById(auditoriumId);
       console.log(auditorium);
@@ -253,11 +257,10 @@ softDeleteDishRepo : async (dishId: string): Promise<DishDocument | null> => {
       console.error(`Error soft-deleting auditorium: ${error}`);
       throw error;
     }
-  },
-  
-  
-  
- findDetailsByvendorId : async (vendorId: string) => {
+  }
+
+
+  async findDetailsByvendorId(vendorId: string) {
     try {
       const results = await bookedModel
         .find({ vendorId: vendorId })
@@ -271,12 +274,12 @@ softDeleteDishRepo : async (dishId: string): Promise<DishDocument | null> => {
       console.error("Database error:", error);
       throw new Error("Database operation failed.");
     }
-  },
-  
-  
-  
-  
-  chatDB : async (vendorId: string) => {
+  }
+
+
+
+
+  async chatDB(vendorId: string) {
     try {
       const chats = await chatModel.find({ vendorId }).select('_id');
       return chats;
@@ -284,25 +287,25 @@ softDeleteDishRepo : async (dishId: string): Promise<DishDocument | null> => {
       console.error("Error fetching chats from the database:", error);
       throw error;
     }
-  },
-  
-  messageDB : async (chatIds: string[]) => {
+  }
+
+  async messageDB(chatIds: string[]) {
     try {
       const unreadCount = await messageModel.countDocuments({
         chatId: { $in: chatIds },
         senderModel: "User",
         isRead: false,
       });
-  
+
       return unreadCount;
     } catch (error) {
       console.error("Error fetching unread messages count from the database:", error);
       throw error;
     }
-  },
-  
-  
+  }
 }
+
+
 
 // export const createVendor = async (vendor: Vendor) => {
 //   try {

@@ -1,24 +1,28 @@
 import { NextFunction, Request, Response } from "express";
-import userService from "../Service/vendorService.js"
+// import userService from "../Service/vendorService"
 
-import { HttpStatus } from "../utils/httpStatus.js";
-import { IMulterFile } from "../utils/type.js";
-import { otpGenerator } from "../utils/otpGenerator.js";
-import { sendEmail } from "../utils/sendEmail.js";
-
-
+import { HttpStatus } from "../utils/httpStatus";
+import { IMulterFile } from "../utils/type";
+import { otpGenerator } from "../utils/otpGenerator";
+import { sendEmail } from "../utils/sendEmail";
 
 
-export default {
+export class VendorController{
+  private vendorService
 
-   register : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  constructor(vendorService:any){
+    this.vendorService = vendorService
+  }
+
+
+  async register  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { vendorname, email, phone, password } = req.body;
 
     const proceedWithRegistration = async () => {
       try {
         const otp = otpGenerator();
-        await userService.registerVendor({
+        await this.vendorService.registerVendor({
           vendorname,
           phone,
           email,
@@ -41,13 +45,14 @@ export default {
   } catch (error: any) {
     next(error);
   }
-},
- verifyOtp : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+}
+
+async verifyOtp  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { email, otp } = req.body;
     console.log(email, otp);
 
-    const vendor = await userService.findVendorByEmailService(email);
+    const vendor = await this.vendorService.findVendorByEmailService(email);
     console.log(vendor);
 
     if (!vendor) {
@@ -56,7 +61,7 @@ export default {
     }
 
     if (vendor.otp === otp) {
-      await userService.verifyAndSaveVendor(email, otp);
+      await this.vendorService.verifyAndSaveVendor(email, otp);
       res.status(HttpStatus.OK).json("Vendor registered successfully");
     } else {
       res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
@@ -64,59 +69,57 @@ export default {
   } catch (error: any) {
     next(error);
   }
-},
+}
 
-
- login : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async login  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { email, password } = req.body;
-    const { vendor, vendorToken } = await userService.loginVendor(email, password);
+    const { vendor, vendorToken } = await this.vendorService.loginVendor(email, password);
     res.cookie("vendorToken", vendorToken,);
     res.status(HttpStatus.OK).json({ vendor, vendorToken });
   } catch (error: any) {
     next(error);
   }
-},
+}
 
 
-
- fetchAddress : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async fetchAddress  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     console.log("vann ta");
 
-    const vendorAddresses = await userService.vendorAddress();
+    const vendorAddresses = await this.vendorService.vendorAddress();
     console.log(vendorAddresses);
 
     res.status(HttpStatus.OK).json(vendorAddresses);
   } catch (error) {
     next(error);
   }
-},
+}
 
 
- editVendorDetails : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async editVendorDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const vendorDetails = req.body;
     const file = req.file as unknown as IMulterFile;
 
     let imageUrl: string | undefined;
     if (file) {
-      imageUrl = await userService.uploadImage(file);
+      imageUrl = await this.vendorService.uploadImage(file);
     }
-    const updatedVendor = await userService.editVendorService(vendorDetails, imageUrl);
+    const updatedVendor = await this.vendorService.editVendorService(vendorDetails, imageUrl);
     res.status(HttpStatus.OK).json({ ...updatedVendor, imageUrl }); 
 
   } catch (error) {
     next(error); 
   }
-},
+}
 
 
-fetchVendorDetails : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async fetchVendorDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     console.log('controller');
     const { vendorId } = req.params; // Extract vendorId from request params
-    const vendor = await userService.findVendorById(vendorId); // Fetch vendor details
+    const vendor = await this.vendorService.findVendorById(vendorId); // Fetch vendor details
     if (!vendor) {
       res.status(HttpStatus.NOT_FOUND).json({ message: "Vendor not found" });
     } else {
@@ -125,57 +128,54 @@ fetchVendorDetails : async (req: Request, res: Response, next: NextFunction): Pr
   } catch (error) {
     next(error);
   }
-},
+}
 
-fetchdishes : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async fetchdishes  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
  
     const { dishesId } = req.params;
-    const vendor = await userService.findDishesById(dishesId);
+    const vendor = await this.vendorService.findDishesById(dishesId);
       res.status(HttpStatus.OK).json(vendor);
   } catch (error) {
     next(error);
   }
-},
+}
 
 
- fetchauditorium : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async fetchauditorium  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { auditoriumId } = req.params;
-    const vendor = await  userService.findAuditoriumById(auditoriumId);
+    const vendor = await  this.vendorService.findAuditoriumById(auditoriumId);
       res.status(HttpStatus.OK).json(vendor);
   } catch (error) {
     next(error);
   }
-},
+}
 
 
 
-addDishes :async (req: Request & { vendorId?: string }, res: Response, next: NextFunction) => {
+ async addDishes  (req: Request & { vendorId?: string }, res: Response, next: NextFunction)  {
   try {
     const { body } = req;
-    const vendorId = req.vendorId
-    console.log(vendorId,'vendorId-----------------------------------------------------');
-    
+    const vendorId = req.vendorId    
     if (!vendorId) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
     const file = req.file as unknown as IMulterFile;
     let imageUrl: string | undefined = undefined;
     if (file) {
-      imageUrl = await  userService.uploadImage(file);
+      imageUrl = await  this.vendorService.uploadImage(file);
     }
-    await  userService.uploadDishes(vendorId, body, imageUrl);
-
+    await  this.vendorService.uploadDishes(vendorId, body, imageUrl);
     return res.status(HttpStatus.OK).json("Dishes added successfully");
 
   } catch (error) {
     console.error("Error adding dishes: ", error);
     next(error);
   }
-},
+}
 
- addAuditorium :async (req: Request & { vendorId?: string }, res: Response, next: NextFunction) => {
+async addAuditorium  (req: Request & { vendorId?: string }, res: Response, next: NextFunction)  {
   try {
 
     const { body } = req;
@@ -190,10 +190,10 @@ addDishes :async (req: Request & { vendorId?: string }, res: Response, next: Nex
     let imageUrl: string | undefined = undefined;
 
     if (file) {
-      imageUrl = await  userService.uploadImage(file);
+      imageUrl = await  this.vendorService.uploadImage(file);
     }
 
-    const auditoriumData = await  userService.uploadAuditorium(vendorId, body, imageUrl);
+    const auditoriumData = await  this.vendorService.uploadAuditorium(vendorId, body, imageUrl);
 
     if (auditoriumData) {
       return res.status(HttpStatus.OK).json("Auditorium added successfully");
@@ -204,27 +204,26 @@ addDishes :async (req: Request & { vendorId?: string }, res: Response, next: Nex
     console.error("Error adding auditorium: ", error);
     next(error);
   }
-},
+}
 
 
-fetchDetailsVendor : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async fetchDetailsVendor  (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { vendorId } = req.params;
-    const vendor = await  userService.findVendorById(vendorId);
+    const vendor = await  this.vendorService.findVendorById(vendorId);
       res.status(HttpStatus.OK).json(vendor);
 
   } catch (error) {
     console.error('Error in fetchDetailsVendor:', error);
     next(error);
   }
-},
+}
 
 
-
-fetchFoodDetails : async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async fetchFoodDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { vendorId } = req.params;
-    const dishes = await  userService.findFoodVendorById(vendorId);
+    const dishes = await  this.vendorService.findFoodVendorById(vendorId);
     if (!dishes || dishes.length === 0) {
       res.status(HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
     } else {
@@ -236,12 +235,12 @@ fetchFoodDetails : async (req: Request, res: Response, next: NextFunction): Prom
     console.error('Error in fetchFoodDetails:', error);
     next(error);
   }
-},
+}
 
-fetchAuditoriumDetails :async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+async fetchAuditoriumDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { vendorId } = req.params;
-    const auditorium = await  userService.findAuditoriumVendorById(vendorId);
+    const auditorium = await  this.vendorService.findAuditoriumVendorById(vendorId);
 
     if (!auditorium || auditorium.length === 0) {
       res.status(HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
@@ -253,55 +252,55 @@ fetchAuditoriumDetails :async (req: Request, res: Response, next: NextFunction):
     console.error('Error in fetchFoodDetails:', error);
     next(error);
   }
-},
+}
 
 
 
 
-softDeleteDish : async (req: Request, res: Response, next: NextFunction) => {
+async softDeleteDish  (req: Request, res: Response, next: NextFunction)  {
   try {
     const { dishId } = req.params;
     if (!dishId) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Dish ID is missing' });
     }
-    const updatedDish = await  userService.softDeleteDishService(dishId); 
+    const updatedDish = await  this.vendorService.softDeleteDishService(dishId); 
     res.status(HttpStatus.OK).json({ message: 'Dish deleted successfully', dish: updatedDish });
   } catch (error) {
     next(error);
   }
-},
+}
 
 
-softDeleteAuditorium : async (req: Request, res: Response, next: NextFunction) => {
+async softDeleteAuditorium  (req: Request, res: Response, next: NextFunction)  {
   try {
     const { auditoriumId } = req.params;
     if (!auditoriumId) {
       return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Auditorium ID is missing' });
     }
-    const updatedAuditorium = await  userService.softDeleteAuditoriumService(auditoriumId); 
+    const updatedAuditorium = await  this.vendorService.softDeleteAuditoriumService(auditoriumId); 
     res.status(HttpStatus.OK).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
   } catch (error) {
     next(error);
   }
-},
+}
 
 
-vendorBookingDetils : async (req: Request, res: Response, next: NextFunction) => {
+async vendorBookingDetils (req: Request, res: Response, next: NextFunction)  {
   const { vendorId } = req.params;
   try {
-    const booking = await  userService.findBookingDetails(vendorId)
+    const booking = await  this.vendorService.findBookingDetails(vendorId)
     res.status(HttpStatus.OK).json(booking);
   } catch (error) {
     next(error);
 
 
   }
-},
+}
 
-getUnreadMessagesCount : async (
+async getUnreadMessagesCount  (
   req: any,
   res: any, next: NextFunction
-): Promise<void> => {
+): Promise<void>  {
   const vendorId = req.vendorId;
 
   try {
@@ -309,7 +308,7 @@ getUnreadMessagesCount : async (
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
 
-    const chatServiceData = await  userService.chatServices({ vendorId });
+    const chatServiceData = await  this.vendorService.chatServices({ vendorId });
 
     const chatIds = chatServiceData.map((chat: any) => chat._id);
 
@@ -317,13 +316,13 @@ getUnreadMessagesCount : async (
       return res.status(HttpStatus.OK).json({ unreadCount: 0 });
     }
 
-    const unreadCount = await  userService.messageService({ chatIds, vendorId });
+    const unreadCount = await  this.vendorService.messageService({ chatIds, vendorId });
     res.status(HttpStatus.OK).json({ unreadCount });
   } catch (error) {
     next(error);
 
   }
-},
+}
 
  
 }
