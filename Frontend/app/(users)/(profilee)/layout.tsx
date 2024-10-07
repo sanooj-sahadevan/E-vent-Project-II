@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     title: "E-vent",
     description: "E-vent Event Management Company",
     icons: {
-        icon: "/icon.jpg", // path to your favicon in the public folder
+        icon: "/icon.jpg",
     },
 };
 
@@ -26,12 +26,12 @@ export default function RootLayout({
         <html lang="en">
             <body className={inter.className}>
 
-              <UserMain/>
-                <UserProfile/>
+                <UserMain />
+                <UserProfile />
                 {children}
-                <Footer/>
-                
-                </body>
+                <Footer />
+
+            </body>
         </html>
     );
 }
