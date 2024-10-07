@@ -1,87 +1,75 @@
 import { NextFunction, Request, Response } from "express";
-import {
-  savechatService, companyAddMessageService
-} from "../Service/chatService";
 import { HttpStatus } from '../utils/httpStatus'
-import { messageModel } from "../models/messageModal";
-import { chatModel } from "../models/chatModel";
-import mongoose from "mongoose";
 
 
 
 
+export class ChatController {
 
-export const savechat = async (req: Request, res: Response) => {
-  try {
-    const { text } = req.body;
-    const userId = req.body.senderId;
-    const vendorId = req.body.vendorId;
+  private chatService
 
-    const result = await savechatService(text, userId, vendorId);
-
-    res.status(HttpStatus.OK).json(result);
-  } catch (error: any) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+  constructor(chatService: any) {
+    this.chatService = chatService
   }
-};
 
 
+  async savechat(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { text } = req.body;
+      const userId = req.body.senderId;
+      const vendorId = req.body.vendorId;
 
+      const result = await this.chatService.savechatService(text, userId, vendorId);
 
-export const getMessage = async (req: Request, res: Response) => {
-  const { chatId } = req.params;
-
-  try {
-    const messages = await messageModel.find({ chatId }).populate("senderId");
-    if (!messages.length) {
-      return res
-        .status(HttpStatus.NOT_FOUND)
-        .json({ message: "No messages found for this chat" });
+      res.status(HttpStatus.OK).json(result);
+    } catch (error: any) {
+      res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
     }
-    await messageModel.updateMany({ chatId }, { $set: { isRead: true } });
-    const updatedMessages = await messageModel.find({ chatId }).populate("senderId");
-    res.status(HttpStatus.OK).json(updatedMessages);
-  } catch (error: any) {
-    res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: "Failed to retrieve messages", error: error.message });
-  }
-};
+  };
+
+  async getMessage(req: Request, res: Response, next: NextFunction) {
+    const { chatId } = req.params;
+
+    try {
+      const updatedMessages = await this.chatService.getMessageService(chatId);
+      if (!updatedMessages.length) {
+        return res
+          .status(HttpStatus.NOT_FOUND)
+          .json({ message: "No messages found for this chat" });
+      }
+      res.status(HttpStatus.OK).json(updatedMessages);
+    } catch (error: any) {
+      res
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .json({ message: "Failed to retrieve messages", error: error.message });
+    }
+  };
 
 
-export const companyChat = async (req: Request, res: Response) => {
-  try {
-    const chat = await chatModel.find({
-      vendorId: req.params.companyId,
-    }).populate("userId");
-    res.status(HttpStatus.OK).json(chat);
-  } catch (error: any) {
-    next(error)
-  }
-};
 
 
 
-interface Ichat extends Document {
-  _id: mongoose.Types.ObjectId;
-  userId: string;
-  vendorId: string;
+  async companyChat(req: Request, res: Response, next: NextFunction) {
+    try {
+      const chatResponse = await this.chatService.chatController(req.params.companyId);
+      res.status(HttpStatus.OK).json(chatResponse);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+  async companyAddMessage(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { text } = req.body;
+      const vendorId = req.body.senderId;
+      const userId = req.body.userId;
+      const result = await this.chatService.companyAddMessageService(text, userId, vendorId);
+      res.status(HttpStatus.OK).json(result);
+    } catch (error: any) {
+      res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
+    }
+  };
+
+
 }
-
-
-
-export const companyAddMessage = async (req: Request, res: Response) => {
-  try {
-    const { text } = req.body;
-    const vendorId = req.body.senderId;
-    const userId = req.body.userId;
-    const result = await companyAddMessageService(text, userId, vendorId);
-    res.status(HttpStatus.OK).json(result);
-  } catch (error: any) {
-    res.status(HttpStatus.BAD_REQUEST).json({ error: error.message });
-  }
-};
-
-
-function next(error: any) {
-  throw new Error("Function not implemented.");
-}
-

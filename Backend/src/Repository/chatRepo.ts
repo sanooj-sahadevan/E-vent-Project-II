@@ -3,10 +3,38 @@ import { chatModel } from "../models/chatModel";
 import { messageModel } from "../models/messageModal";
 import { io } from '../index'; 
 import { Ichat } from "../interfaces/chat";
+import { IChatRepository } from "../interfaces/repository/chatRepository";
 
 
 
-export const savechatDB = async (text: string, userId: string, vendorId: string) => {
+export class ChatRepository implements IChatRepository {
+  constructor() {
+  }
+
+
+
+  async getMessagesByChatId (chatId: string)  {
+  try {
+    return await messageModel.find({ chatId }).populate('senderId');
+  } catch (error) {
+    throw new Error('Error fetching messages from the database');
+  }
+};
+
+async markMessagesAsRead(chatId: string)  {
+  try {
+    await messageModel.updateMany({ chatId }, { $set: { isRead: true } });
+  } catch (error) {
+    throw new Error('Error updating message status to read');
+  }
+};
+
+
+
+
+
+
+async savechatDB  (text: string, userId: string, vendorId: string)  {
   try {
     const chatDocument = await chatModel.findOne({ userId, vendorId }) as Ichat;  
     if (!chatDocument) {
@@ -53,7 +81,7 @@ export const savechatDB = async (text: string, userId: string, vendorId: string)
 };
 
 
-export const companyAddMessageDB = async (text: string, userId: string, vendorId: string) => {
+async companyAddMessageDB  (text: string, userId: string, vendorId: string)  {
   try {
     const chatDocument = await chatModel.findOne({ userId, vendorId }) as Ichat;
     if (!chatDocument) {
@@ -89,3 +117,19 @@ export const companyAddMessageDB = async (text: string, userId: string, vendorId
     throw new Error("Database operation failed.");
   }
 };
+
+
+async chatService  (vendorId: string)  {
+  try {
+    const chat = await chatModel.find({
+      vendorId,
+    }).populate("userId");
+    return chat;
+  } catch (error) {
+    console.error("Repository error:", error);
+    throw new Error("Could not retrieve chat data."); 
+  }
+};
+
+
+}
