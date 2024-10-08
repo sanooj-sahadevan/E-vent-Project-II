@@ -1,13 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpStatus } from '../utils/httpStatus'
-
-
-
-
 export class ChatController {
-
   private chatService
-
   constructor(chatService: any) {
     this.chatService = chatService
   }

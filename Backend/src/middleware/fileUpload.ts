@@ -42,12 +42,6 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 
 
-
-
-
-
-
-
 export async function uploadToS3Bucket(fileName: string, fileType: string): Promise<string> {
   try {
     console.log('s1 - Generating pre-signed URL for:', fileName, fileType);

@@ -77,7 +77,6 @@ export class VendorRepository implements IVendorRepository {
   ): Promise<Vendor> {
     try {
       if (existingVendor) {
-        // Update the vendor details
         existingVendor.vendorname = vendorDetails.vendorname;
         existingVendor.phone = vendorDetails.phone;
         existingVendor.address = vendorDetails.address;
@@ -85,20 +84,12 @@ export class VendorRepository implements IVendorRepository {
         existingVendor.state = vendorDetails.state;
         existingVendor.reviews = vendorDetails.reviews;
         existingVendor.profileImage = vendorDetails.profileImage || existingVendor.profileImage;
-  
-        // if (vendorDetails.password) {
-        //   // Ensure password is hashed if updating
-        //   existingVendor.password = await hashPassword(vendorDetails.password);
-        // }
-  
-        // Save updated vendor
         await existingVendor.save();
         return existingVendor;
       } else {
-        // Create a new vendor
         const newVendor = new VendorModel({
           ...vendorDetails,
-          profileImage: vendorDetails.profileImage, // Ensure image is set correctly
+          profileImage: vendorDetails.profileImage, 
         });
   
         await newVendor.save();
@@ -193,7 +184,7 @@ export class VendorRepository implements IVendorRepository {
         price: auditoriumData.data.price,
         category: auditoriumData.data.category,
         status: auditoriumData.data.status,
-        images: auditoriumData.images, // Handle single image as array
+        images: auditoriumData.images, 
         capacity: auditoriumData.data.capacity,
       });
 

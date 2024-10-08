@@ -59,7 +59,6 @@ app.use(
     },
   })
 );
-// app.use(morgan('dev'));
 
 app.use('/user', userRoutes);
 app.use('/vendor', vendorRoutes);

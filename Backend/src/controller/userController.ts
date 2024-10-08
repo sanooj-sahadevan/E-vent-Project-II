@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
 import { HttpStatus } from '../utils/httpStatus'
@@ -99,9 +98,7 @@ export class UserController {
 
   async editUserDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userDetails = req.body;
-      console.log(userDetails,'------------------------------------------------');
-      
+      const userDetails = req.body;      
       console.log('Request Body:', userDetails);
       const updatedUser = await this.userService.editUser(userDetails);
       res.status(HttpStatus.OK).json(updatedUser);
@@ -127,9 +124,7 @@ export class UserController {
     try {
       const { vendorId } = req.params;
       const dishes = await this.userService.findFoodVendorById(vendorId);
-
       res.status(HttpStatus.OK).json(dishes);
-
     } catch (error) {
       console.error('Error in fetchFoodDetails:', error);
       next(error);
@@ -139,11 +134,8 @@ export class UserController {
 
   async fetchAuditoriumDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log('Controller invoked');
-
       const { vendorId } = req.params;
       const dishes = await this.userService.findAuditoriumVendorById(vendorId);
-
       res.status(HttpStatus.OK).json(dishes);
     } catch (error) {
       console.error('Error in fetchFoodDetails:', error);
@@ -175,7 +167,6 @@ export class UserController {
   async fetchBookedData(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
     try {
-
       const booking: any = await this.userService.findEvent(id);
       res.status(HttpStatus.OK).json(booking);
     } catch (error) {
@@ -229,14 +220,11 @@ export class UserController {
   ) {
     try {
       const { PayUOrderId, email, status } = req.body;
-      console.log({ PayUOrderId, email, status });
-
       const transactionId = await this.userService.addTransactionDetails(
         email,
         PayUOrderId,
         status
       );
-
       res.status(HttpStatus.OK).send(transactionId);
     } catch (error) {
       next(error);
@@ -247,7 +235,6 @@ export class UserController {
   async saveData(req: Request, res: Response, next: NextFunction) {
     try {
       const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, } = req.body;
-
       const userId = udf1;
       const auditoriumId = udf2;
       const dishesId = udf3;
@@ -269,7 +256,6 @@ export class UserController {
           category
         });
         console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, category });
-
         if (bookedTripId) {
           res.status(HttpStatus.OK).json({ success: true, bookedTripId: bookedTripId._id });
         } else {

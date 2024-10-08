@@ -2,19 +2,13 @@ import { NextFunction, Request, Response } from "express";
 // import userService from "../Service/vendorService"
 
 import { HttpStatus } from "../utils/httpStatus";
-import { IMulterFile } from "../utils/type";
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
-
-
 export class VendorController{
   private vendorService
-
   constructor(vendorService:any){
     this.vendorService = vendorService
   }
-
-
   async register  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { vendorname, email, phone, password } = req.body;
@@ -50,16 +44,11 @@ export class VendorController{
 async verifyOtp  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { email, otp } = req.body;
-    console.log(email, otp);
-
     const vendor = await this.vendorService.findVendorByEmailService(email);
-    console.log(vendor);
-
     if (!vendor) {
       res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
       return;
     }
-
     if (vendor.otp === otp) {
       await this.vendorService.verifyAndSaveVendor(email, otp);
       res.status(HttpStatus.OK).json("Vendor registered successfully");
@@ -85,11 +74,7 @@ async login  (req: Request, res: Response, next: NextFunction): Promise<void>  {
 
 async fetchAddress  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
-    console.log("vann ta");
-
     const vendorAddresses = await this.vendorService.vendorAddress();
-    console.log(vendorAddresses);
-
     res.status(HttpStatus.OK).json(vendorAddresses);
   } catch (error) {
     next(error);
@@ -99,9 +84,6 @@ async fetchAddress  (req: Request, res: Response, next: NextFunction): Promise<v
 async editVendorDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const userDetails = req.body;
-
-    console.log('Request Body:', userDetails);
-
     const updatedUser = await this.vendorService.editVendorService(userDetails);
     res.status(HttpStatus.OK).json(updatedUser);
   } catch (error) {
@@ -115,7 +97,6 @@ async editVendorDetails(req: Request, res: Response, next: NextFunction): Promis
 
 async fetchVendorDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
-    console.log('controller');
     const { vendorId } = req.params; // Extract vendorId from request params
     const vendor = await this.vendorService.findVendorById(vendorId); // Fetch vendor details
     if (!vendor) {
@@ -154,11 +135,8 @@ async fetchauditorium  (req: Request, res: Response, next: NextFunction): Promis
 
 async getPresignedUrl(req: Request, res: Response, next: NextFunction) {
   try {
-      const { fileName, fileType } = req.query;
-      console.log(req.query, '10');  // Log the request query to see if fileName and fileType are coming correctly
-      
+      const { fileName, fileType } = req.query;      
       if (!fileName || !fileType) {
-          console.log('00');  // If either is missing, log an error and return early
           return res.status(400).json({ error: "fileName and fileType are required" });
       }
 
@@ -177,13 +155,9 @@ async getPresignedUrl(req: Request, res: Response, next: NextFunction) {
 
 
 async addDishes (req: Request, res: Response, next: NextFunction) {
-  try {
-    console.log('start dish');
-    
+  try {    
     const { body } = req;
-    const vendorId = (req as any).vendorId;
-  console.log('1212');
-  
+    const vendorId = (req as any).vendorId;  
     if (!vendorId) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
@@ -199,18 +173,12 @@ async addDishes (req: Request, res: Response, next: NextFunction) {
 
 async addAuditorium  (req: Request & { vendorId?: string }, res: Response, next: NextFunction)  {
   try {
-
     const { body } = req;
     const vendorId = req.vendorId;
-
     if (!vendorId) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
-
-  
     const auditoriumData = await  this.vendorService.uploadAuditorium(vendorId, body, body.image);
-console.log(auditoriumData);
-
     if (auditoriumData) {
       return res.status(HttpStatus.OK).json("Auditorium added successfully");
     } else {
@@ -228,7 +196,6 @@ async fetchDetailsVendor  (req: Request, res: Response, next: NextFunction): Pro
     const { vendorId } = req.params;
     const vendor = await  this.vendorService.findVendorById(vendorId);
       res.status(HttpStatus.OK).json(vendor);
-
   } catch (error) {
     console.error('Error in fetchDetailsVendor:', error);
     next(error);

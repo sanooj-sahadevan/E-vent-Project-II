@@ -58,7 +58,5 @@ async companyAddMessageService  (text: string, userId: string, vendorId: string)
   }
 };
 
-
-
 }
 

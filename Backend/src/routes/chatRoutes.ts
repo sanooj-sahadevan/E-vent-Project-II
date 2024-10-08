@@ -6,7 +6,6 @@ import { ChatService } from "../Service/chatService";
 const router = express.Router();
 const chatRepository = new ChatRepository()
 const chatService = new ChatService(chatRepository)
-
 const chatController = new ChatController(chatService)
 
 router.post('/savechat', chatController.savechat.bind(chatController));

@@ -1,4 +1,3 @@
-// src/utils/HttpStatus.ts
 export enum HttpStatus {
     OK = 200,
     CREATED = 201,

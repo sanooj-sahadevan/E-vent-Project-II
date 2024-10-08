@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { IAdminRepository } from '../interfaces/repository/adminRepository';
-// import adminRepositary from "../Repository/adminRepo";
 
 
 export class AdminService {
@@ -21,7 +20,6 @@ export class AdminService {
       if (process.env.ADMIN_PASS !== password) {
         console.error(Error);
       }
-
       const adminToken = jwt.sign(
         {
           AdminEmail: email,
@@ -33,7 +31,6 @@ export class AdminService {
       return { adminToken, admin: email };
     } catch (error) {
       console.error(error);
-
     }
   }
 
@@ -44,7 +41,6 @@ export class AdminService {
       console.error(error);
     }
   }
-
   async getAllBookingsService() {
     try {
       return await this.adminRepository.getAllBookingsFromDB();

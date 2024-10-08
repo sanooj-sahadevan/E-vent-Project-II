@@ -121,9 +121,7 @@ export class AdminRepository implements IAdminRepository {
   async getTotalEvents  ()  {
     try {
       const res = await bookedModel.countDocuments();
-      console.log(res);
       return res
-  
     } catch (error: any) {
       console.error("Error getting total trips", error);
       throw error;
@@ -149,7 +147,6 @@ export class AdminRepository implements IAdminRepository {
     try {
   
       const res = await VendorModel.countDocuments({});
-      console.log(res);
       return res
     } catch (error: any) {
       console.error("Error getting total companies", error);
@@ -160,7 +157,6 @@ export class AdminRepository implements IAdminRepository {
   async  getTotalUsers  ()  {
     try {
       const res = await UserModel.countDocuments({});
-      console.log(res);
       return res
     } catch (error: any) {
       console.error("Error getting total users", error);
