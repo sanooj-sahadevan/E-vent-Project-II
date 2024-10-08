@@ -15,7 +15,7 @@ export class VendorRepository implements IVendorRepository {
   constructor() {
   }
 
-  async createVendor(vendor: Vendor) : Promise<any>{
+  async createVendor(vendor: Vendor): Promise<any> {
     try {
       const newVendor = new VendorModel(vendor);
       return newVendor.save();
@@ -69,58 +69,49 @@ export class VendorRepository implements IVendorRepository {
       throw new Error('Database operation failed');
     }
   }
+ 
 
-  // Edit or create vendor in the database
   async editVendorRepo(
     existingVendor: Vendor | null,
     vendorDetails: Vendor,
-    imageUrl: string | undefined
   ): Promise<Vendor> {
     try {
       if (existingVendor) {
-        // Update existing vendor details
+        // Update the vendor details
         existingVendor.vendorname = vendorDetails.vendorname;
         existingVendor.phone = vendorDetails.phone;
         existingVendor.address = vendorDetails.address;
         existingVendor.district = vendorDetails.district;
         existingVendor.state = vendorDetails.state;
         existingVendor.reviews = vendorDetails.reviews;
-
-        // Update profile image if new image is uploaded
-        if (imageUrl) {
-          existingVendor.profileImage = imageUrl;
-        }
-
-        // Update password if provided
-        if (vendorDetails.password) {
-          existingVendor.password = vendorDetails.password;
-        }
-
+        existingVendor.profileImage = vendorDetails.profileImage || existingVendor.profileImage;
+  
+        // if (vendorDetails.password) {
+        //   // Ensure password is hashed if updating
+        //   existingVendor.password = await hashPassword(vendorDetails.password);
+        // }
+  
         // Save updated vendor
         await existingVendor.save();
         return existingVendor;
       } else {
-        // If vendor doesn't exist, create a new one
+        // Create a new vendor
         const newVendor = new VendorModel({
           ...vendorDetails,
-          profileImage: imageUrl || vendorDetails.profileImage
+          profileImage: vendorDetails.profileImage, // Ensure image is set correctly
         });
+  
         await newVendor.save();
         return newVendor;
       }
     } catch (error) {
-      console.error('Error updating vendor:', error);
+      console.error('Error in editVendorRepo:', error);
       throw new Error('Database operation failed');
     }
   }
+  
 
 
-  // export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
-  //   try {
-  //   } catch (error: any) {
-  //     throw new Error(error.message);
-  //   }
-  // };
 
 
   async findVendorByIdInDb(vendorId: string) {
@@ -128,10 +119,8 @@ export class VendorRepository implements IVendorRepository {
   }
 
   async findAuditoriumByIdInDb(auditoriumId: string) {
-    console.log(auditoriumId);
 
     let result = await Auditorium.findById(auditoriumId);
-    console.log(result);
     return result
   }
 
@@ -204,7 +193,7 @@ export class VendorRepository implements IVendorRepository {
         price: auditoriumData.data.price,
         category: auditoriumData.data.category,
         status: auditoriumData.data.status,
-        images: auditoriumData.image ? [auditoriumData.image] : [], // Handle single image as array
+        images: auditoriumData.images, // Handle single image as array
         capacity: auditoriumData.data.capacity,
       });
 

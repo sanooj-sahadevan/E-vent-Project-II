@@ -35,15 +35,37 @@ export const verifyOtp = async (data: any) => {
 
 export const addDishAPI = async (data: any) => {
   try {
-    console.log('addDishApi');
-    let res = await axios.post(`${SERVER_URL_vendor}/addDishes`, data, { withCredentials: true });
-    console.log(res);
-    return res
-  } catch (error) {
-    console.error('error');
+    const formData = new FormData();
+    console.log('hey hey hey----dish');
 
+    for (const key in data) {
+      formData.append(key, data[key]);
+    }
+    const res = await axios.post(`${SERVER_URL_vendor}/addDishes`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      withCredentials: true,
+    });
+    return res;
+  } catch (error) {
+    console.error('Error in addDishAPI:', error);
   }
-}
+};
+
+
+
+export const getPresignedUrl = async (fileName: string, fileType: string) => {
+  try {
+    console.log("Fetching pre-signed URL");
+    const response = await axios.get(`${SERVER_URL_vendor}/getPresignedUrl`, {
+      params: { fileName, fileType },
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching pre-signed URL:", error);
+    throw error;
+  }
+};
 
 
 
@@ -79,10 +101,10 @@ export const editDetails = async (vendorData: any) => {
   }
 };
 
-export const VendorEdit = async (vendorData: any) => {
+export const VendorEdit = async (data: any) => {
 
   try {
-    return await axios.patch(`${SERVER_URL_vendor}/editVendorDetails`, vendorData);
+    return await axios.patch(`${SERVER_URL_vendor}/editVendorDetails`, data, { withCredentials: true });
   } catch (error) {
     console.error('Error updating vendor details:', error);
     throw error;

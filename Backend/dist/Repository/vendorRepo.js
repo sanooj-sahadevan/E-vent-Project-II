@@ -76,49 +76,39 @@ class VendorRepository {
             }
         });
     }
-    // Edit or create vendor in the database
-    editVendorRepo(existingVendor, vendorDetails, imageUrl) {
+    editVendorRepo(existingVendor, vendorDetails) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (existingVendor) {
-                    // Update existing vendor details
+                    // Update the vendor details
                     existingVendor.vendorname = vendorDetails.vendorname;
                     existingVendor.phone = vendorDetails.phone;
                     existingVendor.address = vendorDetails.address;
                     existingVendor.district = vendorDetails.district;
                     existingVendor.state = vendorDetails.state;
                     existingVendor.reviews = vendorDetails.reviews;
-                    // Update profile image if new image is uploaded
-                    if (imageUrl) {
-                        existingVendor.profileImage = imageUrl;
-                    }
-                    // Update password if provided
-                    if (vendorDetails.password) {
-                        existingVendor.password = vendorDetails.password;
-                    }
+                    existingVendor.profileImage = vendorDetails.profileImage || existingVendor.profileImage;
+                    // if (vendorDetails.password) {
+                    //   // Ensure password is hashed if updating
+                    //   existingVendor.password = await hashPassword(vendorDetails.password);
+                    // }
                     // Save updated vendor
                     yield existingVendor.save();
                     return existingVendor;
                 }
                 else {
-                    // If vendor doesn't exist, create a new one
-                    const newVendor = new vendorModel_1.VendorModel(Object.assign(Object.assign({}, vendorDetails), { profileImage: imageUrl || vendorDetails.profileImage }));
+                    // Create a new vendor
+                    const newVendor = new vendorModel_1.VendorModel(Object.assign(Object.assign({}, vendorDetails), { profileImage: vendorDetails.profileImage }));
                     yield newVendor.save();
                     return newVendor;
                 }
             }
             catch (error) {
-                console.error('Error updating vendor:', error);
+                console.error('Error in editVendorRepo:', error);
                 throw new Error('Database operation failed');
             }
         });
     }
-    // export const uploadImage = async function (imageFile: IMulterFile): Promise<string> {
-    //   try {
-    //   } catch (error: any) {
-    //     throw new Error(error.message);
-    //   }
-    // };
     findVendorByIdInDb(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield vendorModel_1.VendorModel.findById(vendorId);
@@ -126,9 +116,7 @@ class VendorRepository {
     }
     findAuditoriumByIdInDb(auditoriumId) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(auditoriumId);
             let result = yield auditoriumModel_1.Auditorium.findById(auditoriumId);
-            console.log(result);
             return result;
         });
     }
@@ -202,7 +190,7 @@ class VendorRepository {
                     price: auditoriumData.data.price,
                     category: auditoriumData.data.category,
                     status: auditoriumData.data.status,
-                    images: auditoriumData.image ? [auditoriumData.image] : [], // Handle single image as array
+                    images: auditoriumData.images, // Handle single image as array
                     capacity: auditoriumData.data.capacity,
                 });
                 const savedAuditorium = yield auditorium.save();

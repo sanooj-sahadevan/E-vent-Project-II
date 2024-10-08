@@ -103,16 +103,13 @@ class VendorController {
     editVendorDetails(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const vendorDetails = req.body;
-                const file = req.file;
-                let imageUrl;
-                if (file) {
-                    imageUrl = yield this.vendorService.uploadImage(file);
-                }
-                const updatedVendor = yield this.vendorService.editVendorService(vendorDetails, imageUrl);
-                res.status(httpStatus_1.HttpStatus.OK).json(Object.assign(Object.assign({}, updatedVendor), { imageUrl }));
+                const userDetails = req.body;
+                console.log('Request Body:', userDetails);
+                const updatedUser = yield this.vendorService.editVendorService(userDetails);
+                res.status(httpStatus_1.HttpStatus.OK).json(updatedUser);
             }
             catch (error) {
+                console.error('Error in editUserDetails controller:', error);
                 next(error);
             }
         });
@@ -159,20 +156,35 @@ class VendorController {
             }
         });
     }
+    getPresignedUrl(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { fileName, fileType } = req.query;
+                console.log(req.query, '10'); // Log the request query to see if fileName and fileType are coming correctly
+                if (!fileName || !fileType) {
+                    console.log('00'); // If either is missing, log an error and return early
+                    return res.status(400).json({ error: "fileName and fileType are required" });
+                }
+                const presignedUrl = yield this.vendorService.uploadImage(fileName, fileType);
+                return res.status(200).json({ url: presignedUrl });
+            }
+            catch (error) {
+                console.error("Error generating pre-signed URL:", error);
+                next(error);
+            }
+        });
+    }
     addDishes(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log('start dish');
                 const { body } = req;
                 const vendorId = req.vendorId;
+                console.log('1212');
                 if (!vendorId) {
                     return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
                 }
-                const file = req.file;
-                let imageUrl = undefined;
-                if (file) {
-                    imageUrl = yield this.vendorService.uploadImage(file);
-                }
-                yield this.vendorService.uploadDishes(vendorId, body, imageUrl);
+                yield this.vendorService.uploadDishes(vendorId, body, body.image);
                 return res.status(httpStatus_1.HttpStatus.OK).json("Dishes added successfully");
             }
             catch (error) {
@@ -189,12 +201,8 @@ class VendorController {
                 if (!vendorId) {
                     return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
                 }
-                const file = req.file;
-                let imageUrl = undefined;
-                if (file) {
-                    imageUrl = yield this.vendorService.uploadImage(file);
-                }
-                const auditoriumData = yield this.vendorService.uploadAuditorium(vendorId, body, imageUrl);
+                const auditoriumData = yield this.vendorService.uploadAuditorium(vendorId, body, body.image);
+                console.log(auditoriumData);
                 if (auditoriumData) {
                     return res.status(httpStatus_1.HttpStatus.OK).json("Auditorium added successfully");
                 }

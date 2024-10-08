@@ -14,6 +14,8 @@ const router = (0, express_1.Router)();
 const vendorRepository = new vendorRepo_1.VendorRepository();
 const vendorService = new vendorService_1.VendorService(vendorRepository);
 const vendorController = new vendorController_1.VendorController(vendorService);
+// router.get('/getPresignedUrl',  async (req: Request, res: Response, next: NextFunction) => {
+router.get("/getPresignedUrl", vendorController.getPresignedUrl.bind(vendorController));
 router.post("/signup", vendorController.register.bind(vendorController));
 router.post("/verifyOtp", vendorController.verifyOtp.bind(vendorController));
 router.post("/login", vendorController.login.bind(vendorController));

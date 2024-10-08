@@ -111,6 +111,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const userDetails = req.body;
+                console.log(userDetails, '------------------------------------------------');
                 console.log('Request Body:', userDetails);
                 const updatedUser = yield this.userService.editUser(userDetails);
                 res.status(httpStatus_1.HttpStatus.OK).json(updatedUser);

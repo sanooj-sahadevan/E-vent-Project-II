@@ -96,23 +96,21 @@ async fetchAddress  (req: Request, res: Response, next: NextFunction): Promise<v
   }
 }
 
-
-async editVendorDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+async editVendorDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const vendorDetails = req.body;
-    const file = req.file as unknown as IMulterFile;
+    const userDetails = req.body;
 
-    let imageUrl: string | undefined;
-    if (file) {
-      imageUrl = await this.vendorService.uploadImage(file);
-    }
-    const updatedVendor = await this.vendorService.editVendorService(vendorDetails, imageUrl);
-    res.status(HttpStatus.OK).json({ ...updatedVendor, imageUrl }); 
+    console.log('Request Body:', userDetails);
 
+    const updatedUser = await this.vendorService.editVendorService(userDetails);
+    res.status(HttpStatus.OK).json(updatedUser);
   } catch (error) {
-    next(error); 
+    console.error('Error in editUserDetails controller:', error);
+    next(error);
   }
 }
+
+
 
 
 async fetchVendorDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
@@ -154,26 +152,50 @@ async fetchauditorium  (req: Request, res: Response, next: NextFunction): Promis
 
 
 
- async addDishes  (req: Request & { vendorId?: string }, res: Response, next: NextFunction)  {
+async getPresignedUrl(req: Request, res: Response, next: NextFunction) {
   try {
+      const { fileName, fileType } = req.query;
+      console.log(req.query, '10');  // Log the request query to see if fileName and fileType are coming correctly
+      
+      if (!fileName || !fileType) {
+          console.log('00');  // If either is missing, log an error and return early
+          return res.status(400).json({ error: "fileName and fileType are required" });
+      }
+
+      const presignedUrl = await this.vendorService.uploadImage(fileName as string, fileType as string);
+      return res.status(200).json({ url: presignedUrl });
+  } catch (error) {
+      console.error("Error generating pre-signed URL:", error);
+      next(error);
+  }
+}
+
+
+
+
+
+
+
+async addDishes (req: Request, res: Response, next: NextFunction) {
+  try {
+    console.log('start dish');
+    
     const { body } = req;
-    const vendorId = req.vendorId    
+    const vendorId = (req as any).vendorId;
+  console.log('1212');
+  
     if (!vendorId) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
-    const file = req.file as unknown as IMulterFile;
-    let imageUrl: string | undefined = undefined;
-    if (file) {
-      imageUrl = await  this.vendorService.uploadImage(file);
-    }
-    await  this.vendorService.uploadDishes(vendorId, body, imageUrl);
-    return res.status(HttpStatus.OK).json("Dishes added successfully");
 
+    await this.vendorService.uploadDishes(vendorId, body, body.image);
+    return res.status(HttpStatus.OK).json("Dishes added successfully");
   } catch (error) {
     console.error("Error adding dishes: ", error);
     next(error);
   }
 }
+
 
 async addAuditorium  (req: Request & { vendorId?: string }, res: Response, next: NextFunction)  {
   try {
@@ -185,15 +207,9 @@ async addAuditorium  (req: Request & { vendorId?: string }, res: Response, next:
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
 
-    const file = req.file as unknown as IMulterFile;
-
-    let imageUrl: string | undefined = undefined;
-
-    if (file) {
-      imageUrl = await  this.vendorService.uploadImage(file);
-    }
-
-    const auditoriumData = await  this.vendorService.uploadAuditorium(vendorId, body, imageUrl);
+  
+    const auditoriumData = await  this.vendorService.uploadAuditorium(vendorId, body, body.image);
+console.log(auditoriumData);
 
     if (auditoriumData) {
       return res.status(HttpStatus.OK).json("Auditorium added successfully");

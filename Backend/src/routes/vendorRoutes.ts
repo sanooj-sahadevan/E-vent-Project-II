@@ -2,7 +2,6 @@ import { Router } from "express";
 import upload from "../middleware/multer";
 import { verifyvendor } from "../middleware/vendorJWT";
 import { VendorController } from "../controller/vendorController";
-import { UserController } from "../controller/userController";
 import { VendorRepository } from "../Repository/vendorRepo";
 import { VendorService } from "../Service/vendorService";
 // import vendorController from "../controller/vendorController"
@@ -16,8 +15,9 @@ const vendorController = new VendorController(vendorService)
 
 
 
+// router.get('/getPresignedUrl',  async (req: Request, res: Response, next: NextFunction) => {
 
-
+router.get("/getPresignedUrl", vendorController.getPresignedUrl.bind(vendorController));
 router.post("/signup", vendorController.register.bind(vendorController));
 router.post("/verifyOtp", vendorController.verifyOtp.bind(vendorController));
 router.post("/login", vendorController.login.bind(vendorController));
