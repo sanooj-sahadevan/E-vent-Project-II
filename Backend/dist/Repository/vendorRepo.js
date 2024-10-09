@@ -80,7 +80,6 @@ class VendorRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 if (existingVendor) {
-                    // Update the vendor details
                     existingVendor.vendorname = vendorDetails.vendorname;
                     existingVendor.phone = vendorDetails.phone;
                     existingVendor.address = vendorDetails.address;
@@ -88,16 +87,10 @@ class VendorRepository {
                     existingVendor.state = vendorDetails.state;
                     existingVendor.reviews = vendorDetails.reviews;
                     existingVendor.profileImage = vendorDetails.profileImage || existingVendor.profileImage;
-                    // if (vendorDetails.password) {
-                    //   // Ensure password is hashed if updating
-                    //   existingVendor.password = await hashPassword(vendorDetails.password);
-                    // }
-                    // Save updated vendor
                     yield existingVendor.save();
                     return existingVendor;
                 }
                 else {
-                    // Create a new vendor
                     const newVendor = new vendorModel_1.VendorModel(Object.assign(Object.assign({}, vendorDetails), { profileImage: vendorDetails.profileImage }));
                     yield newVendor.save();
                     return newVendor;
@@ -190,7 +183,7 @@ class VendorRepository {
                     price: auditoriumData.data.price,
                     category: auditoriumData.data.category,
                     status: auditoriumData.data.status,
-                    images: auditoriumData.images, // Handle single image as array
+                    images: auditoriumData.images,
                     capacity: auditoriumData.data.capacity,
                 });
                 const savedAuditorium = yield auditorium.save();

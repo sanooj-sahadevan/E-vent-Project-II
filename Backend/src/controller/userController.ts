@@ -28,6 +28,8 @@ export class UserController {
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, otp } = req.body;
+      console.log({otp});
+      
       const result = await this.userService.verifyOtpService(email, otp);
       res.status(HttpStatus.OK).json(result);
     } catch (error: any) {

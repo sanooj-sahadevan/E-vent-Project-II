@@ -13,7 +13,7 @@ interface OTPFormInputs {
 
 const OTPPage: React.FC = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<OTPFormInputs>();
-  const [timeLeft, setTimeLeft] = useState(60); // 1 minute countdown
+  const [timeLeft, setTimeLeft] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
 
   const router = useRouter();
@@ -22,23 +22,24 @@ const OTPPage: React.FC = () => {
   const email = searchParams?.get("email"); // Retrieve the email from the URL query params
   console.log(email, 'emailllllllllllllllllllllllllll');
 
-  // Handle OTP submission
   const handleOtpSubmit: SubmitHandler<OTPFormInputs> = async (data) => {
     const { otp } = data;
 
     try {
       if (otp.toString() === otpFromUrl) {
-        // OTP matches
+        console.log('hlooo');
+
         toast.success("OTP verification successful, please reset your password.");
+        // router.push(`/`)
         router.push(`/updatePassword?email=${email}`);
       } else {
-        // OTP does not match
         toast.error("Invalid OTP. Please try again.");
       }
     } catch (error) {
-      console.error(error);
-      toast.error("An error occurred during OTP verification. Please try again.");
+      console.error('Navigation error:', error);
+      toast.error("Failed to navigate to update password.");
     }
+
   };
 
   // Handle Resend OTP click

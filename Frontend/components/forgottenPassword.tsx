@@ -21,13 +21,12 @@ const ForgottenPassword: React.FC = () => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       console.log("Submitting email:", data.email);
-      const result = await ForgotenAPI({ email: data.email }); // Assuming ForgotenAPI sends email and OTP to backend
+      const result = await ForgotenAPI({ email: data.email }); 
 
-      console.log('API result:', result); // Debugging line
+      console.log('API result:', result); 
 
       toast.success('Email verification sent!');
 
-      // Redirect to OTP verification page with email and OTP in query params
       router.push(`/forgototp?otp=${result.otp}&email=${encodeURIComponent(data.email)}`);
     } catch (error) {
       console.error(error);
@@ -59,7 +58,7 @@ const ForgottenPassword: React.FC = () => {
     />
   </div>
 
-  <div className="flex-1 flex items-center justify-center px-4 bg-white">
+  <div className="flex flex-col items-center justify-center w-2/5 px-6 space-y-6 bg-white"> {/* Reduced width and padding */}
     <div className="w-full max-w-sm">
       <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Forgot Password</h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

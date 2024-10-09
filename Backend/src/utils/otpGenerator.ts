@@ -1,4 +1,8 @@
 import crypto from 'crypto';
 export const otpGenerator = () => {
-  return crypto.randomInt(1000, 9999).toString();
+
+  let otp =  crypto.randomInt(1000, 9999).toString();
+  console.log(otp,'--');
+  return otp
+  
 };

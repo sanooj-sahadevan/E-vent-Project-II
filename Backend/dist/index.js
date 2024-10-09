@@ -52,7 +52,6 @@ app.use((0, morgan_1.default)(morganFormat, {
         },
     },
 }));
-// app.use(morgan('dev'));
 app.use('/user', userRoutes_1.default);
 app.use('/vendor', vendorRoutes_1.default);
 app.use('/admin', adminRoutes_1.default);

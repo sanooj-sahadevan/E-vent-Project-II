@@ -54,9 +54,7 @@ class VendorController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, otp } = req.body;
-                console.log(email, otp);
                 const vendor = yield this.vendorService.findVendorByEmailService(email);
-                console.log(vendor);
                 if (!vendor) {
                     res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
                     return;
@@ -90,9 +88,7 @@ class VendorController {
     fetchAddress(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log("vann ta");
                 const vendorAddresses = yield this.vendorService.vendorAddress();
-                console.log(vendorAddresses);
                 res.status(httpStatus_1.HttpStatus.OK).json(vendorAddresses);
             }
             catch (error) {
@@ -104,7 +100,6 @@ class VendorController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const userDetails = req.body;
-                console.log('Request Body:', userDetails);
                 const updatedUser = yield this.vendorService.editVendorService(userDetails);
                 res.status(httpStatus_1.HttpStatus.OK).json(updatedUser);
             }
@@ -117,7 +112,6 @@ class VendorController {
     fetchVendorDetails(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('controller');
                 const { vendorId } = req.params; // Extract vendorId from request params
                 const vendor = yield this.vendorService.findVendorById(vendorId); // Fetch vendor details
                 if (!vendor) {
@@ -160,9 +154,7 @@ class VendorController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { fileName, fileType } = req.query;
-                console.log(req.query, '10'); // Log the request query to see if fileName and fileType are coming correctly
                 if (!fileName || !fileType) {
-                    console.log('00'); // If either is missing, log an error and return early
                     return res.status(400).json({ error: "fileName and fileType are required" });
                 }
                 const presignedUrl = yield this.vendorService.uploadImage(fileName, fileType);
@@ -177,10 +169,8 @@ class VendorController {
     addDishes(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('start dish');
                 const { body } = req;
                 const vendorId = req.vendorId;
-                console.log('1212');
                 if (!vendorId) {
                     return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
                 }
@@ -202,7 +192,6 @@ class VendorController {
                     return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
                 }
                 const auditoriumData = yield this.vendorService.uploadAuditorium(vendorId, body, body.image);
-                console.log(auditoriumData);
                 if (auditoriumData) {
                     return res.status(httpStatus_1.HttpStatus.OK).json("Auditorium added successfully");
                 }

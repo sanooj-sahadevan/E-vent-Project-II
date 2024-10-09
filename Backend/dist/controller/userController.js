@@ -37,6 +37,7 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { email, otp } = req.body;
+                console.log({ otp });
                 const result = yield this.userService.verifyOtpService(email, otp);
                 res.status(httpStatus_1.HttpStatus.OK).json(result);
             }
@@ -111,7 +112,6 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const userDetails = req.body;
-                console.log(userDetails, '------------------------------------------------');
                 console.log('Request Body:', userDetails);
                 const updatedUser = yield this.userService.editUser(userDetails);
                 res.status(httpStatus_1.HttpStatus.OK).json(updatedUser);
@@ -149,7 +149,6 @@ class UserController {
     fetchAuditoriumDetails(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Controller invoked');
                 const { vendorId } = req.params;
                 const dishes = yield this.userService.findAuditoriumVendorById(vendorId);
                 res.status(httpStatus_1.HttpStatus.OK).json(dishes);
@@ -242,7 +241,6 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { PayUOrderId, email, status } = req.body;
-                console.log({ PayUOrderId, email, status });
                 const transactionId = yield this.userService.addTransactionDetails(email, PayUOrderId, status);
                 res.status(httpStatus_1.HttpStatus.OK).send(transactionId);
             }
