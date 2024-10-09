@@ -76,8 +76,8 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link
-            href="/contact"
-            className={`${isActive("/contact") ? "text-pink-500" : " text-white"}`}
+            href="/contactus"
+            className={`${isActive("/contactus") ? "text-pink-500" : " text-white"}`}
           >
             Contact
           </Link>

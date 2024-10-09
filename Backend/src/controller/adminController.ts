@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { HttpStatus } from "../utils/httpStatus";
+import { IAdminService } from "../interfaces/service/adminService";
 
 export class AdminController {
 
-  private adminService
+  private adminService: IAdminService
 
-  constructor(adminService: any) {
+  constructor(adminService: IAdminService) {
     this.adminService = adminService
   }
 

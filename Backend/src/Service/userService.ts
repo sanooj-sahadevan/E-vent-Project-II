@@ -6,6 +6,7 @@ import jsSHA from "jssha";
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
 import { IUserRepository } from "../interfaces/repository/userRepository";
+import { io } from "..";
 
 export class UserService {
 
@@ -338,6 +339,38 @@ export class UserService {
       throw new Error("Error generating payment hash");
     }
   }
+
+  async chatServices  ({ userId }: { userId: string })  {
+    try {
+      const chats = await this.userRepository.chatDB(userId);
+      console.log(chats,'ok serive');
+      
+      return chats;
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+      throw error;
+    }
+  }
+  async messageService  ({
+    chatIds,
+    userId,
+  }: {
+    chatIds: string[];
+    userId: string;
+  })  {
+    try {
+      const unreadCount = await this.userRepository.messageDB(chatIds);
+  
+      io.to(userId).emit("unreadCount", { unreadCount });
+  console.log(unreadCount,'ok messge service');
+  console.log('emmited sucessfullly');
+  
+      return unreadCount;
+    } catch (error) {
+      console.error("Error fetching unread messages:", error);
+      throw error;
+    }
+  }  
 
 }
 

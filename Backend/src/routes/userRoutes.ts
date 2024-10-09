@@ -45,6 +45,8 @@ router.post('/response/saveData', userController.saveData.bind(userController));
 router.get('/fetchBookingDetails/:userId', userController.fetchBookingDetails.bind(userController));
 router.patch('/changePassword/:id', userController.changePassword.bind(userController));
 
+router.get('/userunread-count', userController.getUnreadMessagesCount.bind(userController));
+
 
 export default router;
 

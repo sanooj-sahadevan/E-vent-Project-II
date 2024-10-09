@@ -295,7 +295,57 @@ export class UserController {
 
     }
   }
+
+  async getUnreadMessagesCount(
+    req: any,
+    res: any,
+    next: NextFunction
+  ): Promise<void> {
+    const userId = req.query.userId; 
+    console.log('User ID from query:', userId);
+    
+    try {
+      if (!userId) {
+        return res.status(HttpStatus.BAD_REQUEST).json({ error: "User ID is required" });
+      }
+      console.log('Controller hit with valid userId');
+    
+      const chatServiceData = await this.userService.chatServices({ userId });
+      const chatIds = chatServiceData.map((chat: any) => chat._id);
+    
+      if (chatIds.length === 0) {
+        return res.status(HttpStatus.OK).json({ unreadCount: 0 });
+      }
+    
+      const unreadCount = await this.userService.messageService({ chatIds, userId });
+      console.log('Unread messages count:', unreadCount);
+      
+      res.status(HttpStatus.OK).json({ unreadCount });
+    } catch (error) {
+      next(error);
+    }
+  }
+  
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

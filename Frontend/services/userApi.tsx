@@ -149,6 +149,8 @@ export const allAuditoriumAPI = async (vendorId: string) => {
 
 
 
+
+
 export const fetchvendor = async (vendorId: string, userId: string) => {
   try {
     const res = await axios.get(`${SERVER_URL}/fetchVendorDetails?vendorId=${vendorId}&userId=${userId}`);
@@ -304,14 +306,18 @@ export const changePassword = async (userId: string, newPassword: string) => {
 };
 
 
-// export const BookingFetchData = async (userId: string,) => {
-//   try {
-//     console.log('nook fetchuing data ');
-    
-//     const response = await axios.patch(`${SERVER_URL}/BookingFetchData/${userId}`);
-//     return response; 
-//   } catch (error) {
-//     console.error('Error updating password:', error);
-//     throw error;
-//   }
-// };
+export const userGetUnreadMessagesCountAPI = async (userId: string) => {
+  try {
+    console.log('Fetching unread messages count for user:', userId);
+
+    const response = await axios.get(`${SERVER_URL}/userunread-count`, {
+      params: { userId }, // pass the userId as a query parameter
+      withCredentials: true
+    });
+
+    console.log('Unread messages response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching unread messages:', error);
+  }
+};
