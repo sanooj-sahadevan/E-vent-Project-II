@@ -4,9 +4,10 @@ import { NextFunction, Request, Response } from "express";
 import { HttpStatus } from "../utils/httpStatus";
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
+import { IVendorService } from "../interfaces/service/vendorService";
 export class VendorController{
-  private vendorService
-  constructor(vendorService:any){
+  private vendorService:IVendorService
+  constructor(vendorService:IVendorService){
     this.vendorService = vendorService
   }
   async register  (req: Request, res: Response, next: NextFunction): Promise<void>  {

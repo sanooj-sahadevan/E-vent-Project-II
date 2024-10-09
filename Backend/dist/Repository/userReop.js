@@ -21,6 +21,7 @@ const auditoriumModel_1 = require("../models/auditoriumModel");
 const bookedEvent_1 = require("../models/bookedEvent");
 const chatModel_1 = require("../models/chatModel");
 const vendorModel_1 = require("../models/vendorModel");
+const messageModal_1 = require("../models/messageModal");
 class UserRepository {
     constructor() {
     }
@@ -334,6 +335,34 @@ class UserRepository {
             }
             catch (error) {
                 console.error(error);
+                throw error;
+            }
+        });
+    }
+    chatDB(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const chats = yield chatModel_1.chatModel.find({ userId }).select('_id');
+                return chats;
+            }
+            catch (error) {
+                console.error("Error fetching chats from the database:", error);
+                throw error;
+            }
+        });
+    }
+    messageDB(chatIds) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const unreadCount = yield messageModal_1.messageModel.countDocuments({
+                    chatId: { $in: chatIds },
+                    senderModel: "Vendor",
+                    isRead: false,
+                });
+                return unreadCount;
+            }
+            catch (error) {
+                console.error("Error fetching unread messages count from the database:", error);
                 throw error;
             }
         });

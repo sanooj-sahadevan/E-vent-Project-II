@@ -8,6 +8,7 @@ import { chatModel } from "../models/chatModel";
 import { User } from '../interfaces/user';
 import { VendorModel } from "../models/vendorModel";
 import { IUserRepository } from "../interfaces/repository/userRepository";
+import { messageModel } from "../models/messageModal";
 
 export class UserRepository implements IUserRepository {
   constructor() {
@@ -322,6 +323,31 @@ export class UserRepository implements IUserRepository {
       return user;
     } catch (error) {
       console.error(error);
+      throw error;
+    }
+  }
+
+  async chatDB(userId: string) {
+    try {
+      const chats = await chatModel.find({ userId }).select('_id');
+      return chats;
+    } catch (error) {
+      console.error("Error fetching chats from the database:", error);
+      throw error;
+    }
+  }
+
+  async messageDB(chatIds: string[]) {
+    try {
+      const unreadCount = await messageModel.countDocuments({
+        chatId: { $in: chatIds },
+        senderModel: "Vendor",
+        isRead: false,
+      });
+
+      return unreadCount;
+    } catch (error) {
+      console.error("Error fetching unread messages count from the database:", error);
       throw error;
     }
   }

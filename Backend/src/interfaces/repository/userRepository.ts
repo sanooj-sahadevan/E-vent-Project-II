@@ -22,5 +22,8 @@ export interface IUserRepository{
     findDetailsByUserId (userId: string): Promise<any>
     changepassword (userId: string, newPassword: string): Promise<any>
     findFoodVendorIdInDb(vendorId:string): Promise<any>
+    chatDB(userId: string): Promise<any>
+    messageDB(chatIds: string[]): Promise<any>
+
 
 }

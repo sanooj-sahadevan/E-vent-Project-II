@@ -19,6 +19,7 @@ const jssha_1 = __importDefault(require("jssha"));
 // import userRepositary from "../Repository/userReop"
 const otpGenerator_1 = require("../utils/otpGenerator");
 const sendEmail_1 = require("../utils/sendEmail");
+const __1 = require("..");
 class UserService {
     constructor(userRepository) {
         this.userRepository = userRepository;
@@ -331,6 +332,34 @@ class UserService {
             }
             catch (error) {
                 throw new Error("Error generating payment hash");
+            }
+        });
+    }
+    chatServices(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ userId }) {
+            try {
+                const chats = yield this.userRepository.chatDB(userId);
+                console.log(chats, 'ok serive');
+                return chats;
+            }
+            catch (error) {
+                console.error("Error fetching chats:", error);
+                throw error;
+            }
+        });
+    }
+    messageService(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ chatIds, userId, }) {
+            try {
+                const unreadCount = yield this.userRepository.messageDB(chatIds);
+                __1.io.to(userId).emit("unreadCount", { unreadCount });
+                console.log(unreadCount, 'ok messge service');
+                console.log('emmited sucessfullly');
+                return unreadCount;
+            }
+            catch (error) {
+                console.error("Error fetching unread messages:", error);
+                throw error;
             }
         });
     }

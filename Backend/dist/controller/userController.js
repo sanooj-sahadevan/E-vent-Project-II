@@ -314,6 +314,29 @@ class UserController {
             }
         });
     }
+    getUnreadMessagesCount(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.query.userId;
+            console.log('User ID from query:', userId);
+            try {
+                if (!userId) {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "User ID is required" });
+                }
+                console.log('Controller hit with valid userId');
+                const chatServiceData = yield this.userService.chatServices({ userId });
+                const chatIds = chatServiceData.map((chat) => chat._id);
+                if (chatIds.length === 0) {
+                    return res.status(httpStatus_1.HttpStatus.OK).json({ unreadCount: 0 });
+                }
+                const unreadCount = yield this.userService.messageService({ chatIds, userId });
+                console.log('Unread messages count:', unreadCount);
+                res.status(httpStatus_1.HttpStatus.OK).json({ unreadCount });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
 }
 exports.UserController = UserController;
 /*

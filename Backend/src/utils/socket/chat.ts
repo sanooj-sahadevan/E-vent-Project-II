@@ -3,6 +3,7 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
 
 export const socketHandler = (io: SocketIOServer) => {
+console.log('socket');
 
   io.on("connection", (socket: Socket) => {
 

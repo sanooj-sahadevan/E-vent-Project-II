@@ -286,6 +286,22 @@ export class VendorService{
       throw error;
     }
   }  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 }
 
 // export const registerVendor = async (vendor: Vendor) => {
