@@ -21,10 +21,7 @@ export class UserService {
       if (existingUser) {
         if (existingUser.otpVerified) {
           throw new Error("User already exists and is verified.");
-        } else {
-          await this.userRepository.updateUser(existingUser.email, { otp: user.otp, ...user });
-          return existingUser;
-        }
+        } 
       }
       const hashedPassword = await bcrypt.hash(user.password, 10);
       user.password = hashedPassword;

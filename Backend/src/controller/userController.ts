@@ -1,10 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
 import { HttpStatus } from '../utils/httpStatus'
 
-export class UserController{
+export class UserController {
 
   private userService
 
@@ -12,7 +11,7 @@ export class UserController{
     this.userService = userService
   }
 
-  async login  (req: Request, res: Response, next: NextFunction)  {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
       const { user, token } = await this.userService.loginUser(email, password);
@@ -26,9 +25,11 @@ export class UserController{
       next(error.message);
     }
   }
-  async verifyOtp (req: Request, res: Response, next: NextFunction)  {
+  async verifyOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, otp } = req.body;
+      console.log({otp});
+      
       const result = await this.userService.verifyOtpService(email, otp);
       res.status(HttpStatus.OK).json(result);
     } catch (error: any) {
@@ -38,8 +39,7 @@ export class UserController{
 
 
 
-
-  async vendorList  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async vendorList(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const vendors = await this.userService.getAllVendors();
       res.status(HttpStatus.OK).json(vendors);
@@ -48,7 +48,7 @@ export class UserController{
     }
   }
 
-  async dishlist  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async dishlist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { vendorId } = req.query;
       const dishes = await this.userService.getAllDishes(vendorId as string);
@@ -59,7 +59,7 @@ export class UserController{
     }
   }
 
-  async auditoriumlist (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async auditoriumlist(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { vendorId } = req.query;
       const auditorium = await this.userService.getAllAuditorium(vendorId as string);
@@ -70,7 +70,7 @@ export class UserController{
   }
 
 
-  async forgottenPassword  (req: Request, res: Response, next: NextFunction)  {
+  async forgottenPassword(req: Request, res: Response, next: NextFunction) {
     try {
       const { email } = req.body;
       const { user, otp } = await this.userService.checkEmail(email);
@@ -85,7 +85,7 @@ export class UserController{
 
 
 
-  async updatePassword  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async updatePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { email, password } = req.body;
       const user = await this.userService.update(email, password);
@@ -98,9 +98,9 @@ export class UserController{
 
 
 
-  async editUserDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async editUserDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userDetails = req.body;
+      const userDetails = req.body;      
       console.log('Request Body:', userDetails);
       const updatedUser = await this.userService.editUser(userDetails);
       res.status(HttpStatus.OK).json(updatedUser);
@@ -111,7 +111,7 @@ export class UserController{
 
 
 
-  async  fetchVendorDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async fetchVendorDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { vendorId, userId } = req.query;
       const result = await this.userService.findVendorById(vendorId as string, userId as string);
@@ -122,13 +122,11 @@ export class UserController{
   }
 
 
-  async fetchFoodDetails (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async fetchFoodDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { vendorId } = req.params;
       const dishes = await this.userService.findFoodVendorById(vendorId);
-
       res.status(HttpStatus.OK).json(dishes);
-
     } catch (error) {
       console.error('Error in fetchFoodDetails:', error);
       next(error);
@@ -136,13 +134,10 @@ export class UserController{
   }
 
 
-  async fetchAuditoriumDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async fetchAuditoriumDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      console.log('Controller invoked');
-
       const { vendorId } = req.params;
       const dishes = await this.userService.findAuditoriumVendorById(vendorId);
-
       res.status(HttpStatus.OK).json(dishes);
     } catch (error) {
       console.error('Error in fetchFoodDetails:', error);
@@ -150,7 +145,7 @@ export class UserController{
     }
   }
 
-  async  fetchauditorium  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async fetchauditorium(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { auditoriumId } = req.params;
       const vendor = await this.userService.findAuditoriumById(auditoriumId);
@@ -160,7 +155,7 @@ export class UserController{
     }
   }
 
-  async fetchdishes  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  async fetchdishes(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { dishesId } = req.params;
       const vendor = await this.userService.finddishesById(dishesId);
@@ -171,10 +166,9 @@ export class UserController{
   }
 
 
-  async  fetchBookedData  (req: Request, res: Response, next: NextFunction)  {
+  async fetchBookedData(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
     try {
-
       const booking: any = await this.userService.findEvent(id);
       res.status(HttpStatus.OK).json(booking);
     } catch (error) {
@@ -182,7 +176,7 @@ export class UserController{
     }
   }
 
-  async payment  (req: Request, res: Response, next: NextFunction) {
+  async payment(req: Request, res: Response, next: NextFunction) {
     try {
       const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6 } = req.body;
       if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6) {
@@ -197,7 +191,7 @@ export class UserController{
     }
   }
 
-  async register  (req: Request, res: Response, next: NextFunction)  {
+  async register(req: Request, res: Response, next: NextFunction) {
     try {
       const otp = otpGenerator();
       await this.userService.registerUser({
@@ -221,21 +215,18 @@ export class UserController{
   }
 
 
-  async addTransaction  (
+  async addTransaction(
     req: Request,
     res: Response,
     next: NextFunction
-  )  {
+  ) {
     try {
       const { PayUOrderId, email, status } = req.body;
-      console.log({ PayUOrderId, email, status });
-
       const transactionId = await this.userService.addTransactionDetails(
         email,
         PayUOrderId,
         status
       );
-
       res.status(HttpStatus.OK).send(transactionId);
     } catch (error) {
       next(error);
@@ -243,10 +234,9 @@ export class UserController{
   }
 
 
-  async saveData (req: Request, res: Response, next: NextFunction)  {
+  async saveData(req: Request, res: Response, next: NextFunction) {
     try {
-      const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5,  } = req.body;
-
+      const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, } = req.body;
       const userId = udf1;
       const auditoriumId = udf2;
       const dishesId = udf3;
@@ -268,7 +258,6 @@ export class UserController{
           category
         });
         console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, date, category });
-
         if (bookedTripId) {
           res.status(HttpStatus.OK).json({ success: true, bookedTripId: bookedTripId._id });
         } else {
@@ -284,7 +273,7 @@ export class UserController{
 
 
 
-  async fetchBookingDetails  (req: Request, res: Response, next: NextFunction) {
+  async fetchBookingDetails(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.params;
     try {
       const booking = await this.userService.findBookingDetails(userId);
@@ -295,7 +284,7 @@ export class UserController{
     }
   }
 
-  async changePassword  (req: Request, res: Response, next: NextFunction)  {
+  async changePassword(req: Request, res: Response, next: NextFunction) {
     const { id } = req.params;
     const { newPassword } = req.body;
     try {
@@ -308,7 +297,7 @@ export class UserController{
   }
 }
 
-  
+
 
 
 

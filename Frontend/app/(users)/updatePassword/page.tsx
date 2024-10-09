@@ -18,21 +18,19 @@ type Inputs = {
 const UpdatePasswordForm: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const email = searchParams?.get("email"); // Extract the email from the query parameters
+    const email = searchParams?.get("email"); 
     console.log(email + 'eeeeeeeeeeeeeeeeeee');
-
     const { register, handleSubmit, getValues, formState: { errors } } = useForm<Inputs>();
-
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
         const { password } = data;
 
         const reqBody = {
-            email, // Include the email in the request body
+            email, 
             password,
         };
 
         try {
-            const result = await updatePassword(reqBody); // Assuming updatePassword is an API call to update the password
+            const result = await updatePassword(reqBody); 
             console.log("updatePassword result:", result);
 
             toast.success("Password updated successfully.");

@@ -119,7 +119,6 @@ class AdminRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const res = yield bookedEvent_1.bookedModel.countDocuments();
-                console.log(res);
                 return res;
             }
             catch (error) {
@@ -148,7 +147,6 @@ class AdminRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const res = yield vendorModel_1.VendorModel.countDocuments({});
-                console.log(res);
                 return res;
             }
             catch (error) {
@@ -161,7 +159,6 @@ class AdminRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const res = yield userModel_1.default.countDocuments({});
-                console.log(res);
                 return res;
             }
             catch (error) {

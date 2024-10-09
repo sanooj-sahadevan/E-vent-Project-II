@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { addDishAPI } from '@/services/vendorAPI';
+import { addDishAPI, getPresignedUrl } from '@/services/vendorAPI';
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -15,7 +15,7 @@ type FormValues = {
     category: string;
     menu: string;
     status: string;
-    vendorId: string; // Use string instead of mongoose.Schema.Types.ObjectId
+    vendorId: string;
 };
 
 const AddDishes: React.FC = () => {
@@ -32,51 +32,69 @@ const AddDishes: React.FC = () => {
     });
 
     const router = useRouter();
-    const [photo, setPhoto] = useState<File | null>(null);
+    const [photoFile, setPhotoFile] = useState<File | null>(null); // For the actual file
+    const [photoUrl, setPhotoUrl] = useState<string | null>(null); // For the S3 URL
 
-    const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            setPhoto(e.target.files[0]);
+            const file = e.target.files[0];
+            const fileType = file.type;
+
+            setPhotoFile(file); // Save the file object
+
+            try {
+                const data = await getPresignedUrl(file.name, fileType);
+
+                if (data.url) {
+                    const uploadResult = await fetch(data.url, {
+                        method: "PUT",
+                        body: file,
+                        headers: {
+                            "Content-Type": fileType,
+                        },
+                    });
+
+                    if (uploadResult.ok) {
+                        const s3Url = data.url.split('?')[0]; 
+                        setPhotoUrl(s3Url); 
+                        console.log("Image uploaded successfully:", s3Url);
+                    } else {
+                        console.error("Error uploading image to S3");
+                    }
+                } else {
+                    console.error("Error fetching pre-signed URL");
+                }
+            } catch (error) {
+                console.error("Error during file upload:", error);
+            }
         }
     };
 
     const removePhoto = () => {
-        setPhoto(null);
+        setPhotoFile(null);
+        setPhotoUrl(null); 
     };
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        const formData = new FormData();
-        formData.append("dishesName", data.dishesName);
-        formData.append("description", data.description);
-        formData.append("price", data.price.toString());
-        formData.append("types", data.types);
-        formData.append("category", data.category);
-        formData.append("menu", data.menu);
-        formData.append("status", data.status);
-        if (photo) {
-            formData.append("image", photo, photo.name);
-        }
-
+        const formData = {
+            ...data,
+            image: photoUrl,
+        };
         const storedVendor = localStorage.getItem("vendor");
         let vendorId = '';
 
         if (storedVendor) {
             const parsedVendor = JSON.parse(storedVendor);
-            vendorId = parsedVendor._id; // Assuming _id is the vendor ID
+            vendorId = parsedVendor._id;
             console.log(vendorId);
         }
 
         try {
-            console.log('Submitting FormData:', formData);
-
             const result = await addDishAPI(formData);
-
-            console.log(result);
 
             if (result) {
                 toast.success("Dish added successfully");
                 setTimeout(() => {
-                    // Redirect to the vendor dashboard with vendorId
                     router.push(`/vendordashboard?vendorId=${vendorId}`);
                 }, 3000);
             } else {
@@ -96,10 +114,10 @@ const AddDishes: React.FC = () => {
                 <div className="flex space-x-6">
                     <div className="w-1/3">
                         <div className="border border-gray-300 rounded-lg p-6 text-center">
-                            {photo ? (
+                            {photoFile ? (
                                 <div className="mb-4">
                                     <img
-                                        src={URL.createObjectURL(photo)}
+                                        src={URL.createObjectURL(photoFile)} // Use the file object here
                                         alt="Dish"
                                         className="w-full h-40 object-cover rounded-lg mb-4"
                                     />
@@ -127,15 +145,6 @@ const AddDishes: React.FC = () => {
                             >
                                 Upload Photo
                             </label>
-                            <div className="mt-4">
-                                <label className="block text-gray-700">Description</label>
-                                <textarea
-                                    {...register("description", { required: true })}
-                                    className="w-full p-2 border border-gray-300 rounded-lg mt-2"
-                                    placeholder="Enter description"
-                                />
-                                {errors.description && <p className="text-red-500">Description is required.</p>}
-                            </div>
                         </div>
                     </div>
 

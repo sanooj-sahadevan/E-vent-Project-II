@@ -4,7 +4,6 @@ const express_1 = require("express");
 const adminRepo_1 = require("../Repository/adminRepo");
 const adminService_1 = require("../Service/adminService");
 const adminController_1 = require("../controller/adminController");
-// import adminController from "../controller/adminController";
 const router = (0, express_1.Router)();
 const adminRepository = new adminRepo_1.AdminRepository();
 const adminService = new adminService_1.AdminService(adminRepository);

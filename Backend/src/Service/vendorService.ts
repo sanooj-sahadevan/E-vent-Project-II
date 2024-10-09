@@ -73,31 +73,35 @@ export class VendorService{
   }
   
   
-  async editVendorService (vendorDetails: Vendor, imageUrl: string | undefined) {
+  async editVendorService(vendorDetails: any): Promise<Vendor> {
     try {
       const existingVendor = await this.vendorRepository.findVendorByEmailRepo(vendorDetails.email);
   
       if (existingVendor) {
-        return await this.vendorRepository.editVendorRepo(existingVendor, vendorDetails, imageUrl);
+        return await this.vendorRepository.editVendorRepo(existingVendor, vendorDetails);
       } else {
-        return await this.vendorRepository.editVendorRepo(null, vendorDetails, imageUrl);
+        return await this.vendorRepository.editVendorRepo(null, vendorDetails);
       }
     } catch (error) {
+      console.error('Error in editVendorService:', error);
       throw new Error('Failed to update vendor details');
     }
   }
   
   
-  async uploadImage  (imageFile: IMulterFile): Promise<string> {
-    try {
-      console.log('first step');
   
-      const uploadedUrl = await uploadToS3Bucket([], imageFile);
-      return uploadedUrl;
+  
+  async uploadImage(fileName: string, fileType: string): Promise<string> {
+    try {
+        console.log("Generating pre-signed URL for file:", fileName, "with type:", fileType);  // Log the details
+        const presignedUrl = await uploadToS3Bucket(fileName, fileType);
+        return presignedUrl;
     } catch (error: any) {
-      throw new Error(error.message);
+        throw new Error(error.message);
     }
   }
+  
+
   
   async  findVendorById  (vendorId: string)  {
     try {
@@ -143,9 +147,7 @@ export class VendorService{
     data: DishDocument,
     images?: string
   ) {
-    try {
-      console.log('duisg servuive');
-      
+    try {      
       const dishesData = { vendorId, data, images };
   
       dishesData.data.price = Number(dishesData.data.price);
@@ -164,10 +166,10 @@ export class VendorService{
   async uploadAuditorium  (
     vendorId: string,
     data: AuditoriumDocument,
-    image?: string
+    images?: string
   ) {
     try {
-      const auditoriumData = { vendorId, data, image };
+      const auditoriumData = { vendorId, data, images };
       auditoriumData.data.price = Number(auditoriumData.data.price);
   
       const newAuditorium = await this.vendorRepository.createAuditorium(auditoriumData);

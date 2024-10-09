@@ -71,36 +71,46 @@ const BookingSuccess: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between mt-[100px]">
+
+
+    <div className="min-h-screen flex flex-col justify-between mt-[100px] bg-gray-50">
       {/* Navbar at the top */}
       <Navbar />
 
       {/* Booking Success message in the middle */}
-      <div className="flex-grow flex flex-col items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
+      <div className="flex-grow flex flex-col items-center justify-center">
+        <div className="bg-white p-10 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">Booking Successful!</h2>
-          <div className="mb-6 text-center">
-            <p className="text-lg font-bold text-gray-700">Transaction ID:</p>
-            {/* Display the latest transaction ID */}
-            <p className="text-gray-500 text-lg">{latestTransactionId || "Transaction ID not found"}</p>
 
-            <p className="text-lg font-bold text-gray-700 mt-4">Vendor Name:</p>
-            <p className="text-gray-500 text-lg">{latestVendor}</p>
-
-            <p className="text-lg font-bold text-gray-700 mt-4">User Name:</p>
-            <p className="text-gray-500 text-lg">{latestuser}</p>
-
-            <p className="text-lg font-bold text-gray-700 mt-4">Total Amount:</p>
-            <p className="text-gray-500 text-lg">{latestamount}</p>
-
-            <p className="text-lg font-bold text-gray-700 mt-4">Category:</p>
-            <p className="text-gray-500 text-lg">{latestCategory}</p>
+          {/* Transaction details section */}
+          <div className="space-y-6 text-center">
+            <div>
+              <p className="text-sm font-semibold text-gray-600">Transaction ID</p>
+              <p className="text-xl font-medium text-gray-800 mt-1">{latestTransactionId || "Not available"}</p>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-600">Vendor Name</p>
+              <p className="text-lg text-gray-700 mt-1">{latestVendor || "N/A"}</p>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-600">User Name</p>
+              <p className="text-lg text-gray-700 mt-1">{latestuser || "N/A"}</p>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-600">Total Amount</p>
+              <p className="text-lg text-gray-700 mt-1">{latestamount || "N/A"}</p>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-600">Category</p>
+              <p className="text-lg text-gray-700 mt-1">{latestCategory || "N/A"}</p>
+            </div>
           </div>
 
-          <div className="mt-6">
+          {/* Action button */}
+          <div className="mt-8">
             <button
               onClick={handleRedirect}
-              className="w-full bg-pink-500 text-white font-bold py-2 rounded-lg hover:bg-pink-600 transition duration-300"
+              className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold py-2 rounded-lg shadow-lg hover:from-pink-600 hover:to-purple-700 transition duration-300"
             >
               Go to Homepage
             </button>
@@ -111,6 +121,7 @@ const BookingSuccess: React.FC = () => {
       {/* Footer at the bottom */}
       <Footer />
     </div>
+
 
 
 

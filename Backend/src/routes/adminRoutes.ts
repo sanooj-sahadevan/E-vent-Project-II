@@ -2,7 +2,6 @@ import { Router } from "express";
 import { AdminRepository } from "../Repository/adminRepo";
 import { AdminService } from "../Service/adminService";
 import { AdminController } from "../controller/adminController";
-// import adminController from "../controller/adminController";
 
 const router = Router();
 

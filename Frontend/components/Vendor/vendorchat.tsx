@@ -14,6 +14,7 @@ interface User {
 }
 
 interface Message {
+  createdAt: string;
   senderModel: string | null;
   senderId: string;
   _id: string;
@@ -203,7 +204,7 @@ const ChatApp = () => {
                     {msg.senderModel === "Vendor" ? "You" : "User"}
                   </span>
                   <span className="text-xs text-white-300 block mt-1">
-                    {formatDate(msg.time)}
+                    {formatDate(msg.createdAt)}
                   </span>
                 </div>
               </div>

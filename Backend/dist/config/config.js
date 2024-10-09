@@ -34,7 +34,6 @@ const connectToMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     mongoose_1.default.connection.on('disconnected', () => {
         console.log('Mongoose disconnected from DB');
     });
-    // Handle application termination (for example, when Ctrl+C is pressed)
     process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
         yield mongoose_1.default.connection.close();
         console.log('Mongoose connection closed due to app termination');

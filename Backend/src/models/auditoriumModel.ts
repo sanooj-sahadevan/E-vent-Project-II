@@ -8,8 +8,8 @@ interface AuditoriumDocument extends Document {
   price: number;
   category?: string;
   status: string;
-  images?: string;  // Changed to array of strings
-  capacity: number;   // Changed to Number
+  images?: string; 
+  capacity: number;  
   isDeleted: boolean;
 
 }

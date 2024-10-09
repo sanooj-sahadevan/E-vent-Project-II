@@ -8,8 +8,6 @@ const page = () => {
     <div>
       <Navbar/>
       <BookingDetils/>
-      {/* <UserMain/> */}
-      {/* <UserProfile/> */}
     </div>
   )
 }

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HttpStatus = void 0;
-// src/utils/HttpStatus.ts
 var HttpStatus;
 (function (HttpStatus) {
     HttpStatus[HttpStatus["OK"] = 200] = "OK";

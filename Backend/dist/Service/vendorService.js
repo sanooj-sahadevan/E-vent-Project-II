@@ -76,28 +76,29 @@ class VendorService {
             }
         });
     }
-    editVendorService(vendorDetails, imageUrl) {
+    editVendorService(vendorDetails) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const existingVendor = yield this.vendorRepository.findVendorByEmailRepo(vendorDetails.email);
                 if (existingVendor) {
-                    return yield this.vendorRepository.editVendorRepo(existingVendor, vendorDetails, imageUrl);
+                    return yield this.vendorRepository.editVendorRepo(existingVendor, vendorDetails);
                 }
                 else {
-                    return yield this.vendorRepository.editVendorRepo(null, vendorDetails, imageUrl);
+                    return yield this.vendorRepository.editVendorRepo(null, vendorDetails);
                 }
             }
             catch (error) {
+                console.error('Error in editVendorService:', error);
                 throw new Error('Failed to update vendor details');
             }
         });
     }
-    uploadImage(imageFile) {
+    uploadImage(fileName, fileType) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('first step');
-                const uploadedUrl = yield (0, fileUpload_1.uploadToS3Bucket)([], imageFile);
-                return uploadedUrl;
+                console.log("Generating pre-signed URL for file:", fileName, "with type:", fileType); // Log the details
+                const presignedUrl = yield (0, fileUpload_1.uploadToS3Bucket)(fileName, fileType);
+                return presignedUrl;
             }
             catch (error) {
                 throw new Error(error.message);
@@ -150,7 +151,6 @@ class VendorService {
     uploadDishes(vendorId, data, images) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('duisg servuive');
                 const dishesData = { vendorId, data, images };
                 dishesData.data.price = Number(dishesData.data.price);
                 const newDish = yield this.vendorRepository.createDishes(dishesData);
@@ -163,10 +163,10 @@ class VendorService {
             }
         });
     }
-    uploadAuditorium(vendorId, data, image) {
+    uploadAuditorium(vendorId, data, images) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const auditoriumData = { vendorId, data, image };
+                const auditoriumData = { vendorId, data, images };
                 auditoriumData.data.price = Number(auditoriumData.data.price);
                 const newAuditorium = yield this.vendorRepository.createAuditorium(auditoriumData);
                 return newAuditorium;

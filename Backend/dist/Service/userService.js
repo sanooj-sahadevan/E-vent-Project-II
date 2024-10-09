@@ -31,10 +31,6 @@ class UserService {
                     if (existingUser.otpVerified) {
                         throw new Error("User already exists and is verified.");
                     }
-                    else {
-                        yield this.userRepository.updateUser(existingUser.email, Object.assign({ otp: user.otp }, user));
-                        return existingUser;
-                    }
                 }
                 const hashedPassword = yield bcrypt_1.default.hash(user.password, 10);
                 user.password = hashedPassword;

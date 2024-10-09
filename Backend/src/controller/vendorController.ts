@@ -2,19 +2,13 @@ import { NextFunction, Request, Response } from "express";
 // import userService from "../Service/vendorService"
 
 import { HttpStatus } from "../utils/httpStatus";
-import { IMulterFile } from "../utils/type";
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
-
-
 export class VendorController{
   private vendorService
-
   constructor(vendorService:any){
     this.vendorService = vendorService
   }
-
-
   async register  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { vendorname, email, phone, password } = req.body;
@@ -50,16 +44,11 @@ export class VendorController{
 async verifyOtp  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { email, otp } = req.body;
-    console.log(email, otp);
-
     const vendor = await this.vendorService.findVendorByEmailService(email);
-    console.log(vendor);
-
     if (!vendor) {
       res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
       return;
     }
-
     if (vendor.otp === otp) {
       await this.vendorService.verifyAndSaveVendor(email, otp);
       res.status(HttpStatus.OK).json("Vendor registered successfully");
@@ -85,39 +74,29 @@ async login  (req: Request, res: Response, next: NextFunction): Promise<void>  {
 
 async fetchAddress  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
-    console.log("vann ta");
-
     const vendorAddresses = await this.vendorService.vendorAddress();
-    console.log(vendorAddresses);
-
     res.status(HttpStatus.OK).json(vendorAddresses);
   } catch (error) {
     next(error);
   }
 }
 
-
-async editVendorDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+async editVendorDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const vendorDetails = req.body;
-    const file = req.file as unknown as IMulterFile;
-
-    let imageUrl: string | undefined;
-    if (file) {
-      imageUrl = await this.vendorService.uploadImage(file);
-    }
-    const updatedVendor = await this.vendorService.editVendorService(vendorDetails, imageUrl);
-    res.status(HttpStatus.OK).json({ ...updatedVendor, imageUrl }); 
-
+    const userDetails = req.body;
+    const updatedUser = await this.vendorService.editVendorService(userDetails);
+    res.status(HttpStatus.OK).json(updatedUser);
   } catch (error) {
-    next(error); 
+    console.error('Error in editUserDetails controller:', error);
+    next(error);
   }
 }
 
 
+
+
 async fetchVendorDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
-    console.log('controller');
     const { vendorId } = req.params; // Extract vendorId from request params
     const vendor = await this.vendorService.findVendorById(vendorId); // Fetch vendor details
     if (!vendor) {
@@ -154,47 +133,52 @@ async fetchauditorium  (req: Request, res: Response, next: NextFunction): Promis
 
 
 
- async addDishes  (req: Request & { vendorId?: string }, res: Response, next: NextFunction)  {
+async getPresignedUrl(req: Request, res: Response, next: NextFunction) {
   try {
+      const { fileName, fileType } = req.query;      
+      if (!fileName || !fileType) {
+          return res.status(400).json({ error: "fileName and fileType are required" });
+      }
+
+      const presignedUrl = await this.vendorService.uploadImage(fileName as string, fileType as string);
+      return res.status(200).json({ url: presignedUrl });
+  } catch (error) {
+      console.error("Error generating pre-signed URL:", error);
+      next(error);
+  }
+}
+
+
+
+
+
+
+
+async addDishes (req: Request, res: Response, next: NextFunction) {
+  try {    
     const { body } = req;
-    const vendorId = req.vendorId    
+    const vendorId = (req as any).vendorId;  
     if (!vendorId) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
-    const file = req.file as unknown as IMulterFile;
-    let imageUrl: string | undefined = undefined;
-    if (file) {
-      imageUrl = await  this.vendorService.uploadImage(file);
-    }
-    await  this.vendorService.uploadDishes(vendorId, body, imageUrl);
-    return res.status(HttpStatus.OK).json("Dishes added successfully");
 
+    await this.vendorService.uploadDishes(vendorId, body, body.image);
+    return res.status(HttpStatus.OK).json("Dishes added successfully");
   } catch (error) {
     console.error("Error adding dishes: ", error);
     next(error);
   }
 }
 
+
 async addAuditorium  (req: Request & { vendorId?: string }, res: Response, next: NextFunction)  {
   try {
-
     const { body } = req;
     const vendorId = req.vendorId;
-
     if (!vendorId) {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
     }
-
-    const file = req.file as unknown as IMulterFile;
-
-    let imageUrl: string | undefined = undefined;
-
-    if (file) {
-      imageUrl = await  this.vendorService.uploadImage(file);
-    }
-
-    const auditoriumData = await  this.vendorService.uploadAuditorium(vendorId, body, imageUrl);
-
+    const auditoriumData = await  this.vendorService.uploadAuditorium(vendorId, body, body.image);
     if (auditoriumData) {
       return res.status(HttpStatus.OK).json("Auditorium added successfully");
     } else {
@@ -212,7 +196,6 @@ async fetchDetailsVendor  (req: Request, res: Response, next: NextFunction): Pro
     const { vendorId } = req.params;
     const vendor = await  this.vendorService.findVendorById(vendorId);
       res.status(HttpStatus.OK).json(vendor);
-
   } catch (error) {
     console.error('Error in fetchDetailsVendor:', error);
     next(error);

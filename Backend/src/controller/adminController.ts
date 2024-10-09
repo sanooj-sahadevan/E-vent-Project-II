@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-// import adminService from "../Service/adminService";
 import { HttpStatus } from "../utils/httpStatus";
 
 export class AdminController {

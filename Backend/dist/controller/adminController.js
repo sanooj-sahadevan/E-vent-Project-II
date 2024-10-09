@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminController = void 0;
-// import adminService from "../Service/adminService";
 const httpStatus_1 = require("../utils/httpStatus");
 class AdminController {
     constructor(adminService) {

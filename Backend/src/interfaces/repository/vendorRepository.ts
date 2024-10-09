@@ -7,7 +7,7 @@ export interface IVendorRepository {
     findVendorByEmailAndPassword(email: string, password: string): Promise<any>
     vendorAddressFromDB(): Promise<any>
     findVendorByEmailRepo(email: string): Promise<any>
-    editVendorRepo(existingVendor: Vendor | null, vendorDetails: Vendor, imageUrl: string | undefined): Promise<any>
+    editVendorRepo(existingVendor: Vendor | null, vendorDetails: Vendor): Promise<any>
     findVendorByIdInDb(vendorId: string): Promise<any>
     findAuditoriumByIdInDb(auditoriumId: string): Promise<any>
     findDishesByIdInDb(dishesId: string): Promise<any>
