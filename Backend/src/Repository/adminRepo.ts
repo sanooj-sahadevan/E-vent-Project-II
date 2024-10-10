@@ -23,6 +23,7 @@ export class AdminRepository implements IAdminRepository {
   
   
   async getAllVendorsFromDB  () {
+    
     try {
       return VendorModel.find().sort({ createdAt: -1 })
   

@@ -296,6 +296,7 @@ class UserRepository {
             try {
                 console.log('Saving chat to DB');
                 const newChat = new chatModel_1.chatModel({ message: chat });
+                console.log('save karo--------------------------');
                 return yield newChat.save();
             }
             catch (error) {

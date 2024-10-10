@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { IAdminRepository } from '../interfaces/repository/adminRepository';
+import { IAdminService } from '../interfaces/service/adminService';
 
 
-export class AdminService {
+export class AdminService implements IAdminService {
 
   private adminRepository: IAdminRepository
   constructor(adminRepository: IAdminRepository) {

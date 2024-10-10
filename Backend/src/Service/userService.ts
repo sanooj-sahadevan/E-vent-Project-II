@@ -2,13 +2,12 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import jsSHA from "jssha";
 
-// import userRepositary from "../Repository/userReop"
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
 import { IUserRepository } from "../interfaces/repository/userRepository";
 import { io } from "..";
 
-export class UserService {
+export class UserService  {
 
   private userRepository: IUserRepository
 
@@ -278,7 +277,7 @@ export class UserService {
 
   async fetchbookingData(bookingData: any) {
     const bookedTrip = await this.userRepository.createBookedTrip(bookingData);
-    console.log(bookedTrip);
+    console.log(bookedTrip,'okokookok');
     return bookedTrip;
   }
 

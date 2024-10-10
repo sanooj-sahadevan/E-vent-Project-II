@@ -16,7 +16,6 @@ exports.UserService = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jssha_1 = __importDefault(require("jssha"));
-// import userRepositary from "../Repository/userReop"
 const otpGenerator_1 = require("../utils/otpGenerator");
 const sendEmail_1 = require("../utils/sendEmail");
 const __1 = require("..");
@@ -287,7 +286,7 @@ class UserService {
     fetchbookingData(bookingData) {
         return __awaiter(this, void 0, void 0, function* () {
             const bookedTrip = yield this.userRepository.createBookedTrip(bookingData);
-            console.log(bookedTrip);
+            console.log(bookedTrip, 'okokookok');
             return bookedTrip;
         });
     }
