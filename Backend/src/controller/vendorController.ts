@@ -5,7 +5,7 @@ import { HttpStatus } from "../utils/httpStatus";
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
 import { IVendorService } from "../interfaces/service/vendorService";
-export class VendorController{
+export class VendorController  {
   private vendorService:IVendorService
   constructor(vendorService:IVendorService){
     this.vendorService = vendorService

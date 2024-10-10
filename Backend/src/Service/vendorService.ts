@@ -7,9 +7,10 @@ import { io } from "../index";
 import { DishDocument } from "../interfaces/dishes";
 import { AuditoriumDocument } from "../models/auditoriumModel";
 import { IVendorRepository } from "../interfaces/repository/vendorRepository";
+import { IVendorService } from "../interfaces/service/vendorService";
 
 
-export class VendorService{
+export class VendorService implements IVendorService {
   private vendorRepository: IVendorRepository
 
   constructor(vendorRepository:IVendorRepository){

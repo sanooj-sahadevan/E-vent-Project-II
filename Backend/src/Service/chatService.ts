@@ -1,6 +1,7 @@
 import { IChatRepository } from "../interfaces/repository/chatRepository";
+import { IChatService } from "../interfaces/service/chatService";
 
-export class ChatService {
+export class ChatService implements IChatService {
 
   private chatRepository: IChatRepository
 

@@ -284,6 +284,8 @@ export class UserRepository implements IUserRepository {
       console.log('Saving chat to DB');
 
       const newChat = new chatModel({ message: chat });
+      console.log('save karo--------------------------');
+
       return await newChat.save();
     } catch (error) {
       console.error("Database error:", error);

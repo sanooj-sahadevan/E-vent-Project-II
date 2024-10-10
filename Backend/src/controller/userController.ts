@@ -4,9 +4,7 @@ import { sendEmail } from "../utils/sendEmail";
 import { HttpStatus } from '../utils/httpStatus'
 
 export class UserController {
-
   private userService
-
   constructor(userService: any) {
     this.userService = userService
   }

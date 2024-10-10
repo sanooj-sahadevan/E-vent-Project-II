@@ -3,12 +3,8 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
 
 export const socketHandler = (io: SocketIOServer) => {
-console.log('socket');
-
   io.on("connection", (socket: Socket) => {
-
     console.log("New client connected");
-
     socket.on("joinRoom", (id: string) => {
       console.log(`User joined room: ${id}`);
       socket.join(id);
