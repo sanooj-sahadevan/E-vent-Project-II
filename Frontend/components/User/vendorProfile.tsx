@@ -25,7 +25,7 @@ const VendorsPage: React.FC = () => {
     const [vendorData, setVendorData] = useState<Vendor | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [userId, setUserId] = useState<string | null>(null);
-    const [chatId, setChatId] = useState<string | null>(null); 
+    const [chatId, setChatId] = useState<string | null>(null);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -44,7 +44,7 @@ const VendorsPage: React.FC = () => {
                     if (response) {
                         const { vendor, chatId } = response;
                         setVendorData(vendor);
-                        setChatId(chatId); 
+                        setChatId(chatId);
                     } else {
                         toast.error("Vendor details not found.");
                     }
@@ -55,12 +55,12 @@ const VendorsPage: React.FC = () => {
                     setLoading(false);
                 }
             } else {
-                setLoading(false); 
+                setLoading(false);
             }
         };
 
         fetchVendorDetails();
-    }, [vendorId, userId]);    
+    }, [vendorId, userId]);
     if (loading) {
         return <p>Loading...</p>;
     }
@@ -70,6 +70,8 @@ const VendorsPage: React.FC = () => {
     }
 
     return (
+
+
         <div className="max-w-7xl mx-auto px-4 py-6 mt-12">
             {/* Header */}
             <div className="relative p-6 rounded-lg mb-[70px] mt-[71px]">
@@ -77,19 +79,19 @@ const VendorsPage: React.FC = () => {
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url('/vendor-bg.jpg')` }}
                 ></div>
-                <div className="relative flex items-center space-x-6">
+                <div className="relative flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
                     <img
                         src={vendorData.profileImage || "/default-vendor.jpg"}
                         alt="Vendor Image"
                         className="rounded-full w-24 h-24 object-cover border-4 border-white"
                     />
-                    <div>
+                    <div className="text-center md:text-left">
                         <h1 className="text-2xl font-semibold">{vendorData.vendorname}</h1>
                         <p className="text-sm text-gray-600">{vendorData.email}</p>
                     </div>
                 </div>
 
-                <div className="relative flex items-center mt-4">
+                <div className="relative flex items-center justify-center md:justify-start mt-4">
                     {/* Location symbol and state */}
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -108,7 +110,7 @@ const VendorsPage: React.FC = () => {
                     <p className="text-gray-700">{vendorData.state}</p>
                 </div>
 
-                <div className="absolute right-6 top-6 flex space-x-4">
+                <div className="absolute right-6 top-6 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                     <button
                         onClick={() => router.push(`/booknow?vendorId=${vendorId}`)}
                         className="px-4 py-2 bg-buttonBg text-white rounded"
@@ -116,7 +118,7 @@ const VendorsPage: React.FC = () => {
                         Book Now
                     </button>
                     <button
-                        onClick={() => chatId && router.push(`/chat?vendorId=${vendorId}&chatId=${chatId}`)} // Include chatId in the route
+                        onClick={() => chatId && router.push(`/chat?vendorId=${vendorId}&chatId=${chatId}`)}
                         className="px-4 py-2 bg-buttonBg text-white rounded"
                     >
                         Chat With Us
@@ -126,7 +128,7 @@ const VendorsPage: React.FC = () => {
             </div>
 
             {/* Categories */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-[70px] mt-[71px]">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-[70px] mt-[71px]">
                 <div className="bg-gray-100 p-4 rounded-md shadow">
                     <h3 className="text-lg font-semibold">Platinum</h3>
                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat eros non urna fermentum.</p>
@@ -145,7 +147,7 @@ const VendorsPage: React.FC = () => {
             <div className="mt-8">
                 <h2 className="text-xl font-semibold">Photos</h2>
                 {Array.isArray(vendorData.photos) && vendorData.photos.length > 0 ? (
-                    <div className="grid grid-cols-4 gap-4 mt-4">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                         {vendorData.photos.map((photo, index) => (
                             <img
                                 key={index}
@@ -192,6 +194,7 @@ const VendorsPage: React.FC = () => {
                 )}
             </div>
         </div>
+
     );
 };
 

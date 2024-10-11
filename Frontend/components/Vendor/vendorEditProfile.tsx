@@ -15,7 +15,7 @@ interface Vendor {
   address: string;
   district: string;
   state: string;
-  reviews: string;
+  Description: string;
 }
 
 const EditVendor: React.FC = () => {
@@ -110,17 +110,14 @@ const EditVendor: React.FC = () => {
     }
   };
 
-  // Toggle editing mode
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
 
-  // Display a loading state while data is being fetched
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
-  // Handle case where no vendor details are available
   if (!vendorDetails) {
     return <div>No vendor details available</div>;
   }

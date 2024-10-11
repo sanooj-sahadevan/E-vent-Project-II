@@ -362,6 +362,19 @@ class UserService {
             }
         });
     }
+    reviewService(reviewData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // Call the repository to save the review
+                const review = yield this.userRepository.reviewRepository(reviewData);
+                return review;
+            }
+            catch (error) {
+                console.error("Error in reviewService:", error);
+                throw error; // Rethrow the error for the controller to handle
+            }
+        });
+    }
 }
 exports.UserService = UserService;
 /*

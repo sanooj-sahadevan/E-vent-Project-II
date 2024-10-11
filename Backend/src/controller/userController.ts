@@ -26,8 +26,8 @@ export class UserController {
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, otp } = req.body;
-      console.log({otp});
-      
+      console.log({ otp });
+
       const result = await this.userService.verifyOtpService(email, otp);
       res.status(HttpStatus.OK).json(result);
     } catch (error: any) {
@@ -98,7 +98,7 @@ export class UserController {
 
   async editUserDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userDetails = req.body;      
+      const userDetails = req.body;
       console.log('Request Body:', userDetails);
       const updatedUser = await this.userService.editUser(userDetails);
       res.status(HttpStatus.OK).json(updatedUser);
@@ -241,6 +241,7 @@ export class UserController {
       const date = udf4;
       const category = udf5;
       const vendorId = productinfo
+      console.log(date);
 
       if (status === "success") {
         const bookedTripId = await this.userService.fetchbookingData({
@@ -299,34 +300,51 @@ export class UserController {
     res: any,
     next: NextFunction
   ): Promise<void> {
-    const userId = req.query.userId; 
+    const userId = req.query.userId;
     console.log('User ID from query:', userId);
-    
+
     try {
       if (!userId) {
         return res.status(HttpStatus.BAD_REQUEST).json({ error: "User ID is required" });
       }
       console.log('Controller hit with valid userId');
-    
+
       const chatServiceData = await this.userService.chatServices({ userId });
       const chatIds = chatServiceData.map((chat: any) => chat._id);
-    
+
       if (chatIds.length === 0) {
         return res.status(HttpStatus.OK).json({ unreadCount: 0 });
       }
-    
+
       const unreadCount = await this.userService.messageService({ chatIds, userId });
       console.log('Unread messages count:', unreadCount);
-      
+
       res.status(HttpStatus.OK).json({ unreadCount });
     } catch (error) {
       next(error);
     }
   }
+
+
+
+  async review(req: Request, res: Response, next: NextFunction): Promise<any> {
+    try {
+      const { reviews, stars, userId, vendorId } = req.body;
   
-
-
-
+      // Ensure all required fields are provided
+      if (!reviews || !stars || !userId || !vendorId) {
+        return res.status(400).json({ message: 'All fields are required' });
+      }
+  
+      // Call the reviewService with the data
+      const reviewData = await this.userService.reviewService({ reviews, stars, userId, vendorId });
+  
+      res.status(HttpStatus.OK).json(reviewData);
+    } catch (error) {
+      next(error);
+    }
+  }
+  
 
 }
 

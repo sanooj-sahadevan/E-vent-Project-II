@@ -88,7 +88,7 @@ export const allVendorAPI = async () => {
     console.log('sucess front end ');
 
     const response = await axios.get(`${SERVER_URL}/vendors`);
-    console.log(response.data,'basdhbqhbd')
+    console.log(response.data, 'basdhbqhbd')
     return response.data;
   } catch (error) {
     console.error(error);
@@ -121,12 +121,12 @@ export const UserEdit = async (vendorData: any) => {
 
 
 
-export const allDishesAPI =  async (vendorId: string) => {
+export const allDishesAPI = async (vendorId: string) => {
   try {
     console.log('sucess front end ');
 
     const response = await axios.get(`${SERVER_URL}/dishlist?vendorId=${vendorId}`); // Send vendorId as a query parameter
-    console.log(response.data,'basdhbqhbd')
+    console.log(response.data, 'basdhbqhbd')
     return response.data;
   } catch (error) {
     console.error(error);
@@ -137,13 +137,13 @@ export const allDishesAPI =  async (vendorId: string) => {
 
 export const allAuditoriumAPI = async (vendorId: string) => {
   try {
-      console.log('Success front end');
+    console.log('Success front end');
 
-      const response = await axios.get(`${SERVER_URL}/auditoriumlist?vendorId=${vendorId}`); 
-      console.log(response.data, 'basdhbqhbd');
-      return response.data;
+    const response = await axios.get(`${SERVER_URL}/auditoriumlist?vendorId=${vendorId}`);
+    console.log(response.data, 'basdhbqhbd');
+    return response.data;
   } catch (error) {
-      console.error(error);
+    console.error(error);
   }
 };
 
@@ -154,12 +154,12 @@ export const allAuditoriumAPI = async (vendorId: string) => {
 export const fetchvendor = async (vendorId: string, userId: string) => {
   try {
     const res = await axios.get(`${SERVER_URL}/fetchVendorDetails?vendorId=${vendorId}&userId=${userId}`);
-    
-    const { vendor, chatId } = res.data;  
-    
+
+    const { vendor, chatId } = res.data;
+
     console.log(vendor, chatId, 'Received vendor and chat ID');
-    
-    return { vendor, chatId };  
+
+    return { vendor, chatId };
   } catch (error) {
     console.error("Error fetching vendor:", error);
     throw error;
@@ -172,7 +172,7 @@ export const FetchDishes = async (vendorId: string) => {
   try {
 
     console.log('pokunnu food');
-    
+
     const res = await axios.get(`${SERVER_URL}/fetchFoodDetails/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
@@ -186,7 +186,7 @@ export const FetchAuditorium = async (vendorId: string) => {
   try {
 
     console.log('pokunnu Ausittttttttttttttttttt');
-    
+
     const res = await axios.get(`${SERVER_URL}/fetchAuditoriumDetails/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
@@ -202,7 +202,7 @@ export const Payment = async (username: string) => {
   try {
 
     console.log('payment on');
-    
+
     const res = await axios.get(`${SERVER_URL}/Payment/${username}`);
     return res.data;
   } catch (error) {
@@ -217,13 +217,13 @@ export const Payment = async (username: string) => {
 export const fetchdishes = async (auditoriumId: string) => {
   try {
     console.log('rdyyyy auditirum profie');
-    
-      const res = await axios.get(`${SERVER_URL}/fetchdishes/${auditoriumId}`);
-      console.log(res);
-      return res;
+
+    const res = await axios.get(`${SERVER_URL}/fetchdishes/${auditoriumId}`);
+    console.log(res);
+    return res;
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
@@ -231,13 +231,13 @@ export const fetchdishes = async (auditoriumId: string) => {
 export const fetchauditorium = async (auditoriumId: string) => {
   try {
     console.log('rdyyyy auditirum profie');
-    
-      const res = await axios.get(`${SERVER_URL}/fetchauditorium/${auditoriumId}`);
-      console.log(res);
-      return res;
+
+    const res = await axios.get(`${SERVER_URL}/fetchauditorium/${auditoriumId}`);
+    console.log(res);
+    return res;
   } catch (error) {
     console.error(error);
-    
+
   }
 };
 
@@ -262,8 +262,8 @@ export const fetchBookedData = async (bookingId: any) => {
   try {
 
     console.log('32423453525');
-    
-    const response = await axios.get(`${SERVER_URL}/bookEvent/${bookingId}`, { withCredentials: true}); // Adjust the API endpoint
+
+    const response = await axios.get(`${SERVER_URL}/bookEvent/${bookingId}`, { withCredentials: true }); // Adjust the API endpoint
     return response.data; // Return the data from the response
   } catch (error) {
     console.error("Error fetching booking data:", error);
@@ -278,9 +278,9 @@ export const fetchBookedData = async (bookingId: any) => {
 export const fetchBookingDetilsProfile = async (userId: string) => {
   try {
     const response = await axios.get(`${SERVER_URL}/fetchBookingDetails/${userId}`);
-    console.log(response.data,'api call retuen');
-    
-    return response.data; 
+    console.log(response.data, 'api call retuen');
+
+    return response.data;
   } catch (error) {
     console.error('Error fetching booking data:', error);
     throw error;
@@ -296,9 +296,9 @@ export const fetchBookingDetilsProfile = async (userId: string) => {
 export const changePassword = async (userId: string, newPassword: string) => {
   try {
     console.log('ijjijijijij');
-    
+
     const response = await axios.patch(`${SERVER_URL}/changePassword/${userId}`, { newPassword });
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error('Error updating password:', error);
     throw error;
@@ -321,3 +321,30 @@ export const userGetUnreadMessagesCountAPI = async (userId: string) => {
     console.error('Error fetching unread messages:', error);
   }
 };
+
+
+export const saveReview = async (review: string, rating: number, userId: string, vendorId: string) => {
+  try {
+    console.log('9999999999');
+    
+    console.log(   review,
+       rating,
+      userId,
+      vendorId,'---------------------------');
+    
+    const response = await axios.post(`${SERVER_URL}/review`, {
+      reviews: review,
+      stars: rating,
+      userId,
+      vendorId,
+    }, {
+      withCredentials: true
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Error saving review:', error);
+    throw error;
+  }
+};
+

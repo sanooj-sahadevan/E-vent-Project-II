@@ -22,6 +22,7 @@ const bookedEvent_1 = require("../models/bookedEvent");
 const chatModel_1 = require("../models/chatModel");
 const vendorModel_1 = require("../models/vendorModel");
 const messageModal_1 = require("../models/messageModal");
+const reviews_1 = require("../models/reviews");
 class UserRepository {
     constructor() {
     }
@@ -270,6 +271,7 @@ class UserRepository {
             try {
                 console.log('save karo');
                 const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, date, category, payment_source } = bookingData;
+                console.log(bookingData);
                 const bookedData = yield bookedEvent_1.bookedModel.create({
                     vendorId,
                     txnId: txnid,
@@ -365,6 +367,20 @@ class UserRepository {
             catch (error) {
                 console.error("Error fetching unread messages count from the database:", error);
                 throw error;
+            }
+        });
+    }
+    reviewRepository(reviewData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const review = new reviews_1.Reviews(reviewData); // Create a new review document
+                const savedReview = yield review.save(); // Save to the database
+                console.log("Review saved:", savedReview);
+                return savedReview; // Return the saved review
+            }
+            catch (error) {
+                console.error("Error saving review to the database:", error);
+                throw error; // Rethrow the error
             }
         });
     }
