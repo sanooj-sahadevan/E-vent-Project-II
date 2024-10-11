@@ -34,7 +34,9 @@ class VendorController {
                             reviews: "",
                             address: "",
                             district: "",
-                            state: ""
+                            state: "",
+                            description: "",
+                            reviewsID: null,
                         });
                         yield (0, sendEmail_1.sendEmail)(email, otp);
                         res.status(httpStatus_1.HttpStatus.OK).json("OTP sent to email");

@@ -259,6 +259,7 @@ class UserController {
                 const date = udf4;
                 const category = udf5;
                 const vendorId = productinfo;
+                console.log(date);
                 if (status === "success") {
                     const bookedTripId = yield this.userService.fetchbookingData({
                         txnid,
@@ -331,6 +332,23 @@ class UserController {
                 const unreadCount = yield this.userService.messageService({ chatIds, userId });
                 console.log('Unread messages count:', unreadCount);
                 res.status(httpStatus_1.HttpStatus.OK).json({ unreadCount });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    review(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { reviews, stars, userId, vendorId } = req.body;
+                // Ensure all required fields are provided
+                if (!reviews || !stars || !userId || !vendorId) {
+                    return res.status(400).json({ message: 'All fields are required' });
+                }
+                // Call the reviewService with the data
+                const reviewData = yield this.userService.reviewService({ reviews, stars, userId, vendorId });
+                res.status(httpStatus_1.HttpStatus.OK).json(reviewData);
             }
             catch (error) {
                 next(error);

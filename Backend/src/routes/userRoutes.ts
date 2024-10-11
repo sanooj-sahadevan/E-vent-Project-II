@@ -47,6 +47,9 @@ router.patch('/changePassword/:id', userController.changePassword.bind(userContr
 
 router.get('/userunread-count', userController.getUnreadMessagesCount.bind(userController));
 
+// route.ts
+router.post('/review', userController.review.bind(userController));
+
 
 export default router;
 

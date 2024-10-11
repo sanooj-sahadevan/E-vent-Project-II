@@ -9,6 +9,7 @@ import { User } from '../interfaces/user';
 import { VendorModel } from "../models/vendorModel";
 import { IUserRepository } from "../interfaces/repository/userRepository";
 import { messageModel } from "../models/messageModal";
+import { Reviews } from "../models/reviews";
 
 export class UserRepository implements IUserRepository {
   constructor() {
@@ -257,6 +258,7 @@ export class UserRepository implements IUserRepository {
         category,
         payment_source
       } = bookingData;
+console.log(bookingData);
 
       const bookedData = await bookedModel.create({
         vendorId,
@@ -353,6 +355,24 @@ export class UserRepository implements IUserRepository {
       throw error;
     }
   }
+
+  
+
+
+  async reviewRepository(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> {
+    try {
+      const review = new Reviews(reviewData); // Create a new review document
+  
+      const savedReview = await review.save(); // Save to the database
+      console.log("Review saved:", savedReview);
+  
+      return savedReview; // Return the saved review
+    } catch (error) {
+      console.error("Error saving review to the database:", error);
+      throw error; // Rethrow the error
+    }
+  }
+  
 }
 
 

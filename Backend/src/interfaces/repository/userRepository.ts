@@ -24,6 +24,5 @@ export interface IUserRepository{
     findFoodVendorIdInDb(vendorId:string): Promise<any>
     chatDB(userId: string): Promise<any>
     messageDB(chatIds: string[]): Promise<any>
-
-
+    reviewRepository(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> 
 }

@@ -26,7 +26,9 @@ export class VendorController  {
           reviews: "",
           address: "",
           district: "",
-          state: ""
+          state: "",
+          description: "",
+          reviewsID: null,      
         });
 
         await sendEmail(email, otp);

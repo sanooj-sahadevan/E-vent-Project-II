@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+
 export interface Vendor {
     [x: string]: any;
     vendorname: string;
@@ -5,15 +7,16 @@ export interface Vendor {
     email: string;
     password: string;
     profileImage?: string;
-    // categories: string;
     address: string,
     district: string,
     state: string,
-    reviews: string;
+    description: string;
     otp?: string;
     otpVerified?: boolean;
     adminVerified?: boolean;
     isBlocked?: boolean;
     vendorId?: string;
+    reviewsID: mongoose.Schema.Types.ObjectId | null; // Allow reviewsID to be ObjectId or null
+
 
 }

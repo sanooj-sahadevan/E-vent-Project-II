@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorModel = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
 const VendorSchema = new mongoose_1.Schema({
+    reviewsID: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Reviews", default: null },
     vendorname: { type: String, required: true },
     phone: { type: Number, required: true },
     email: { type: String, required: true, unique: true },
@@ -34,7 +35,7 @@ const VendorSchema = new mongoose_1.Schema({
     adminVerified: { type: Boolean, default: false },
     otp: { type: String, required: false },
     otpVerified: { type: Boolean, default: false },
-    reviews: { type: String, default: '' },
+    description: { type: String, default: '' },
     address: { type: String, default: '' },
     district: { type: String, default: '' },
     state: { type: String, default: '' },

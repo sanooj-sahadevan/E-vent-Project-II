@@ -10,7 +10,7 @@ export interface IUserService {
 
     verifyOtpService(email: string, otp: string): Promise<any[]>
     update(email: string, password: string): Promise<any[]>
-
+    reviewService(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any[]>
 
     getAllVendors(): Promise<any[]>
     getAllDishes(vendorId: string): Promise<any[]>

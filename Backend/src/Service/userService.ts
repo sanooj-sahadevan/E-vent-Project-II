@@ -369,7 +369,23 @@ export class UserService  {
       console.error("Error fetching unread messages:", error);
       throw error;
     }
-  }  
+  } 
+  
+  
+  async reviewService(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> {
+    try {
+      // Call the repository to save the review
+      const review = await this.userRepository.reviewRepository(reviewData);
+      return review;
+    } catch (error) {
+      console.error("Error in reviewService:", error);
+      throw error; // Rethrow the error for the controller to handle
+    }
+  }
+  
+
+
+  
 
 }
 
