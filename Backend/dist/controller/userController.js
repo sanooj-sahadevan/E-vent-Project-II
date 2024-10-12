@@ -133,6 +133,19 @@ class UserController {
             }
         });
     }
+    fetchReview(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('kokokokokokkokokokokokokokokokok');
+            try {
+                const { vendorId, userId } = req.query;
+                const result = yield this.userService.fetchReviewById(vendorId, userId);
+                res.status(httpStatus_1.HttpStatus.OK).json(result);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
     fetchFoodDetails(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

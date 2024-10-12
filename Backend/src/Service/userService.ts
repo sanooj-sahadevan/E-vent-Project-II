@@ -138,13 +138,36 @@ export class UserService  {
 
   async findVendorById(vendorId: string, userId: string) {
     try {
-      const vendor = await this.userRepository.findVendor(vendorId); // Fetch the vendor details
-      const chat = await this.userRepository.findVendorByIdInDb(vendorId, userId); // Fetch or create chat details
-      return { vendor, chatId: chat.chatId }; // Return both vendor and chat ID
+      const vendor = await this.userRepository.findVendor(vendorId); 
+      const chat = await this.userRepository.findVendorByIdInDb(vendorId, userId); 
+      return { vendor, chatId: chat.chatId }; 
     } catch (error) {
       throw new Error(`Error finding vendor: ${error}`);
     }
   }
+
+
+  async fetchReviewById(vendorId: string, userId: string) {
+    try {
+      // const vendor = await this.userRepository.findVendor(vendorId); 
+      const review = await this.userRepository.findReviewByIdInDb(vendorId, userId); 
+      
+      if (!review || !review.review) {
+        throw new Error('No review found');
+      }
+console.log(review,'okokok');
+
+      return {review}
+    } catch (error) {
+      throw new Error(`Error fetching review: ${error}`);
+    }
+  }
+
+
+
+
+
+
 
   async findFoodVendorById(vendorId: string) {
     try {

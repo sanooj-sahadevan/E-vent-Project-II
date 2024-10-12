@@ -3,14 +3,14 @@
 import mongoose, { Schema } from "mongoose";
 
 const ReviewSchema: Schema = new Schema({
-  vendorVerified: { type: Boolean, required: false }, // Required field
+  vendorVerified: { type: Boolean, required: false }, 
 
-  reviews: { type: String, required: true }, // Required field
-  stars: { type: Number, required: true },  // Required field
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Required field
-  vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "Vendor", required: true, }, // Required field
+  reviews: { type: String, required: true }, 
+  stars: { type: Number, required: true }, 
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, 
+  vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "Vendor", required: true, },
 }, {
-  timestamps: true, // Automatically add createdAt and updatedAt timestamps
+  timestamps: true, 
 });
 
 export const Reviews = mongoose.model("Reviews", ReviewSchema);

@@ -13,6 +13,7 @@ export interface IUserRepository{
     fetchfromDBAuditorium (vendorId: string): Promise<any>
     findVendor (vendorId: string): Promise<any>
     findVendorByIdInDb (vendorId: string, userId: string): Promise<any>
+    findReviewByIdInDb(vendorId: string, userId: string): Promise<any>
     findAuditoriumVendorIdInDb (vendorId: string): Promise<any>
     findAuditoriumByIdInDb (auditoriumId: string): Promise<any>
     finddishesByIdInDb (dishesId: string): Promise<any>

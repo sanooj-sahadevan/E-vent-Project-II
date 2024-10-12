@@ -147,12 +147,28 @@ class UserService {
     findVendorById(vendorId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const vendor = yield this.userRepository.findVendor(vendorId); // Fetch the vendor details
-                const chat = yield this.userRepository.findVendorByIdInDb(vendorId, userId); // Fetch or create chat details
-                return { vendor, chatId: chat.chatId }; // Return both vendor and chat ID
+                const vendor = yield this.userRepository.findVendor(vendorId);
+                const chat = yield this.userRepository.findVendorByIdInDb(vendorId, userId);
+                return { vendor, chatId: chat.chatId };
             }
             catch (error) {
                 throw new Error(`Error finding vendor: ${error}`);
+            }
+        });
+    }
+    fetchReviewById(vendorId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                // const vendor = await this.userRepository.findVendor(vendorId); 
+                const review = yield this.userRepository.findReviewByIdInDb(vendorId, userId);
+                if (!review || !review.review) {
+                    throw new Error('No review found');
+                }
+                console.log(review, 'okokok');
+                return { review };
+            }
+            catch (error) {
+                throw new Error(`Error fetching review: ${error}`);
             }
         });
     }
