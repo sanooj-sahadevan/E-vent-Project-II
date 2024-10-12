@@ -184,96 +184,64 @@ const EditVendor: React.FC = () => {
 
         {/* Inputs for email, phone, etc. */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-gray-700 font-medium">Email</label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={vendorDetails.email}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, email: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
-            )}
-          </div>
+  <div>
+    <label className="block text-gray-700 font-medium">Email</label>
+    {isEditing ? (
+      <input
+        type="text"
+        value={vendorDetails.email}
+        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+        onChange={(e) =>
+          setVendorDetails((prev) =>
+            prev ? { ...prev, email: e.target.value } : null
+          )
+        }
+      />
+    ) : (
+      <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
+    )}
+  </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium">Address</label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={vendorDetails.address}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, address: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
-            )}
-          </div>
+  <div>
+    <label className="block text-gray-700 font-medium">Address</label>
+    {isEditing ? (
+      <input
+        type="text"
+        value={vendorDetails.address}
+        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+        onChange={(e) =>
+          setVendorDetails((prev) =>
+            prev ? { ...prev, address: e.target.value } : null
+          )
+        }
+      />
+    ) : (
+      <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
+    )}
+  </div>
 
-          <div>
-            <label className="block text-gray-700 font-medium">District</label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={vendorDetails.district}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, district: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
-            )}
-          </div>
+  {/* Other fields... */}
 
-          <div>
-            <label className="block text-gray-700 font-medium">Phone Number</label>
-            {isEditing ? (
-              <input
-                type="tel"
-                value={vendorDetails.phone}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, phone: Number(e.target.value) } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
-            )}
-          </div>
+  {/* Add a full-width "Description" column */}
+  <div className="col-span-1 md:col-span-2">
+    <label className="block text-gray-700 font-medium">Description</label>
+    {isEditing ? (
+      <textarea
+        value={vendorDetails.Description}
+        rows={4}
+        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+        onChange={(e) =>
+          setVendorDetails((prev) =>
+            prev ? { ...prev, Description: e.target.value } : null
+          )
+        }
+      />
+    ) : (
+      <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
+    )}
+  </div>
+</div>
 
-          <div>
-            <label className="block text-gray-700 font-medium">State</label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={vendorDetails.state}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, state: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
-            )}
-          </div>
-        </div>
 
         <div className="flex justify-between mt-6">
           <button

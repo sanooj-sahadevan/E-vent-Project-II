@@ -20,6 +20,7 @@ router.get('/auditoriumlist', userController.auditoriumlist.bind(userController)
 router.patch('/edituserDetails', userController.editUserDetails.bind(userController));
 // All fetch
 router.get('/fetchVendorDetails', userController.fetchVendorDetails.bind(userController));
+router.get('/fetchReview', userController.fetchReview.bind(userController));
 router.get('/fetchFoodDetails/:vendorId', userController.fetchFoodDetails.bind(userController));
 router.get('/fetchAuditoriumDetails/:vendorId', userController.fetchAuditoriumDetails.bind(userController));
 router.get('/fetchauditorium/:auditoriumId', userController.fetchauditorium.bind(userController));

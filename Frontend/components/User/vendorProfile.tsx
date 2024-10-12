@@ -1,20 +1,28 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { fetchvendor } from '@/services/userApi';
+import { fetchvendor, fetchReview } from '@/services/userApi';
+
+interface Review {
+    userId: any;
+    stars: number;
+    reviews: ReactNode;
+    name: string;
+    rating: number;
+    review: string; // Changed from String to string (use lowercase)
+}
 
 interface Vendor {
-    profileImage: string | undefined;
+    profileImage?: string; // Use optional chaining
     vendorname: string;
     email: string;
     state: string;
-    rating: number;
-    reviews: Array<{ name: string; review: string; rating: number }>;
-    photos: [];
+    reviews: Review[]; // Changed to an array of Review objects
+    photos: string[]; // Assuming photos are strings (URLs)
 }
 
 const VendorsPage: React.FC = () => {
@@ -22,11 +30,14 @@ const VendorsPage: React.FC = () => {
     const searchParams = useSearchParams();
     const vendorId = searchParams.get("vendorId");
 
+    const [review, setReview] = useState<Review[]>([]); // Initialize as an empty array
     const [vendorData, setVendorData] = useState<Vendor | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [loadingReviews, setLoadingReviews] = useState<boolean>(true);
     const [userId, setUserId] = useState<string | null>(null);
     const [chatId, setChatId] = useState<string | null>(null);
 
+    // Get user ID from localStorage
     useEffect(() => {
         if (typeof window !== "undefined") {
             const user = localStorage.getItem('user');
@@ -35,12 +46,12 @@ const VendorsPage: React.FC = () => {
         }
     }, []);
 
+    // Fetch vendor details
     useEffect(() => {
         const fetchVendorDetails = async () => {
             if (vendorId && userId) {
                 try {
                     const response = await fetchvendor(vendorId, userId);
-
                     if (response) {
                         const { vendor, chatId } = response;
                         setVendorData(vendor);
@@ -61,7 +72,38 @@ const VendorsPage: React.FC = () => {
 
         fetchVendorDetails();
     }, [vendorId, userId]);
-    if (loading) {
+
+
+
+    // Fetch vendor reviews
+    useEffect(() => {
+        const fetchReviews = async () => {
+            if (vendorId && userId) {
+                try {
+                    const response = await fetchReview(vendorId, userId);
+                    console.log(response);
+
+                    if (response && response.review) {
+                        setReview(response.review.review);
+                    } else {
+                        toast.error("No reviews found.");
+                    }
+                } catch (error) {
+                    toast.error("Failed to load reviews.");
+                    console.error(error);
+                } finally {
+                    setLoadingReviews(false);
+                }
+            } else {
+                setLoadingReviews(false);
+            }
+        };
+
+        fetchReviews();
+    }, [vendorId, userId]);
+    console.log(review, '999999999999999999999999');
+
+    if (loading || loadingReviews) {
         return <p>Loading...</p>;
     }
 
@@ -69,9 +111,9 @@ const VendorsPage: React.FC = () => {
         return <p>No vendor data available.</p>;
     }
 
+
+
     return (
-
-
         <div className="max-w-7xl mx-auto px-4 py-6 mt-12">
             {/* Header */}
             <div className="relative p-6 rounded-lg mb-[70px] mt-[71px]">
@@ -119,7 +161,8 @@ const VendorsPage: React.FC = () => {
                     </button>
                     <button
                         onClick={() => chatId && router.push(`/chat?vendorId=${vendorId}&chatId=${chatId}`)}
-                        className="px-4 py-2 bg-buttonBg text-white rounded"
+                        className={`px-4 py-2 bg-buttonBg text-white rounded ${!chatId ? "opacity-50 cursor-not-allowed" : ""}`}
+                        disabled={!chatId}
                     >
                         Chat With Us
                     </button>
@@ -151,7 +194,7 @@ const VendorsPage: React.FC = () => {
                         {vendorData.photos.map((photo, index) => (
                             <img
                                 key={index}
-                                src={photo}
+                                src={photo || "/default-photo.jpg"}
                                 alt={`Vendor Photo ${index + 1}`}
                                 className="object-cover w-full h-40 rounded-md"
                             />
@@ -163,38 +206,45 @@ const VendorsPage: React.FC = () => {
             </div>
 
             {/* Reviews */}
-            <div className="mb-[70px] mt-[71px]">
+            <div className="mb-[70px] mt-[71px] text-center">
                 <h2 className="text-xl font-semibold">Reviews</h2>
-                {Array.isArray(vendorData.reviews) && vendorData.reviews.length > 0 ? (
+                {Array.isArray(review) && review.length > 0 ? (
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                            {vendorData.reviews.map((review, index) => (
-                                <div key={index} className="p-4 bg-gray-100 rounded-md shadow-md">
-                                    <div className="flex justify-between">
-                                        <p>{review.name}</p>
-                                        <div className="flex items-center space-x-1">
-                                            <span className="text-yellow-500">
-                                                {"★".repeat(Math.round(review.rating))}
-                                            </span>
-                                            <span>{review.rating}</span>
-                                        </div>
+                            {review.map((reviewItem, index) => (
+                                <div
+                                    key={index}
+                                    className="p-4 bg-white border border-gray-300 rounded-md shadow-md flex justify-between items-start"
+                                >
+                                    <div className="flex items-center">
+                                        <span className="mr-2">
+                                          
+                                        </span>
+                                        <p className="text-gray-800 font-medium">{reviewItem.userId.username}</p>
                                     </div>
-                                    <p>{review.review}</p>
+                                    <div className="flex items-center space-x-1">
+                                        <span className="text-yellow-500">
+                                            {"★".repeat(Math.round(reviewItem.stars))}
+                                        </span>
+                                        <span className="text-gray-500">{reviewItem.stars}</span>
+                                    </div>
+                                    <p className="mt-2 text-gray-700">{reviewItem.reviews}</p>
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-6 flex justify-center space-x-4">
-                            <button className="px-4 py-2 bg-buttonBg text-white rounded">
-                                View All
+                        <div className="flex justify-center mt-6">
+                            <button className="bg-pink-500 text-white px-4 py-2 rounded-full shadow-md transition-transform transform hover:scale-105">
+                                VIEW MORE REVIEWS
                             </button>
+                           
                         </div>
                     </>
                 ) : (
-                    <p className="text-center text-gray-500">No reviews available.</p>
+                    <p className="text-center text-gray-500 mt-4">No reviews available.</p>
                 )}
             </div>
-        </div>
 
+        </div>
     );
 };
 

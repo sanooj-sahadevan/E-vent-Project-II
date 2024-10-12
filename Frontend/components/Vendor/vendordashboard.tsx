@@ -356,7 +356,7 @@ const Home: React.FC = () => {
                                         </button>
                                     </>
                                 ) : (
-                                    <span className="text-green-500">✔</span> 
+                                    <span className="text-green-500">✔</span>
                                 )}
                             </div>
                         </div>

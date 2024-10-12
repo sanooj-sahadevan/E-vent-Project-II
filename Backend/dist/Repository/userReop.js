@@ -205,6 +205,27 @@ class UserRepository {
             }
         });
     }
+    findReviewByIdInDb(vendorId, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('hloo');
+                const review = yield reviews_1.Reviews.find({
+                    userId,
+                    vendorId,
+                    vendorVerified: true
+                }).populate('userId');
+                console.log(review);
+                if (!review) {
+                    return { message: 'No review found' };
+                }
+                return { review };
+            }
+            catch (error) {
+                console.error("Error in repository:", error);
+                throw error;
+            }
+        });
+    }
     findFoodVendorIdInDb(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

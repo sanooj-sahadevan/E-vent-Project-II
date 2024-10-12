@@ -183,6 +183,31 @@ export class UserRepository implements IUserRepository {
     }
   }
 
+  async findReviewByIdInDb(vendorId: string, userId: string) {
+    try {
+      console.log('hloo');
+
+      const review = await Reviews.find({
+        userId,
+        vendorId,
+        vendorVerified: true
+      }).populate('userId')
+
+      console.log(review);
+
+      if (!review) {
+        return { message: 'No review found' };
+      }
+
+      return {review}
+    } catch (error) {
+      console.error("Error in repository:", error);
+      throw error;
+    }
+  }
+
+
+
 
 
   async findFoodVendorIdInDb(vendorId: string) {
@@ -258,7 +283,7 @@ export class UserRepository implements IUserRepository {
         category,
         payment_source
       } = bookingData;
-console.log(bookingData);
+      console.log(bookingData);
 
       const bookedData = await bookedModel.create({
         vendorId,
@@ -356,23 +381,23 @@ console.log(bookingData);
     }
   }
 
-  
+
 
 
   async reviewRepository(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> {
     try {
       const review = new Reviews(reviewData); // Create a new review document
-  
+
       const savedReview = await review.save(); // Save to the database
       console.log("Review saved:", savedReview);
-  
+
       return savedReview; // Return the saved review
     } catch (error) {
       console.error("Error saving review to the database:", error);
       throw error; // Rethrow the error
     }
   }
-  
+
 }
 
 
