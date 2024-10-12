@@ -32,14 +32,15 @@ export interface IVendorService {
     ): Promise<any>
 
     findFoodVendorById(vendorId: string): Promise<any>
+    findReviewsVendorById(vendorId: string): Promise<any>
 
     findAuditoriumVendorById(vendorId: string): Promise<any>
     softDeleteDishService(dishId: string): Promise<any>
 
     softDeleteAuditoriumService(auditoriumId: string): Promise<any>
-
+    reviewIdService(reviewId: string): Promise<any>
     findBookingDetails(vendorId: string): Promise<any>
-
+    reviewIdServiceReject(reviewId: string): Promise<any>
 
     findVendorByEmailService(email: string): Promise<any>
 

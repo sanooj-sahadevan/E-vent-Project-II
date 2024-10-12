@@ -173,6 +173,21 @@ export const FetchDishes = async (vendorId: string) => {
 };
 
 
+export const fetchReviews = async (vendorId: string) => {
+  try {
+
+    console.log('pokunnu review');
+
+    const res = await axios.get(`${SERVER_URL_vendor}/fetchReviews/${vendorId}`);
+    console.log(res, '0---------k');
+
+    return res.data;
+  } catch (error) {
+    console.error('Error fetching vendor details:', error);
+    throw new Error('Failed to fetch vendor details');
+  }
+};
+
 
 export const FetchAuditorium = async (vendorId: string) => {
   try {
@@ -230,6 +245,43 @@ export const deleteAuditorium = async (aditoriumId: string,) => {
     throw new Error('Failed to delete dish');
   }
 };
+
+
+export const approveReviewAPI = async (reviewId: string,) => {
+  try {
+    const response = await axios.patch(`${SERVER_URL_vendor}/approveReview/${reviewId}`, {
+      vendorVerified: true,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting dish:', error);
+    throw new Error('Failed to delete dish');
+  }
+};
+
+export const rejectReviewAPI = async (reviewId: string,) => {
+  try {
+    console.log('Attempting to delete dish');
+    const response = await axios.delete(`${SERVER_URL_vendor}/rejectReview/${reviewId}`,);
+    return response.data;
+  } catch (error) {
+    console.error('Error deleting dish:', error);
+    throw new Error('Failed to delete dish');
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 export const vendorChats = (id: string) => {

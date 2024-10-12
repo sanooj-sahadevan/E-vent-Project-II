@@ -193,6 +193,16 @@ export class VendorService implements IVendorService {
     }
   }
   
+  async findReviewsVendorById (vendorId: string) {
+    try {
+      console.log('Service invoked to find reviews for vendor:', vendorId);
+      const dishes = await this.vendorRepository.findReviewsVendorIdInDb(vendorId);
+      return dishes;
+    } catch (error) {
+      throw new Error(`Error finding vendor dishes: ${error}`);
+    }
+  }
+  
   
   
   async findAuditoriumVendorById  (vendorId: string) {
@@ -231,6 +241,30 @@ export class VendorService implements IVendorService {
     }
   }
   
+  async  reviewIdService  (reviewId: string)  {
+    try {
+      const updatedreview = await this.vendorRepository.updatedreviewRepo(reviewId);
+      if(!updatedreview){
+        throw new Error(`Error soft-deleting auditorium`);
+      }
+      return updatedreview;
+    } catch (error) {
+      throw new Error(`Error soft-deleting auditorium: ${error}`);
+    }
+  }
+
+
+  async    reviewIdServiceReject  (reviewId: string)  {
+    try {
+      const deletereview = await this.vendorRepository.updatedreviewRepoReject(reviewId);
+      if(!deletereview){
+        throw new Error(`Error soft-deleting auditorium`);
+      }
+      return deletereview;
+    } catch (error) {
+      throw new Error(`Error soft-deleting auditorium: ${error}`);
+    }
+  }
   
   async findBookingDetails  (vendorId: string)  {
     try {

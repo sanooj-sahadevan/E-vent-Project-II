@@ -223,6 +223,24 @@ async fetchFoodDetails  (req: Request, res: Response, next: NextFunction): Promi
   }
 }
 
+async fetchReviews  (req: Request, res: Response, next: NextFunction): Promise<void>  {
+  try {
+    const { vendorId } = req.params;
+    const Reviews = await  this.vendorService.findReviewsVendorById(vendorId);
+    if (!Reviews || Reviews.length === 0) {
+      res.status(HttpStatus.NOT_FOUND).json({ message: "No Reviews found for this vendor" });
+    } else {
+      console.log(Reviews, 'Fetched Reviews for vendor');
+      res.status(HttpStatus.OK).json(Reviews);
+    }
+
+  } catch (error) {
+    console.error('Error in fetchFoodDetails:', error);
+    next(error);
+  }
+}
+
+
 async fetchAuditoriumDetails  (req: Request, res: Response, next: NextFunction): Promise<void>  {
   try {
     const { vendorId } = req.params;
@@ -270,6 +288,31 @@ async softDeleteAuditorium  (req: Request, res: Response, next: NextFunction)  {
   }
 }
 
+async approveReview  (req: Request, res: Response, next: NextFunction)  {
+  try {
+    const { reviewId } = req.params;
+    if (!reviewId) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'reviewId  is missing' });
+    }
+    const updatedAuditorium = await  this.vendorService.reviewIdService(reviewId); 
+    res.status(HttpStatus.OK).json({ message: 'reviewId deleted successfully', auditorium: updatedAuditorium });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async rejectReview  (req: Request, res: Response, next: NextFunction)  {
+  try {
+    const { reviewId } = req.params;
+    if (!reviewId) {
+      return res.status(HttpStatus.BAD_REQUEST).json({ message: 'reviewId  is missing' });
+    }
+    const updatedAuditorium = await  this.vendorService.reviewIdServiceReject(reviewId); 
+    res.status(HttpStatus.OK).json({ message: 'reviewId deleted successfully', auditorium: updatedAuditorium });
+  } catch (error) {
+    next(error);
+  }
+}
 
 async vendorBookingDetils (req: Request, res: Response, next: NextFunction)  {
   const { vendorId } = req.params;

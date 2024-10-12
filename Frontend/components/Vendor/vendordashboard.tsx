@@ -4,8 +4,18 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { FaEdit, FaPlus, FaTrashAlt } from 'react-icons/fa';
-import { fetchDetailsVendor, FetchDishes, FetchAuditorium, deleteDish, deleteAuditorium } from '@/services/vendorAPI'; // Assuming deleteAuditorium is the soft delete API
+import { fetchDetailsVendor, FetchDishes, FetchAuditorium, deleteDish, deleteAuditorium, fetchReviews, approveReviewAPI, rejectReviewAPI } from '@/services/vendorAPI'; // Imported API functions
 import 'react-toastify/dist/ReactToastify.css';
+
+interface Review {
+    _id: string; // Added _id for review identification
+    userId: any;
+    stars: number;
+    username: string;
+    rating: number;
+    reviews: string;
+    verified: boolean;
+}
 
 interface VendorData {
     vendorname: string;
@@ -36,6 +46,7 @@ const Home: React.FC = () => {
     const query = searchParams.get('vendorId');
     const router = useRouter();
 
+    const [reviews, setReviews] = useState<Review[] | null>(null);
     const [vendorData, setVendorData] = useState<VendorData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -75,11 +86,21 @@ const Home: React.FC = () => {
             if (query) {
                 await fetchAuditorium(query);
                 await fetchDishes(query);
+                await fetchReview(query);
             }
         };
 
         fetchAllDetails();
     }, [query]);
+
+    const fetchReview = async (vendorId: string) => {
+        try {
+            const Reviews = await fetchReviews(vendorId);
+            setReviews(Reviews);
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+        }
+    };
 
     const fetchDishes = async (vendorId: string) => {
         try {
@@ -105,28 +126,24 @@ const Home: React.FC = () => {
         }
     };
 
-    const handleDelete = (dishId: string) => {
+    const handleDelete = async (dishId: string) => {
         if (!query) return;
-        deleteDish(dishId)
-            .then(response => {
-                console.log('Dish deleted successfully', response);
-                fetchDishes(query);
-            })
-            .catch(error => {
-                console.error('Error deleting dish:', error);
-            });
+        try {
+            await deleteDish(dishId);
+            await fetchDishes(query);
+        } catch (error) {
+            console.error('Error deleting dish:', error);
+        }
     };
 
-    const handleDeleteAuditorium = (auditoriumId: string) => {
+    const handleDeleteAuditorium = async (auditoriumId: string) => {
         if (!query) return;
-        deleteAuditorium(auditoriumId)
-            .then((response: any) => {
-                console.log('Auditorium deleted successfully', response);
-                fetchAuditorium(query);
-            })
-            .catch((error: any) => {
-                console.error('Error deleting auditorium:', error);
-            });
+        try {
+            await deleteAuditorium(auditoriumId);
+            await fetchAuditorium(query);
+        } catch (error) {
+            console.error('Error deleting auditorium:', error);
+        }
     };
 
     const handleEditProfile = () => {
@@ -135,6 +152,37 @@ const Home: React.FC = () => {
             router.push(`/vendorEditProfile?query=${query}`);
         }
     };
+
+    const rejectReview = async (reviewId: string) => {
+        try {
+            await rejectReviewAPI(reviewId);
+            setReviews((prevReviews) => {
+                if (!prevReviews) return null;
+                return prevReviews.filter((review) => review._id !== reviewId);
+            });
+        } catch (error) {
+            console.error('Error rejecting review:', error);
+        }
+    };
+
+    const approveReview = async (reviewId: string) => {
+        try {
+            await approveReviewAPI(reviewId);
+            setReviews((prevReviews) => {
+                if (!prevReviews) return null;
+                return prevReviews.map((review) =>
+                    review._id === reviewId
+                        ? { ...review, verified: true }
+                        : review
+                );
+            });
+        } catch (error) {
+            console.error('Error approving review:', error);
+        }
+    };
+
+
+
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p className="text-red-600">{error}</p>;
@@ -210,26 +258,27 @@ const Home: React.FC = () => {
                             <div key={food._id} className="flex items-center justify-between border-b border-gray-200 py-4">
                                 <div className="flex items-center">
                                     <img
-                                        src={food.images}
-                                        alt={food.dishesName}
-                                        className="w-12 h-12 object-cover rounded-full mr-4"
+                                        src={food.images || '/placeholder.jpg'}
+                                        alt={food.dishesName || 'Food Image'}
+                                        className="w-16 h-16 rounded-full object-cover"
                                     />
-                                    <div className="flex flex-col">
-                                        <h3 className="font-bold text-lg">{food.dishesName}</h3>
-                                        <p className="text-sm text-gray-600 truncate">{food.description}</p>
+                                    <div className="ml-4">
+                                        <h3 className="font-semibold">{food.dishesName}</h3>
+                                        <p className="text-gray-500 text-sm">{food.description}</p>
                                     </div>
                                 </div>
-                                <div className="flex items-center space-x-4">
-                                    <FaEdit className="text-gray-500 cursor-pointer" />
-                                    <FaTrashAlt
-                                        className="text-black cursor-pointer"
-                                        onClick={() => handleDelete(food._id)}
-                                    />
+                                <div className="flex">
+                                    <a href={`/vendorEditDish?dishId=${food._id}`} className="text-gray-500 mr-2">
+                                        <FaEdit />
+                                    </a>
+                                    <button onClick={() => handleDelete(food._id)} className="text-gray-500">
+                                        <FaTrashAlt />
+                                    </button>
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <p>No food items found.</p>
+                        <p>No dishes found</p>
                     )}
                 </div>
             </div>
@@ -237,8 +286,8 @@ const Home: React.FC = () => {
             {/* Auditorium Section */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
                 <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
-                    <span className="flex items-center"><span className="mr-2">🏛️</span> Auditorium</span>
-                    <a href="/vendorAddAuditoriums" className="text-black-500"><FaPlus /></a>
+                    <span className="flex items-center"><span className="mr-2">🎭</span> Auditoriums</span>
+                    <a href="/vendorAddAuditorium" className="text-black-500"><FaPlus /></a>
                 </h2>
                 <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
                     {dishError ? (
@@ -248,24 +297,71 @@ const Home: React.FC = () => {
                             <div key={auditorium._id} className="flex items-center justify-between border-b border-gray-200 py-4">
                                 <div className="flex items-center">
                                     <img
-                                        src={auditorium.images}
-                                        alt={auditorium.auditoriumName}
-                                        className="w-12 h-12 object-cover rounded-full mr-4"
+                                        src={auditorium.images || '/placeholder.jpg'}
+                                        alt={auditorium.auditoriumName || 'Auditorium Image'}
+                                        className="w-16 h-16 rounded-full object-cover"
                                     />
-                                    <div className="flex flex-col">
-                                        <h3 className="font-bold text-lg">{auditorium.auditoriumName}</h3>
-                                        <p className="text-sm text-gray-600 truncate">{auditorium.description}</p>
+                                    <div className="ml-4">
+                                        <h3 className="font-semibold">{auditorium.auditoriumName}</h3>
+                                        <p className="text-gray-500 text-sm">{auditorium.description}</p>
                                     </div>
                                 </div>
-                                <FaTrashAlt
-                                    className="text-black cursor-pointer"
-                                    onClick={() => handleDeleteAuditorium(auditorium._id)}
-                                />
+                                <div className="flex">
+                                    <a href={`/vendorEditAuditorium?auditoriumId=${auditorium._id}`} className="text-gray-500 mr-2">
+                                        <FaEdit />
+                                    </a>
+                                    <button onClick={() => handleDeleteAuditorium(auditorium._id)} className="text-gray-500">
+                                        <FaTrashAlt />
+                                    </button>
+                                </div>
                             </div>
                         ))
                     ) : (
-                        <p>No auditorium details found.</p>
+                        <p>No auditoriums found</p>
                     )}
+                </div>
+            </div>
+
+            {/* Reviews Section */}
+            <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
+                <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
+                    <span className="flex items-center"><span className="mr-2">⭐</span> Reviews</span>
+                </h2>
+                <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
+                    {reviews?.map((review) => (
+                        <div key={review._id} className="flex items-center justify-between border-b border-gray-200 py-4">
+                            <div>
+                                <h3 className="font-semibold">{review.userId.username}</h3>
+                                <p className="text-gray-500 text-sm">{review.reviews}</p>
+                                <div className="flex items-center text-yellow-400">
+                                    {Array.from({ length: review.stars }, (_, i) => (
+                                        <span key={i}>⭐</span>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="flex">
+                                {!review.verified ? (
+                                    <>
+                                        <button
+                                            onClick={() => approveReview(review._id)}
+                                            className="text-sm text-green-500 mr-2"
+                                        >
+                                            Approve
+                                        </button>
+                                        <button
+                                            onClick={() => rejectReview(review._id)}
+                                            className="text-sm text-red-500"
+                                        >
+                                            Reject
+                                        </button>
+                                    </>
+                                ) : (
+                                    <span className="text-green-500">✔</span> 
+                                )}
+                            </div>
+                        </div>
+                    ))}
+
                 </div>
             </div>
         </div>

@@ -239,6 +239,25 @@ class VendorController {
             }
         });
     }
+    fetchReviews(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { vendorId } = req.params;
+                const Reviews = yield this.vendorService.findReviewsVendorById(vendorId);
+                if (!Reviews || Reviews.length === 0) {
+                    res.status(httpStatus_1.HttpStatus.NOT_FOUND).json({ message: "No Reviews found for this vendor" });
+                }
+                else {
+                    console.log(Reviews, 'Fetched Reviews for vendor');
+                    res.status(httpStatus_1.HttpStatus.OK).json(Reviews);
+                }
+            }
+            catch (error) {
+                console.error('Error in fetchFoodDetails:', error);
+                next(error);
+            }
+        });
+    }
     fetchAuditoriumDetails(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -282,6 +301,36 @@ class VendorController {
                 }
                 const updatedAuditorium = yield this.vendorService.softDeleteAuditoriumService(auditoriumId);
                 res.status(httpStatus_1.HttpStatus.OK).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    approveReview(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { reviewId } = req.params;
+                if (!reviewId) {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ message: 'reviewId  is missing' });
+                }
+                const updatedAuditorium = yield this.vendorService.reviewIdService(reviewId);
+                res.status(httpStatus_1.HttpStatus.OK).json({ message: 'reviewId deleted successfully', auditorium: updatedAuditorium });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    rejectReview(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { reviewId } = req.params;
+                if (!reviewId) {
+                    return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ message: 'reviewId  is missing' });
+                }
+                const updatedAuditorium = yield this.vendorService.reviewIdServiceReject(reviewId);
+                res.status(httpStatus_1.HttpStatus.OK).json({ message: 'reviewId deleted successfully', auditorium: updatedAuditorium });
             }
             catch (error) {
                 next(error);

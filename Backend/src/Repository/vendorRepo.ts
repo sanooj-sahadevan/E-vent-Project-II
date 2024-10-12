@@ -7,6 +7,7 @@ import { messageModel } from "../models/messageModal";
 import { VendorModel } from "../models/vendorModel";
 import { Vendor } from '../interfaces/vendor'
 import { IVendorRepository } from "../interfaces/repository/vendorRepository";
+import { Reviews } from "../models/reviews";
 
 
 
@@ -69,7 +70,7 @@ export class VendorRepository implements IVendorRepository {
       throw new Error('Database operation failed');
     }
   }
- 
+
 
   async editVendorRepo(
     existingVendor: Vendor | null,
@@ -89,9 +90,9 @@ export class VendorRepository implements IVendorRepository {
       } else {
         const newVendor = new VendorModel({
           ...vendorDetails,
-          profileImage: vendorDetails.profileImage, 
+          profileImage: vendorDetails.profileImage,
         });
-  
+
         await newVendor.save();
         return newVendor;
       }
@@ -100,7 +101,7 @@ export class VendorRepository implements IVendorRepository {
       throw new Error('Database operation failed');
     }
   }
-  
+
 
 
 
@@ -125,13 +126,28 @@ export class VendorRepository implements IVendorRepository {
 
   async findFoodVendorIdInDb(vendorId: string) {
     try {
-      const result = await Dishes.find({ vendorId: vendorId });
+      const result = await Dishes
+        .find({ vendorId: vendorId })
+
       return result
     } catch (error) {
       console.error(error);
 
     }
   }
+  async findReviewsVendorIdInDb(vendorId: string) {
+    try {
+      const result = await Reviews
+        .find({ vendorId: vendorId })
+        .populate('userId')
+        .exec();
+      return result
+    } catch (error) {
+      console.error(error);
+
+    }
+  }
+
 
 
 
@@ -184,7 +200,7 @@ export class VendorRepository implements IVendorRepository {
         price: auditoriumData.data.price,
         category: auditoriumData.data.category,
         status: auditoriumData.data.status,
-        images: auditoriumData.images, 
+        images: auditoriumData.images,
         capacity: auditoriumData.data.capacity,
       });
 
@@ -239,6 +255,42 @@ export class VendorRepository implements IVendorRepository {
     }
   }
 
+
+  async updatedreviewRepo(reviewId: string) {
+    try {
+      const review = await Reviews.findById(reviewId);
+      console.log(review);
+      if (!review || review.vendorVerified) {
+        return null;
+      }
+      review.vendorVerified = true;
+      await review.save();
+      console.log(review);
+      
+      return review;
+    } catch (error) {
+      console.error(`Error soft-deleting auditorium: ${error}`);
+      throw error;
+    }
+  }
+  async updatedreviewRepoReject(reviewId: string) {
+    try {
+    const review = await Reviews.findById(reviewId);
+    if (!review) {
+      console.log('Review not found');
+      return null;
+    }
+
+    await Reviews.findByIdAndDelete(reviewId);
+    console.log(`Review with ID ${reviewId} deleted successfully.`);
+    
+    return review;
+  } catch (error) {
+    console.error(`Error deleting review: ${error}`);
+    throw error;
+  }
+}
+ 
 
   async findDetailsByvendorId(vendorId: string) {
     try {

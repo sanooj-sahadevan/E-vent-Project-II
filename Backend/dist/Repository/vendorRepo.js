@@ -16,6 +16,7 @@ const bookedEvent_1 = require("../models/bookedEvent");
 const chatModel_1 = require("../models/chatModel");
 const messageModal_1 = require("../models/messageModal");
 const vendorModel_1 = require("../models/vendorModel");
+const reviews_1 = require("../models/reviews");
 class VendorRepository {
     constructor() {
     }
@@ -126,7 +127,22 @@ class VendorRepository {
     findFoodVendorIdInDb(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const result = yield dishesModel_1.Dishes.find({ vendorId: vendorId });
+                const result = yield dishesModel_1.Dishes
+                    .find({ vendorId: vendorId });
+                return result;
+            }
+            catch (error) {
+                console.error(error);
+            }
+        });
+    }
+    findReviewsVendorIdInDb(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const result = yield reviews_1.Reviews
+                    .find({ vendorId: vendorId })
+                    .populate('userId')
+                    .exec();
                 return result;
             }
             catch (error) {
@@ -230,6 +246,43 @@ class VendorRepository {
             }
             catch (error) {
                 console.error(`Error soft-deleting auditorium: ${error}`);
+                throw error;
+            }
+        });
+    }
+    updatedreviewRepo(reviewId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const review = yield reviews_1.Reviews.findById(reviewId);
+                console.log(review);
+                if (!review || review.vendorVerified) {
+                    return null;
+                }
+                review.vendorVerified = true;
+                yield review.save();
+                console.log(review);
+                return review;
+            }
+            catch (error) {
+                console.error(`Error soft-deleting auditorium: ${error}`);
+                throw error;
+            }
+        });
+    }
+    updatedreviewRepoReject(reviewId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const review = yield reviews_1.Reviews.findById(reviewId);
+                if (!review) {
+                    console.log('Review not found');
+                    return null;
+                }
+                yield reviews_1.Reviews.findByIdAndDelete(reviewId);
+                console.log(`Review with ID ${reviewId} deleted successfully.`);
+                return review;
+            }
+            catch (error) {
+                console.error(`Error deleting review: ${error}`);
                 throw error;
             }
         });
