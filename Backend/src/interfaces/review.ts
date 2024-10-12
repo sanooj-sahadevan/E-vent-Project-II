@@ -5,5 +5,5 @@ export interface ReviewsDocument extends Document {
     stars: number;
     userId: mongoose.Schema.Types.ObjectId; 
     vendorId: mongoose.Schema.Types.ObjectId;   createdAt: Date;
-
+    vendorVerified:boolean
 }

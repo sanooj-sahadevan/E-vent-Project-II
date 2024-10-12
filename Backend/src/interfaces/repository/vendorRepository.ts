@@ -12,11 +12,14 @@ export interface IVendorRepository {
     findAuditoriumByIdInDb(auditoriumId: string): Promise<any>
     findDishesByIdInDb(dishesId: string): Promise<any>
     findFoodVendorIdInDb(vendorId: string): Promise<any>
+    findReviewsVendorIdInDb(vendorId: string): Promise<any>
     findAuditoriumVendorIdInDb(vendorId: string): Promise<any>
     createDishes(dishesData: any): Promise<any>
     createAuditorium(auditoriumData: any): Promise<any>
     softDeleteDishRepo(dishId: string): Promise<any>
     softDeleteAuditoriumRepo(auditoriumId: string): Promise<any>
+    updatedreviewRepo(reviewId: string): Promise<any>
+    updatedreviewRepoReject(reviewId: string): Promise<any>
     findDetailsByvendorId(vendorId: string): Promise<any>
     chatDB(vendorId: string): Promise<any>
     messageDB(chatIds: string[]): Promise<any>

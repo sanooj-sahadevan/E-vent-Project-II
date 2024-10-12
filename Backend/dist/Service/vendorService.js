@@ -189,6 +189,18 @@ class VendorService {
             }
         });
     }
+    findReviewsVendorById(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Service invoked to find reviews for vendor:', vendorId);
+                const dishes = yield this.vendorRepository.findReviewsVendorIdInDb(vendorId);
+                return dishes;
+            }
+            catch (error) {
+                throw new Error(`Error finding vendor dishes: ${error}`);
+            }
+        });
+    }
     findAuditoriumVendorById(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -223,6 +235,34 @@ class VendorService {
                     throw new Error(`Error soft-deleting auditorium`);
                 }
                 return updatedAuditorium;
+            }
+            catch (error) {
+                throw new Error(`Error soft-deleting auditorium: ${error}`);
+            }
+        });
+    }
+    reviewIdService(reviewId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const updatedreview = yield this.vendorRepository.updatedreviewRepo(reviewId);
+                if (!updatedreview) {
+                    throw new Error(`Error soft-deleting auditorium`);
+                }
+                return updatedreview;
+            }
+            catch (error) {
+                throw new Error(`Error soft-deleting auditorium: ${error}`);
+            }
+        });
+    }
+    reviewIdServiceReject(reviewId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const deletereview = yield this.vendorRepository.updatedreviewRepoReject(reviewId);
+                if (!deletereview) {
+                    throw new Error(`Error soft-deleting auditorium`);
+                }
+                return deletereview;
             }
             catch (error) {
                 throw new Error(`Error soft-deleting auditorium: ${error}`);

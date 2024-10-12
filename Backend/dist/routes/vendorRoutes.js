@@ -26,9 +26,12 @@ router.get('/fetchFoodDetails/:vendorId', vendorController.fetchFoodDetails.bind
 router.get('/fetchAuditoriumDetails/:vendorId', vendorController.fetchAuditoriumDetails.bind(vendorController));
 router.get('/fetchauditorium/:auditoriumId', vendorController.fetchauditorium.bind(vendorController));
 router.get('/fetchdishes/:dishesId', vendorController.fetchdishes.bind(vendorController));
+router.get('/fetchReviews/:vendorId', vendorController.fetchReviews.bind(vendorController));
 router.get("/getPresignedUrl", vendorController.getPresignedUrl.bind(vendorController));
 router.patch('/dishes/:dishId', vendorController.softDeleteDish.bind(vendorController));
 router.patch('/auditorium/:auditoriumId', vendorController.softDeleteAuditorium.bind(vendorController));
+router.patch('/approveReview/:reviewId', vendorController.approveReview.bind(vendorController));
+router.delete('/rejectReview/:reviewId', vendorController.rejectReview.bind(vendorController));
 router.get('/vendorBookingDetils/:vendorId', vendorController.vendorBookingDetils.bind(vendorController));
 router.get('/unread-count', vendorJWT_1.verifyvendor, vendorController.getUnreadMessagesCount.bind(vendorController));
 exports.default = router;
