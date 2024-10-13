@@ -410,7 +410,10 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('getReviewsByVendorId');
             try {
-                const reviews = yield reviews_1.Reviews.find({ vendorId });
+                const reviews = yield reviews_1.Reviews.find({
+                    vendorId: vendorId,
+                    vendorVerified: true
+                });
                 console.log(reviews);
                 return reviews;
             }
