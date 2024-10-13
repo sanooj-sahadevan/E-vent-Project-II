@@ -83,11 +83,7 @@ const VendorsPage: React.FC = () => {
             <div className="my-8">
                 <div className="flex justify-end space-x-4 mb-6">
                     <div>Filter by</div>
-                    {/* <select className="border rounded px-2 py-1">
-                        <option>Category</option>
-                        <option>Category 1</option>
-                        <option>Category 2</option>
-                    </select> */}
+                   
                     <select className="border rounded px-2 py-1">
                         <option>Location</option>
                         <option>Location 1</option>
