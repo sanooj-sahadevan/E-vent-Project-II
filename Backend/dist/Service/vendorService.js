@@ -16,6 +16,7 @@ exports.VendorService = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const fileUpload_1 = require("../middleware/fileUpload");
 const index_1 = require("../index");
+const notification_1 = __importDefault(require("../utils/notificationHelper/notification"));
 class VendorService {
     constructor(vendorRepository) {
         this.vendorRepository = vendorRepository;
@@ -148,6 +149,22 @@ class VendorService {
             }
         });
     }
+    // async  uploadDishes  (
+    //   vendorId: string,
+    //   data: DishDocument,
+    //   images?: string
+    // ) {
+    //   try {      
+    //     const dishesData = { vendorId, data, images };
+    //     dishesData.data.price = Number(dishesData.data.price);
+    //     const newDish = await this.vendorRepository.createDishes(dishesData);
+    // console.log(newDish);
+    //     return newDish;
+    //   } catch (error) {
+    //     console.error("Error in uploadDishes: ", error);
+    //     console.error();
+    //   }
+    // }
     uploadDishes(vendorId, data, images) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -155,11 +172,12 @@ class VendorService {
                 dishesData.data.price = Number(dishesData.data.price);
                 const newDish = yield this.vendorRepository.createDishes(dishesData);
                 console.log(newDish);
+                const dishNotification = yield (0, notification_1.default)(vendorId, newDish._id, newDish.name);
+                console.log(dishNotification);
                 return newDish;
             }
             catch (error) {
                 console.error("Error in uploadDishes: ", error);
-                console.error();
             }
         });
     }

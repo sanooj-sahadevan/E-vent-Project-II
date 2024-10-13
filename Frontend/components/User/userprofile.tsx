@@ -110,9 +110,9 @@ const TopNavBar = () => {
         </li>
         <li className="mr-8">
           <Link
-            href="/notifications"
-            onClick={() => setActivePath('/notifications')}
-            className={`flex flex-col items-center ${isActive('/notifications') ? 'text-pink-500' : 'text-gray-600'} hover:text-pink-500`}
+            href="/notification"
+            onClick={() => setActivePath('/notification')}
+            className={`flex flex-col items-center ${isActive('/notification') ? 'text-pink-500' : 'text-gray-600'} hover:text-pink-500`}
           >
             <FaBell size={24} />
             <span>Notifications</span>

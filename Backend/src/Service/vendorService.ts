@@ -8,6 +8,7 @@ import { DishDocument } from "../interfaces/dishes";
 import { AuditoriumDocument } from "../models/auditoriumModel";
 import { IVendorRepository } from "../interfaces/repository/vendorRepository";
 import { IVendorService } from "../interfaces/service/vendorService";
+import notifyDishAdded from "../utils/notificationHelper/notification";
 
 
 export class VendorService implements IVendorService {
@@ -143,25 +144,59 @@ export class VendorService implements IVendorService {
     }
   }
   
-  async  uploadDishes  (
-    vendorId: string,
-    data: DishDocument,
-    images?: string
-  ) {
-    try {      
-      const dishesData = { vendorId, data, images };
+  // async  uploadDishes  (
+  //   vendorId: string,
+  //   data: DishDocument,
+  //   images?: string
+  // ) {
+  //   try {      
+  //     const dishesData = { vendorId, data, images };
   
+  //     dishesData.data.price = Number(dishesData.data.price);
+  
+  //     const newDish = await this.vendorRepository.createDishes(dishesData);
+  // console.log(newDish);
+  
+  //     return newDish;
+  //   } catch (error) {
+  //     console.error("Error in uploadDishes: ", error);
+  //     console.error();
+  //   }
+  // }
+
+
+  async uploadDishes(vendorId: string, data: DishDocument, images?: string) {
+    try {
+      const dishesData = { vendorId, data, images };
       dishesData.data.price = Number(dishesData.data.price);
   
       const newDish = await this.vendorRepository.createDishes(dishesData);
-  console.log(newDish);
-  
+      console.log(newDish);
+      const dishNotification = await notifyDishAdded(vendorId, newDish._id, newDish.name);
+      console.log(dishNotification);
+
+
       return newDish;
     } catch (error) {
       console.error("Error in uploadDishes: ", error);
-      console.error();
     }
   }
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   
   async uploadAuditorium  (
