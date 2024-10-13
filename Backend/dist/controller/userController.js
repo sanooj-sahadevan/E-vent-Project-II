@@ -355,11 +355,9 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { reviews, stars, userId, vendorId } = req.body;
-                // Ensure all required fields are provided
                 if (!reviews || !stars || !userId || !vendorId) {
                     return res.status(400).json({ message: 'All fields are required' });
                 }
-                // Call the reviewService with the data
                 const reviewData = yield this.userService.reviewService({ reviews, stars, userId, vendorId });
                 res.status(httpStatus_1.HttpStatus.OK).json(reviewData);
             }

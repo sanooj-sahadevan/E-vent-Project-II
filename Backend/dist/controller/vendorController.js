@@ -35,7 +35,7 @@ class VendorController {
                             address: "",
                             district: "",
                             state: "",
-                            description: "",
+                            description: "", rating: 0,
                             reviewsID: null,
                         });
                         yield (0, sendEmail_1.sendEmail)(email, otp);

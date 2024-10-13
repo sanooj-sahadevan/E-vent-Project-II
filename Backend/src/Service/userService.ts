@@ -1,13 +1,12 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import jsSHA from "jssha";
-
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
 import { IUserRepository } from "../interfaces/repository/userRepository";
 import { io } from "..";
 
-export class UserService  {
+export class UserService {
 
   private userRepository: IUserRepository
 
@@ -21,7 +20,7 @@ export class UserService  {
       if (existingUser) {
         if (existingUser.otpVerified) {
           throw new Error("User already exists and is verified.");
-        } 
+        }
       }
       const hashedPassword = await bcrypt.hash(user.password, 10);
       user.password = hashedPassword;
@@ -138,9 +137,9 @@ export class UserService  {
 
   async findVendorById(vendorId: string, userId: string) {
     try {
-      const vendor = await this.userRepository.findVendor(vendorId); 
-      const chat = await this.userRepository.findVendorByIdInDb(vendorId, userId); 
-      return { vendor, chatId: chat.chatId }; 
+      const vendor = await this.userRepository.findVendor(vendorId);
+      const chat = await this.userRepository.findVendorByIdInDb(vendorId, userId);
+      return { vendor, chatId: chat.chatId };
     } catch (error) {
       throw new Error(`Error finding vendor: ${error}`);
     }
@@ -150,14 +149,14 @@ export class UserService  {
   async fetchReviewById(vendorId: string, userId: string) {
     try {
       // const vendor = await this.userRepository.findVendor(vendorId); 
-      const review = await this.userRepository.findReviewByIdInDb(vendorId, userId); 
-      
+      const review = await this.userRepository.findReviewByIdInDb(vendorId, userId);
+
       if (!review || !review.review) {
         throw new Error('No review found');
       }
-console.log(review,'okokok');
+      console.log(review, 'okokok');
 
-      return {review}
+      return { review }
     } catch (error) {
       throw new Error(`Error fetching review: ${error}`);
     }
@@ -300,7 +299,7 @@ console.log(review,'okokok');
 
   async fetchbookingData(bookingData: any) {
     const bookedTrip = await this.userRepository.createBookedTrip(bookingData);
-    console.log(bookedTrip,'okokookok');
+    console.log(bookedTrip, 'okokookok');
     return bookedTrip;
   }
 
@@ -362,53 +361,70 @@ console.log(review,'okokok');
     }
   }
 
-  async chatServices  ({ userId }: { userId: string })  {
+  async chatServices({ userId }: { userId: string }) {
     try {
       const chats = await this.userRepository.chatDB(userId);
-      console.log(chats,'ok serive');
-      
+      console.log(chats, 'ok serive');
+
       return chats;
     } catch (error) {
       console.error("Error fetching chats:", error);
       throw error;
     }
   }
-  async messageService  ({
+  async messageService({
     chatIds,
     userId,
   }: {
     chatIds: string[];
     userId: string;
-  })  {
+  }) {
     try {
       const unreadCount = await this.userRepository.messageDB(chatIds);
-  
+
       io.to(userId).emit("unreadCount", { unreadCount });
-  console.log(unreadCount,'ok messge service');
-  console.log('emmited sucessfullly');
-  
+      console.log(unreadCount, 'ok messge service');
+      console.log('emmited sucessfullly');
+
       return unreadCount;
     } catch (error) {
       console.error("Error fetching unread messages:", error);
       throw error;
     }
-  } 
-  
-  
+  }
+
+
+  // async reviewService(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> {
+  //   try {
+  //     const review = await this.userRepository.reviewRepository(reviewData);
+  //     return review;
+  //   } catch (error) {
+  //     console.error("Error in reviewService:", error);
+  //     throw error; 
+  //   }
+  // }
+
   async reviewService(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> {
     try {
-      // Call the repository to save the review
       const review = await this.userRepository.reviewRepository(reviewData);
+      const reviews = await this.userRepository.getReviewsByVendorId(reviewData.vendorId);
+      const averageRating = this.calculateAverageRating(reviews);
+      await this.userRepository.updateVendorRating(reviewData.vendorId, averageRating);
       return review;
     } catch (error) {
       console.error("Error in reviewService:", error);
-      throw error; // Rethrow the error for the controller to handle
+      throw error;
     }
   }
-  
+
+  private calculateAverageRating(reviews: any[]): number {
+    console.log('hlper function');
+    if (reviews.length === 0) return 0;
+    const totalStars = reviews.reduce((acc, review) => acc + review.stars, 0);
+    return totalStars / reviews.length;
+  }
 
 
-  
 
 }
 

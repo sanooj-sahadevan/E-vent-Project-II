@@ -378,18 +378,36 @@ class UserService {
             }
         });
     }
+    // async reviewService(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> {
+    //   try {
+    //     const review = await this.userRepository.reviewRepository(reviewData);
+    //     return review;
+    //   } catch (error) {
+    //     console.error("Error in reviewService:", error);
+    //     throw error; 
+    //   }
+    // }
     reviewService(reviewData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // Call the repository to save the review
                 const review = yield this.userRepository.reviewRepository(reviewData);
+                const reviews = yield this.userRepository.getReviewsByVendorId(reviewData.vendorId);
+                const averageRating = this.calculateAverageRating(reviews);
+                yield this.userRepository.updateVendorRating(reviewData.vendorId, averageRating);
                 return review;
             }
             catch (error) {
                 console.error("Error in reviewService:", error);
-                throw error; // Rethrow the error for the controller to handle
+                throw error;
             }
         });
+    }
+    calculateAverageRating(reviews) {
+        console.log('hlper function');
+        if (reviews.length === 0)
+            return 0;
+        const totalStars = reviews.reduce((acc, review) => acc + review.stars, 0);
+        return totalStars / reviews.length;
     }
 }
 exports.UserService = UserService;

@@ -346,12 +346,10 @@ export class UserController {
     try {
       const { reviews, stars, userId, vendorId } = req.body;
   
-      // Ensure all required fields are provided
       if (!reviews || !stars || !userId || !vendorId) {
         return res.status(400).json({ message: 'All fields are required' });
       }
   
-      // Call the reviewService with the data
       const reviewData = await this.userService.reviewService({ reviews, stars, userId, vendorId });
   
       res.status(HttpStatus.OK).json(reviewData);

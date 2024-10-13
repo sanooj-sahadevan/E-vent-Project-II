@@ -199,7 +199,7 @@ export class UserRepository implements IUserRepository {
         return { message: 'No review found' };
       }
 
-      return {review}
+      return { review }
     } catch (error) {
       console.error("Error in repository:", error);
       throw error;
@@ -386,17 +386,56 @@ export class UserRepository implements IUserRepository {
 
   async reviewRepository(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> {
     try {
-      const review = new Reviews(reviewData); // Create a new review document
+      console.log('reviewRepository');
 
-      const savedReview = await review.save(); // Save to the database
+      const review = new Reviews(reviewData);
+
+      const savedReview = await review.save();
       console.log("Review saved:", savedReview);
 
-      return savedReview; // Return the saved review
+      return savedReview;
     } catch (error) {
       console.error("Error saving review to the database:", error);
-      throw error; // Rethrow the error
+      throw error;
     }
   }
+
+  async getReviewsByVendorId(vendorId: string): Promise<any[]> {
+    console.log('getReviewsByVendorId');
+
+    try {
+      const reviews = await Reviews.find({
+        vendorId: vendorId,
+        vendorVerified: true
+      });
+
+      console.log(reviews);
+      return reviews;
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      throw error;
+    }
+  }
+
+
+
+
+  async updateVendorRating(vendorId: string, averageRating: number): Promise<any> {
+    console.log('updateVendorRating');
+
+    try {
+      const updatedVendor = await VendorModel.findByIdAndUpdate(
+        vendorId,
+        { rating: averageRating },
+        { new: true }
+      );
+      return updatedVendor;
+    } catch (error) {
+      console.error("Error updating vendor rating:", error);
+      throw error;
+    }
+  }
+
 
 }
 

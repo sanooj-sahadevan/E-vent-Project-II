@@ -5,11 +5,14 @@ import { allVendorAPI } from "@/services/userApi";
 import { useRouter } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Spinner from "../skeletons/spinner";
+import { MapPin, Star } from 'lucide-react';
+
 
 interface Dishes {
     profileImage: string | undefined;
     profileimage: string | undefined;
-    _id: string; // Ensure this is a string to match the MongoDB ObjectId type
+    _id: string;
     image: string | undefined;
     vendorname: string;
     state: string;
@@ -18,7 +21,11 @@ interface Dishes {
 
 const VendorsPage: React.FC = () => {
     const router = useRouter();
-    const [vendor, setVendor] = useState<Dishes[]>([]); // Ensure it's initialized as an empty array
+    const [vendor, setVendor] = useState<Dishes[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [filteredVendors, setFilteredVendors] = useState<Dishes[]>(vendor); // For filtered results
+    const [ratingFilter, setRatingFilter] = useState<number | null>(null); // Rating filter state
+    const [filterLoading, setFilterLoading] = useState<boolean>(false); // Add a separate filter loading state
 
     useEffect(() => {
         const fetchVendor = async () => {
@@ -26,9 +33,9 @@ const VendorsPage: React.FC = () => {
                 const response = await allVendorAPI();
                 console.log("API Response:", response);
 
-                // Ensure the response is an array
                 if (Array.isArray(response)) {
                     setVendor(response);
+                    setFilteredVendors(response);
                 } else {
                     console.error("Unexpected response format:", response);
                     toast.error("Failed to load vendors. Please try again later.");
@@ -36,43 +43,84 @@ const VendorsPage: React.FC = () => {
             } catch (error) {
                 router.push('/login');
                 console.error("Failed to fetch vendors:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchVendor();
     }, [router]);
 
+    // Handle rating filter change
+    const handleRatingFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedRating = parseFloat(event.target.value);
+        setRatingFilter(selectedRating);
+        setFilterLoading(true); // Set filter loading to true when filtering starts
+
+        setTimeout(() => {
+            if (selectedRating) {
+                const filtered = vendor.filter((v) => v.rating >= selectedRating);
+                setFilteredVendors(filtered);
+            } else {
+                setFilteredVendors(vendor); // Reset to all vendors if no rating filter is selected
+            }
+            setFilterLoading(false); // Set filter loading to false after filtering is done
+        }, 500); // Simulate a delay for filtering
+    };
+
+    // Render spinner while loading
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <Spinner size="xl" color="gray" />
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-6xl mx-auto mt-12 mb-12 p-8 bg-white shadow-xl rounded-lg"> {/* Added margin-top and bottom, darker shadow */}
+        <div className="max-w-6xl mx-auto mt-12 mb-12 p-8 bg-white shadow-xl rounded-lg">
             {/* Filter Section */}
             <div className="my-8">
-                <div className="flex justify-end space-x-4 mb-6"> {/* Added margin-bottom */}
+                <div className="flex justify-end space-x-4 mb-6">
                     <div>Filter by</div>
-                    <select className="border rounded px-2 py-1">
+                    {/* <select className="border rounded px-2 py-1">
                         <option>Category</option>
                         <option>Category 1</option>
                         <option>Category 2</option>
-                    </select>
+                    </select> */}
                     <select className="border rounded px-2 py-1">
                         <option>Location</option>
                         <option>Location 1</option>
                         <option>Location 2</option>
                     </select>
-                    <select className="border rounded px-2 py-1">
-                        <option>Type</option>
-                        <option>Type 1</option>
-                        <option>Type 2</option>
+                    {/* Rating Filter */}
+                    <select
+                        className="border rounded px-2 py-1"
+                        value={ratingFilter || ""}
+                        onChange={handleRatingFilterChange}
+                    >
+                        <option value="">Rating</option>
+                        <option value="4.5">4.5 and above</option>
+                        <option value="4">4.0 and above</option>
+                        <option value="2.5">2.5 and above</option>
                     </select>
                 </div>
             </div>
 
             {/* Vendor Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {vendor.length > 0 ? (
-                    vendor.map((vendor, index) => (
-                        <div key={index} className="bg-white shadow-lg hover:shadow-2xl rounded-lg p-4 transform hover:scale-105 transition-transform duration-300"> {/* Darker shadow effect on hover */}
+                {filterLoading ? (
+                    <div className="flex justify-center items-center w-full h-64">
+                        <Spinner size="lg" color="muted" />
+                    </div>
+                ) : filteredVendors.length > 0 ? (
+                    filteredVendors.map((vendor, index) => (
+                        <div
+                            key={index}
+                            className="bg-white shadow-lg hover:shadow-2xl rounded-lg p-4 transform hover:scale-105 transition-transform duration-300"
+                        >
                             <img
-                                src={vendor.profileImage || vendor.profileimage || "/placeholder.png"} // Fallback for missing image
+                                src={vendor.profileImage || vendor.profileimage || "/placeholder.png"}
                                 alt={vendor.vendorname}
                                 className="w-full h-40 object-cover rounded-t-md"
                             />
@@ -93,7 +141,9 @@ const VendorsPage: React.FC = () => {
                         </div>
                     ))
                 ) : (
-                    <p>No vendors found.</p> // Fallback when no vendors are available
+                    <div className="flex justify-center items-center w-full h-64">
+                        <Spinner size="lg" color="muted" />
+                    </div>
                 )}
             </div>
 
@@ -104,8 +154,6 @@ const VendorsPage: React.FC = () => {
                 </button>
             </div>
         </div>
-
-
     );
 };
 

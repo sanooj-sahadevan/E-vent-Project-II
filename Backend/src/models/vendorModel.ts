@@ -2,9 +2,9 @@ import mongoose, { Schema } from "mongoose";
 import { Vendor } from "../interfaces/vendor";
 
 const VendorSchema: Schema<Vendor> = new Schema({
-  reviewsID: { type: mongoose.Schema.Types.ObjectId, ref: "Reviews", default: null } ,
 
-   vendorname: { type: String, required: true },
+  reviewsID: { type: mongoose.Schema.Types.ObjectId, ref: "Reviews", default: null },
+  vendorname: { type: String, required: true },
   phone: { type: Number, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: [true, 'Password is required'], select: false },
@@ -15,13 +15,11 @@ const VendorSchema: Schema<Vendor> = new Schema({
   description: { type: String, default: '' },
   address: { type: String, default: '' },
   district: { type: String, default: '' },
+  rating: { type: Number, default: 0 },
   state: { type: String, default: '' },
-  isBlocked: {
-    type: Boolean,
-    default: false,
-  },
+  isBlocked: { type: Boolean, default: false, },
 });
 
-export const VendorModel = mongoose.model<Vendor>("Vendor", VendorSchema);
+export const VendorModel = mongoose.model<Vendor>("Vendor", VendorSchema)
 
 export { Vendor };

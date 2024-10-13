@@ -27,7 +27,7 @@ export class VendorController  {
           address: "",
           district: "",
           state: "",
-          description: "",
+          description: "",rating:0,
           reviewsID: null,      
         });
 

@@ -394,14 +394,42 @@ class UserRepository {
     reviewRepository(reviewData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const review = new reviews_1.Reviews(reviewData); // Create a new review document
-                const savedReview = yield review.save(); // Save to the database
+                console.log('reviewRepository');
+                const review = new reviews_1.Reviews(reviewData);
+                const savedReview = yield review.save();
                 console.log("Review saved:", savedReview);
-                return savedReview; // Return the saved review
+                return savedReview;
             }
             catch (error) {
                 console.error("Error saving review to the database:", error);
-                throw error; // Rethrow the error
+                throw error;
+            }
+        });
+    }
+    getReviewsByVendorId(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('getReviewsByVendorId');
+            try {
+                const reviews = yield reviews_1.Reviews.find({ vendorId });
+                console.log(reviews);
+                return reviews;
+            }
+            catch (error) {
+                console.error("Error fetching reviews:", error);
+                throw error;
+            }
+        });
+    }
+    updateVendorRating(vendorId, averageRating) {
+        return __awaiter(this, void 0, void 0, function* () {
+            console.log('updateVendorRating');
+            try {
+                const updatedVendor = yield vendorModel_1.VendorModel.findByIdAndUpdate(vendorId, { rating: averageRating }, { new: true });
+                return updatedVendor;
+            }
+            catch (error) {
+                console.error("Error updating vendor rating:", error);
+                throw error;
             }
         });
     }
