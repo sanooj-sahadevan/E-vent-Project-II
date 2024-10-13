@@ -183,6 +183,20 @@ export const fetchReview = async (vendorId: string, userId: string) => {
 };
 
 
+export const saveRatings = async (vendorId: string,) => {
+  try {
+    
+    const res = await axios.post(`${SERVER_URL}/saveRatings`)
+   
+
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching review:", error);
+    throw error;
+  }
+};
+
+
 
 
 export const FetchDishes = async (vendorId: string) => {

@@ -38,10 +38,8 @@ const VendorSchema = new mongoose_1.Schema({
     description: { type: String, default: '' },
     address: { type: String, default: '' },
     district: { type: String, default: '' },
+    rating: { type: Number, default: 0 },
     state: { type: String, default: '' },
-    isBlocked: {
-        type: Boolean,
-        default: false,
-    },
+    isBlocked: { type: Boolean, default: false, },
 });
 exports.VendorModel = mongoose_1.default.model("Vendor", VendorSchema);

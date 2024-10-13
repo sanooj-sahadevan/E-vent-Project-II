@@ -1,6 +1,7 @@
 "use client";
 
 import { deleteCookie } from "@/utils/deleteCookie";
+import { BellRing, LogOut, ScanFace, UserRoundPen } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -49,11 +50,11 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Navigation Links */}
-      <ul className="flex space-x-8 text-white">
+      <ul className="flex space-x-6 text-white"> {/* Reduced space between links */}
         <li>
           <Link
             href="/"
-            className={`${isActive("/") ? "text-pink-500" : " text-white"}`}
+            className={`${isActive("/") ? "text-pink-500" : "text-white"}`}
           >
             Home
           </Link>
@@ -61,7 +62,7 @@ const Navbar: React.FC = () => {
         <li>
           <Link
             href="/vendor"
-            className={`${isActive("/vendor") ? "text-pink-500" : " text-white"}`}
+            className={`${isActive("/vendor") ? "text-pink-500" : "text-white"}`}
           >
             Vendor
           </Link>
@@ -69,7 +70,7 @@ const Navbar: React.FC = () => {
         <li>
           <Link
             href="/about"
-            className={`${isActive("/about") ? "text-pink-500" : " text-white"}`}
+            className={`${isActive("/about") ? "text-pink-500" : "text-white"}`}
           >
             About
           </Link>
@@ -77,7 +78,7 @@ const Navbar: React.FC = () => {
         <li>
           <Link
             href="/contactus"
-            className={`${isActive("/contactus") ? "text-pink-500" : " text-white"}`}
+            className={`${isActive("/contactus") ? "text-pink-500" : "text-white"}`}
           >
             Contact
           </Link>
@@ -85,53 +86,25 @@ const Navbar: React.FC = () => {
       </ul>
 
       {/* Icons and Logout */}
-      <div className="flex space-x-4 items-center">
+      <div className="flex space-x-7 items-center"> {/* Reduced spacing between icons */}
         {/* Notification Icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="white"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h11z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M13.73 21a2 2 0 01-3.46 0"
-          />
-        </svg>
+        <BellRing className="w-5 h-5 text-white" /> {/* Reduced icon size */}
 
         {/* Profile Icon */}
-        <svg
+        <UserRoundPen
           onClick={() => router.push("/profile")}
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 cursor-pointer"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="white"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14c0 1.105-1.343 2-3 2s-3-.895-3-2c0-1.105 1.343-2 3-2s3 .895 3 2z"
-          />
-        </svg>
+          className="w-5 h-5 text-white cursor-pointer" 
+        />
 
         {/* Logout or Login */}
         {isAuthorized ? (
-          <span onClick={handleLogoutClick} className="p-2 text-white cursor-pointer">
-            Logout
-          </span>
+          <LogOut
+            onClick={handleLogoutClick}
+            className="w-5 h-5 text-white cursor-pointer"
+          />
         ) : (
           <Link href="/login">
-            <span className="text-white">Login</span>
+            <ScanFace className="w-5 h-5 text-white" /> 
           </Link>
         )}
       </div>

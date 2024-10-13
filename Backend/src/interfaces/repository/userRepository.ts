@@ -26,4 +26,6 @@ export interface IUserRepository{
     chatDB(userId: string): Promise<any>
     messageDB(chatIds: string[]): Promise<any>
     reviewRepository(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any> 
+    getReviewsByVendorId(vendorId: string): Promise<any[]>
+    updateVendorRating(vendorId: string, averageRating: number): Promise<any>
 }

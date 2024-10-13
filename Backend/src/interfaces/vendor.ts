@@ -16,7 +16,8 @@ export interface Vendor {
     adminVerified?: boolean;
     isBlocked?: boolean;
     vendorId?: string;
-    reviewsID: mongoose.Schema.Types.ObjectId | null; 
+    rating: number;
+    reviewsID: mongoose.Schema.Types.ObjectId | null;
 
 
 }
