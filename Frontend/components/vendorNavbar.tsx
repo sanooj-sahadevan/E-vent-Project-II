@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { io, Socket } from "socket.io-client";
+import { BellRing, LogIn, LogOut, Send } from "lucide-react";
 
 const Navbar: React.FC = () => {
   const router = useRouter();
@@ -58,7 +59,7 @@ const Navbar: React.FC = () => {
       try {
         const response = await getUnreadMessagesCountAPI();
         console.log(response);
-        
+
         if (response && typeof response.unreadCount === 'number') {
           setUnreadMessagesCount(response.unreadCount);
         } else {
@@ -68,10 +69,10 @@ const Navbar: React.FC = () => {
         console.error("Failed to fetch unread messages:", error);
       }
     };
-  
+
     fetchUnreadMessages();
   }, []);
-  
+
   useEffect(() => {
     const token = localStorage.getItem("vendorToken");
     const userData = localStorage.getItem("vendor");
@@ -116,27 +117,9 @@ const Navbar: React.FC = () => {
       </ul>
 
       {/* Icons and Logout */}
-      <div className="flex space-x-4 items-center">
+      <div className="flex space-x-7 items-center"> 
         {/* Notification Icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="white"
-          strokeWidth="2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h11z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M13.73 21a2 2 0 01-3.46 0"
-          />
-        </svg>
+        <BellRing color="#ffffff" />
 
         {/* Chat Icon */}
         <Link href="/vendorChat">
@@ -150,32 +133,20 @@ const Navbar: React.FC = () => {
                 horizontal: 'right',
               }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="white"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7 8h10M7 12h4m1 8v2a2 2 0 01-2 2h-6a2 2 0 01-2-2v-2m10-4h4a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2h4"
-                />
-              </svg>
+              <Send color="#ffffff" />
             </Badge>
           </div>
         </Link>
 
+
         {/* Logout or Login */}
         {isAuthorized ? (
           <span onClick={handleLogoutClick} className="p-2 text-white cursor-pointer">
-            <p>Log out</p>
+            <LogOut color="#ffffff" />
           </span>
         ) : (
           <Link href="/login">
-            <p>Login</p>
+            <LogIn color="#ffffff" />
           </Link>
         )}
       </div>
