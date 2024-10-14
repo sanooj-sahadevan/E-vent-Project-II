@@ -379,6 +379,19 @@ class UserController {
             }
         });
     }
+    getSlotsByWorkerController(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vendorId = req.params.vendorId;
+                const slots = yield this.userService.getSlotsByWorkerId(vendorId);
+                res.status(200).json(slots); // return slots directly
+            }
+            catch (error) {
+                console.error("Error fetching slots:", error);
+                res.status(500).json({ message: "Error fetching slots", error: error.message });
+            }
+        });
+    }
 }
 exports.UserController = UserController;
 /*

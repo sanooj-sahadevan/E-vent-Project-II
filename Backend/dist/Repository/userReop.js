@@ -24,6 +24,7 @@ const vendorModel_1 = require("../models/vendorModel");
 const messageModal_1 = require("../models/messageModal");
 const reviews_1 = require("../models/reviews");
 const notificationModel_1 = require("../models/notificationModel");
+const slotModel_1 = require("../models/slotModel");
 class UserRepository {
     constructor() {
     }
@@ -448,6 +449,16 @@ class UserRepository {
                 console.error("Error updating vendor rating:", error);
                 throw error;
             }
+        });
+    }
+    getSlotsByWorkerIdFromRepo(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0); // Resetting time to 00:00:00 for the date comparison
+            return yield slotModel_1.Slot.find({
+                vendorId,
+                date: { $gte: today }, // Filter for slots starting from today
+            }).exec();
         });
     }
 }

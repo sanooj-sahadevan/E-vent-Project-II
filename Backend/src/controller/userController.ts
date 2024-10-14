@@ -370,9 +370,17 @@ export class UserController {
     }
   }
 
+async getSlotsByWorkerController(req: Request, res: Response) {
+  try {
+    const vendorId = req.params.vendorId; 
+    const slots = await this.userService.getSlotsByWorkerId(vendorId);
+    res.status(200).json(slots); // return slots directly
+  } catch (error: any) {
+    console.error("Error fetching slots:", error);
+    res.status(500).json({ message: "Error fetching slots", error: error.message });
+  }
+}
 
-
-  
 
 
 }

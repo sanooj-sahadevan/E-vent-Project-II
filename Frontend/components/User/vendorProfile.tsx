@@ -9,6 +9,7 @@ import { fetchvendor, fetchReview } from '@/services/userApi';
 import Skeleton from "@mui/material/Skeleton/Skeleton";
 import Spinner from "../skeletons/spinner";
 import { MapPin, Star } from 'lucide-react';
+import AvailabilityModal from "./checkAvailability";
 
 interface Review {
     userId: any;
@@ -40,6 +41,9 @@ const VendorsPage: React.FC = () => {
     const [loadingReviews, setLoadingReviews] = useState<boolean>(true);
     const [userId, setUserId] = useState<string | null>(null);
     const [chatId, setChatId] = useState<string | null>(null);
+    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     // Get user ID from localStorage
     useEffect(() => {
@@ -105,6 +109,14 @@ const VendorsPage: React.FC = () => {
 
         fetchReviews();
     }, [vendorId, userId]);
+
+    const handleCheckAvailability = () => {
+        setIsModalOpen(true); // Open the modal
+    };
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setAvailableSlots([]); // Clear slots when closing
+    };
 
     if (loading) {
         return (
@@ -188,18 +200,21 @@ const VendorsPage: React.FC = () => {
                         >
                             Chat With Us
                         </button>
-                        <button className="px-4 py-2 bg-buttonBg text-white rounded shadow hover:bg-buttonHover"> {/* Added hover effect */}
+                        <button
+                            onClick={handleCheckAvailability}
+                            className="px-4 py-2 bg-buttonBg text-white rounded shadow hover:bg-buttonHover"
+                        >
                             Check Availability
                         </button>
                     </div>
 
                     {/* Stars aligned below the buttons */}
-                    <div className="flex items-center justify-center mt-12 space-x-1"> 
+                    <div className="flex items-center justify-center mt-12 space-x-1">
                         {[...Array(Math.round(vendorData.rating))].map((_, index) => (
                             <svg
                                 key={index}
                                 xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5 text-gray-600" 
+                                className="h-5 w-5 text-gray-600"
                                 viewBox="0 0 20 20"
                                 fill="currentColor"
                             >
@@ -292,6 +307,8 @@ const VendorsPage: React.FC = () => {
                 ) : (
                     <p className="text-center text-gray-500 mt-4">No reviews available.</p>
                 )}
+                 {/* Availability Modal */}
+            <AvailabilityModal open={isModalOpen} onClose={closeModal} vendorId={vendorId!} />
             </div>
         </div>
     );

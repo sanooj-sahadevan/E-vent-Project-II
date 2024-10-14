@@ -424,6 +424,18 @@ class UserService {
         const totalStars = reviews.reduce((acc, review) => acc + review.stars, 0);
         return totalStars / reviews.length;
     }
+    // userService.ts
+    getSlotsByWorkerId(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.userRepository.getSlotsByWorkerIdFromRepo(vendorId);
+            }
+            catch (error) {
+                console.error("Error fetching slots from repository:", error);
+                throw error; // Re-throw to allow the controller to handle it
+            }
+        });
+    }
 }
 exports.UserService = UserService;
 /*

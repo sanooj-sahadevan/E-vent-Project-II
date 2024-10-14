@@ -166,20 +166,20 @@ export class UserService {
   async fetchNotificationsById(userId: string) {
     try {
       console.log('ziya', userId);  // Added userId log for more info
-  
+
       const notificationsData = await this.userRepository.findNotificationsByIdInDb(userId);
-  
+
       if (!notificationsData || !notificationsData.notification) {
         throw new Error('No notifications found');  // Updated error message for clarity
       }
-  
+
       console.log(notificationsData, 'okokok');
       return notificationsData;  // Returning fetched notifications
     } catch (error) {
       throw new Error(`Error fetching notifications: ${error}`);  // Improved error message
     }
   }
-  
+
 
 
 
@@ -443,8 +443,16 @@ export class UserService {
   }
 
 
-  
-  
+  // userService.ts
+async getSlotsByWorkerId(vendorId: string): Promise<ISlot[]> {
+  try {
+    return await this.userRepository.getSlotsByWorkerIdFromRepo(vendorId);
+  } catch (error) {
+    console.error("Error fetching slots from repository:", error);
+    throw error; // Re-throw to allow the controller to handle it
+  }
+}
+
 
 
 }

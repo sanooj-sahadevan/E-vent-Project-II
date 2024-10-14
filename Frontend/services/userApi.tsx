@@ -392,3 +392,17 @@ export const fetchNotification = async (userId: string) => {
     throw error;
   }
 };
+
+
+export const fetchSlots = async (vendorId: string) => {
+  try {
+    const response = await axios.get(`${SERVER_URL}/slots/${vendorId}`, {
+      withCredentials: true,
+    });
+    console.log('Slot response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching slots:', error);
+    throw error; // Re-throw the error for further handling if needed
+  }
+};
