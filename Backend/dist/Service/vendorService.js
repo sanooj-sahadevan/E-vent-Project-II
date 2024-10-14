@@ -17,6 +17,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const fileUpload_1 = require("../middleware/fileUpload");
 const index_1 = require("../index");
 const notification_1 = __importDefault(require("../utils/notificationHelper/notification"));
+const mongoose_1 = __importDefault(require("mongoose"));
 class VendorService {
     constructor(vendorRepository) {
         this.vendorRepository = vendorRepository;
@@ -335,6 +336,42 @@ class VendorService {
                 console.error("Error fetching unread messages:", error);
                 throw error;
             }
+        });
+    }
+    createWorkerSlots(vendorId, startDate, endDate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const slots = [];
+            const workerObjectId = new mongoose_1.default.Types.ObjectId(vendorId);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            // Ensure that the start date is tomorrow or a future date
+            if (startDate <= today) {
+                throw new Error("Start date must be tomorrow or a future date.");
+            }
+            const currentDate = new Date(startDate);
+            const end = new Date(endDate);
+            // Loop through dates from startDate to endDate
+            while (currentDate <= end) {
+                const existingSlot = yield this.vendorRepository.findSlotByWorkerAndDate(workerObjectId, currentDate);
+                if (existingSlot) {
+                    throw new Error(`Slot already exists for vendor ${vendorId} on ${currentDate.toDateString()}`);
+                }
+                const slot = yield this.vendorRepository.createSlot({
+                    vendorId: workerObjectId,
+                    date: new Date(currentDate),
+                    startDate: new Date(startDate),
+                    endDate: new Date(endDate),
+                });
+                slots.push(slot);
+                currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+            }
+            return slots;
+        });
+    }
+    getSlotsByWorkerId(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const workerObjectId = new mongoose_1.default.Types.ObjectId(vendorId);
+            return yield this.vendorRepository.getSlotsByWorkerIdFromRepo(workerObjectId);
         });
     }
 }

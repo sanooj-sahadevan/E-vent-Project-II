@@ -355,9 +355,7 @@ export const userGetUnreadMessagesCountAPI = async (userId: string) => {
 
 
 export const saveReview = async (review: string, rating: number, userId: string, vendorId: string) => {
-  try {
-    console.log('9999999999');
-    
+  try {    
     console.log(   review,
        rating,
       userId,
@@ -379,3 +377,18 @@ export const saveReview = async (review: string, rating: number, userId: string,
   }
 };
 
+
+
+export const fetchNotification = async (userId: string) => {
+  try {
+    const response = await axios.get(`${SERVER_URL}/fetchNotifications`, { 
+      params: { userId }, 
+      withCredentials: true,
+    });
+    console.log('Unread messages response:', response);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching unread messages:', error);
+    throw error;
+  }
+};

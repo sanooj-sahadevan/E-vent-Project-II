@@ -121,18 +121,30 @@ export class UserController {
 
   async fetchReview(req: Request, res: Response, next: NextFunction): Promise<void> {
     console.log('kokokokokokkokokokokokokokokokok');
-    
+
     try {
       const { vendorId, userId } = req.query;
       const result = await this.userService.fetchReviewById(vendorId as string, userId as string);
-      
-      res.status(HttpStatus.OK).json(result); 
+
+      res.status(HttpStatus.OK).json(result);
     } catch (error) {
-      next(error); 
+      next(error);
     }
   }
 
-  
+  async fetchNotifications(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { userId } = req.query;
+      console.log('sanooj', userId);
+
+
+      const result = await this.userService.fetchNotificationsById(userId as string);
+      res.status(HttpStatus.OK).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
 
 
   async fetchFoodDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -345,21 +357,40 @@ export class UserController {
   async review(req: Request, res: Response, next: NextFunction): Promise<any> {
     try {
       const { reviews, stars, userId, vendorId } = req.body;
-  
+
       if (!reviews || !stars || !userId || !vendorId) {
         return res.status(400).json({ message: 'All fields are required' });
       }
-  
+
       const reviewData = await this.userService.reviewService({ reviews, stars, userId, vendorId });
-  
+
       res.status(HttpStatus.OK).json(reviewData);
     } catch (error) {
       next(error);
     }
   }
+
+
+
   
 
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

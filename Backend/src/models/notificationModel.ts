@@ -1,33 +1,23 @@
-import { Schema, Document, model, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
+import { INotification } from "../interfaces/notification";
 
-interface INotification extends Document {
-  userId: Types.ObjectId;
-  vendorId: Types.ObjectId;
-  notificationMessage: string;
-  isRead: boolean;
-  type: string;  // Added type field here
-}
-
-const NotificationSchema: Schema = new Schema(
+const NotificationSchema = new Schema<INotification>(
   {
     userId: {
       type: Types.ObjectId,
-      required: true,  // Set to true to ensure a user is always associated
-      ref: "users",
+      ref: "Users",
     },
-    vendorId: {  // Added vendorId field
+    vendorId: {
       type: Types.ObjectId,
-      required: true,
-      ref: "vendors",  // Assuming you have a vendors collection
+      ref: "Vendors",
     },
     notificationMessage: {
       type: String,
-      required: true,  // Made required
-    },
-    type: {  // Ensure type is defined
-      type: String,
       required: true,
-      enum: ["follow", "like", "comment", "dish_added"],  // Added dish_added type
+    },
+    type: {
+      type: String,
+      enum: ["follow", "like", "comment", "dish_added"],
     },
     isRead: {
       type: Boolean,
@@ -39,5 +29,5 @@ const NotificationSchema: Schema = new Schema(
   }
 );
 
-export default model<INotification>("notifications", NotificationSchema);
-export type { INotification };
+// Export as Notification
+export const Notification = mongoose.model("Notification", NotificationSchema);

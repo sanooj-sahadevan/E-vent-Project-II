@@ -34,4 +34,6 @@ router.patch('/approveReview/:reviewId', vendorController.approveReview.bind(ven
 router.delete('/rejectReview/:reviewId', vendorController.rejectReview.bind(vendorController));
 router.get('/vendorBookingDetils/:vendorId', vendorController.vendorBookingDetils.bind(vendorController));
 router.get('/unread-count', vendorJWT_1.verifyvendor, vendorController.getUnreadMessagesCount.bind(vendorController));
+router.post("/create-slot/:vendorId", vendorController.createSlotController.bind(vendorController));
+router.get("/slots/:vendorId", vendorController.getSlotsByWorkerController.bind(vendorController));
 exports.default = router;

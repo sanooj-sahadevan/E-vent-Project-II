@@ -55,8 +55,13 @@ const Home: React.FC = () => {
     const [auditoriums, setAuditoriums] = useState<Auditorium[]>([]);
     const [dishError, setDishError] = useState<string | null>(null);
 
+
+
+
+
     useEffect(() => {
         const fetchVendorDetails = async () => {
+
             try {
                 if (!query) {
                     setError('Vendor ID not provided.');
@@ -224,9 +229,9 @@ const Home: React.FC = () => {
                         <div className="bg-green-500 text-white rounded-full px-4 py-1 text-sm">
                             {vendorData?.rating || 'N/A'}
                         </div>
-                        <a href="#" className="text-sm text-green-600 mt-2">
+                        {/* <a href="#" className="text-sm text-green-600 mt-2">
                             View Reviews
-                        </a>
+                        </a> */}
                     </div>
                 </div>
                 <div className="flex justify-between p-6 bg-gray-50">
@@ -236,12 +241,20 @@ const Home: React.FC = () => {
                     >
                         Booking Details
                     </button>
+
+                    <button
+                        onClick={() => router.push('/slotBooking')}
+                        className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
+                    >
+                        Create slot
+                    </button>
                     <button
                         onClick={handleEditProfile}
                         className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
                     >
                         Edit Profile
                     </button>
+
                 </div>
             </div>
 
@@ -255,7 +268,14 @@ const Home: React.FC = () => {
                 <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
                     {dishError ? (
                         <p className="text-red-600 text-center">{dishError}</p>
-                    ) : foodItems.length > 0 ? (
+
+
+
+
+
+                    ) : foodItems.length
+                        > 0 ? (
+
                         foodItems.map((food) => (
                             <div key={food._id} className="flex items-center justify-between border-b border-gray-200 py-4">
                                 <div className="flex items-center">

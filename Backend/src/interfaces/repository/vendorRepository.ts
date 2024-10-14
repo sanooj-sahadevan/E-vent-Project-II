@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+import { ISlot } from "../slot";
 import { Vendor } from "../vendor";
 
 export interface IVendorRepository {
@@ -23,5 +25,9 @@ export interface IVendorRepository {
     findDetailsByvendorId(vendorId: string): Promise<any>
     chatDB(vendorId: string): Promise<any>
     messageDB(chatIds: string[]): Promise<any>
-
+    findSlotByWorkerAndDate(vendorId: any, date: Date): Promise<any | null>
+    createSlot(slotData: { vendorId: any; date: Date; startDate?: Date; endDate?: Date }): Promise<any>
+    getSlotsByWorkerIdFromRepo  (
+        vendorId: mongoose.Types.ObjectId
+      ): Promise<ISlot[]> 
 }

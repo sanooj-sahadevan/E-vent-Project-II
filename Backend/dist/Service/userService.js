@@ -159,7 +159,6 @@ class UserService {
     fetchReviewById(vendorId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // const vendor = await this.userRepository.findVendor(vendorId); 
                 const review = yield this.userRepository.findReviewByIdInDb(vendorId, userId);
                 if (!review || !review.review) {
                     throw new Error('No review found');
@@ -169,6 +168,22 @@ class UserService {
             }
             catch (error) {
                 throw new Error(`Error fetching review: ${error}`);
+            }
+        });
+    }
+    fetchNotificationsById(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('ziya', userId); // Added userId log for more info
+                const notificationsData = yield this.userRepository.findNotificationsByIdInDb(userId);
+                if (!notificationsData || !notificationsData.notification) {
+                    throw new Error('No notifications found'); // Updated error message for clarity
+                }
+                console.log(notificationsData, 'okokok');
+                return notificationsData; // Returning fetched notifications
+            }
+            catch (error) {
+                throw new Error(`Error fetching notifications: ${error}`); // Improved error message
             }
         });
     }

@@ -9,6 +9,8 @@ import { AuditoriumDocument } from "../models/auditoriumModel";
 import { IVendorRepository } from "../interfaces/repository/vendorRepository";
 import { IVendorService } from "../interfaces/service/vendorService";
 import notifyDishAdded from "../utils/notificationHelper/notification";
+import mongoose from "mongoose";
+import { ISlot } from "../interfaces/slot";
 
 
 export class VendorService implements IVendorService {
@@ -182,23 +184,6 @@ export class VendorService implements IVendorService {
     }
   }
   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  
   async uploadAuditorium  (
     vendorId: string,
     data: AuditoriumDocument,
@@ -361,13 +346,49 @@ export class VendorService implements IVendorService {
 
 
 
+async createWorkerSlots(vendorId: string, startDate: Date, endDate: Date): Promise<ISlot[]> {
+  const slots: ISlot[] = [];
+  const workerObjectId = new mongoose.Types.ObjectId(vendorId);
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  // Ensure that the start date is tomorrow or a future date
+  if (startDate <= today) {
+    throw new Error("Start date must be tomorrow or a future date.");
+  }
+
+  const currentDate = new Date(startDate);
+  const end = new Date(endDate);
+
+  // Loop through dates from startDate to endDate
+  while (currentDate <= end) {
+    const existingSlot = await this.vendorRepository.findSlotByWorkerAndDate(workerObjectId, currentDate);
+  
+    if (existingSlot) {
+      throw new Error(`Slot already exists for vendor ${vendorId} on ${currentDate.toDateString()}`);
+    }
+  
+    const slot = await this.vendorRepository.createSlot({
+      vendorId: workerObjectId,
+      date: new Date(currentDate),
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+    });
+  
+    slots.push(slot);
+    currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+  }
+  
+  return slots;
+}
 
 
 
-
-
-
-
+async getSlotsByWorkerId(vendorId: string): Promise<ISlot[]> {
+  const workerObjectId = new mongoose.Types.ObjectId(vendorId);
+  return await this.vendorRepository.getSlotsByWorkerIdFromRepo(workerObjectId);
+}
 
 
 
