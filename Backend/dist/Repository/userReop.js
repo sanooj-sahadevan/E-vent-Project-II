@@ -23,6 +23,7 @@ const chatModel_1 = require("../models/chatModel");
 const vendorModel_1 = require("../models/vendorModel");
 const messageModal_1 = require("../models/messageModal");
 const reviews_1 = require("../models/reviews");
+const notificationModel_1 = require("../models/notificationModel");
 class UserRepository {
     constructor() {
     }
@@ -208,7 +209,6 @@ class UserRepository {
     findReviewByIdInDb(vendorId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('hloo');
                 const review = yield reviews_1.Reviews.find({
                     userId,
                     vendorId,
@@ -223,6 +223,20 @@ class UserRepository {
             catch (error) {
                 console.error("Error in repository:", error);
                 throw error;
+            }
+        });
+    }
+    findNotificationsByIdInDb(userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const notifications = yield notificationModel_1.Notification.find();
+                // .populate('vendorId')
+                // .populate('userId')
+                return { notification: notifications };
+            }
+            catch (error) {
+                console.error("Error in repository:", error);
+                throw new Error(`Error fetching notifications from DB: ${error}`);
             }
         });
     }

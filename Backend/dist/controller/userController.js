@@ -146,6 +146,19 @@ class UserController {
             }
         });
     }
+    fetchNotifications(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { userId } = req.query;
+                console.log('sanooj', userId);
+                const result = yield this.userService.fetchNotificationsById(userId);
+                res.status(httpStatus_1.HttpStatus.OK).json(result);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
     fetchFoodDetails(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

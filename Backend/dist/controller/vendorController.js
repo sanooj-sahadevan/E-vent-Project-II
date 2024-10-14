@@ -8,12 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorController = void 0;
 // import userService from "../Service/vendorService"
 const httpStatus_1 = require("../utils/httpStatus");
 const otpGenerator_1 = require("../utils/otpGenerator");
 const sendEmail_1 = require("../utils/sendEmail");
+const mongoose_1 = __importDefault(require("mongoose"));
 class VendorController {
     constructor(vendorService) {
         this.vendorService = vendorService;
@@ -369,258 +373,48 @@ class VendorController {
             }
         });
     }
+    createSlotController(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { startDate, endDate } = req.body; // Extract start and end dates from body
+                const { vendorId } = req.params; // Extract vendorId from URL params
+                if (!startDate || !endDate) {
+                    return res.status(400).json({ message: "Start and End dates are required" });
+                }
+                // Parse dates from strings to Date objects
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+                    return res.status(400).json({ message: "Invalid start or end date" });
+                }
+                if (!vendorId) {
+                    return res.status(400).json({ message: "Vendor ID is required" });
+                }
+                // Pass data to the service
+                const slots = yield this.vendorService.createWorkerSlots(vendorId, start, end);
+                res.status(201).json(slots);
+            }
+            catch (error) {
+                console.error("Error creating slots:", error);
+                res.status(500).json({ message: "Error creating slots", error: error.message });
+            }
+        });
+    }
+    getSlotsByWorkerController(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const vendorId = req.params.vendorId; // Get vendorId from route parameters
+                if (!vendorId || !mongoose_1.default.Types.ObjectId.isValid(vendorId)) {
+                    return res.status(400).json({ message: "Invalid vendorId format" });
+                }
+                const slots = yield this.vendorService.getSlotsByWorkerId(vendorId);
+                res.status(200).json(slots);
+            }
+            catch (error) {
+                console.error("Error fetching slots:", error);
+                res.status(500).json({ message: "Error fetching slots", error: error.message });
+            }
+        });
+    }
 }
 exports.VendorController = VendorController;
-// export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { vendorname, email, phone, password } = req.body;
-//     const proceedWithRegistration = async () => {
-//       try {
-//         const otp = otpGenerator();
-//         await registerVendor({
-//           vendorname,
-//           phone,
-//           email,
-//           password,
-//           otp,
-//           reviews: "",
-//           address: "",
-//           district: "",
-//           state: ""
-//         });
-//         await sendEmail(email, otp);
-//         res.status(HttpStatus.OK).json("OTP sent to email");
-//       } catch (error: any) {
-//         console.error('Error during registration:', error.message);
-//         res.status(HttpStatus.BAD_REQUEST).json({ error: "Registration failed: " + error.message });
-//       }
-//     };
-//     await proceedWithRegistration();
-//   } catch (error: any) {
-//     next(error);
-//   }
-// };
-// export const verifyOtp = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { email, otp } = req.body;
-//     console.log(email, otp);
-//     const vendor = await findVendorByEmailService(email);
-//     console.log(vendor);
-//     if (!vendor) {
-//       res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor not found" });
-//       return;
-//     }
-//     if (vendor.otp === otp) {
-//       await verifyAndSaveVendor(email, otp);
-//       res.status(HttpStatus.OK).json("Vendor registered successfully");
-//     } else {
-//       res.status(HttpStatus.BAD_REQUEST).json({ error: "Invalid OTP" });
-//     }
-//   } catch (error: any) {
-//     next(error);
-//   }
-// };
-// export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { email, password } = req.body;
-//     const { vendor, vendorToken } = await loginVendor(email, password);
-//     res.cookie("vendorToken", vendorToken,);
-//     res.status(HttpStatus.OK).json({ vendor, vendorToken });
-//   } catch (error: any) {
-//     next(error);
-//   }
-// };
-// export const fetchAddress = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     console.log("vann ta");
-//     const vendorAddresses = await vendorAddress();
-//     console.log(vendorAddresses);
-//     res.status(HttpStatus.OK).json(vendorAddresses);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// export const editVendorDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const vendorDetails = req.body;
-//     const file = req.file as unknown as IMulterFile;
-//     let imageUrl: string | undefined;
-//     if (file) {
-//       imageUrl = await uploadImage(file);
-//     }
-//     const updatedVendor = await editVendorService(vendorDetails, imageUrl);
-//     res.status(200).json({ ...updatedVendor, imageUrl }); 
-//   } catch (error) {
-//     next(error); 
-//   }
-// };
-// export const fetchVendorDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     console.log('controller');
-//     const { vendorId } = req.params; // Extract vendorId from request params
-//     const vendor = await findVendorById(vendorId); // Fetch vendor details
-//     if (!vendor) {
-//       res.status(404).json({ message: "Vendor not found" });
-//     } else {
-//       res.status(200).json(vendor);
-//     }
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// export const fetchdishes = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { dishesId } = req.params;
-//     const vendor = await findDishesById(dishesId);
-//       res.status(200).json(vendor);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// export const fetchauditorium = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { auditoriumId } = req.params;
-//     const vendor = await findAuditoriumById(auditoriumId);
-//       res.status(200).json(vendor);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// interface ExtendedRequest extends Request {
-//   vendorId?: string;
-// }
-// export const addDishes = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-//   try {
-//     const { body } = req;
-//     const vendorId = req.vendorId;
-//     if (!vendorId) {
-//       return res.status(400).json({ error: "Vendor ID is required" });
-//     }
-//     const file = req.file as unknown as IMulterFile;
-//     let imageUrl: string | undefined = undefined;
-//     if (file) {
-//       imageUrl = await uploadImage(file);
-//     }
-//     await uploadDishes(vendorId, body, imageUrl);
-//     return res.status(400).json({ error: "Dishes not added: something went wrong" });
-//   } catch (error) {
-//     console.error("Error adding dishes: ", error);
-//     next(error);
-//   }
-// };
-// export const addAuditorium = async (req: ExtendedRequest, res: Response, next: NextFunction) => {
-//   try {
-//     const { body } = req;
-//     const vendorId = req.vendorId;
-//     if (!vendorId) {
-//       return res.status(400).json({ error: "Vendor ID is required" });
-//     }
-//     const file = req.file as unknown as IMulterFile;
-//     let imageUrl: string | undefined = undefined;
-//     if (file) {
-//       imageUrl = await uploadImage(file);
-//     }
-//     const auditoriumData = await uploadAuditorium(vendorId, body, imageUrl);
-//     if (auditoriumData) {
-//       return res.status(200).json("Auditorium added successfully");
-//     } else {
-//       return res.status(400).json({ error: "Auditorium not added: something went wrong" });
-//     }
-//   } catch (error) {
-//     console.error("Error adding auditorium: ", error);
-//     next(error);
-//   }
-// };
-// export const fetchDetailsVendor = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { vendorId } = req.params;
-//     const vendor = await findVendorById(vendorId);
-//       res.status(200).json(vendor);
-//   } catch (error) {
-//     console.error('Error in fetchDetailsVendor:', error);
-//     next(error);
-//   }
-// };
-// export const fetchFoodDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { vendorId } = req.params;
-//     const dishes = await findFoodVendorById(vendorId);
-//     if (!dishes || dishes.length === 0) {
-//       res.status(404).json({ message: "No dishes found for this vendor" });
-//     } else {
-//       console.log(dishes, 'Fetched dishes for vendor');
-//       res.status(200).json(dishes);
-//     }
-//   } catch (error) {
-//     console.error('Error in fetchFoodDetails:', error);
-//     next(error);
-//   }
-// };
-// export const fetchAuditoriumDetails = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-//   try {
-//     const { vendorId } = req.params;
-//     const auditorium = await findAuditoriumVendorById(vendorId);
-//     if (!auditorium || auditorium.length === 0) {
-//       res.status(404).json({ message: "No dishes found for this vendor" });
-//     } else {
-//       console.log(auditorium, 'Fetched dishes for vendor');
-//       res.status(200).json(auditorium);
-//     }
-//   } catch (error) {
-//     console.error('Error in fetchFoodDetails:', error);
-//     next(error);
-//   }
-// };
-// export const softDeleteDish = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const { dishId } = req.params;
-//     if (!dishId) {
-//       return res.status(400).json({ message: 'Dish ID is missing' });
-//     }
-//     const updatedDish = await softDeleteDishService(dishId); 
-//     res.status(200).json({ message: 'Dish deleted successfully', dish: updatedDish });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// export const softDeleteAuditorium = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const { auditoriumId } = req.params;
-//     if (!auditoriumId) {
-//       return res.status(400).json({ message: 'Auditorium ID is missing' });
-//     }
-//     const updatedAuditorium = await softDeleteAuditoriumService(auditoriumId); 
-//     res.status(200).json({ message: 'Auditorium deleted successfully', auditorium: updatedAuditorium });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// export const vendorBookingDetils = async (req: Request, res: Response, next: NextFunction) => {
-//   const { vendorId } = req.params;
-//   try {
-//     const booking = await findBookingDetails(vendorId)
-//     res.status(200).json(booking);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-// export const getUnreadMessagesCount = async (
-//   req: any,
-//   res: any, next: NextFunction
-// ): Promise<void> => {
-//   const vendorId = req.vendorId;
-//   try {
-//     if (!vendorId) {
-//       return res.status(400).json({ error: "Vendor ID is required" });
-//     }
-//     const chatServiceData = await chatServices({ vendorId });
-//     const chatIds = chatServiceData.map((chat: any) => chat._id);
-//     if (chatIds.length === 0) {
-//       return res.status(200).json({ unreadCount: 0 });
-//     }
-//     const unreadCount = await messageService({ chatIds, vendorId });
-//     res.status(200).json({ unreadCount });
-//   } catch (error) {
-//     next(error);
-//   }
-// };

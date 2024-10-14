@@ -5,6 +5,8 @@ import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
 import { IUserRepository } from "../interfaces/repository/userRepository";
 import { io } from "..";
+import { ISlot } from "../interfaces/slot";
+import mongoose from "mongoose";
 
 export class UserService {
 
@@ -148,7 +150,6 @@ export class UserService {
 
   async fetchReviewById(vendorId: string, userId: string) {
     try {
-      // const vendor = await this.userRepository.findVendor(vendorId); 
       const review = await this.userRepository.findReviewByIdInDb(vendorId, userId);
 
       if (!review || !review.review) {
@@ -162,6 +163,23 @@ export class UserService {
     }
   }
 
+  async fetchNotificationsById(userId: string) {
+    try {
+      console.log('ziya', userId);  // Added userId log for more info
+  
+      const notificationsData = await this.userRepository.findNotificationsByIdInDb(userId);
+  
+      if (!notificationsData || !notificationsData.notification) {
+        throw new Error('No notifications found');  // Updated error message for clarity
+      }
+  
+      console.log(notificationsData, 'okokok');
+      return notificationsData;  // Returning fetched notifications
+    } catch (error) {
+      throw new Error(`Error fetching notifications: ${error}`);  // Improved error message
+    }
+  }
+  
 
 
 
@@ -424,6 +442,9 @@ export class UserService {
     return totalStars / reviews.length;
   }
 
+
+  
+  
 
 
 }

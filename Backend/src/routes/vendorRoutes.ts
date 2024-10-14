@@ -41,5 +41,7 @@ router.delete('/rejectReview/:reviewId', vendorController.rejectReview.bind(vend
 router.get('/vendorBookingDetils/:vendorId', vendorController.vendorBookingDetils.bind(vendorController));
 router.get('/unread-count', verifyvendor, vendorController.getUnreadMessagesCount.bind(vendorController));
 
+router.post("/create-slot/:vendorId", vendorController.createSlotController.bind(vendorController));
+router.get("/slots/:vendorId", vendorController.getSlotsByWorkerController.bind(vendorController));
 
 export default router;

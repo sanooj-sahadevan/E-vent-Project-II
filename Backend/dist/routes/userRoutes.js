@@ -21,6 +21,7 @@ router.patch('/edituserDetails', userController.editUserDetails.bind(userControl
 // All fetch
 router.get('/fetchVendorDetails', userController.fetchVendorDetails.bind(userController));
 router.get('/fetchReview', userController.fetchReview.bind(userController));
+router.get('/fetchNotifications', userController.fetchNotifications.bind(userController));
 router.get('/fetchFoodDetails/:vendorId', userController.fetchFoodDetails.bind(userController));
 router.get('/fetchAuditoriumDetails/:vendorId', userController.fetchAuditoriumDetails.bind(userController));
 router.get('/fetchauditorium/:auditoriumId', userController.fetchauditorium.bind(userController));
@@ -34,6 +35,7 @@ router.post('/response/saveData', userController.saveData.bind(userController));
 router.get('/fetchBookingDetails/:userId', userController.fetchBookingDetails.bind(userController));
 router.patch('/changePassword/:id', userController.changePassword.bind(userController));
 router.get('/userunread-count', userController.getUnreadMessagesCount.bind(userController));
-// route.ts
+//review
 router.post('/review', userController.review.bind(userController));
+// slot
 exports.default = router;

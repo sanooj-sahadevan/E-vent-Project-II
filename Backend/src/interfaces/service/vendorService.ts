@@ -1,5 +1,6 @@
 import { AuditoriumDocument } from "../../models/auditoriumModel";
 import { DishDocument } from "../dishes";
+import { ISlot } from "../slot";
 import { Vendor } from "../vendor";
 
 export interface IVendorService {
@@ -46,7 +47,7 @@ export interface IVendorService {
 
 
     chatServices({ vendorId }: { vendorId: string }): Promise<any>
-
+    createWorkerSlots(vendorId: string, startDate: Date, endDate: Date): Promise<ISlot[]>
     messageService({
         chatIds,
         vendorId,
@@ -54,5 +55,6 @@ export interface IVendorService {
         chatIds: string[];
         vendorId: string;
     }): Promise<any>
-
+    
+    getSlotsByWorkerId(vendorId: string): Promise<ISlot[]>
 }

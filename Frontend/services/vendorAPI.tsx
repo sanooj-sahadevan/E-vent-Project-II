@@ -1,5 +1,5 @@
 import { commonAPI } from "./commonAPI";
-import { SERVER_URL_vendor } from "./serverURL";
+import { SERVER_URL, SERVER_URL_vendor } from "./serverURL";
 import { server_URL_chat } from "./serverURL";
 
 
@@ -369,3 +369,25 @@ export const vendorBookingDetils = async (vendorId: string) => {
 
 
 
+export const createSlotAPI = async (reqBody: { startDate: Date, endDate: Date }, vendorId: string) => {
+  try {
+    const response = await axios.post(`${SERVER_URL_vendor}/create-slot/${vendorId}`, reqBody);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create slot");
+  }
+};
+
+
+export const getSlotsByWorkerAPI = async (vendorId: string) => {
+  try {
+    const response = await axios.get(`${SERVER_URL_vendor}/slots/${vendorId}`);
+    console.log(response.data, 'API call return');
+
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to fetch slots by worker");
+  }
+}

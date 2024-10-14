@@ -10,6 +10,10 @@ import { VendorModel } from "../models/vendorModel";
 import { IUserRepository } from "../interfaces/repository/userRepository";
 import { messageModel } from "../models/messageModal";
 import { Reviews } from "../models/reviews";
+import { Notification } from "../models/notificationModel";
+import { ISlot } from "../interfaces/slot";
+import { Slot } from '../models/slotModel';
+
 
 export class UserRepository implements IUserRepository {
   constructor() {
@@ -185,8 +189,6 @@ export class UserRepository implements IUserRepository {
 
   async findReviewByIdInDb(vendorId: string, userId: string) {
     try {
-      console.log('hloo');
-
       const review = await Reviews.find({
         userId,
         vendorId,
@@ -203,6 +205,18 @@ export class UserRepository implements IUserRepository {
     } catch (error) {
       console.error("Error in repository:", error);
       throw error;
+    }
+  }
+
+  async findNotificationsByIdInDb(userId: any) {
+    try {
+      const notifications = await Notification.find()
+      // .populate('vendorId')
+      // .populate('userId')
+      return { notification: notifications };
+    } catch (error) {
+      console.error("Error in repository:", error);
+      throw new Error(`Error fetching notifications from DB: ${error}`);
     }
   }
 
@@ -420,7 +434,7 @@ export class UserRepository implements IUserRepository {
 
 
 
-  async updateVendorRating(vendorId: string, averageRating: number): Promise<any> {
+  async updateVendorRating(vendorId: string, averageRating: number): Promise<any | null> {
     console.log('updateVendorRating');
 
     try {
@@ -437,7 +451,13 @@ export class UserRepository implements IUserRepository {
   }
 
 
+
 }
+
+
+
+
+
 
 
 
