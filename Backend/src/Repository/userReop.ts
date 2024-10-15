@@ -293,7 +293,9 @@ export class UserRepository implements IUserRepository {
         userId,
         auditoriumId,
         dishesId,
-        date,
+        StartingDate,
+        eventType,
+        EndingDate,
         category,
         payment_source
       } = bookingData;
@@ -307,7 +309,8 @@ export class UserRepository implements IUserRepository {
         userId,
         auditoriumId,
         dishesId,
-        date,
+        StartingDate,
+        eventType, EndingDate,
         category,
         payment_source,
         createdAt: new Date(),

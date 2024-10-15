@@ -27,7 +27,7 @@ export default {
           "Content-Type": "application/json",
         },
       });
-      console.log({ reshash })
+      console.log({ reshash },'ooooooooooooooooooooooo')
       return reshash.data;
     } catch (error: any) {
       throw new Error(error.message);

@@ -8,7 +8,8 @@ interface Booking extends Document {
     paymentType?: string;
     paymentStatus: string;
     txnId?: string;
-    date: Date;
+    StartingDate: Date;
+    EndingDate: Date;
     eventType: string;
     category: string;
     occupancy: number;
@@ -47,7 +48,7 @@ const bookingSchema = new Schema<Booking>({
     },
     occupancy: {
         type: Number,
-        required: false
+        required: true
     },
     totalAmount: {
         type: Number,
@@ -65,7 +66,11 @@ const bookingSchema = new Schema<Booking>({
         type: String,
         default: null
     },
-    date: {
+    StartingDate: {
+        type: Date,
+        required: true
+    },
+    EndingDate: {
         type: Date,
         required: true
     }

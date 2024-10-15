@@ -306,7 +306,7 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log('save karo');
-                const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, date, category, payment_source } = bookingData;
+                const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, StartingDate, eventType, EndingDate, category, payment_source } = bookingData;
                 console.log(bookingData);
                 const bookedData = yield bookedEvent_1.bookedModel.create({
                     vendorId,
@@ -316,7 +316,8 @@ class UserRepository {
                     userId,
                     auditoriumId,
                     dishesId,
-                    date,
+                    StartingDate,
+                    eventType, EndingDate,
                     category,
                     payment_source,
                     createdAt: new Date(),
@@ -454,10 +455,10 @@ class UserRepository {
     getSlotsByWorkerIdFromRepo(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             const today = new Date();
-            today.setHours(0, 0, 0, 0); // Resetting time to 00:00:00 for the date comparison
+            today.setHours(0, 0, 0, 0);
             return yield slotModel_1.Slot.find({
                 vendorId,
-                date: { $gte: today }, // Filter for slots starting from today
+                date: { $gte: today },
             }).exec();
         });
     }

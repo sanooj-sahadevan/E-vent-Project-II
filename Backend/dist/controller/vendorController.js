@@ -8,16 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorController = void 0;
 // import userService from "../Service/vendorService"
 const httpStatus_1 = require("../utils/httpStatus");
 const otpGenerator_1 = require("../utils/otpGenerator");
 const sendEmail_1 = require("../utils/sendEmail");
-const mongoose_1 = __importDefault(require("mongoose"));
 class VendorController {
     constructor(vendorService) {
         this.vendorService = vendorService;
@@ -404,9 +400,6 @@ class VendorController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const vendorId = req.params.vendorId; // Get vendorId from route parameters
-                if (!vendorId || !mongoose_1.default.Types.ObjectId.isValid(vendorId)) {
-                    return res.status(400).json({ message: "Invalid vendorId format" });
-                }
                 const slots = yield this.vendorService.getSlotsByWorkerId(vendorId);
                 res.status(200).json(slots);
             }

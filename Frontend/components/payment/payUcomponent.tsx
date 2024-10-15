@@ -15,29 +15,25 @@ const PayUComponent = ({ BookedData }: Props) => {
     console.log('BookedData:', BookedData);
 
     // Extract values with default fallback
-    const amount = BookedData.advanceAmount || 0; // Default to 0 if undefined
-    const productinfo = BookedData.vendorId || '';  // Ensure this is set correctly
+    const amount = BookedData.advanceAmount || 0;
+    const productinfo = BookedData.vendorId || '';
     const udf1 = BookedData.userId?._id || '';
     const { username = '', email = '', phone = '' } = BookedData.userId || {};
     const surl = `${FRONTEND_DOMAIN}/api/paymentSuccess`;
     const furl = `${FRONTEND_DOMAIN}/api/paymentFailure`;
 
-    const udf2 = BookedData.auditoriumId || 'nil';  // Fallback to empty string if undefined
-    const udf3 = BookedData.dishesId || 'nil';  // Fallback to empty string if undefined
-    const udf4 = BookedData.date || 'nil';  // Fallback to empty string if undefined
-    const udf5 = BookedData.category || 'nil';  // Fallback to empty string if undefined
-    const udf6 = BookedData.eventType || 'nil';  // Fallback to 'nil' if undefined
-
-    // const udf6 = BookedData.eventType || 'nil';  // Fallback to empty string if undefined
-
-
+    const udf2 = BookedData.auditoriumId || 'nil';
+    const udf3 = BookedData.dishesId || 'nil';
+    const udf4 = BookedData.StartingDate || 'nil';
+    const udf5 = BookedData.category || 'nil';
+    const udf6 = BookedData.eventType || 'nil'; // New item
+    const udf7 = BookedData.EndingDate || 'nil'; // New item
+console.log(udf7,'pap');
 
     const key = PayU.merchantKey;
 
-   
-
     useEffect(() => {
-        const data = { txnid, amount, productinfo, username, email, phone, udf1, udf2, udf3, udf4, udf5,udf6 };
+        const data = { txnid, amount, productinfo, username, email, phone, udf1, udf2, udf3, udf4, udf5, udf6, udf7 };
         (async function () {
             try {
                 console.log('Payment request data:', data);
@@ -47,8 +43,8 @@ const PayUComponent = ({ BookedData }: Props) => {
                 console.error("Payment Error: " + error.message);
             }
         })();
-    }, [amount, productinfo, txnid, username, email, phone, udf1, udf2, udf3,udf4, udf5,udf6]);
-    
+    }, [amount, productinfo, txnid, username, email, phone, udf1, udf2, udf3, udf4, udf5, udf6, udf7]);
+
     return (
         <form action="https://test.payu.in/_payment" method="post">
             <input type="hidden" name="key" value={key} />
@@ -63,12 +59,10 @@ const PayUComponent = ({ BookedData }: Props) => {
             <input type="hidden" name="udf3" value={udf3} />
             <input type="hidden" name="udf4" value={udf4} />
             <input type="hidden" name="udf5" value={udf5} />
-            <input type="hidden" name="udf6" value={udf6} />
-
+            <input type="hidden" name="udf6" value={udf6} /> {/* New field */}
+            <input type="hidden" name="udf7" value={udf7} /> {/* New field */}
             <input type="hidden" name="surl" value={surl} />
             <input type="hidden" name="furl" value={furl} />
-         
-
             <input type="hidden" name="hash" value={hash || ""} />
             {hash && (
                 <button

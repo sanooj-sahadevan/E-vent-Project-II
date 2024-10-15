@@ -37,7 +37,7 @@ const connectToMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     process.on('SIGINT', () => __awaiter(void 0, void 0, void 0, function* () {
         yield mongoose_1.default.connection.close();
         console.log('Mongoose connection closed due to app termination');
-        process.exit(0); // Graceful exit
+        process.exit(0);
     }));
 });
 exports.connectToMongoDB = connectToMongoDB;
