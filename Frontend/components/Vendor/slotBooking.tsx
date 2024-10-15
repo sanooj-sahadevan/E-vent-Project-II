@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format } from 'date-fns';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { createSlotAPI, getSlotsByWorkerAPI } from '@/services/vendorAPI';
 
@@ -50,10 +50,8 @@ const CreateSlotsPage = () => {
             console.log(res);
             toast.success("Slot created successfully!");
 
-            // Add the new slot to the list of slots
             setNewSlots(prevSlots => [...prevSlots, { startDate: data.startDate, endDate: data.endDate }]);
 
-            // Reset form state after successful submission
             setValue('startDate', null);
             setValue('endDate', null);
         } catch (err) {
@@ -87,9 +85,8 @@ const CreateSlotsPage = () => {
     }, []);
 
     return (
-
-
         <div className="max-w-5xl mx-auto p-6">
+            <ToastContainer />  {/* Ensure to add this */}
             <div className="flex justify-between items-start space-x-8">
                 <div className="flex-1">
                     <h1 className="text-3xl font-bold mb-6 text-gray-800">Create Slots</h1>
@@ -127,35 +124,38 @@ const CreateSlotsPage = () => {
                     <div className="mt-4">
                         {newSlots.length > 0 ? (
                             <div className="border rounded-lg overflow-hidden shadow-md">
-                                <table className="w-full bg-white">
-                                    <thead className="bg-gray-200">
-                                        <tr className="text-left">
-                                            <th className="p-4">Start Date</th>
-                                            <th className="p-4">End Date</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {newSlots.map((slot, index) => (
-                                            <tr key={index} className="border-t hover:bg-gray-100">
-                                                <td className="p-4">
-                                                    {slot.startDate ? format(new Date(slot.startDate), 'dd MMM yyyy') : 'N/A'}
-                                                </td>
-                                                <td className="p-4">
-                                                    {slot.endDate ? format(new Date(slot.endDate), 'dd MMM yyyy') : 'N/A'}
-                                                </td>
+                                {/* Added max-height and overflow-y-auto for scroll */}
+                                <div className="max-h-64 overflow-y-auto">
+                                    <table className="w-full bg-white">
+                                        <thead className="bg-gray-200">
+                                            <tr className="text-left">
+                                                <th className="p-4">Start Date</th>
+                                                <th className="p-4">End Date</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {newSlots.map((slot, index) => (
+                                                <tr key={index} className="border-t hover:bg-gray-100">
+                                                    <td className="p-4">
+                                                        {slot.startDate ? format(new Date(slot.startDate), 'dd MMM yyyy') : 'N/A'}
+                                                    </td>
+                                                    <td className="p-4">
+                                                        {slot.endDate ? format(new Date(slot.endDate), 'dd MMM yyyy') : 'N/A'}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         ) : (
                             <p className="text-gray-600">No slots created yet.</p>
                         )}
                     </div>
                 </div>
+
             </div>
         </div>
-
     );
 };
 

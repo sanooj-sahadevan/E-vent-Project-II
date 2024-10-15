@@ -28,6 +28,6 @@ export interface IVendorRepository {
     findSlotByWorkerAndDate(vendorId: any, date: Date): Promise<any | null>
     createSlot(slotData: { vendorId: any; date: Date; startDate?: Date; endDate?: Date }): Promise<any>
     getSlotsByWorkerIdFromRepo  (
-        vendorId: mongoose.Types.ObjectId
+        vendorId:any
       ): Promise<ISlot[]> 
 }

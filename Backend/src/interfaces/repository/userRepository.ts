@@ -1,3 +1,4 @@
+import { ISlot } from "../slot";
 import { User } from "../user";
 
 export interface IUserRepository {
@@ -29,5 +30,6 @@ export interface IUserRepository {
     reviewRepository(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any>
     getReviewsByVendorId(vendorId: string): Promise<any[]>
     updateVendorRating(vendorId: string, averageRating: number): Promise<any>
+    getSlotsByWorkerIdFromRepo(vendorId: any): Promise<ISlot[]>
     
 }

@@ -24,6 +24,7 @@ const vendorModel_1 = require("../models/vendorModel");
 const messageModal_1 = require("../models/messageModal");
 const reviews_1 = require("../models/reviews");
 const notificationModel_1 = require("../models/notificationModel");
+const slotModel_1 = require("../models/slotModel");
 class UserRepository {
     constructor() {
     }
@@ -305,7 +306,7 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log('save karo');
-                const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, date, category, payment_source } = bookingData;
+                const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, StartingDate, eventType, EndingDate, category, payment_source } = bookingData;
                 console.log(bookingData);
                 const bookedData = yield bookedEvent_1.bookedModel.create({
                     vendorId,
@@ -315,7 +316,8 @@ class UserRepository {
                     userId,
                     auditoriumId,
                     dishesId,
-                    date,
+                    StartingDate,
+                    eventType, EndingDate,
                     category,
                     payment_source,
                     createdAt: new Date(),
@@ -448,6 +450,16 @@ class UserRepository {
                 console.error("Error updating vendor rating:", error);
                 throw error;
             }
+        });
+    }
+    getSlotsByWorkerIdFromRepo(vendorId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return yield slotModel_1.Slot.find({
+                vendorId,
+                date: { $gte: today },
+            }).exec();
         });
     }
 }

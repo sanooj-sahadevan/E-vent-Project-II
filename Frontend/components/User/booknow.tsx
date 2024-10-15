@@ -1,14 +1,14 @@
-'use client'
-import React, { useEffect } from "react";
+'use client';
+import React, { useEffect, useState } from "react";
 import Image from 'next/image';
 import { useRouter, useSearchParams } from "next/navigation";
 import img from '@/public/7.jpg.jpg';
+import AvailabilityModal from "./checkAvailability";
 
 const Booknow: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Get values from URL params or localStorage
   const vendorId = searchParams.get("vendorId") || localStorage.getItem("vendorId");
   const auditoriumId = searchParams.get("auditoriumId") || localStorage.getItem("auditoriumId");
   const dishesId = searchParams.get("dishesId") || localStorage.getItem("dishesId");
@@ -16,9 +16,26 @@ const Booknow: React.FC = () => {
   const vendorName = searchParams.get("vendorname") || localStorage.getItem("vendorName") || "Vendor Name";
   const email = searchParams.get("email") || localStorage.getItem("email") || "vendor@example.com";
 
-  // Retrieve user data from localStorage
+  const startDate = searchParams.get("startDate");
+  const endDate = searchParams.get("endDate");
+
+  // Format date function to return a string in 'YYYY-MM-DD' format
+  const formatDate = (dateString: string | null): any => {
+    if (!dateString) return null; // Return null if the date is not provided
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0]; // Get the date in 'YYYY-MM-DD' format
+  };
+
+  const formattedStartDate = formatDate(startDate);
+  const formattedEndDate = formatDate(endDate);
+
+  console.log(formattedStartDate, 'formatted start date');
+  console.log(formattedEndDate, 'formatted end date');
+
   const user = JSON.parse(localStorage.getItem("user") || '{}');
   const userId = user._id;
+
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
 
   useEffect(() => {
     if (vendorId) localStorage.setItem("vendorId", vendorId);
@@ -33,7 +50,8 @@ const Booknow: React.FC = () => {
     event.preventDefault();
 
     const formData = {
-      date: event.currentTarget.date.value,
+      EndingDate:formattedStartDate,
+      StartingDate: formattedEndDate,
       category: event.currentTarget.category.value,
       eventType: event.currentTarget.eventType.value,
       occupancy: event.currentTarget.people.value,
@@ -51,8 +69,15 @@ const Booknow: React.FC = () => {
     }
   };
 
-  return (
+  const handleCheckAvailability = () => {
+    setIsModalOpen(true); // Open the modal
+  };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
     <div className="min-h-screen flex flex-col justify-center mt-[100px] items-center bg-gray-100 p-8">
       <div className="bg-white shadow-md rounded-lg overflow-hidden max-w-4xl w-full flex">
         {/* Form Section */}
@@ -61,16 +86,24 @@ const Booknow: React.FC = () => {
           <form className="space-y-4" onSubmit={handleSubmit}>
             {/* Date Input */}
             <div>
-              <label className="block text-sm font-medium text-gray-700" htmlFor="date">
-                Date
-              </label>
-              <input
-                type="date"
-                id="date"
-                name="date"
-                className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                required
-              />
+              {(!formattedStartDate && !formattedEndDate) ? (
+                <><p onClick={handleCheckAvailability}
+                >Selet date</p></>
+              ) : (
+                <>
+                  <label className="block text-sm font-medium text-gray-700" htmlFor="date">
+                    Date (Start: {formattedStartDate}, End: {formattedEndDate})
+                  </label>
+                  {/* <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    className="mt-1 w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    placeholder={formattedStartDate}
+                    required
+                  /> */}
+                </>
+              )}
             </div>
 
             {/* Event Category */}
@@ -164,9 +197,8 @@ const Booknow: React.FC = () => {
           <Image src={img} alt="Wedding event" fill className="rounded-lg object-cover" />
         </div>
       </div>
+      <AvailabilityModal open={isModalOpen} onClose={closeModal} vendorId={vendorId!} />
     </div>
-
-
   );
 };
 

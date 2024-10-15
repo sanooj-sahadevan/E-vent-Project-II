@@ -293,7 +293,9 @@ export class UserRepository implements IUserRepository {
         userId,
         auditoriumId,
         dishesId,
-        date,
+        StartingDate,
+        eventType,
+        EndingDate,
         category,
         payment_source
       } = bookingData;
@@ -307,7 +309,8 @@ export class UserRepository implements IUserRepository {
         userId,
         auditoriumId,
         dishesId,
-        date,
+        StartingDate,
+        eventType, EndingDate,
         category,
         payment_source,
         createdAt: new Date(),
@@ -450,7 +453,14 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-
+  async getSlotsByWorkerIdFromRepo(vendorId: string): Promise<ISlot[]> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return await Slot.find({
+      vendorId,
+      date: { $gte: today },
+    }).exec();
+  }
 
 }
 

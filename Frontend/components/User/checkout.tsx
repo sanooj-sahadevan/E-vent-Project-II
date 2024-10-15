@@ -7,6 +7,7 @@ import PayUComponent from "@/components/payment/payUcomponent";
 const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  console.log(searchParams, 'params');
 
   const [bookingDetails, setBookingDetails] = useState({
     userId: {
@@ -16,15 +17,16 @@ const CheckoutPage: React.FC = () => {
       _id: '',
     },
     category: '',
-    date: '',
+    StartingDate: '', EndingDate: '',
+
     eventType: '',
     vendorId: '',
     auditoriumId: '',
     dishesId: '',
-    advanceAmount: 10000,  
+    advanceAmount: 10000,
   });
 
-  const [isPaymentEnabled, setIsPaymentEnabled] = useState(false); 
+  const [isPaymentEnabled, setIsPaymentEnabled] = useState(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -37,17 +39,20 @@ const CheckoutPage: React.FC = () => {
           address: parsedUser.address || '',
           phone: parsedUser.phone || '',
           email: parsedUser.email || '',
-          _id: parsedUser._id || '', 
+          _id: parsedUser._id || '',
         },
       }));
     }
 
     const params = {
       category: searchParams.get("category") || '',
-      date: searchParams.get("date") || '',
+      StartingDate: searchParams.get("StartingDate") || '',
+      EndingDate: searchParams.get("EndingDate") || '',
       eventType: searchParams.get("eventType") || '',
       vendorId: searchParams.get("vendorId") || '',
       auditoriumId: searchParams.get("auditoriumId") || '',
+
+
       dishesId: searchParams.get("dishesId") || '',
     };
 
@@ -60,15 +65,13 @@ const CheckoutPage: React.FC = () => {
       advanceAmount = 1000;
     }
 
-    // Update booking details state
     setBookingDetails((prev) => ({
       ...prev,
       ...params,
-      advanceAmount, 
+      advanceAmount,
     }));
   }, [searchParams]);
 
-  // Log booking details when they update
   useEffect(() => {
     console.log(bookingDetails, 'Booking Details ---');
   }, [bookingDetails]);
@@ -85,7 +88,8 @@ const CheckoutPage: React.FC = () => {
           {bookingDetails.userId.username && <p className="text-lg text-gray-600 mb-2">User: <span className="font-semibold">{bookingDetails.userId.username}</span></p>}
           {bookingDetails.userId.address && <p className="text-lg text-gray-600 mb-2">Address: <span className="font-semibold">{bookingDetails.userId.address}</span></p>}
           {bookingDetails.userId.phone && <p className="text-lg text-gray-600 mb-2">Phone: <span className="font-semibold">{bookingDetails.userId.phone}</span></p>}
-          {bookingDetails.date && <p className="text-lg text-gray-600 mb-2">Event Date: <span className="font-semibold">{bookingDetails.date}</span></p>}
+          {bookingDetails.StartingDate && <p className="text-lg text-gray-600 mb-2">Event  Starting Date: <span className="font-semibold">{bookingDetails.StartingDate}</span></p>}
+          {bookingDetails.EndingDate && <p className="text-lg text-gray-600 mb-2">Event  Ending Date: <span className="font-semibold">{bookingDetails.EndingDate}</span></p>}
           {bookingDetails.eventType && <p className="text-lg text-gray-600 mb-2">Event Type: <span className="font-semibold">{bookingDetails.eventType}</span></p>}
           {bookingDetails.category && <p className="text-lg text-gray-600 mb-2">Category: <span className="font-semibold capitalize">{bookingDetails.category}</span></p>}
           {bookingDetails.vendorId && <p className="text-lg text-gray-600 mb-2">Vendor ID: <span className="font-semibold">{bookingDetails.vendorId}</span></p>}
@@ -114,7 +118,7 @@ const CheckoutPage: React.FC = () => {
               type="checkbox"
               id="paymentToggle"
               checked={isPaymentEnabled}
-              onChange={() => setIsPaymentEnabled(!isPaymentEnabled)} 
+              onChange={() => setIsPaymentEnabled(!isPaymentEnabled)}
               className="mr-2"
             />
             <label htmlFor="paymentToggle" className="text-lg text-gray-700">

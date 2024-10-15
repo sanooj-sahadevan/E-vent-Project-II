@@ -388,11 +388,6 @@ export class VendorController {
   async getSlotsByWorkerController(req: Request, res: Response) {
     try {
       const vendorId = req.params.vendorId; // Get vendorId from route parameters
-  
-      if (!vendorId || !mongoose.Types.ObjectId.isValid(vendorId)) {
-        return res.status(400).json({ message: "Invalid vendorId format" });
-      }
-  
       const slots = await this.vendorService.getSlotsByWorkerId(vendorId);
       res.status(200).json(slots);
     } catch (error: any) {
