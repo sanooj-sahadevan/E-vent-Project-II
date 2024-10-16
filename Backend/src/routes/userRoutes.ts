@@ -52,9 +52,7 @@ router.get('/userunread-count', userController.getUnreadMessagesCount.bind(userC
 
 //review
 router.post('/review', userController.review.bind(userController));
-// slot
 
-// routes.ts
 router.get("/slots/:vendorId", userController.getSlotsByWorkerController.bind(userController));
 
 export default router;

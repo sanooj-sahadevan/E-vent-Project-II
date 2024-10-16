@@ -40,19 +40,19 @@ const bookingSchema = new Schema<Booking>({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required: false
     },
     category: {
         type: String,
-        required: true
+        required: false
     },
     occupancy: {
         type: Number,
-        required: true
+        required: false
     },
     totalAmount: {
         type: Number,
-        required: true
+        required: false
     },
     paymentType: {
         type: String,
@@ -60,7 +60,7 @@ const bookingSchema = new Schema<Booking>({
     },
     paymentStatus: {
         type: String,
-        required: true
+        required: false
     },
     txnId: {
         type: String,
@@ -68,11 +68,11 @@ const bookingSchema = new Schema<Booking>({
     },
     StartingDate: {
         type: Date,
-        required: true
+        required: false
     },
     EndingDate: {
         type: Date,
-        required: true
+        required: false
     }
 }, { timestamps: true });
 

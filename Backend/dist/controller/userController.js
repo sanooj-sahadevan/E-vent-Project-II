@@ -301,7 +301,8 @@ class UserController {
                         dishesId,
                         StartingDate,
                         category,
-                        eventType, EndingDate
+                        eventType,
+                        EndingDate
                     });
                     console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, StartingDate, category, eventType, EndingDate });
                     if (bookedTripId) {

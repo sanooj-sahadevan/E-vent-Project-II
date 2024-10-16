@@ -6,7 +6,6 @@ import { sendEmail } from "../utils/sendEmail";
 import { IUserRepository } from "../interfaces/repository/userRepository";
 import { io } from "..";
 import { ISlot } from "../interfaces/slot";
-import mongoose from "mongoose";
 
 export class UserService {
 

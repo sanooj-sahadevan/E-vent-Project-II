@@ -15,11 +15,6 @@
     ],
     "button-type": "off",
     "axe/forms": "off",
-    "axe/name-role-value": [
-      "default",
-      {
-        "button-name": "off"
-      }
-    ]
+    "axe/name-role-value": "off"
   }
 }

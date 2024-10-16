@@ -26,8 +26,8 @@ const PayUComponent = ({ BookedData }: Props) => {
     const udf3 = BookedData.dishesId || 'nil';
     const udf4 = BookedData.StartingDate || 'nil';
     const udf5 = BookedData.category || 'nil';
-    const udf6 = BookedData.eventType || 'nil'; // New item
-    const udf7 = BookedData.EndingDate || 'nil'; // New item
+    const udf6 = BookedData.eventType || 'nil';
+    const udf7 = BookedData.EndingDate || 'nil'; 
 console.log(udf7,'pap');
 
     const key = PayU.merchantKey;
@@ -59,8 +59,8 @@ console.log(udf7,'pap');
             <input type="hidden" name="udf3" value={udf3} />
             <input type="hidden" name="udf4" value={udf4} />
             <input type="hidden" name="udf5" value={udf5} />
-            <input type="hidden" name="udf6" value={udf6} /> {/* New field */}
-            <input type="hidden" name="udf7" value={udf7} /> {/* New field */}
+            <input type="hidden" name="udf6" value={udf6} /> 
+            <input type="hidden" name="udf7" value={udf7} /> 
             <input type="hidden" name="surl" value={surl} />
             <input type="hidden" name="furl" value={furl} />
             <input type="hidden" name="hash" value={hash || ""} />

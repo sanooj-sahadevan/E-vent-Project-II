@@ -20,7 +20,6 @@ export default {
 
   paymentReq: async function (data: any) {
     console.log('routikii');
-
     try {
       const reshash = await apiClient.post("/payment", JSON.stringify(data), {
         headers: {

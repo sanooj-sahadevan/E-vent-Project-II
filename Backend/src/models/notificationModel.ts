@@ -17,7 +17,7 @@ const NotificationSchema = new Schema<INotification>(
     },
     type: {
       type: String,
-      enum: ["follow", "like", "comment", "dish_added"],
+      enum: ["dish_added", "like", "comment", "dish_added"],
     },
     isRead: {
       type: Boolean,
