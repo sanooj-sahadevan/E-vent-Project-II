@@ -8,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorRepository = void 0;
 const dishesModel_1 = require("../models/dishesModel");
@@ -18,6 +21,8 @@ const messageModal_1 = require("../models/messageModal");
 const vendorModel_1 = require("../models/vendorModel");
 const reviews_1 = require("../models/reviews");
 const slotModel_1 = require("../models/slotModel");
+const userModel_1 = __importDefault(require("../models/userModel"));
+const notificationModel_1 = require("../models/notificationModel");
 class VendorRepository {
     constructor() {
     }
@@ -87,7 +92,7 @@ class VendorRepository {
                     existingVendor.address = vendorDetails.address;
                     existingVendor.district = vendorDetails.district;
                     existingVendor.state = vendorDetails.state;
-                    existingVendor.reviews = vendorDetails.reviews;
+                    existingVendor.description = vendorDetails.description;
                     existingVendor.profileImage = vendorDetails.profileImage || existingVendor.profileImage;
                     yield existingVendor.save();
                     return existingVendor;
@@ -353,6 +358,68 @@ class VendorRepository {
                 vendorId,
                 date: { $gte: today },
             }).exec();
+        });
+    }
+    notifyDishAdded(vendorId, dishId, dishName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const message = `New dish "${dishName}" has been added by Vendor ${vendorId}.`;
+                // Retrieve all users
+                const users = yield this.getAllUsers();
+                // Create notifications for all users
+                const notificationPromises = users.map(user => this.createNotificationDishes({
+                    userId: user._id,
+                    vendorId: vendorId,
+                    dishId: dishId,
+                    notificationMessage: message,
+                    type: "dish_added"
+                }));
+                yield Promise.all(notificationPromises);
+                console.log(`Notifications sent for dish: ${dishName}`);
+            }
+            catch (error) {
+                console.error("Error in notifyDishAdded: ", error);
+                throw error;
+            }
+        });
+    }
+    notifyAuditoriumAdded(vendorId, auditoriumId, auditoriumName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const message = `New Auditorium "${auditoriumName}" has been added by Vendor ${vendorId}.`;
+                // Retrieve all users
+                const users = yield this.getAllUsers();
+                // Create notifications for all users
+                const notificationPromises = users.map(user => this.createNotificationAudi({
+                    userId: user._id,
+                    vendorId: vendorId,
+                    auditoriumId: auditoriumId,
+                    notificationMessage: message,
+                    type: "dish_added"
+                }));
+                yield Promise.all(notificationPromises);
+                console.log(`Notifications sent for auditoriumName: ${auditoriumName}`);
+            }
+            catch (error) {
+                console.error("Error in notifyDishAdded: ", error);
+                throw error;
+            }
+        });
+    }
+    createNotificationAudi(notificationData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield notificationModel_1.NotificationModel.create(notificationData); // Use NotificationModel here
+        });
+    }
+    createNotificationDishes(notificationData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield notificationModel_1.NotificationModel.create(notificationData); // Use NotificationModel here
+        });
+    }
+    // Helper function to get all users
+    getAllUsers() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield userModel_1.default.find();
         });
     }
 }

@@ -10,7 +10,7 @@ import { VendorModel } from "../models/vendorModel";
 import { IUserRepository } from "../interfaces/repository/userRepository";
 import { messageModel } from "../models/messageModal";
 import { Reviews } from "../models/reviews";
-import { Notification } from "../models/notificationModel";
+import {  NotificationModel } from "../models/notificationModel";
 import { ISlot } from "../interfaces/slot";
 import { Slot } from '../models/slotModel';
 
@@ -210,7 +210,7 @@ export class UserRepository implements IUserRepository {
 
   async findNotificationsByIdInDb(userId: any) {
     try {
-      const notifications = await Notification.find()
+      const notifications = await NotificationModel.find()
       // .populate('vendorId')
       // .populate('userId')
       return { notification: notifications };
