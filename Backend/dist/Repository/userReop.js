@@ -230,7 +230,7 @@ class UserRepository {
     findNotificationsByIdInDb(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const notifications = yield notificationModel_1.Notification.find();
+                const notifications = yield notificationModel_1.NotificationModel.find();
                 // .populate('vendorId')
                 // .populate('userId')
                 return { notification: notifications };

@@ -1,6 +1,7 @@
 import mongoose, { Schema, Types } from "mongoose";
 import { INotification } from "../interfaces/notification";
 
+// Define the notification schema
 const NotificationSchema = new Schema<INotification>(
   {
     userId: {
@@ -29,5 +30,5 @@ const NotificationSchema = new Schema<INotification>(
   }
 );
 
-// Export as Notification
-export const Notification = mongoose.model("Notification", NotificationSchema);
+// Rename the model to avoid conflict
+export const NotificationModel = mongoose.model("NotificationModel", NotificationSchema);

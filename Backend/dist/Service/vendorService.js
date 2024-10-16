@@ -17,7 +17,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 // import { Vendor } from "../interfaces/vendor";
 const fileUpload_1 = require("../middleware/fileUpload");
 const index_1 = require("../index");
-const notification_1 = __importDefault(require("../utils/notificationHelper/notification"));
 const mongoose_1 = __importDefault(require("mongoose"));
 class VendorService {
     constructor(vendorRepository) {
@@ -171,15 +170,18 @@ class VendorService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const dishesData = { vendorId, data, images };
-                dishesData.data.price = Number(dishesData.data.price);
+                dishesData.data.price = Number(dishesData.data.price); // Ensure price is a number
+                // Create the new dish in the repository
                 const newDish = yield this.vendorRepository.createDishes(dishesData);
-                console.log(newDish);
-                const dishNotification = yield (0, notification_1.default)(vendorId, newDish._id, newDish.name);
-                console.log(dishNotification);
+                console.log("New dish created:", newDish);
+                // Send notifications for the new dish
+                const dishNotification = yield this.vendorRepository.notifyDishAdded(vendorId, newDish._id, newDish.name);
+                console.log("Dish notification result:", dishNotification);
                 return newDish;
             }
             catch (error) {
                 console.error("Error in uploadDishes: ", error);
+                throw error;
             }
         });
     }
@@ -189,6 +191,8 @@ class VendorService {
                 const auditoriumData = { vendorId, data, images };
                 auditoriumData.data.price = Number(auditoriumData.data.price);
                 const newAuditorium = yield this.vendorRepository.createAuditorium(auditoriumData);
+                const dishNotification = yield this.vendorRepository.notifyAuditoriumAdded(vendorId, newAuditorium._id, newAuditorium.name);
+                console.log("Dish notification result:", dishNotification);
                 return newAuditorium;
             }
             catch (error) {

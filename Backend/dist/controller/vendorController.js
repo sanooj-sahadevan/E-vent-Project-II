@@ -229,7 +229,6 @@ class VendorController {
                     res.status(httpStatus_1.HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
                 }
                 else {
-                    console.log(dishes, 'Fetched dishes for vendor');
                     res.status(httpStatus_1.HttpStatus.OK).json(dishes);
                 }
             }
@@ -248,7 +247,6 @@ class VendorController {
                     res.status(httpStatus_1.HttpStatus.NOT_FOUND).json({ message: "No Reviews found for this vendor" });
                 }
                 else {
-                    console.log(Reviews, 'Fetched Reviews for vendor');
                     res.status(httpStatus_1.HttpStatus.OK).json(Reviews);
                 }
             }
@@ -267,7 +265,6 @@ class VendorController {
                     res.status(httpStatus_1.HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
                 }
                 else {
-                    console.log(auditorium, 'Fetched dishes for vendor');
                     res.status(httpStatus_1.HttpStatus.OK).json(auditorium);
                 }
             }

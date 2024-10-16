@@ -214,7 +214,6 @@ export class VendorController {
       if (!dishes || dishes.length === 0) {
         res.status(HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
       } else {
-        console.log(dishes, 'Fetched dishes for vendor');
         res.status(HttpStatus.OK).json(dishes);
       }
 
@@ -231,7 +230,6 @@ export class VendorController {
       if (!Reviews || Reviews.length === 0) {
         res.status(HttpStatus.NOT_FOUND).json({ message: "No Reviews found for this vendor" });
       } else {
-        console.log(Reviews, 'Fetched Reviews for vendor');
         res.status(HttpStatus.OK).json(Reviews);
       }
 
@@ -250,7 +248,6 @@ export class VendorController {
       if (!auditorium || auditorium.length === 0) {
         res.status(HttpStatus.NOT_FOUND).json({ message: "No dishes found for this vendor" });
       } else {
-        console.log(auditorium, 'Fetched dishes for vendor');
         res.status(HttpStatus.OK).json(auditorium);
       }
     } catch (error) {
@@ -395,8 +392,8 @@ export class VendorController {
       res.status(500).json({ message: "Error fetching slots", error: error.message });
     }
   }
-  
 
 
- 
+
+
 }

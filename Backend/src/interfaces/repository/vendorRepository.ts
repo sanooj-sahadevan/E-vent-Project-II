@@ -31,5 +31,6 @@ export interface IVendorRepository {
         vendorId:any
       ): Promise<ISlot[]> 
       
-
+      notifyDishAdded(vendorId: string, dishId: mongoose.Types.ObjectId, dishName: string): Promise<void>
+      notifyAuditoriumAdded(vendorId: string, auditoriumId: mongoose.Types.ObjectId, auditoriumName: string): Promise<void>
 }

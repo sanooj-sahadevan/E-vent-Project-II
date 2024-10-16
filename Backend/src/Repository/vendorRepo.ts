@@ -10,6 +10,8 @@ import { IVendorRepository } from "../interfaces/repository/vendorRepository";
 import { Reviews } from "../models/reviews";
 import { Slot } from "../models/slotModel";
 import { ISlot } from "../interfaces/slot";
+import UserModel from "../models/userModel";
+import { NotificationModel } from "../models/notificationModel";
 
 
 
@@ -85,7 +87,7 @@ export class VendorRepository implements IVendorRepository {
         existingVendor.address = vendorDetails.address;
         existingVendor.district = vendorDetails.district;
         existingVendor.state = vendorDetails.state;
-        existingVendor.reviews = vendorDetails.reviews;
+        existingVendor.description = vendorDetails.description;
         existingVendor.profileImage = vendorDetails.profileImage || existingVendor.profileImage;
         await existingVendor.save();
         return existingVendor;
@@ -358,7 +360,75 @@ export class VendorRepository implements IVendorRepository {
     }).exec();
   }
 
+  async notifyDishAdded(vendorId: string, dishId: mongoose.Types.ObjectId, dishName: string): Promise<void> {
+    try {
+      const message = `New dish "${dishName}" has been added by Vendor ${vendorId}.`;
+
+      // Retrieve all users
+      const users = await this.getAllUsers();
+
+      // Create notifications for all users
+      const notificationPromises = users.map(user =>
+        this.createNotificationDishes({
+          userId: user._id,
+          vendorId: vendorId,
+          dishId: dishId,
+          notificationMessage: message,
+          type: "dish_added"
+        })
+      );
+
+      await Promise.all(notificationPromises);
+
+      console.log(`Notifications sent for dish: ${dishName}`);
+    } catch (error) {
+      console.error("Error in notifyDishAdded: ", error);
+      throw error;
+    }
+  }
 
 
+
+  
+  async notifyAuditoriumAdded(vendorId: string, auditoriumId: mongoose.Types.ObjectId, auditoriumName: string): Promise<void> {
+    try {
+      const message = `New Auditorium "${auditoriumName}" has been added by Vendor ${vendorId}.`;
+
+      // Retrieve all users
+      const users = await this.getAllUsers();
+
+      // Create notifications for all users
+      const notificationPromises = users.map(user =>
+        this.createNotificationAudi({
+          userId: user._id,
+          vendorId: vendorId,
+          auditoriumId: auditoriumId,
+          notificationMessage: message,
+          type: "dish_added"
+        })
+      );
+
+      await Promise.all(notificationPromises);
+
+      console.log(`Notifications sent for auditoriumName: ${auditoriumName}`);
+    } catch (error) {
+      console.error("Error in notifyDishAdded: ", error);
+      throw error;
+    }
+  }
+  async createNotificationAudi(notificationData: { userId: any; vendorId: string; auditoriumId: mongoose.Types.ObjectId; notificationMessage: string; type: string }) {
+    return await NotificationModel.create(notificationData); // Use NotificationModel here
 }
+  async createNotificationDishes(notificationData: { userId: any; vendorId: string; dishId: mongoose.Types.ObjectId; notificationMessage: string; type: string }) {
+    return await NotificationModel.create(notificationData); // Use NotificationModel here
+}
+
+
+  // Helper function to get all users
+  async getAllUsers() {
+    return await UserModel.find();
+  }
+}
+
+
 
