@@ -309,7 +309,7 @@ const Home: React.FC = () => {
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
                 <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
                     <span className="flex items-center"><span className="mr-2">🎭</span> Auditoriums</span>
-                    <a href="/vendorAddAuditorium" className="text-black-500">  <Plus size={30} color="#000000" /> </a>
+                    <a href="/vendorAddAuditoriums" className="text-black-500">  <Plus size={30} color="#000000" /> </a>
                 </h2>
                 <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
                     {dishError ? (

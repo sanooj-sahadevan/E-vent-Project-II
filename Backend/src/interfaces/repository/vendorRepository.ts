@@ -30,4 +30,6 @@ export interface IVendorRepository {
     getSlotsByWorkerIdFromRepo  (
         vendorId:any
       ): Promise<ISlot[]> 
+      
+
 }
