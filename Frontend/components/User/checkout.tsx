@@ -7,7 +7,6 @@ import PayUComponent from "@/components/payment/payUcomponent";
 const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  console.log(searchParams, 'params');
 
   const [bookingDetails, setBookingDetails] = useState({
     userId: {
@@ -17,8 +16,8 @@ const CheckoutPage: React.FC = () => {
       _id: '',
     },
     category: '',
-    StartingDate: '', EndingDate: '',
-
+    StartingDate: '', 
+    EndingDate: '',
     eventType: '',
     vendorId: '',
     auditoriumId: '',
@@ -28,6 +27,7 @@ const CheckoutPage: React.FC = () => {
 
   const [isPaymentEnabled, setIsPaymentEnabled] = useState(false);
 
+  // Separate useEffect for fetching user data only once
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -43,7 +43,10 @@ const CheckoutPage: React.FC = () => {
         },
       }));
     }
+  }, []);  // Empty dependency array to ensure this runs only once
 
+  // Fetch booking details from search params
+  useEffect(() => {
     const params = {
       category: searchParams.get("category") || '',
       StartingDate: searchParams.get("StartingDate") || '',
@@ -51,8 +54,6 @@ const CheckoutPage: React.FC = () => {
       eventType: searchParams.get("eventType") || '',
       vendorId: searchParams.get("vendorId") || '',
       auditoriumId: searchParams.get("auditoriumId") || '',
-
-
       dishesId: searchParams.get("dishesId") || '',
     };
 
@@ -72,6 +73,7 @@ const CheckoutPage: React.FC = () => {
     }));
   }, [searchParams]);
 
+  // Ensure bookingDetails are updated properly but without triggering redundant renders
   useEffect(() => {
     console.log(bookingDetails, 'Booking Details ---');
   }, [bookingDetails]);

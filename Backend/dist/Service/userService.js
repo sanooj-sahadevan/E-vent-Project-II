@@ -314,13 +314,6 @@ class UserService {
             }
         });
     }
-    fetchbookingData(bookingData) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const bookedTrip = yield this.userRepository.createBookedTrip(bookingData);
-            console.log(bookedTrip, 'okokookok');
-            return bookedTrip;
-        });
-    }
     findBookingDetails(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             const bookingDetails = yield this.userRepository.findDetailsByUserId(userId);
@@ -328,6 +321,13 @@ class UserService {
                 throw new Error(`Booking with id not found`);
             }
             return bookingDetails;
+        });
+    }
+    updateBookingStatus(bookingData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const updatedBooking = yield this.userRepository.updateBookingStatus(bookingData);
+            console.log(updatedBooking, 'Booking Update Service');
+            return updatedBooking;
         });
     }
     findchangePassword(userId, newPassword) {
@@ -354,11 +354,31 @@ class UserService {
     generatePaymentHash(_a) {
         return __awaiter(this, arguments, void 0, function* ({ txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6, udf7 }) {
             try {
+                console.log('123');
                 const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}|${udf6}|${udf7}||||${process.env.PAYU_SALT}`;
+                console.log('123456');
                 const sha = new jssha_1.default("SHA-512", "TEXT");
                 sha.update(hashString);
                 const hash = sha.getHash("HEX");
                 console.log(hash, 'hash');
+                const bookingData = {
+                    txnid,
+                    amount,
+                    productinfo,
+                    username,
+                    email,
+                    udf1,
+                    udf2,
+                    udf3,
+                    udf4,
+                    udf5,
+                    udf6,
+                    udf7,
+                    paymentStatus: 'pending', // You can adjust this according to your logic
+                    paymentHash: hash // Save the generated hash
+                };
+                const savedBooking = yield this.userRepository.saveBooking(bookingData);
+                // return savedBooking;
                 return hash;
             }
             catch (error) {

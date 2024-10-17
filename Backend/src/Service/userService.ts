@@ -313,15 +313,6 @@ export class UserService {
       throw new Error(error.message);
     }
   }
-
-  async fetchbookingData(bookingData: any) {
-    const bookedTrip = await this.userRepository.createBookedTrip(bookingData);
-    console.log(bookedTrip, 'okokookok');
-    return bookedTrip;
-  }
-
-
-
   async findBookingDetails(userId: string) {
     const bookingDetails = await this.userRepository.findDetailsByUserId(userId);
     if (!bookingDetails) {
@@ -330,6 +321,12 @@ export class UserService {
     return bookingDetails;
   }
 
+  async updateBookingStatus(bookingData: any) {
+    const updatedBooking = await this.userRepository.updateBookingStatus(bookingData);
+    console.log(updatedBooking, 'Booking Update Service');
+    return updatedBooking;
+  }
+  
 
   async findchangePassword(userId: string, newPassword: string) {
     console.log('Updating password for userId:', userId);
@@ -350,11 +347,12 @@ export class UserService {
     }
   }
 
- 
+
+
 
   async generatePaymentHash({
     txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6, udf7
-}: {
+  }: {
     txnid: string,
     amount: string,
     productinfo: string,
@@ -367,20 +365,45 @@ export class UserService {
     udf5: string,
     udf6: string, // New field
     udf7: string, // New field
-}) {
+  }) {
     try {
+      console.log('123');
+      
       const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}|${udf6}|${udf7}||||${process.env.PAYU_SALT}`;
+      console.log('123456');
 
       const sha = new jsSHA("SHA-512", "TEXT");
       sha.update(hashString);
       const hash = sha.getHash("HEX");
-console.log(hash,'hash');
+      console.log(hash, 'hash');
+const bookingData = {
+      txnid,
+      amount,
+      productinfo,
+      username,
+      email,
+      udf1,
+      udf2,
+      udf3,
+      udf4,
+      udf5,
+      udf6,
+      udf7,
+      paymentStatus: 'pending',  // You can adjust this according to your logic
+      paymentHash: hash          // Save the generated hash
+    };
 
+      const savedBooking = await this.userRepository.saveBooking(bookingData);
+      // return savedBooking;
       return hash;
     } catch (error) {
       throw new Error("Error generating payment hash");
     }
-}
+  }
+
+
+
+
 
 
 
@@ -453,7 +476,7 @@ console.log(hash,'hash');
       return await this.userRepository.getSlotsByWorkerIdFromRepo(vendorId);
     } catch (error) {
       console.error("Error fetching slots from repository:", error);
-      throw error; 
+      throw error;
     }
   }
 

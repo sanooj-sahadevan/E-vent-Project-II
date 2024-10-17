@@ -60,7 +60,8 @@ const bookingSchema = new Schema<Booking>({
     },
     paymentStatus: {
         type: String,
-        required: false
+        required: false,        default: "pending"
+
     },
     txnId: {
         type: String,
