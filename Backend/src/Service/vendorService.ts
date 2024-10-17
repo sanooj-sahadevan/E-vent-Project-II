@@ -143,38 +143,16 @@ export class VendorService implements IVendorService {
     }
   }
 
-  // async  uploadDishes  (
-  //   vendorId: string,
-  //   data: DishDocument,
-  //   images?: string
-  // ) {
-  //   try {      
-  //     const dishesData = { vendorId, data, images };
-
-  //     dishesData.data.price = Number(dishesData.data.price);
-
-  //     const newDish = await this.vendorRepository.createDishes(dishesData);
-  // console.log(newDish);
-
-  //     return newDish;
-  //   } catch (error) {
-  //     console.error("Error in uploadDishes: ", error);
-  //     console.error();
-  //   }
-  // }
-
-
-  async uploadDishes(vendorId: string, data: DishDocument, images?: string) {
+  async uploadDishes(vendorId: any, data: any, images?: string) {
     try {
+      data.price = Number(data.price);
       const dishesData = { vendorId, data, images };
-      dishesData.data.price = Number(dishesData.data.price); // Ensure price is a number
+      console.log("Dishes Data: ", dishesData);
 
-      // Create the new dish in the repository
       const newDish = await this.vendorRepository.createDishes(dishesData);
       console.log("New dish created:", newDish);
 
-      // Send notifications for the new dish
-      const dishNotification = await this.vendorRepository.notifyDishAdded(vendorId, newDish._id, newDish.name);
+      const dishNotification = await this.vendorRepository.notifyDishAdded(vendorId, newDish, newDish.dishesName);
       console.log("Dish notification result:", dishNotification);
 
       return newDish;
@@ -184,21 +162,16 @@ export class VendorService implements IVendorService {
     }
   }
 
-  async uploadAuditorium(
-    vendorId: string,
-    data: AuditoriumDocument,
-    images?: string
+
+  async uploadAuditorium(vendorId: string, data: AuditoriumDocument, images?: string
   ) {
     try {
       const auditoriumData = { vendorId, data, images };
       auditoriumData.data.price = Number(auditoriumData.data.price);
 
       const newAuditorium = await this.vendorRepository.createAuditorium(auditoriumData);
-      const dishNotification = await this.vendorRepository.notifyAuditoriumAdded(vendorId, newAuditorium._id, newAuditorium.name);
+      const dishNotification = await this.vendorRepository.notifyAuditoriumAdded(vendorId, newAuditorium, newAuditorium.auditoriumName);
       console.log("Dish notification result:", dishNotification);
-
-
-
       return newAuditorium;
     } catch (error) {
       console.error("Error in uploadAuditorium: ", error);

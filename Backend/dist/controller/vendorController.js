@@ -173,6 +173,7 @@ class VendorController {
             try {
                 const { body } = req;
                 const vendorId = req.vendorId;
+                console.log("Request Body: ", body); // Add this line to check the body
                 if (!vendorId) {
                     return res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
                 }

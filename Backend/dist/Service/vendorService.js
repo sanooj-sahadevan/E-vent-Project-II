@@ -150,32 +150,15 @@ class VendorService {
             }
         });
     }
-    // async  uploadDishes  (
-    //   vendorId: string,
-    //   data: DishDocument,
-    //   images?: string
-    // ) {
-    //   try {      
-    //     const dishesData = { vendorId, data, images };
-    //     dishesData.data.price = Number(dishesData.data.price);
-    //     const newDish = await this.vendorRepository.createDishes(dishesData);
-    // console.log(newDish);
-    //     return newDish;
-    //   } catch (error) {
-    //     console.error("Error in uploadDishes: ", error);
-    //     console.error();
-    //   }
-    // }
     uploadDishes(vendorId, data, images) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                data.price = Number(data.price);
                 const dishesData = { vendorId, data, images };
-                dishesData.data.price = Number(dishesData.data.price); // Ensure price is a number
-                // Create the new dish in the repository
+                console.log("Dishes Data: ", dishesData);
                 const newDish = yield this.vendorRepository.createDishes(dishesData);
                 console.log("New dish created:", newDish);
-                // Send notifications for the new dish
-                const dishNotification = yield this.vendorRepository.notifyDishAdded(vendorId, newDish._id, newDish.name);
+                const dishNotification = yield this.vendorRepository.notifyDishAdded(vendorId, newDish, newDish.dishesName);
                 console.log("Dish notification result:", dishNotification);
                 return newDish;
             }
@@ -191,7 +174,7 @@ class VendorService {
                 const auditoriumData = { vendorId, data, images };
                 auditoriumData.data.price = Number(auditoriumData.data.price);
                 const newAuditorium = yield this.vendorRepository.createAuditorium(auditoriumData);
-                const dishNotification = yield this.vendorRepository.notifyAuditoriumAdded(vendorId, newAuditorium._id, newAuditorium.name);
+                const dishNotification = yield this.vendorRepository.notifyAuditoriumAdded(vendorId, newAuditorium, newAuditorium.auditoriumName);
                 console.log("Dish notification result:", dishNotification);
                 return newAuditorium;
             }

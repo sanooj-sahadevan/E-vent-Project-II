@@ -165,9 +165,10 @@ export class VendorRepository implements IVendorRepository {
     }
   }
 
-
   async createDishes(dishesData: any) {
     try {
+      console.log("Dishes Data: ", dishesData);
+  
       const dish = new Dishes({
         vendorId: dishesData.vendorId,
         dishesName: dishesData.data.dishesName,
@@ -179,21 +180,21 @@ export class VendorRepository implements IVendorRepository {
         status: dishesData.data.status,
         images: dishesData.images,
       });
+  
       const savedDish = await dish.save();
+      await savedDish.populate("vendorId");
+  
       console.log("Saved Dish: ", savedDish);
-
-      return {
-        savedDish,
-        vendorId: dishesData.vendorId,
-      };
+  
+      return savedDish;
     } catch (error) {
       console.error("Error saving dish: ", error);
       throw error;
     }
   }
+  
 
-
-
+ 
   async createAuditorium(auditoriumData: any) {
     try {
       const auditorium = new Auditorium({
@@ -209,12 +210,12 @@ export class VendorRepository implements IVendorRepository {
       });
 
       const savedAuditorium = await auditorium.save();
+      await savedAuditorium.populate("vendorId");
+
       console.log("Saved Auditorium: ", savedAuditorium);
 
-      return {
-        savedAuditorium,
-        vendorId: auditoriumData.vendorId,
-      };
+      return savedAuditorium
+       
     } catch (error) {
       console.error("Error saving auditorium: ", error);
       throw error;
@@ -389,7 +390,7 @@ export class VendorRepository implements IVendorRepository {
 
 
 
-  
+
   async notifyAuditoriumAdded(vendorId: string, auditoriumId: mongoose.Types.ObjectId, auditoriumName: string): Promise<void> {
     try {
       const message = `New Auditorium "${auditoriumName}" has been added by Vendor ${vendorId}.`;
@@ -408,7 +409,7 @@ export class VendorRepository implements IVendorRepository {
         })
       );
 
-      await Promise.all(notificationPromises);
+      await Promise.all(notificationPromises)
 
       console.log(`Notifications sent for auditoriumName: ${auditoriumName}`);
     } catch (error) {
@@ -418,10 +419,10 @@ export class VendorRepository implements IVendorRepository {
   }
   async createNotificationAudi(notificationData: { userId: any; vendorId: string; auditoriumId: mongoose.Types.ObjectId; notificationMessage: string; type: string }) {
     return await NotificationModel.create(notificationData); // Use NotificationModel here
-}
+  }
   async createNotificationDishes(notificationData: { userId: any; vendorId: string; dishId: mongoose.Types.ObjectId; notificationMessage: string; type: string }) {
     return await NotificationModel.create(notificationData); // Use NotificationModel here
-}
+  }
 
 
   // Helper function to get all users

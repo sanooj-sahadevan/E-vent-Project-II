@@ -162,10 +162,11 @@ export class VendorController {
     try {
       const { body } = req;
       const vendorId = (req as any).vendorId;
+      console.log("Request Body: ", body);  // Add this line to check the body
       if (!vendorId) {
         return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
       }
-
+  
       await this.vendorService.uploadDishes(vendorId, body, body.image);
       return res.status(HttpStatus.OK).json("Dishes added successfully");
     } catch (error) {
@@ -173,7 +174,7 @@ export class VendorController {
       next(error);
     }
   }
-
+  
 
   async addAuditorium(req: Request & { vendorId?: string }, res: Response, next: NextFunction) {
     try {

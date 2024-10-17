@@ -42,8 +42,14 @@ const NotificationsPage: React.FC = () => {
         setLoading(true);
         try {
           const fetchedNotifications = await fetchNotification(userId);
-          console.log(fetchedNotifications.notification, 'notiii');
-          setNotifications(fetchedNotifications.notification);
+
+          // Sort notifications by the newest first (descending order by createdAt)
+          const sortedNotifications = fetchedNotifications.notification.sort(
+            (a: Notification, b: Notification) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+
+          console.log(sortedNotifications, 'Sorted Notifications');
+          setNotifications(sortedNotifications);
         } catch (error) {
           setError('Failed to fetch notifications');
         } finally {
@@ -61,7 +67,7 @@ const NotificationsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-1 w-full h-[500px] bg-white rounded-lg shadow-md pt-10 pb-20">
+    <div className="max-w-md mx-auto w-full h-[500px] bg-white rounded-lg shadow-md p-4">
       <div className="flex justify-between items-center mb-4">
         <button 
           className="text-blue-500 text-sm"
@@ -70,7 +76,7 @@ const NotificationsPage: React.FC = () => {
           Mark all as read
         </button>
       </div>
-      <div className="space-y-4 overflow-y-auto">
+      <div className="h-[400px] overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
         {loading ? (
           <p>Loading...</p>
         ) : error ? (
