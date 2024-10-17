@@ -305,39 +305,63 @@ class UserRepository {
     updateBookingStatus(bookingData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('sanooo');
-                const { txnid, status } = bookingData;
+                const { txnid, status, StartingDate, EndingDate, vendorId } = bookingData;
+                console.log(bookingData, 'liston');
+                // Find bookings based on txnid
                 const bookings = yield bookedEvent_1.bookedModel.find({ txnId: txnid });
                 if (bookings.length > 1) {
-                    // If more than one booking with the same txnid, delete all except one
                     const [firstBooking, ...duplicateBookings] = bookings;
-                    // Delete duplicate bookings
                     yield bookedEvent_1.bookedModel.deleteMany({ _id: { $in: duplicateBookings.map(b => b._id) } });
                     console.log(`Deleted ${duplicateBookings.length} duplicate bookings for txnid: ${txnid}`);
-                    // Update the first booking with paymentStatus 'success'
                     firstBooking.paymentStatus = 'success';
                     yield firstBooking.save();
                     console.log('Booking updated successfully:', firstBooking);
+                    // Update slot availability
+                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
                     return firstBooking;
                 }
                 else if (bookings.length === 1) {
-                    // If only one booking exists, update it
                     const booking = bookings[0];
                     booking.paymentStatus = 'success';
                     yield booking.save();
                     console.log('Booking updated successfully:', booking);
+                    // Update slot availability
+                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
                     return booking;
                 }
                 else {
-                    // If no bookings found, create a new one
+                    // If no bookings are found, create a new one
                     const newBooking = yield bookedEvent_1.bookedModel.create(Object.assign(Object.assign({ txnId: txnid, paymentStatus: status }, bookingData), { createdAt: new Date() }));
                     console.log('New booking created:', newBooking);
+                    // Update slot availability
+                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
                     return newBooking;
                 }
             }
             catch (error) {
                 console.error('Error updating booking:', error);
                 return null;
+            }
+        });
+    }
+    updateSlotAvailability(vendorId, StartingDate, EndingDate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Akil');
+                yield slotModel_1.Slot.updateMany({
+                    vendorId,
+                    isAvailable: true,
+                    $or: [
+                        { date: { $gte: StartingDate, $lte: EndingDate } },
+                        { date: { $gte: EndingDate, $lte: StartingDate } }
+                    ]
+                }, {
+                    $set: { isAvailable: false }, // Update isAvailable to false
+                });
+                console.log(`Slot availability updated for vendor: ${vendorId} from ${StartingDate} to ${EndingDate}`);
+            }
+            catch (error) {
+                console.error('Error updating slot availability:', error);
             }
         });
     }
@@ -469,6 +493,7 @@ class UserRepository {
             today.setHours(0, 0, 0, 0);
             return yield slotModel_1.Slot.find({
                 vendorId,
+                isAvailable: true,
                 date: { $gte: today },
             }).exec();
         });
@@ -477,7 +502,6 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 console.log('sanooj');
-                // Create a new booking instance
                 const newBooking = new bookedEvent_1.bookedModel({
                     vendorId: bookingData.productinfo,
                     userId: bookingData.udf1,
@@ -493,10 +517,7 @@ class UserRepository {
                     dishesId: bookingData.udf3 || null,
                     auditoriumId: bookingData.udf2 || null
                 });
-                // Save the new booking
                 const savedBooking = yield newBooking.save();
-                // await bookedModel.deleteOne({ txnId: bookingData.txnid });
-                // console.log(`Existing booking with txnId ${bookingData.txnid} deleted`);
                 return savedBooking;
             }
             catch (error) {

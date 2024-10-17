@@ -286,44 +286,36 @@ export class UserRepository implements IUserRepository {
 
   async updateBookingStatus(bookingData: any) {
     try {
-      console.log('sanooo');
-      
-      const { txnid, status } = bookingData;
-  
-                const bookings = await bookedModel.find({ txnId: txnid });
-  
+      const { txnid, status, StartingDate, EndingDate, vendorId } = bookingData;
+      console.log(bookingData, 'liston');
+
+
+      // Find bookings based on txnid
+      const bookings = await bookedModel.find({ txnId: txnid });
+
       if (bookings.length > 1) {
-        // If more than one booking with the same txnid, delete all except one
         const [firstBooking, ...duplicateBookings] = bookings;
-  
-        // Delete duplicate bookings
         await bookedModel.deleteMany({ _id: { $in: duplicateBookings.map(b => b._id) } });
         console.log(`Deleted ${duplicateBookings.length} duplicate bookings for txnid: ${txnid}`);
-  
-        // Update the first booking with paymentStatus 'success'
+
         firstBooking.paymentStatus = 'success';
         await firstBooking.save();
         console.log('Booking updated successfully:', firstBooking);
-  
         return firstBooking;
       } else if (bookings.length === 1) {
-        // If only one booking exists, update it
         const booking = bookings[0];
         booking.paymentStatus = 'success';
         await booking.save();
         console.log('Booking updated successfully:', booking);
-  
         return booking;
       } else {
-        // If no bookings found, create a new one
         const newBooking = await bookedModel.create({
           txnId: txnid,
           paymentStatus: status,
-          ...bookingData, // Pass other booking details from bookingData
+          ...bookingData,
           createdAt: new Date(),
         });
         console.log('New booking created:', newBooking);
-  
         return newBooking;
       }
     } catch (error) {
@@ -331,8 +323,8 @@ export class UserRepository implements IUserRepository {
       return null;
     }
   }
-  
-  
+
+
 
 
 
@@ -362,7 +354,7 @@ export class UserRepository implements IUserRepository {
   async findDetailsByUserId(userId: string) {
     try {
       const results = await bookedModel
-        .find({ userId: userId ,paymentStatus:"success"})
+        .find({ userId: userId, paymentStatus: "success" })
         .populate('dishesId')
         .populate('userId')
         .populate('vendorId')
@@ -479,6 +471,7 @@ export class UserRepository implements IUserRepository {
     today.setHours(0, 0, 0, 0);
     return await Slot.find({
       vendorId,
+      isAvailable: true,
       date: { $gte: today },
     }).exec();
   }
@@ -488,10 +481,6 @@ export class UserRepository implements IUserRepository {
   async saveBooking(bookingData: any): Promise<any> {
     try {
       console.log('sanooj');
-
-
-
-      // Create a new booking instance
       const newBooking = new bookedModel({
         vendorId: bookingData.productinfo,
         userId: bookingData.udf1,
@@ -508,10 +497,7 @@ export class UserRepository implements IUserRepository {
         auditoriumId: bookingData.udf2 || null
       });
 
-      // Save the new booking
       const savedBooking = await newBooking.save();
-      // await bookedModel.deleteOne({ txnId: bookingData.txnid });
-      // console.log(`Existing booking with txnId ${bookingData.txnid} deleted`);
       return savedBooking;
     } catch (error) {
       console.error('Error saving booking:', error);
