@@ -2,6 +2,7 @@ import { ISlot } from "../slot";
 import { User } from "../user";
 
 export interface IUserRepository {
+    saveBooking(bookingData: any): Promise<any>
     createUser(user: User): Promise<any>
     findUserByEmail(email: string): Promise<any>
     verifyAndSaveUserRepo(email: string, otp: string): Promise<any>
@@ -20,7 +21,7 @@ export interface IUserRepository {
     findAuditoriumByIdInDb(auditoriumId: string): Promise<any>
     finddishesByIdInDb(dishesId: string): Promise<any>
     getBookingDetail(id: string): Promise<any>
-    createBookedTrip(bookingData: any): Promise<any>
+    // createBookedTrip(bookingData: any): Promise<any>
     savechatDB(chat: string): Promise<any>
     findDetailsByUserId(userId: string): Promise<any>
     changepassword(userId: string, newPassword: string): Promise<any>
@@ -31,5 +32,5 @@ export interface IUserRepository {
     getReviewsByVendorId(vendorId: string): Promise<any[]>
     updateVendorRating(vendorId: string, averageRating: number): Promise<any>
     getSlotsByWorkerIdFromRepo(vendorId: any): Promise<ISlot[]>
-    
+    updateBookingStatus(bookingData: any): Promise<any> 
 }

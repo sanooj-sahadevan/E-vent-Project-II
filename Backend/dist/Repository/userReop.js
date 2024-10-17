@@ -302,32 +302,66 @@ class UserRepository {
             }
         });
     }
-    createBookedTrip(bookingData) {
+    updateBookingStatus(bookingData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('save karo');
-                const { vendorId, txnid, status, amount, userId, auditoriumId, dishesId, StartingDate, eventType, EndingDate, category, payment_source } = bookingData;
-                console.log(bookingData);
-                const bookedData = yield bookedEvent_1.bookedModel.create({
-                    vendorId,
-                    txnId: txnid,
-                    paymentStatus: status,
-                    totalAmount: amount,
-                    userId,
-                    auditoriumId,
-                    dishesId,
-                    StartingDate,
-                    eventType,
-                    EndingDate,
-                    category,
-                    payment_source,
-                    createdAt: new Date(),
-                });
-                return bookedData;
+                const { txnid, status, StartingDate, EndingDate, vendorId } = bookingData;
+                console.log(bookingData, 'liston');
+                // Find bookings based on txnid
+                const bookings = yield bookedEvent_1.bookedModel.find({ txnId: txnid });
+                if (bookings.length > 1) {
+                    const [firstBooking, ...duplicateBookings] = bookings;
+                    yield bookedEvent_1.bookedModel.deleteMany({ _id: { $in: duplicateBookings.map(b => b._id) } });
+                    console.log(`Deleted ${duplicateBookings.length} duplicate bookings for txnid: ${txnid}`);
+                    firstBooking.paymentStatus = 'success';
+                    yield firstBooking.save();
+                    console.log('Booking updated successfully:', firstBooking);
+                    // Update slot availability
+                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
+                    return firstBooking;
+                }
+                else if (bookings.length === 1) {
+                    const booking = bookings[0];
+                    booking.paymentStatus = 'success';
+                    yield booking.save();
+                    console.log('Booking updated successfully:', booking);
+                    // Update slot availability
+                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
+                    return booking;
+                }
+                else {
+                    // If no bookings are found, create a new one
+                    const newBooking = yield bookedEvent_1.bookedModel.create(Object.assign(Object.assign({ txnId: txnid, paymentStatus: status }, bookingData), { createdAt: new Date() }));
+                    console.log('New booking created:', newBooking);
+                    // Update slot availability
+                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
+                    return newBooking;
+                }
             }
             catch (error) {
-                console.error(error);
+                console.error('Error updating booking:', error);
                 return null;
+            }
+        });
+    }
+    updateSlotAvailability(vendorId, StartingDate, EndingDate) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Akil');
+                yield slotModel_1.Slot.updateMany({
+                    vendorId,
+                    isAvailable: true,
+                    $or: [
+                        { date: { $gte: StartingDate, $lte: EndingDate } },
+                        { date: { $gte: EndingDate, $lte: StartingDate } }
+                    ]
+                }, {
+                    $set: { isAvailable: false }, // Update isAvailable to false
+                });
+                console.log(`Slot availability updated for vendor: ${vendorId} from ${StartingDate} to ${EndingDate}`);
+            }
+            catch (error) {
+                console.error('Error updating slot availability:', error);
             }
         });
     }
@@ -349,7 +383,7 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const results = yield bookedEvent_1.bookedModel
-                    .find({ userId: userId })
+                    .find({ userId: userId, paymentStatus: "success" })
                     .populate('dishesId')
                     .populate('userId')
                     .populate('vendorId')
@@ -459,8 +493,37 @@ class UserRepository {
             today.setHours(0, 0, 0, 0);
             return yield slotModel_1.Slot.find({
                 vendorId,
+                isAvailable: true,
                 date: { $gte: today },
             }).exec();
+        });
+    }
+    saveBooking(bookingData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('sanooj');
+                const newBooking = new bookedEvent_1.bookedModel({
+                    vendorId: bookingData.productinfo,
+                    userId: bookingData.udf1,
+                    totalAmount: bookingData.amount,
+                    paymentType: "online",
+                    paymentStatus: bookingData.paymentStatus,
+                    txnId: bookingData.txnid || null,
+                    StartingDate: bookingData.udf4,
+                    EndingDate: bookingData.udf7,
+                    eventType: bookingData.udf6,
+                    category: bookingData.udf5,
+                    occupancy: bookingData.occupancy,
+                    dishesId: bookingData.udf3 || null,
+                    auditoriumId: bookingData.udf2 || null
+                });
+                const savedBooking = yield newBooking.save();
+                return savedBooking;
+            }
+            catch (error) {
+                console.error('Error saving booking:', error);
+                throw new Error('Error saving booking');
+            }
         });
     }
 }

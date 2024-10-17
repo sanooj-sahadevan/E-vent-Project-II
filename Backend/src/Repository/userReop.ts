@@ -10,7 +10,7 @@ import { VendorModel } from "../models/vendorModel";
 import { IUserRepository } from "../interfaces/repository/userRepository";
 import { messageModel } from "../models/messageModal";
 import { Reviews } from "../models/reviews";
-import {  NotificationModel } from "../models/notificationModel";
+import { NotificationModel } from "../models/notificationModel";
 import { ISlot } from "../interfaces/slot";
 import { Slot } from '../models/slotModel';
 
@@ -281,48 +281,60 @@ export class UserRepository implements IUserRepository {
   }
 
 
-  async createBookedTrip(bookingData: any) {
+
+
+
+  async updateBookingStatus(bookingData: any) {
     try {
-      console.log('save karo');
+      const { txnid, status, StartingDate, EndingDate, vendorId } = bookingData;
+      console.log(bookingData, 'liston');
 
-      const {
-        vendorId,
-        txnid,
-        status,
-        amount,
-        userId,
-        auditoriumId,
-        dishesId,
-        StartingDate,
-        eventType,
-        EndingDate,
-        category,
-        payment_source
-      } = bookingData;
-      console.log(bookingData);
 
-      const bookedData = await bookedModel.create({
-        vendorId,
-        txnId: txnid,
-        paymentStatus: status,
-        totalAmount: amount,
-        userId,
-        auditoriumId,
-        dishesId,
-        StartingDate,
-        eventType,
-        EndingDate,
-        category,
-        payment_source,
-        createdAt: new Date(),
-      });
+      // Find bookings based on txnid
+      const bookings = await bookedModel.find({ txnId: txnid });
 
-      return bookedData;
+      if (bookings.length > 1) {
+        const [firstBooking, ...duplicateBookings] = bookings;
+        await bookedModel.deleteMany({ _id: { $in: duplicateBookings.map(b => b._id) } });
+        console.log(`Deleted ${duplicateBookings.length} duplicate bookings for txnid: ${txnid}`);
+
+        firstBooking.paymentStatus = 'success';
+        await firstBooking.save();
+        console.log('Booking updated successfully:', firstBooking);
+        return firstBooking;
+      } else if (bookings.length === 1) {
+        const booking = bookings[0];
+        booking.paymentStatus = 'success';
+        await booking.save();
+        console.log('Booking updated successfully:', booking);
+        return booking;
+      } else {
+        const newBooking = await bookedModel.create({
+          txnId: txnid,
+          paymentStatus: status,
+          ...bookingData,
+          createdAt: new Date(),
+        });
+        console.log('New booking created:', newBooking);
+        return newBooking;
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error updating booking:', error);
       return null;
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
 
   async savechatDB(chat: string) {
     try {
@@ -342,7 +354,7 @@ export class UserRepository implements IUserRepository {
   async findDetailsByUserId(userId: string) {
     try {
       const results = await bookedModel
-        .find({ userId: userId })
+        .find({ userId: userId, paymentStatus: "success" })
         .populate('dishesId')
         .populate('userId')
         .populate('vendorId')
@@ -459,12 +471,42 @@ export class UserRepository implements IUserRepository {
     today.setHours(0, 0, 0, 0);
     return await Slot.find({
       vendorId,
+      isAvailable: true,
       date: { $gte: today },
     }).exec();
   }
 
-}
 
+
+  async saveBooking(bookingData: any): Promise<any> {
+    try {
+      console.log('sanooj');
+      const newBooking = new bookedModel({
+        vendorId: bookingData.productinfo,
+        userId: bookingData.udf1,
+        totalAmount: bookingData.amount,
+        paymentType: "online",
+        paymentStatus: bookingData.paymentStatus,
+        txnId: bookingData.txnid || null,
+        StartingDate: bookingData.udf4,
+        EndingDate: bookingData.udf7,
+        eventType: bookingData.udf6,
+        category: bookingData.udf5,
+        occupancy: bookingData.occupancy,
+        dishesId: bookingData.udf3 || null,
+        auditoriumId: bookingData.udf2 || null
+      });
+
+      const savedBooking = await newBooking.save();
+      return savedBooking;
+    } catch (error) {
+      console.error('Error saving booking:', error);
+      throw new Error('Error saving booking');
+    }
+  }
+
+
+}
 
 
 

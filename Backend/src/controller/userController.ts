@@ -204,8 +204,11 @@ export class UserController {
 
   async payment(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log('23232');
+      
       const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6, udf7 } = req.body;
       if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6 || !udf7) {
+        console.log('poi');
         return res.status(400).send("Mandatory fields missing");
       }
 
@@ -219,7 +222,6 @@ export class UserController {
       next(error);
     }
   }
-
 
 
 
@@ -270,18 +272,17 @@ export class UserController {
     try {
       const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, udf6, udf7 } = req.body;
       console.log('req.body', req.body);
-
+  
       const userId = udf1;
       const auditoriumId = udf2;
       const dishesId = udf3;
       const StartingDate = udf4;
       const category = udf5;
-      const vendorId = productinfo
+      const vendorId = productinfo;
       const eventType = udf6;
-      const EndingDate = udf7
-
-      if (status === "success") {
-        const bookedTripId = await this.userService.fetchbookingData({
+      const EndingDate = udf7;
+  
+        const updatedBooking = await this.userService.updateBookingStatus({
           txnid,
           email,
           vendorId,
@@ -295,19 +296,21 @@ export class UserController {
           eventType,
           EndingDate
         });
-        console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, StartingDate, category, eventType, EndingDate });
-        if (bookedTripId) {
-          res.status(HttpStatus.OK).json({ success: true, bookedTripId: bookedTripId._id });
+        console.log('Booking Updated:', updatedBooking);
+  
+        if (updatedBooking) {
+          res.status(HttpStatus.OK).json({ success: true, updatedBookingId: updatedBooking._id });
         } else {
           res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Booking update failed" });
         }
-      } else {
-        res.status(HttpStatus.BAD_REQUEST).json({ success: false, message: "Booking failed" });
-      }
+    
     } catch (error) {
       next(error);
     }
   }
+  
+
+
 
 
 

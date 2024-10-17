@@ -224,8 +224,10 @@ class UserController {
     payment(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log('23232');
                 const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6, udf7 } = req.body;
                 if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6 || !udf7) {
+                    console.log('poi');
                     return res.status(400).send("Mandatory fields missing");
                 }
                 const hash = yield this.userService.generatePaymentHash({
@@ -289,31 +291,26 @@ class UserController {
                 const vendorId = productinfo;
                 const eventType = udf6;
                 const EndingDate = udf7;
-                if (status === "success") {
-                    const bookedTripId = yield this.userService.fetchbookingData({
-                        txnid,
-                        email,
-                        vendorId,
-                        status,
-                        amount,
-                        userId,
-                        auditoriumId,
-                        dishesId,
-                        StartingDate,
-                        category,
-                        eventType,
-                        EndingDate
-                    });
-                    console.log('Booking Data:', { txnid, email, vendorId, status, amount, userId, auditoriumId, dishesId, StartingDate, category, eventType, EndingDate });
-                    if (bookedTripId) {
-                        res.status(httpStatus_1.HttpStatus.OK).json({ success: true, bookedTripId: bookedTripId._id });
-                    }
-                    else {
-                        res.status(httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Booking update failed" });
-                    }
+                const updatedBooking = yield this.userService.updateBookingStatus({
+                    txnid,
+                    email,
+                    vendorId,
+                    status,
+                    amount,
+                    userId,
+                    auditoriumId,
+                    dishesId,
+                    StartingDate,
+                    category,
+                    eventType,
+                    EndingDate
+                });
+                console.log('Booking Updated:', updatedBooking);
+                if (updatedBooking) {
+                    res.status(httpStatus_1.HttpStatus.OK).json({ success: true, updatedBookingId: updatedBooking._id });
                 }
                 else {
-                    res.status(httpStatus_1.HttpStatus.BAD_REQUEST).json({ success: false, message: "Booking failed" });
+                    res.status(httpStatus_1.HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Booking update failed" });
                 }
             }
             catch (error) {

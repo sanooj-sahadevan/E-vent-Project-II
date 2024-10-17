@@ -170,6 +170,7 @@ class VendorRepository {
     createDishes(dishesData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("Dishes Data: ", dishesData);
                 const dish = new dishesModel_1.Dishes({
                     vendorId: dishesData.vendorId,
                     dishesName: dishesData.data.dishesName,
@@ -182,11 +183,9 @@ class VendorRepository {
                     images: dishesData.images,
                 });
                 const savedDish = yield dish.save();
+                yield savedDish.populate("vendorId");
                 console.log("Saved Dish: ", savedDish);
-                return {
-                    savedDish,
-                    vendorId: dishesData.vendorId,
-                };
+                return savedDish;
             }
             catch (error) {
                 console.error("Error saving dish: ", error);
@@ -209,11 +208,9 @@ class VendorRepository {
                     capacity: auditoriumData.data.capacity,
                 });
                 const savedAuditorium = yield auditorium.save();
+                yield savedAuditorium.populate("vendorId");
                 console.log("Saved Auditorium: ", savedAuditorium);
-                return {
-                    savedAuditorium,
-                    vendorId: auditoriumData.vendorId,
-                };
+                return savedAuditorium;
             }
             catch (error) {
                 console.error("Error saving auditorium: ", error);
