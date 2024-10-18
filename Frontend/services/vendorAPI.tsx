@@ -391,3 +391,25 @@ export const getSlotsByWorkerAPI = async (vendorId: string) => {
     throw new Error("Failed to fetch slots by worker");
   }
 }
+
+export const savePhotoUrlsToDB = async (photoUrls: string[], vendorId: string) => {
+  try {
+    console.log('hyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
+
+    const response = await axios.post(`${SERVER_URL_vendor}/serviceImage/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: {
+        photoUrls,
+        vendorId,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error while saving photo URLs and vendorId to DB:", error);
+    throw error;
+  }
+};

@@ -287,11 +287,8 @@ export class UserRepository implements IUserRepository {
   async updateBookingStatus(bookingData: any) {
     try {
       const { txnid, status, StartingDate, EndingDate, vendorId } = bookingData;
-      console.log(bookingData, 'liston');
-
-
-      // Find bookings based on txnid
       const bookings = await bookedModel.find({ txnId: txnid });
+      console.log(bookings, 'liston');
 
       if (bookings.length > 1) {
         const [firstBooking, ...duplicateBookings] = bookings;
@@ -301,12 +298,16 @@ export class UserRepository implements IUserRepository {
         firstBooking.paymentStatus = 'success';
         await firstBooking.save();
         console.log('Booking updated successfully:', firstBooking);
+
+        await this.updateSlotAvailability(firstBooking.StartingDate, firstBooking.EndingDate, vendorId);
         return firstBooking;
       } else if (bookings.length === 1) {
         const booking = bookings[0];
         booking.paymentStatus = 'success';
         await booking.save();
         console.log('Booking updated successfully:', booking);
+
+        await this.updateSlotAvailability(booking.StartingDate, booking.EndingDate, vendorId);
         return booking;
       } else {
         const newBooking = await bookedModel.create({
@@ -316,6 +317,8 @@ export class UserRepository implements IUserRepository {
           createdAt: new Date(),
         });
         console.log('New booking created:', newBooking);
+
+        await this.updateSlotAvailability(newBooking.StartingDate, newBooking.EndingDate, vendorId);
         return newBooking;
       }
     } catch (error) {
@@ -324,11 +327,39 @@ export class UserRepository implements IUserRepository {
     }
   }
 
+  
 
-
-
-
-
+  async updateSlotAvailability(startingDate: Date, endingDate: Date, vendorId: string) {
+    try {
+      // Convert Date objects to timestamps for comparison
+      const startTimestamp = startingDate.getTime();
+      const endTimestamp = endingDate.getTime();
+  
+      const availableSlots = await Slot.find({
+        vendorId: vendorId,
+        date: {
+          $gte: new Date(Math.min(startTimestamp, endTimestamp)), // Use the earlier date
+          $lte: new Date(Math.max(startTimestamp, endTimestamp))  // Use the later date
+        },
+        isAvailable: true,
+      });
+  
+      if (availableSlots.length > 0) {
+        await Slot.updateMany(
+          {
+            _id: { $in: availableSlots.map(slot => slot._id) },
+          },
+          { isAvailable: false }
+        );
+        console.log(`Updated ${availableSlots.length} slots to unavailable.`);
+      } else {
+        console.log('No available slots found for the given dates.');
+      }
+    } catch (error) {
+      console.error('Error updating slot availability:', error);
+    }
+  }
+  
 
 
 
@@ -504,6 +535,11 @@ export class UserRepository implements IUserRepository {
       throw new Error('Error saving booking');
     }
   }
+
+
+
+
+  
 
 
 }

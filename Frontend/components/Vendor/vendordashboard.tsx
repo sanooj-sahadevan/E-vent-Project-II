@@ -1,15 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaEdit, FaPlus, FaTrashAlt } from 'react-icons/fa';
-import { fetchDetailsVendor, FetchDishes, FetchAuditorium, deleteDish, deleteAuditorium, fetchReviews, approveReviewAPI, rejectReviewAPI } from '@/services/vendorAPI'; // Imported API functions
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import {
+    fetchDetailsVendor, FetchDishes, FetchAuditorium, deleteDish, deleteAuditorium,
+    fetchReviews, approveReviewAPI, rejectReviewAPI, getPresignedUrl,savePhotoUrlsToDB
+} from '@/services/vendorAPI';
 import 'react-toastify/dist/ReactToastify.css';
 import { Plus } from 'lucide-react';
 
 interface Review {
-    _id: string; // Added _id for review identification
+    _id: string;
     userId: any;
     stars: number;
     username: string;
@@ -28,15 +30,15 @@ interface VendorData {
 }
 
 interface FoodItem {
-    _id: string;  // Include _id to identify items for delete
+    _id: string;
     images: string | undefined;
     dishesName: string | undefined;
     description: string;
-    isDeleted?: boolean; // Add soft delete flag
+    isDeleted?: boolean;
 }
 
 interface Auditorium {
-    _id: string;  // Include _id for delete
+    _id: string;
     auditoriumName: string | undefined;
     description: string | undefined;
     images: string;
@@ -54,6 +56,8 @@ const Home: React.FC = () => {
     const [foodItems, setFoodItems] = useState<FoodItem[]>([]);
     const [auditoriums, setAuditoriums] = useState<Auditorium[]>([]);
     const [dishError, setDishError] = useState<string | null>(null);
+    const [photo, setPhoto] = useState<File | null>(null);
+    const [photoUrls, setPhotoUrls] = useState<string[]>([]);
 
 
 
@@ -188,6 +192,69 @@ const Home: React.FC = () => {
     };
 
 
+    const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const filesArray = Array.from(e.target.files);
+            const uploadedUrls: string[] = [];
+    
+            const storedVendor = localStorage.getItem("vendor");
+            let vendorId = '';
+    
+            if (storedVendor) {
+                const parsedVendor = JSON.parse(storedVendor);
+                vendorId = parsedVendor._id;
+                console.log(vendorId,'vendoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiid');
+            }    
+            if (!vendorId) {
+                console.error("No vendorId found in localStorage.");
+                return;
+            }
+    
+            for (const file of filesArray) {
+                try {
+                    const data = await getPresignedUrl(file.name, file.type);
+    
+                    if (data.url) {
+                        const uploadResult = await fetch(data.url, {
+                            method: "PUT",
+                            body: file,
+                            headers: {
+                                "Content-Type": file.type,
+                            },
+                        });
+    
+                        if (uploadResult.ok) {
+                            const s3Url = data.url.split('?')[0];
+                            uploadedUrls.push(s3Url);
+                            console.log("Image uploaded successfully:", s3Url);
+                        } else {
+                            console.error("Error uploading image to S3");
+                        }
+                    } else {
+                        console.error("Error fetching pre-signed URL");
+                    }
+                } catch (error) {
+                    console.error("Error during file upload:", error);
+                }
+            }
+    
+            setPhotoUrls(uploadedUrls);
+    console.log(uploadedUrls,vendorId,'okokokokokkkkkkkkkkkkk');
+    
+            try {
+                const response = await savePhotoUrlsToDB(uploadedUrls, vendorId);
+                console.log(response);
+                
+            } catch (error) {
+                console.error("Error during saving to DB:", error);
+            }
+        }
+    };
+  
+
+   
+
+
 
 
     if (loading) return <p>Loading...</p>;
@@ -254,6 +321,21 @@ const Home: React.FC = () => {
                     >
                         Edit Profile
                     </button>
+                    <button
+                        className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
+                        onClick={() => document.getElementById('photoInput')?.click()}
+                    >
+                        Upload Photos
+                    </button>
+                    <input
+                        type="file"
+                        id="photoInput"
+                        accept="image/*"
+                        multiple  // Allows multiple image selection
+                        style={{ display: 'none' }}
+                        onChange={handlePhotoChange}
+                    />
+
 
                 </div>
             </div>
@@ -268,14 +350,8 @@ const Home: React.FC = () => {
                 <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
                     {dishError ? (
                         <p className="text-red-600 text-center">{dishError}</p>
-
-
-
-
-
                     ) : foodItems.length
                         > 0 ? (
-
                         foodItems.map((food) => (
                             <div key={food._id} className="flex items-center justify-between border-b border-gray-200 py-4">
                                 <div className="flex items-center">
@@ -349,7 +425,7 @@ const Home: React.FC = () => {
                 <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
                     <span className="flex items-center"><span className="mr-2">⭐</span> Reviews</span>
                 </h2>
-                <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
+                {/* <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
                     {reviews?.map((review) => (
                         <div key={review._id} className="flex items-center justify-between border-b border-gray-200 py-4">
                             <div>
@@ -384,7 +460,34 @@ const Home: React.FC = () => {
                         </div>
                     ))}
 
+                </div> */}
+
+
+                <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
+                    {reviews?.length ? (
+                        reviews.map((review) => (
+                            <div key={review._id} className="flex items-center justify-between border-b border-gray-200 py-4">
+                                <div>
+                                    <h3 className="font-semibold">{review.username}</h3>
+                                    <p className="text-gray-500 text-sm">{review.reviews}</p>
+                                    <span className="text-yellow-500">{'★'.repeat(review.stars)}</span>
+                                </div>
+                                <div>
+                                    <button onClick={() => rejectReview(review._id)} className="text-red-500">
+                                        Reject
+                                    </button>
+                                    <button onClick={() => approveReview(review._id)} className="text-green-500 ml-2">
+                                        Approve
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No reviews yet.</p>
+                    )}
                 </div>
+
+
             </div>
         </div>
     );

@@ -18,6 +18,7 @@ export interface Vendor {
     vendorId?: string;
     rating: number;
     reviewsID: mongoose.Schema.Types.ObjectId | null;
+    serviceImages:string[];
 
 
 }

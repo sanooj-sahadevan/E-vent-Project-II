@@ -30,6 +30,7 @@ export class VendorController {
             state: "",
             description: "", rating: 0,
             reviewsID: null,
+            serviceImages: []
           });
 
           await sendEmail(email, otp);
@@ -166,7 +167,7 @@ export class VendorController {
       if (!vendorId) {
         return res.status(HttpStatus.BAD_REQUEST).json({ error: "Vendor ID is required" });
       }
-  
+
       await this.vendorService.uploadDishes(vendorId, body, body.image);
       return res.status(HttpStatus.OK).json("Dishes added successfully");
     } catch (error) {
@@ -174,7 +175,7 @@ export class VendorController {
       next(error);
     }
   }
-  
+
 
   async addAuditorium(req: Request & { vendorId?: string }, res: Response, next: NextFunction) {
     try {
@@ -397,4 +398,28 @@ export class VendorController {
 
 
 
+
+
+  async uploadVendorImages(req: Request, res: Response) {
+    // Log the full request body
+    console.log(req.body, 'Received in Controller');
+
+    const { vendorId, photoUrls } = req.body.body
+
+
+    try {
+      console.log({ vendorId, photoUrls })
+      const updatedVendor = await this.vendorService.saveVendorServiceImages(vendorId, photoUrls);
+      return res.status(200).json({ message: "Service images saved successfully", vendor: updatedVendor });
+    } catch (error) {
+      return res.status(500).json({ message: `Error saving service images: ${error}` });
+    }
+  }
+
+
+
+
 }
+
+
+

@@ -27,10 +27,10 @@ const AddAuditorium: React.FC = () => {
     const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            setPhoto(file); // Save the file object
+            setPhoto(file); 
 
             try {
-                const data = await getPresignedUrl(file.name, file.type); // Ensure getPresignedUrl is defined and returns valid URL
+                const data = await getPresignedUrl(file.name, file.type); 
 
                 if (data.url) {
                     const uploadResult = await fetch(data.url, {

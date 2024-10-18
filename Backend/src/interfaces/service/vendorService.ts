@@ -55,6 +55,7 @@ export interface IVendorService {
         chatIds: string[];
         vendorId: string;
     }): Promise<any>
-    
+
     getSlotsByWorkerId(vendorId: string): Promise<ISlot[]>
+    saveVendorServiceImages(vendorId: string, photoUrls: string[]): Promise<void>
 }

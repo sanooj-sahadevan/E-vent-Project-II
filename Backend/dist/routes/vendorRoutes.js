@@ -36,4 +36,5 @@ router.get('/vendorBookingDetils/:vendorId', vendorController.vendorBookingDetil
 router.get('/unread-count', vendorJWT_1.verifyvendor, vendorController.getUnreadMessagesCount.bind(vendorController));
 router.post("/create-slot/:vendorId", vendorController.createSlotController.bind(vendorController));
 router.get("/slots/:vendorId", vendorController.getSlotsByWorkerController.bind(vendorController));
+router.post("/serviceImage", vendorController.uploadVendorImages.bind(vendorController));
 exports.default = router;

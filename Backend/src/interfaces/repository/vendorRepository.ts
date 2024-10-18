@@ -33,4 +33,5 @@ export interface IVendorRepository {
       
       notifyDishAdded(vendorId: string, dishId: mongoose.Types.ObjectId, dishName: string): Promise<void>
       notifyAuditoriumAdded(vendorId: string, auditoriumId: mongoose.Types.ObjectId, auditoriumName: string): Promise<void>
-}
+      updateVendorServiceImages  (vendorId: string, photoUrls: string[]): Promise<void>
+    }

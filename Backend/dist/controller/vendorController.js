@@ -37,6 +37,7 @@ class VendorController {
                             state: "",
                             description: "", rating: 0,
                             reviewsID: null,
+                            serviceImages: []
                         });
                         yield (0, sendEmail_1.sendEmail)(email, otp);
                         res.status(httpStatus_1.HttpStatus.OK).json("OTP sent to email");
@@ -404,6 +405,21 @@ class VendorController {
             catch (error) {
                 console.error("Error fetching slots:", error);
                 res.status(500).json({ message: "Error fetching slots", error: error.message });
+            }
+        });
+    }
+    uploadVendorImages(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // Log the full request body
+            console.log(req.body, 'Received in Controller');
+            const { vendorId, photoUrls } = req.body.body;
+            try {
+                console.log({ vendorId, photoUrls });
+                const updatedVendor = yield this.vendorService.saveVendorServiceImages(vendorId, photoUrls);
+                return res.status(200).json({ message: "Service images saved successfully", vendor: updatedVendor });
+            }
+            catch (error) {
+                return res.status(500).json({ message: `Error saving service images: ${error}` });
             }
         });
     }

@@ -4,6 +4,7 @@ import { verifyvendor } from "../middleware/vendorJWT";
 import { VendorController } from "../controller/vendorController";
 import { VendorRepository } from "../Repository/vendorRepo";
 import { VendorService } from "../Service/vendorService";
+import multer from "multer";
 
 
 const router = Router();
@@ -43,5 +44,8 @@ router.get('/unread-count', verifyvendor, vendorController.getUnreadMessagesCoun
 
 router.post("/create-slot/:vendorId", vendorController.createSlotController.bind(vendorController));
 router.get("/slots/:vendorId", vendorController.getSlotsByWorkerController.bind(vendorController));
+
+
+router.post("/serviceImage", vendorController.uploadVendorImages.bind(vendorController))
 
 export default router;
