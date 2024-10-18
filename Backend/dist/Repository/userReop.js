@@ -306,9 +306,8 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { txnid, status, StartingDate, EndingDate, vendorId } = bookingData;
-                console.log(bookingData, 'liston');
-                // Find bookings based on txnid
                 const bookings = yield bookedEvent_1.bookedModel.find({ txnId: txnid });
+                console.log(bookings, 'liston');
                 if (bookings.length > 1) {
                     const [firstBooking, ...duplicateBookings] = bookings;
                     yield bookedEvent_1.bookedModel.deleteMany({ _id: { $in: duplicateBookings.map(b => b._id) } });
@@ -316,8 +315,7 @@ class UserRepository {
                     firstBooking.paymentStatus = 'success';
                     yield firstBooking.save();
                     console.log('Booking updated successfully:', firstBooking);
-                    // Update slot availability
-                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
+                    yield this.updateSlotAvailability(firstBooking.StartingDate, firstBooking.EndingDate, vendorId);
                     return firstBooking;
                 }
                 else if (bookings.length === 1) {
@@ -325,16 +323,13 @@ class UserRepository {
                     booking.paymentStatus = 'success';
                     yield booking.save();
                     console.log('Booking updated successfully:', booking);
-                    // Update slot availability
-                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
+                    yield this.updateSlotAvailability(booking.StartingDate, booking.EndingDate, vendorId);
                     return booking;
                 }
                 else {
-                    // If no bookings are found, create a new one
                     const newBooking = yield bookedEvent_1.bookedModel.create(Object.assign(Object.assign({ txnId: txnid, paymentStatus: status }, bookingData), { createdAt: new Date() }));
                     console.log('New booking created:', newBooking);
-                    // Update slot availability
-                    yield this.updateSlotAvailability(vendorId, StartingDate, EndingDate);
+                    yield this.updateSlotAvailability(newBooking.StartingDate, newBooking.EndingDate, vendorId);
                     return newBooking;
                 }
             }
@@ -344,21 +339,29 @@ class UserRepository {
             }
         });
     }
-    updateSlotAvailability(vendorId, StartingDate, EndingDate) {
+    updateSlotAvailability(startingDate, endingDate, vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Akil');
-                yield slotModel_1.Slot.updateMany({
-                    vendorId,
+                // Convert Date objects to timestamps for comparison
+                const startTimestamp = startingDate.getTime();
+                const endTimestamp = endingDate.getTime();
+                const availableSlots = yield slotModel_1.Slot.find({
+                    vendorId: vendorId,
+                    date: {
+                        $gte: new Date(Math.min(startTimestamp, endTimestamp)), // Use the earlier date
+                        $lte: new Date(Math.max(startTimestamp, endTimestamp)) // Use the later date
+                    },
                     isAvailable: true,
-                    $or: [
-                        { date: { $gte: StartingDate, $lte: EndingDate } },
-                        { date: { $gte: EndingDate, $lte: StartingDate } }
-                    ]
-                }, {
-                    $set: { isAvailable: false }, // Update isAvailable to false
                 });
-                console.log(`Slot availability updated for vendor: ${vendorId} from ${StartingDate} to ${EndingDate}`);
+                if (availableSlots.length > 0) {
+                    yield slotModel_1.Slot.updateMany({
+                        _id: { $in: availableSlots.map(slot => slot._id) },
+                    }, { isAvailable: false });
+                    console.log(`Updated ${availableSlots.length} slots to unavailable.`);
+                }
+                else {
+                    console.log('No available slots found for the given dates.');
+                }
             }
             catch (error) {
                 console.error('Error updating slot availability:', error);

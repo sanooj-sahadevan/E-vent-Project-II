@@ -18,6 +18,7 @@ const VendorSchema: Schema<Vendor> = new Schema({
   rating: { type: Number, default: 0 },
   state: { type: String, default: '' },
   isBlocked: { type: Boolean, default: false, },
+  serviceImages: { type: [String], default: [] },  
 });
 
 export const VendorModel = mongoose.model<Vendor>("Vendor", VendorSchema)

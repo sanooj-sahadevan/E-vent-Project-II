@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import { createServer } from 'http';
-import { Server as serverSocket} from 'socket.io';
+import { Server as serverSocket } from 'socket.io';
 import chatRoutes from './routes/chatRoutes';
 import { socketHandler } from "./utils/socket/chat";
 import { errorHandler } from "./middleware/errorHandling";
@@ -47,7 +47,7 @@ app.use(cookieParser());
 app.use(
   morgan(morganFormat, {
     stream: {
-      write: (message:string) => {
+      write: (message: string) => {
         const logObject = {
           method: message.split(" ")[0],
           url: message.split(" ")[1],

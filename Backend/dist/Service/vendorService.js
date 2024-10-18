@@ -365,5 +365,17 @@ class VendorService {
             }
         });
     }
+    saveVendorServiceImages(vendorId, photoUrls) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Vendor ID and Photo URLs in Service:', vendorId, photoUrls); // Debugging statement
+                const updatedVendor = yield this.vendorRepository.updateVendorServiceImages(vendorId, photoUrls);
+                return updatedVendor; // Note: You might want to change the return type to Vendor or whatever is appropriate
+            }
+            catch (error) {
+                throw new Error(`Failed to save service images: ${error}`); // Improved error handling
+            }
+        });
+    }
 }
 exports.VendorService = VendorService;

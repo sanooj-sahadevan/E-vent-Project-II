@@ -369,4 +369,19 @@ export class VendorService implements IVendorService {
     }
   }
 
+
+
+  async saveVendorServiceImages(vendorId: string, photoUrls: string[]): Promise<void> {
+    try {
+      console.log('Vendor ID and Photo URLs in Service:', vendorId, photoUrls); // Debugging statement
+  
+      const updatedVendor = await this.vendorRepository.updateVendorServiceImages(vendorId, photoUrls);
+      return updatedVendor; // Note: You might want to change the return type to Vendor or whatever is appropriate
+    } catch (error) {
+      throw new Error(`Failed to save service images: ${error}`); // Improved error handling
+    }
+  }
 }
+
+
+

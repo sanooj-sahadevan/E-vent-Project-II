@@ -419,5 +419,23 @@ class VendorRepository {
             return yield userModel_1.default.find();
         });
     }
+    updateVendorServiceImages(vendorId, photoUrls) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                console.log('Vendor ID and Photo URLs in Repository:', vendorId, photoUrls); // Debugging statement
+                const vendor = yield vendorModel_1.VendorModel.findById(vendorId);
+                if (!vendor) {
+                    throw new Error("Vendor not found");
+                }
+                vendor.serviceImages = [...vendor.serviceImages, ...photoUrls]; // Add new images
+                const updatedVendor = yield vendor.save();
+                console.log('Updated Vendor:', updatedVendor); // Log updated vendor
+                return updatedVendor;
+            }
+            catch (error) {
+                throw new Error(`Error updating service images: ${error}`); // Improved error handling
+            }
+        });
+    }
 }
 exports.VendorRepository = VendorRepository;

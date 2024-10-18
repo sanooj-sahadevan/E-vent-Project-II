@@ -21,6 +21,7 @@ interface Review {
 }
 
 interface Vendor {
+    serviceImages: string[];
     rating: number;
     profileImage?: string;
     vendorname: string;
@@ -109,6 +110,7 @@ const VendorsPage: React.FC = () => {
 
         fetchReviews();
     }, [vendorId, userId]);
+    console.log(vendorData, 'html');
 
     const handleCheckAvailability = () => {
         setIsModalOpen(true); // Open the modal
@@ -249,21 +251,26 @@ const VendorsPage: React.FC = () => {
             {/* Photos */}
             <div className="mt-8">
                 <h2 className="text-xl font-semibold">Photos</h2>
-                {Array.isArray(vendorData.photos) && vendorData.photos.length > 0 ? (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-                        {vendorData.photos.map((photo, index) => (
-                            <img
-                                key={index}
-                                src={photo || "/default-photo.jpg"}
-                                alt={`Vendor Photo ${index + 1}`}
-                                className="object-cover w-full h-40 rounded-md"
-                            />
-                        ))}
+                {Array.isArray(vendorData.serviceImages) && vendorData.serviceImages.length > 0 ? (
+                    <div className="overflow-y-auto max-h-80">
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                            {vendorData.serviceImages.map((photo, index) => (
+                                <img
+                                    key={index}
+                                    src={photo || "/default-photo.jpg"}
+                                    alt={`Vendor Photo ${index + 1}`}
+                                    className="object-cover w-full h-40 rounded-md"
+                                />
+                            ))}
+                        </div>
                     </div>
                 ) : (
-                    <p className="text-center text-gray-500">No photos available.</p>
+                    <p className="text-center text-gray-500">No service images available.</p>
                 )}
             </div>
+
+
+
 
             {/* Reviews */}
             <div className="mb-[70px] mt-[71px] text-center">
@@ -307,8 +314,8 @@ const VendorsPage: React.FC = () => {
                 ) : (
                     <p className="text-center text-gray-500 mt-4">No reviews available.</p>
                 )}
-                 {/* Availability Modal */}
-            <AvailabilityModal open={isModalOpen} onClose={closeModal} vendorId={vendorId!} />
+                {/* Availability Modal */}
+                <AvailabilityModal open={isModalOpen} onClose={closeModal} vendorId={vendorId!} />
             </div>
         </div>
     );
