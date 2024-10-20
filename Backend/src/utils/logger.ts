@@ -46,12 +46,13 @@ const logger = createLogger({
       datePattern: "YYYY-MM-DD",
       zippedArchive: true,
       maxSize: "20m",
-      maxFiles: "7d",
+      maxFiles: "1d",
       format: json()
     }),
     new transports.Console({
       format: consoleLogFormat,
     }),
+    new transports.File({ filename: "app.log" }),
   ],
 });
 
