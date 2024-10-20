@@ -10,7 +10,6 @@ export class AdminController {
     this.adminService = adminService
   }
 
-
   async adminlogin(req: Request,res: Response,next: NextFunction): Promise<void> {
     const { email, password } = req.body;
     try {
@@ -65,6 +64,7 @@ export class AdminController {
       next(error);
     }
   }
+  
 
   async unblockVendorController(
     req: Request,
