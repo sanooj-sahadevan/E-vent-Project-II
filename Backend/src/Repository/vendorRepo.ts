@@ -12,8 +12,6 @@ import { Slot } from "../models/slotModel";
 import { ISlot } from "../interfaces/slot";
 import UserModel from "../models/userModel";
 import { NotificationModel } from "../models/notificationModel";
-import { log } from "console";
-
 
 
 
@@ -46,16 +44,18 @@ export class VendorRepository implements IVendorRepository {
     try {
       return VendorModel.findOneAndUpdate({ email }, update, { new: true });
     } catch (error) {
-      console.error(error);
+      throw new Error('Database query failed');
 
     }
   }
 
-  async findVendorByEmailAndPassword(
-    email: string,
-    password: string
-  ) {
-    return VendorModel.findOne({ email, password });
+  async findVendorByEmailAndPassword(email: string, password: string) {
+    try {
+      return VendorModel.findOne({ email, password });
+    } catch (error) {
+      throw new Error('Database query failed');
+
+    }
   }
 
 
@@ -112,20 +112,33 @@ export class VendorRepository implements IVendorRepository {
 
 
   async findVendorByIdInDb(vendorId: string) {
-    return await VendorModel.findById(vendorId);
+    try {
+      return await VendorModel.findById(vendorId);
+
+    } catch (error) {
+      throw new Error('Database operation failed');
+
+    }
   }
 
   async findAuditoriumByIdInDb(auditoriumId: string) {
 
-    let result = await Auditorium.findById(auditoriumId);
-    return result
+    try {
+      let result = await Auditorium.findById(auditoriumId);
+      return result
+    } catch (error) {
+      throw new Error('Database operation failed');
+
+    }
+
+
   }
 
   async findDishesByIdInDb(dishesId: string) {
     try {
       return await Dishes.findById(dishesId);
     } catch (error) {
-      console.error(error);
+      throw new Error('Database operation failed');
     }
   }
 
@@ -136,19 +149,19 @@ export class VendorRepository implements IVendorRepository {
 
       return result
     } catch (error) {
-      console.error(error);
+      throw new Error('Database operation failed');
 
     }
   }
   async findReviewsVendorIdInDb(vendorId: string) {
     try {
       const result = await Reviews
-        .find({ vendorId: vendorId })
+        .find({ vendorId: vendorId,  })
         .populate('userId')
         .exec();
       return result
     } catch (error) {
-      console.error(error);
+      throw new Error('Database operation failed');
 
     }
   }
@@ -161,15 +174,13 @@ export class VendorRepository implements IVendorRepository {
       const res = await Auditorium.find({ vendorId: vendorId });
       return res
     } catch (error) {
-      console.error(error);
+      throw new Error('Database operation failed');
 
     }
   }
 
   async createDishes(dishesData: any) {
     try {
-      console.log("Dishes Data: ", dishesData);
-  
       const dish = new Dishes({
         vendorId: dishesData.vendorId,
         dishesName: dishesData.data.dishesName,
@@ -181,21 +192,21 @@ export class VendorRepository implements IVendorRepository {
         status: dishesData.data.status,
         images: dishesData.images,
       });
-  
+
       const savedDish = await dish.save();
       await savedDish.populate("vendorId");
-  
+
       console.log("Saved Dish: ", savedDish);
-  
+
       return savedDish;
     } catch (error) {
       console.error("Error saving dish: ", error);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
-  
 
- 
+
+
   async createAuditorium(auditoriumData: any) {
     try {
       const auditorium = new Auditorium({
@@ -212,11 +223,8 @@ export class VendorRepository implements IVendorRepository {
 
       const savedAuditorium = await auditorium.save();
       await savedAuditorium.populate("vendorId");
-
-      console.log("Saved Auditorium: ", savedAuditorium);
-
       return savedAuditorium
-       
+
     } catch (error) {
       console.error("Error saving auditorium: ", error);
       throw error;
@@ -237,7 +245,7 @@ export class VendorRepository implements IVendorRepository {
       return dish;
     } catch (error) {
       console.error(`Error soft-deleting dish: ${error}`);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
 
@@ -257,7 +265,7 @@ export class VendorRepository implements IVendorRepository {
       return auditorium;
     } catch (error) {
       console.error(`Error soft-deleting auditorium: ${error}`);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
 
@@ -276,7 +284,7 @@ export class VendorRepository implements IVendorRepository {
       return review;
     } catch (error) {
       console.error(`Error soft-deleting auditorium: ${error}`);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
   async updatedreviewRepoReject(reviewId: string) {
@@ -293,7 +301,7 @@ export class VendorRepository implements IVendorRepository {
       return review;
     } catch (error) {
       console.error(`Error deleting review: ${error}`);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
 
@@ -323,7 +331,7 @@ export class VendorRepository implements IVendorRepository {
       return chats;
     } catch (error) {
       console.error("Error fetching chats from the database:", error);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
 
@@ -338,38 +346,52 @@ export class VendorRepository implements IVendorRepository {
       return unreadCount;
     } catch (error) {
       console.error("Error fetching unread messages count from the database:", error);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
 
   async findSlotByWorkerAndDate(vendorId: mongoose.Types.ObjectId, date: Date): Promise<any | null> {
-    return Slot.findOne({ vendorId, date }).exec();
+
+    try {
+      return Slot.findOne({ vendorId, date }).exec();
+    } catch (error) {
+      throw new Error('Database operation failed');
+
+    }
   }
 
   async createSlot(slotData: { vendorId: mongoose.Types.ObjectId; date: Date; startDate?: Date; endDate?: Date }): Promise<ISlot> {
-    const slot = new Slot(slotData);
-    return await slot.save();
+
+    try {
+      const slot = new Slot(slotData);
+      return await slot.save();
+    } catch (error) {
+      throw new Error('Database operation failed');
+
+    }
+
   }
 
 
   async getSlotsByWorkerIdFromRepo(vendorId: mongoose.Types.ObjectId): Promise<ISlot[]> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    return Slot.find({
-      vendorId,
-      date: { $gte: today },
-    }).exec();
+      return Slot.find({
+        vendorId,
+        date: { $gte: today },
+      }).exec();
+    } catch (error) {
+      throw new Error('Database operation failed');
+
+    }
   }
 
   async notifyDishAdded(vendorId: string, dishId: mongoose.Types.ObjectId, dishName: string): Promise<void> {
     try {
       const message = `New dish "${dishName}" has been added by Vendor ${vendorId}.`;
-
-      // Retrieve all users
       const users = await this.getAllUsers();
-
-      // Create notifications for all users
       const notificationPromises = users.map(user =>
         this.createNotificationDishes({
           userId: user._id,
@@ -385,7 +407,7 @@ export class VendorRepository implements IVendorRepository {
       console.log(`Notifications sent for dish: ${dishName}`);
     } catch (error) {
       console.error("Error in notifyDishAdded: ", error);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
 
@@ -395,11 +417,7 @@ export class VendorRepository implements IVendorRepository {
   async notifyAuditoriumAdded(vendorId: string, auditoriumId: mongoose.Types.ObjectId, auditoriumName: string): Promise<void> {
     try {
       const message = `New Auditorium "${auditoriumName}" has been added by Vendor ${vendorId}.`;
-
-      // Retrieve all users
       const users = await this.getAllUsers();
-
-      // Create notifications for all users
       const notificationPromises = users.map(user =>
         this.createNotificationAudi({
           userId: user._id,
@@ -415,20 +433,34 @@ export class VendorRepository implements IVendorRepository {
       console.log(`Notifications sent for auditoriumName: ${auditoriumName}`);
     } catch (error) {
       console.error("Error in notifyDishAdded: ", error);
-      throw error;
+      throw new Error('Database operation failed');
     }
   }
+
   async createNotificationAudi(notificationData: { userId: any; vendorId: string; auditoriumId: mongoose.Types.ObjectId; notificationMessage: string; type: string }) {
-    return await NotificationModel.create(notificationData); // Use NotificationModel here
+    try {
+      return await NotificationModel.create(notificationData);
+    } catch (error) {
+      throw new Error('Database operation failed');
+    }
   }
   async createNotificationDishes(notificationData: { userId: any; vendorId: string; dishId: mongoose.Types.ObjectId; notificationMessage: string; type: string }) {
-    return await NotificationModel.create(notificationData); // Use NotificationModel here
+    try {
+      return await NotificationModel.create(notificationData);
+    } catch (error) {
+      throw new Error('Database operation failed');
+
+    }
   }
 
 
-  // Helper function to get all users
   async getAllUsers() {
-    return await UserModel.find();
+    try {
+      return await UserModel.find();
+    } catch (error) {
+      throw new Error('Database operation failed');
+
+    }
   }
 
 
@@ -437,23 +469,20 @@ export class VendorRepository implements IVendorRepository {
 
   async updateVendorServiceImages(vendorId: string, photoUrls: string[]): Promise<any> {
     try {
-      console.log('Vendor ID and Photo URLs in Repository:', vendorId, photoUrls); // Debugging statement
-  
+      console.log('Vendor ID and Photo URLs in Repository:', vendorId, photoUrls);
       const vendor = await VendorModel.findById(vendorId);
       if (!vendor) {
         throw new Error("Vendor not found");
       }
-  
-      vendor.serviceImages = [...vendor.serviceImages, ...photoUrls]; // Add new images
+      vendor.serviceImages = [...vendor.serviceImages, ...photoUrls];
       const updatedVendor = await vendor.save();
-      
-      console.log('Updated Vendor:', updatedVendor); // Log updated vendor
+      console.log('Updated Vendor:', updatedVendor);
       return updatedVendor;
     } catch (error) {
-      throw new Error(`Error updating service images: ${error}`); // Improved error handling
+      throw new Error(`Error updating service images: ${error}`);
     }
   }
-  
+
 
 
 }

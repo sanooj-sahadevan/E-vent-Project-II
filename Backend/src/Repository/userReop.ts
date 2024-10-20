@@ -57,7 +57,7 @@ export class UserRepository implements IUserRepository {
     try {
       return UserModel.findById(userId);
     } catch (error) {
-      console.error(error);
+      throw new Error('Database Error');
 
     }
   }
@@ -92,7 +92,7 @@ export class UserRepository implements IUserRepository {
     try {
       return UserModel.findOneAndUpdate({ email }, update, { new: true });
     } catch (error) {
-      console.error(error);
+      throw new Error('Database Error');
     }
   }
 
@@ -109,7 +109,7 @@ export class UserRepository implements IUserRepository {
       await user.save();
       return user;
     } catch (error) {
-      console.error(error);
+      throw new Error('Database Error');
 
     }
   }
@@ -203,8 +203,7 @@ export class UserRepository implements IUserRepository {
 
       return { review }
     } catch (error) {
-      console.error("Error in repository:", error);
-      throw error;
+      throw new Error('Database Error');
     }
   }
 
@@ -215,8 +214,8 @@ export class UserRepository implements IUserRepository {
       // .populate('userId')
       return { notification: notifications };
     } catch (error) {
-      console.error("Error in repository:", error);
-      throw new Error(`Error fetching notifications from DB: ${error}`);
+      throw new Error('Database Error');
+
     }
   }
 
@@ -226,11 +225,14 @@ export class UserRepository implements IUserRepository {
 
   async findFoodVendorIdInDb(vendorId: string) {
     try {
+
+
       const objectId = new mongoose.Types.ObjectId(vendorId);
-      const result = await Dishes.find({ vendorId: objectId });
+      const result = await Dishes.find({ vendorId: objectId, isDeleted: false });
+
       return result;
     } catch (error) {
-      console.error('Error fetching dishes for vendor:', error);
+      console.error('Error fetching dishes:', error);
       throw new Error(`Error fetching dishes: ${error}`);
     }
   }
@@ -239,10 +241,9 @@ export class UserRepository implements IUserRepository {
     try {
       const objectId = new mongoose.Types.ObjectId(vendorId);
 
-      const result = await Auditorium.find({ vendorId: objectId });
+      const result = await Auditorium.find({ vendorId: objectId, isDeleted: false });
       return result
     } catch (error) {
-      console.error('Error fetching dishes for vendor:', error);
       throw new Error(`Error fetching dishes: ${error}`);
     }
   }
@@ -254,7 +255,7 @@ export class UserRepository implements IUserRepository {
       let result = await Auditorium.findById(auditoriumId);
       return result
     } catch (error) {
-      console.error(error);
+      throw new Error('Database Error');
 
     }
   }
@@ -264,7 +265,7 @@ export class UserRepository implements IUserRepository {
       let result = await Dishes.findById(dishesId);
       return result
     } catch (error) {
-      console.error(error);
+      throw new Error('Database Error');
     }
   }
 
@@ -276,7 +277,7 @@ export class UserRepository implements IUserRepository {
       return bookedData;
     } catch (error) {
       console.error("Error fetching booking details:", error);
-      throw error;
+      throw new Error('Database Error');
     }
   }
 
@@ -323,18 +324,17 @@ export class UserRepository implements IUserRepository {
       }
     } catch (error) {
       console.error('Error updating booking:', error);
-      return null;
+      throw new Error('Database Error');
     }
   }
 
-  
+
 
   async updateSlotAvailability(startingDate: Date, endingDate: Date, vendorId: string) {
     try {
-      // Convert Date objects to timestamps for comparison
       const startTimestamp = startingDate.getTime();
       const endTimestamp = endingDate.getTime();
-  
+
       const availableSlots = await Slot.find({
         vendorId: vendorId,
         date: {
@@ -343,7 +343,7 @@ export class UserRepository implements IUserRepository {
         },
         isAvailable: true,
       });
-  
+
       if (availableSlots.length > 0) {
         await Slot.updateMany(
           {
@@ -356,10 +356,10 @@ export class UserRepository implements IUserRepository {
         console.log('No available slots found for the given dates.');
       }
     } catch (error) {
-      console.error('Error updating slot availability:', error);
+      throw new Error('Database Error');
     }
   }
-  
+
 
 
 
@@ -369,8 +369,6 @@ export class UserRepository implements IUserRepository {
 
   async savechatDB(chat: string) {
     try {
-      console.log('Saving chat to DB');
-
       const newChat = new chatModel({ message: chat });
       console.log('save karo--------------------------');
 
@@ -498,13 +496,18 @@ export class UserRepository implements IUserRepository {
   }
 
   async getSlotsByWorkerIdFromRepo(vendorId: string): Promise<ISlot[]> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return await Slot.find({
-      vendorId,
-      isAvailable: true,
-      date: { $gte: today },
-    }).exec();
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return await Slot.find({
+        vendorId,
+        isAvailable: true,
+        date: { $gte: today },
+      }).exec();
+    } catch (error) {
+      throw error;
+
+    }
   }
 
 
@@ -537,9 +540,18 @@ export class UserRepository implements IUserRepository {
   }
 
 
+  async searchVendorsByName(term: string) {
+    try {
+      return await VendorModel.find({
+        vendorname: { $regex: term, $options: 'i' },
+        isBlocked: false,  
+      }).exec();
+    } catch (error) {
+      throw new Error(`Error fetching vendors: ${error}`);
+    }
+  }
 
 
-  
 
 
 }

@@ -14,10 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorService = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-// import { Vendor } from "../interfaces/vendor";
 const fileUpload_1 = require("../middleware/fileUpload");
 const index_1 = require("../index");
-const mongoose_1 = __importDefault(require("mongoose"));
 class VendorService {
     constructor(vendorRepository) {
         this.vendorRepository = vendorRepository;
@@ -26,7 +24,6 @@ class VendorService {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const existingVendor = yield this.vendorRepository.findVendorByEmail(vendor.email);
-                console.log(existingVendor);
                 if (existingVendor) {
                     if (existingVendor.otpVerified) {
                         throw new Error("User already exists");
@@ -46,26 +43,35 @@ class VendorService {
     }
     verifyAndSaveVendor(email, otp) {
         return __awaiter(this, void 0, void 0, function* () {
-            const vendor = yield this.vendorRepository.findVendorByEmail(email);
-            if (vendor && vendor.otp === otp) {
-                vendor.otp = undefined;
-                vendor.otpVerified = true;
-                yield vendor.save();
-                return vendor;
+            try {
+                const vendor = yield this.vendorRepository.findVendorByEmail(email);
+                if (vendor && vendor.otp === otp) {
+                    vendor.otp = undefined;
+                    vendor.otpVerified = true;
+                    yield vendor.save();
+                    return vendor;
+                }
             }
-            throw new Error("Invalid OTP");
+            catch (error) {
+                throw error;
+            }
         });
     }
     loginVendor(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            const vendor = yield this.vendorRepository.findVendorByEmail(email);
-            if (!vendor) {
-                throw new Error("Invalid Email/Password");
+            try {
+                const vendor = yield this.vendorRepository.findVendorByEmail(email);
+                if (!vendor) {
+                    throw new Error("Invalid Email/Password");
+                }
+                const vendorToken = jsonwebtoken_1.default.sign({ vendorId: vendor._id }, process.env.JWT_SECRET, {
+                    expiresIn: "1h",
+                });
+                return { vendor, vendorToken };
             }
-            const vendorToken = jsonwebtoken_1.default.sign({ vendorId: vendor._id }, process.env.JWT_SECRET, {
-                expiresIn: "1h",
-            });
-            return { vendor, vendorToken };
+            catch (error) {
+                throw new Error('Failed to fetch vendor addresses');
+            }
         });
     }
     vendorAddress() {
@@ -328,30 +334,35 @@ class VendorService {
     }
     createWorkerSlots(vendorId, startDate, endDate) {
         return __awaiter(this, void 0, void 0, function* () {
-            const slots = [];
-            const workerObjectId = new mongoose_1.default.Types.ObjectId(vendorId);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            if (startDate <= today) {
-                throw new Error("Start date must be tomorrow or a future date.");
-            }
-            const currentDate = new Date(startDate);
-            const end = new Date(endDate);
-            while (currentDate <= end) {
-                const existingSlot = yield this.vendorRepository.findSlotByWorkerAndDate(workerObjectId, currentDate);
-                if (existingSlot) {
-                    throw new Error(`Slot already exists for vendor ${vendorId} on ${currentDate.toDateString()}`);
+            try {
+                const slots = [];
+                const workerObjectId = vendorId;
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (startDate <= today) {
+                    throw new Error("Start date must be tomorrow or a future date.");
                 }
-                const slot = yield this.vendorRepository.createSlot({
-                    vendorId: workerObjectId,
-                    date: new Date(currentDate),
-                    startDate: new Date(startDate),
-                    endDate: new Date(endDate),
-                });
-                slots.push(slot);
-                currentDate.setDate(currentDate.getDate() + 1);
+                const currentDate = new Date(startDate);
+                const end = new Date(endDate);
+                while (currentDate <= end) {
+                    const existingSlot = yield this.vendorRepository.findSlotByWorkerAndDate(workerObjectId, currentDate);
+                    if (existingSlot) {
+                        throw new Error(`Slot already exists for vendor ${vendorId} on ${currentDate.toDateString()}`);
+                    }
+                    const slot = yield this.vendorRepository.createSlot({
+                        vendorId: workerObjectId,
+                        date: new Date(currentDate),
+                        startDate: new Date(startDate),
+                        endDate: new Date(endDate),
+                    });
+                    slots.push(slot);
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+                return slots;
             }
-            return slots;
+            catch (error) {
+                throw error;
+            }
         });
     }
     getSlotsByWorkerId(vendorId) {
@@ -368,12 +379,12 @@ class VendorService {
     saveVendorServiceImages(vendorId, photoUrls) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Vendor ID and Photo URLs in Service:', vendorId, photoUrls); // Debugging statement
+                console.log('Vendor ID and Photo URLs in Service:', vendorId, photoUrls);
                 const updatedVendor = yield this.vendorRepository.updateVendorServiceImages(vendorId, photoUrls);
-                return updatedVendor; // Note: You might want to change the return type to Vendor or whatever is appropriate
+                return updatedVendor;
             }
             catch (error) {
-                throw new Error(`Failed to save service images: ${error}`); // Improved error handling
+                throw new Error(`Failed to save service images: ${error}`);
             }
         });
     }

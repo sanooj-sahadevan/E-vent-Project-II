@@ -50,6 +50,8 @@ router.get('/userunread-count', userController.getUnreadMessagesCount.bind(userC
 //review
 router.post('/review', userController.review.bind(userController));
 router.get("/slots/:vendorId", userController.getSlotsByWorkerController.bind(userController));
+router.get('/searchUsers', userController.searchVendors.bind(userController));
+
 
 export default router;
 

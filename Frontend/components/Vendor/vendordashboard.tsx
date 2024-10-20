@@ -9,6 +9,7 @@ import {
 } from '@/services/vendorAPI';
 import 'react-toastify/dist/ReactToastify.css';
 import { Plus } from 'lucide-react';
+import Spinner from '../skeletons/spinner';
 
 interface Review {
     _id: string;
@@ -257,7 +258,14 @@ const Home: React.FC = () => {
 
 
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <Spinner size="xl" color="gray" />
+            </div>
+        );
+    }   
+    
     if (error) return <p className="text-red-600">{error}</p>;
 
     return (

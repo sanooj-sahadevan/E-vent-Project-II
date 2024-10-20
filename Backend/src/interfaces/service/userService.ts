@@ -4,20 +4,14 @@ export interface IUserService {
 
     registerUser(user: any): Promise<any[]>
     loginUser(email: string, password: string): Promise<any[]>
-
     checkEmail(email: string): Promise<any[]>
-
-
     verifyOtpService(email: string, otp: string): Promise<any[]>
     update(email: string, password: string): Promise<any[]>
     reviewService(reviewData: { reviews: string; stars: number; userId: string; vendorId: string }): Promise<any[]>
-
     getAllVendors(): Promise<any[]>
     getAllDishes(vendorId: string): Promise<any[]>
-
     getAllAuditorium(vendorId: string): Promise<any[]>
     editUser(userDetails: any): Promise<any[]>
-
     findVendorById(vendorId: string, userId: string): Promise<any[]>
     findFoodVendorById(vendorId: string): Promise<any[]>
     findAuditoriumVendorById(vendorId: string): Promise<any[]>

@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { saveReview} from '@/services/userApi'; // API for editing vendor
+import { saveReview } from '@/services/userApi'; // API for editing vendor
 
 interface ModalProps {
     isOpen: boolean;
@@ -21,16 +21,34 @@ const ReviewModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, vendorId
     };
 
     const handleSubmit = async () => {
+        const trimmedReview = review.trim(); // Trim white spaces from review
+
+        // Check if review is empty or has more than 50 words
+        const wordCount = trimmedReview.split(/\s+/).length;
+        if (!trimmedReview) {
+            setError('Review cannot be empty.');
+            return;
+        } else if (wordCount > 50) {
+            setError('Review cannot exceed 50 words.');
+            return;
+        }
+
+        // Check if rating is selected
+        if (rating === 0) {
+            setError('Please select a rating.');
+            return;
+        }
+
         const user = localStorage.getItem('user');
         if (user) {
             const userId = JSON.parse(user)._id;
 
             try {
                 // Call the API service to save the review
-              const reviewData =   await saveReview(review, rating, userId, vendorId);
-              console.log(reviewData);
-              
-                onSubmit(review, rating, userId, vendorId); // Call onSubmit after saving the review
+                const reviewData = await saveReview(trimmedReview, rating, userId, vendorId);
+                console.log(reviewData);
+
+                onSubmit(trimmedReview, rating, userId, vendorId); // Call onSubmit after saving the review
                 setReview(''); // Reset review after submission
                 setRating(0); // Reset rating after submission
                 setError(''); // Clear any previous error
@@ -75,7 +93,7 @@ const ReviewModal: React.FC<ModalProps> = ({ isOpen, onClose, onSubmit, vendorId
                 {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error message */}
                 <button
                     onClick={handleSubmit}
-                    className="bg-green-500 text-white p-2 rounded-lg w-full"
+                    className="bg-pink-500 text-white p-2 rounded-lg w-full"
                 >
                     Submit
                 </button>

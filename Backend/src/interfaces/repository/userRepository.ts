@@ -32,5 +32,6 @@ export interface IUserRepository {
     getReviewsByVendorId(vendorId: string): Promise<any[]>
     updateVendorRating(vendorId: string, averageRating: number): Promise<any>
     getSlotsByWorkerIdFromRepo(vendorId: any): Promise<ISlot[]>
-    updateBookingStatus(bookingData: any): Promise<any> 
+    updateBookingStatus(bookingData: any): Promise<any>
+    searchVendorsByName(term: string): Promise<any>
 }

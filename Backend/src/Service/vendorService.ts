@@ -1,12 +1,9 @@
 import jwt from "jsonwebtoken";
-// import { Vendor } from "../interfaces/vendor";
 import { uploadToS3Bucket } from "../middleware/fileUpload";
 import { io } from "../index";
-import { DishDocument } from "../interfaces/dishes";
 import { AuditoriumDocument } from "../models/auditoriumModel";
 import { IVendorRepository } from "../interfaces/repository/vendorRepository";
 import { IVendorService } from "../interfaces/service/vendorService";
-import mongoose from "mongoose";
 import { ISlot } from "../interfaces/slot";
 
 
@@ -17,11 +14,11 @@ export class VendorService implements IVendorService {
     this.vendorRepository = vendorRepository
   }
 
+
+
   async registerVendor(vendor: any) {
     try {
       const existingVendor = await this.vendorRepository.findVendorByEmail(vendor.email);
-      console.log(existingVendor);
-
       if (existingVendor) {
         if (existingVendor.otpVerified) {
           throw new Error("User already exists");
@@ -39,32 +36,45 @@ export class VendorService implements IVendorService {
   }
 
   async verifyAndSaveVendor(email: string, otp: string) {
-    const vendor = await this.vendorRepository.findVendorByEmail(email);
-    if (vendor && vendor.otp === otp) {
-      vendor.otp = undefined;
-      vendor.otpVerified = true;
-      await vendor.save();
-      return vendor;
+    try {
+      const vendor = await this.vendorRepository.findVendorByEmail(email);
+      if (vendor && vendor.otp === otp) {
+        vendor.otp = undefined;
+        vendor.otpVerified = true;
+        await vendor.save();
+        return vendor;
+      }
+
+    } catch (error) {
+      throw error;
     }
-    throw new Error("Invalid OTP");
+
   }
 
   async loginVendor(email: string, password: string) {
-    const vendor = await this.vendorRepository.findVendorByEmail(email);
-    if (!vendor) {
-      throw new Error("Invalid Email/Password");
-    }
-
-    const vendorToken = jwt.sign(
-      { vendorId: vendor._id },
-
-      process.env.JWT_SECRET!,
-      {
-        expiresIn: "1h",
+    try {
+      const vendor = await this.vendorRepository.findVendorByEmail(email);
+      if (!vendor) {
+        throw new Error("Invalid Email/Password");
       }
-    );
-    return { vendor, vendorToken };
+
+      const vendorToken = jwt.sign(
+        { vendorId: vendor._id },
+
+        process.env.JWT_SECRET!,
+        {
+          expiresIn: "1h",
+        }
+      );
+      return { vendor, vendorToken };
+    } catch (error) {
+      throw new Error('Failed to fetch vendor addresses');
+
+    }
   }
+
+
+
   async vendorAddress() {
     try {
       return await this.vendorRepository.vendorAddressFromDB();
@@ -116,6 +126,8 @@ export class VendorService implements IVendorService {
     }
   }
 
+
+
   async findAuditoriumById(auditoriumId: string) {
     try {
       console.log('controller 2');
@@ -132,7 +144,6 @@ export class VendorService implements IVendorService {
 
   async findDishesById(dishesId: string) {
     try {
-
       const vendor = await this.vendorRepository.findDishesByIdInDb(dishesId);
       if (!vendor) {
         throw new Error(`Error finding vendor`);
@@ -142,6 +153,7 @@ export class VendorService implements IVendorService {
       throw new Error(`Error finding vendor: ${error}`);
     }
   }
+
 
   async uploadDishes(vendorId: any, data: any, images?: string) {
     try {
@@ -324,38 +336,43 @@ export class VendorService implements IVendorService {
 
 
   async createWorkerSlots(vendorId: string, startDate: Date, endDate: Date): Promise<ISlot[]> {
-    const slots: ISlot[] = [];
-    const workerObjectId = new mongoose.Types.ObjectId(vendorId);
+    try {
+      const slots: ISlot[] = [];
+      const workerObjectId = vendorId;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-    if (startDate <= today) {
-      throw new Error("Start date must be tomorrow or a future date.");
-    }
-
-    const currentDate = new Date(startDate);
-    const end = new Date(endDate);
-
-    while (currentDate <= end) {
-      const existingSlot = await this.vendorRepository.findSlotByWorkerAndDate(workerObjectId, currentDate);
-
-      if (existingSlot) {
-        throw new Error(`Slot already exists for vendor ${vendorId} on ${currentDate.toDateString()}`);
+      if (startDate <= today) {
+        throw new Error("Start date must be tomorrow or a future date.");
       }
 
-      const slot = await this.vendorRepository.createSlot({
-        vendorId: workerObjectId,
-        date: new Date(currentDate),
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-      });
+      const currentDate = new Date(startDate);
+      const end = new Date(endDate);
 
-      slots.push(slot);
-      currentDate.setDate(currentDate.getDate() + 1);
+      while (currentDate <= end) {
+        const existingSlot = await this.vendorRepository.findSlotByWorkerAndDate(workerObjectId, currentDate);
+
+        if (existingSlot) {
+          throw new Error(`Slot already exists for vendor ${vendorId} on ${currentDate.toDateString()}`);
+        }
+
+        const slot = await this.vendorRepository.createSlot({
+          vendorId: workerObjectId,
+          date: new Date(currentDate),
+          startDate: new Date(startDate),
+          endDate: new Date(endDate),
+        });
+
+        slots.push(slot);
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+
+      return slots;
+    } catch (error) {
+      throw error;
+
     }
-
-    return slots;
   }
 
 
@@ -373,12 +390,12 @@ export class VendorService implements IVendorService {
 
   async saveVendorServiceImages(vendorId: string, photoUrls: string[]): Promise<void> {
     try {
-      console.log('Vendor ID and Photo URLs in Service:', vendorId, photoUrls); // Debugging statement
-  
+      console.log('Vendor ID and Photo URLs in Service:', vendorId, photoUrls); 
+      
       const updatedVendor = await this.vendorRepository.updateVendorServiceImages(vendorId, photoUrls);
-      return updatedVendor; // Note: You might want to change the return type to Vendor or whatever is appropriate
+      return updatedVendor; 
     } catch (error) {
-      throw new Error(`Failed to save service images: ${error}`); // Improved error handling
+      throw new Error(`Failed to save service images: ${error}`);
     }
   }
 }

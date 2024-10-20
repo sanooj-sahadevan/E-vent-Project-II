@@ -3,9 +3,11 @@ import bcrypt from "bcrypt";
 import jsSHA from "jssha";
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
-import { IUserRepository } from "../interfaces/repository/userRepository";
 import { io } from "..";
 import { ISlot } from "../interfaces/slot";
+
+import { IUserRepository } from "../interfaces/repository/userRepository";
+
 
 export class UserService {
 
@@ -326,7 +328,7 @@ export class UserService {
     console.log(updatedBooking, 'Booking Update Service');
     return updatedBooking;
   }
-  
+
 
   async findchangePassword(userId: string, newPassword: string) {
     console.log('Updating password for userId:', userId);
@@ -368,7 +370,7 @@ export class UserService {
   }) {
     try {
       console.log('123');
-      
+
       const hashString = `${process.env.PAYU_MERCHANT_KEY}|${txnid}|${amount}|${productinfo}|${username}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}|${udf6}|${udf7}||||${process.env.PAYU_SALT}`;
       console.log('123456');
 
@@ -376,22 +378,22 @@ export class UserService {
       sha.update(hashString);
       const hash = sha.getHash("HEX");
       console.log(hash, 'hash');
-const bookingData = {
-      txnid,
-      amount,
-      productinfo,
-      username,
-      email,
-      udf1,
-      udf2,
-      udf3,
-      udf4,
-      udf5,
-      udf6,
-      udf7,
-      paymentStatus: 'pending',  // You can adjust this according to your logic
-      paymentHash: hash          // Save the generated hash
-    };
+      const bookingData = {
+        txnid,
+        amount,
+        productinfo,
+        username,
+        email,
+        udf1,
+        udf2,
+        udf3,
+        udf4,
+        udf5,
+        udf6,
+        udf7,
+        paymentStatus: 'pending',  // You can adjust this according to your logic
+        paymentHash: hash          // Save the generated hash
+      };
 
       const savedBooking = await this.userRepository.saveBooking(bookingData);
       // return savedBooking;
@@ -479,6 +481,23 @@ const bookingData = {
       throw error;
     }
   }
+
+
+  async searchVendors(term: string) {
+    if (!term) {
+      throw new Error("Search term is required");
+    }
+
+    try {
+      const vendors = await this.userRepository.searchVendorsByName(term);
+      return vendors;
+    } catch (error) {
+      throw new Error(`Service error: ${error}`);
+    }
+  }
+
+
+
 
 
 

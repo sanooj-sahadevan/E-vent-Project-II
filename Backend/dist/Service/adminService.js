@@ -33,7 +33,7 @@ class AdminService {
                 return { adminToken, admin: email };
             }
             catch (error) {
-                console.error(error);
+                throw new Error;
             }
         });
     }
@@ -53,7 +53,7 @@ class AdminService {
                 return yield this.adminRepository.getAllBookingsFromDB();
             }
             catch (error) {
-                console.error(error);
+                throw new Error;
             }
         });
     }

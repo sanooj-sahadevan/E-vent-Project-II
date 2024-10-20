@@ -9,6 +9,7 @@ export class UserController {
     this.userService = userService
   }
 
+
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password } = req.body;
@@ -17,17 +18,17 @@ export class UserController {
         sameSite: 'strict',
         maxAge: 3600000,
       });
-
       res.status(HttpStatus.OK).json({ user, token });
     } catch (error: any) {
       next(error.message);
     }
   }
+
+
   async verifyOtp(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, otp } = req.body;
       console.log({ otp });
-
       const result = await this.userService.verifyOtpService(email, otp);
       res.status(HttpStatus.OK).json(result);
     } catch (error: any) {
@@ -51,7 +52,6 @@ export class UserController {
       const { vendorId } = req.query;
       const dishes = await this.userService.getAllDishes(vendorId as string);
       res.status(HttpStatus.OK).json(dishes);
-
     } catch (error) {
       next(error);
     }
@@ -120,8 +120,6 @@ export class UserController {
   }
 
   async fetchReview(req: Request, res: Response, next: NextFunction): Promise<void> {
-    console.log('kokokokokokkokokokokokokokokokok');
-
     try {
       const { vendorId, userId } = req.query;
       const result = await this.userService.fetchReviewById(vendorId as string, userId as string);
@@ -135,9 +133,6 @@ export class UserController {
   async fetchNotifications(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { userId } = req.query;
-      console.log('sanooj', userId);
-
-
       const result = await this.userService.fetchNotificationsById(userId as string);
       res.status(HttpStatus.OK).json(result);
     } catch (error) {
@@ -204,8 +199,6 @@ export class UserController {
 
   async payment(req: Request, res: Response, next: NextFunction) {
     try {
-      console.log('23232');
-      
       const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6, udf7 } = req.body;
       if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6 || !udf7) {
         console.log('poi');
@@ -272,7 +265,7 @@ export class UserController {
     try {
       const { txnid, email, productinfo, status, amount, udf1, udf2, udf3, udf4, udf5, udf6, udf7 } = req.body;
       console.log('req.body', req.body);
-  
+
       const userId = udf1;
       const auditoriumId = udf2;
       const dishesId = udf3;
@@ -281,34 +274,33 @@ export class UserController {
       const vendorId = productinfo;
       const eventType = udf6;
       const EndingDate = udf7;
-  
-        const updatedBooking = await this.userService.updateBookingStatus({
-          txnid,
-          email,
-          vendorId,
-          status,
-          amount,
-          userId,
-          auditoriumId,
-          dishesId,
-          StartingDate,
-          category,
-          eventType,
-          EndingDate
-        });
-        console.log('Booking Updated:', updatedBooking);
-  
-        if (updatedBooking) {
-          res.status(HttpStatus.OK).json({ success: true, updatedBookingId: updatedBooking._id });
-        } else {
-          res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Booking update failed" });
-        }
-    
+
+      const updatedBooking = await this.userService.updateBookingStatus({
+        txnid,
+        email,
+        vendorId,
+        status,
+        amount,
+        userId,
+        auditoriumId,
+        dishesId,
+        StartingDate,
+        category,
+        eventType,
+        EndingDate
+      });
+
+      if (updatedBooking) {
+        res.status(HttpStatus.OK).json({ success: true, updatedBookingId: updatedBooking._id });
+      } else {
+        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Booking update failed" });
+      }
+
     } catch (error) {
       next(error);
     }
   }
-  
+
 
 
 
@@ -396,7 +388,16 @@ export class UserController {
     }
   }
 
+  async searchVendors(req: Request, res: Response) {
+    const searchTerm = req.query.term as string;
 
+    try {
+      const vendors = await this.userService.searchVendors(searchTerm);
+      return res.status(200).json({ data: vendors });
+    } catch (error) {
+      return res.status(500).json({ message: error });
+    }
+  }
 
 }
 

@@ -1,15 +1,17 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { fetchBookingDetilsProfile } from '@/services/userApi';
-import { differenceInDays, startOfDay } from 'date-fns';
-import ReviewModal from '@/components/User/review'; 
+import React, { useState, useEffect } from "react";
+import { fetchBookingDetilsProfile } from "@/services/userApi";
+import { differenceInDays, startOfDay } from "date-fns";
+import ReviewModal from "@/components/User/review";
 
 interface Event {
+  EndingDate: string;
+  StartingDate: string;
   date: string;
   createdAt: string;
   vendorId: {
     vendorname: string;
-    _id: string; // Add vendor ID here
+    _id: string;
   };
   auditoriumId: {
     auditoriumName: string;
@@ -20,7 +22,7 @@ interface Event {
   txnId: string;
   paymentStatus: string;
   totalAmount: number;
-  status: 'Pending' | 'Complete';
+  status: "Pending" | "Complete";
 }
 
 const EventsPage: React.FC = () => {
@@ -31,90 +33,92 @@ const EventsPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const itemsPerPage = 6;
 
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Modal state
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null); // Selected event for review
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const fetchDetails = async (userId: string | null) => {
     if (!userId) {
-      setError('User ID is missing');
+      setError("User ID is missing");
       setLoading(false);
       return;
     }
 
     try {
       const data = await fetchBookingDetilsProfile(userId);
-      console.log({ data }, 'frontend');
+      console.log({ data }, "frontend");
 
       setBookingDetails(data);
-      setTotalPages(Math.ceil(data.length / itemsPerPage)); // Calculate total pages
+      setTotalPages(Math.ceil(data.length / itemsPerPage));
       setLoading(false);
     } catch (err: any) {
-      setError('Error fetching booking details');
+      setError("Error fetching booking details");
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
         const userId = user?._id;
         if (!userId) {
-          setError('User ID not found');
+          setError("User ID not found");
           setLoading(false);
           return;
         }
         fetchDetails(userId);
       } catch (err) {
-        setError('Failed to parse user data from localStorage');
+        setError("Failed to parse user data from localStorage");
         setLoading(false);
       }
     } else {
-      setError('No user found in localStorage');
+      setError("No user found in localStorage");
       setLoading(false);
     }
   }, []);
 
-  // Pagination logic to get the events for the current page
   const getPaginatedEvents = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return bookingDetails.slice(startIndex, endIndex);
   };
 
-  // Format the date for readability, without time
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Determine if the event date has passed or is upcoming
-  const getEventStatus = (eventDate: string) => {
-    const eventDateObj = startOfDay(new Date(eventDate)); // Start of day for event date
-    const currentDate = startOfDay(new Date()); // Start of current day
-    const daysDifference = differenceInDays(eventDateObj, currentDate);
+  // Updated function to handle different event statuses
+  const getEventStatus = (startingDate: string, endingDate: string) => {
+    const currentDate = new Date();
+    const eventStartDate = new Date(startingDate);
+    const eventEndDate = new Date(endingDate);
 
-    if (daysDifference > 0) {
-      return { status: `Upcoming in ${daysDifference} days`, canReview: false };
-    } else if (daysDifference === 0) {
-      return { status: 'Happening today', canReview: false };
+    if (currentDate > eventEndDate) {
+      // Event has passed
+      return { status: "Add Review", canReview: true };
+    } else if (currentDate < eventStartDate) {
+      // Event is upcoming
+      const daysUntilStart = differenceInDays(eventStartDate, currentDate);
+      return { status: `Upcoming in ${daysUntilStart} days`, canReview: false };
     } else {
-      return { status: 'Add Review', canReview: true };
+      // Event is ongoing
+      return { status: "Keep Rocking!", canReview: false };
     }
   };
 
   const handleAddReview = (event: Event) => {
     setSelectedEvent(event);
-    setIsModalOpen(true); // Open the modal
+    setIsModalOpen(true);
   };
 
   const handleModalSubmit = (review: string, rating: number) => {
-    console.log('Review submitted', { review, rating, event: selectedEvent });
+    console.log("Review submitted", { review, rating, event: selectedEvent });
     setIsModalOpen(false);
   };
 
@@ -131,7 +135,8 @@ const EventsPage: React.FC = () => {
             <table className="min-w-full bg-white border border-black rounded-lg">
               <thead>
                 <tr className="bg-white text-black border-b border-black">
-                  <th className="p-4 border-black">Event Date</th>
+                  <th className="p-4 border-black">Starting Date</th>
+                  <th className="p-4 border-black">Ending Date</th>
                   <th className="p-4 border-black">Vendor Name</th>
                   <th className="p-4 border-black">Auditorium Name</th>
                   <th className="p-4 border-black">Dishes Name</th>
@@ -144,13 +149,24 @@ const EventsPage: React.FC = () => {
               <tbody>
                 {getPaginatedEvents().length > 0 ? (
                   getPaginatedEvents().map((event, index) => {
-                    const { status, canReview } = getEventStatus(event.date);
+                    const { status, canReview } = getEventStatus(event.StartingDate, event.EndingDate); // Updated call with StartingDate and EndingDate
                     return (
                       <tr key={index} className="border-b border-black">
-                        <td className="p-4 border-black">{formatDate(event.date)}</td>
-                        <td className="p-4 border-black">{event.vendorId?.vendorname || 'N/A'}</td>
-                        <td className="p-4 border-black">{event.auditoriumId?.auditoriumName || 'N/A'}</td>
-                        <td className="p-4 border-black">{event.dishesId?.dishesName || 'N/A'}</td>
+                        <td className="p-4 border-black">
+                          {formatDate(event.StartingDate)}
+                        </td>
+                        <td className="p-4 border-black">
+                          {formatDate(event.EndingDate)}
+                        </td>
+                        <td className="p-4 border-black">
+                          {event.vendorId?.vendorname || "N/A"}
+                        </td>
+                        <td className="p-4 border-black">
+                          {event.auditoriumId?.auditoriumName || "N/A"}
+                        </td>
+                        <td className="p-4 border-black">
+                          {event.dishesId?.dishesName || "N/A"}
+                        </td>
                         <td className="p-4 border-black">{event.txnId}</td>
                         <td className="p-4 border-black">{event.paymentStatus}</td>
                         <td className="p-4 border-black">{event.totalAmount}</td>
@@ -181,20 +197,20 @@ const EventsPage: React.FC = () => {
           </div>
 
           <div className="flex justify-center mt-4">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-200 text-black rounded mx-2"
-            >
-              Previous
-            </button>
-            <button
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-200 text-black rounded mx-2"
-            >
-              Next
-            </button>
+            {/* Render numbered page buttons */}
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentPage(index + 1)}
+                className={`px-4 py-2 mx-2 rounded-full ${
+                  currentPage === index + 1
+                    ? "bg-pink-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                {index + 1}
+              </button>
+            ))}
           </div>
         </>
       )}
@@ -204,10 +220,8 @@ const EventsPage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={(review, rating) => handleModalSubmit(review, rating)}
-        vendorId={selectedEvent?.vendorId?._id || ''} 
+        vendorId={selectedEvent?.vendorId?._id || ""}
       />
-
-
     </div>
   );
 };

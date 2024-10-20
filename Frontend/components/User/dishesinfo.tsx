@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { fetchdishes } from "@/services/userApi";
+import Spinner from "../skeletons/spinner";
 
 interface Dishes {
   images?: string;
@@ -66,8 +67,12 @@ const FoodItemPage: React.FC = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
-  }
+    return (
+        <div className="flex justify-center items-center min-h-screen">
+            <Spinner size="xl" color="gray" />
+        </div>
+    );
+}   
 
   if (!dishesData) {
     return <p>No dishes data available.</p>;

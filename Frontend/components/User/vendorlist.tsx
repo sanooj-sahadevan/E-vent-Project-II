@@ -1,13 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-'use client'
-import React, { useEffect, useState } from "react";
-import { allVendorAPI } from "@/services/userApi";
-import { useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import Spinner from "../skeletons/spinner";
-import { MapPin, Star } from 'lucide-react';
-
+'use client';
+import React, { useEffect, useState } from 'react';
+import { allVendorAPI } from '@/services/userApi';
+import { useRouter } from 'next/navigation';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Spinner from '../skeletons/spinner';
 
 interface Dishes {
     profileImage: string | undefined;
@@ -19,56 +18,89 @@ interface Dishes {
     rating: number;
 }
 
-const VendorsPage: React.FC = () => {
+interface Vendor {
+    _id: string;
+    vendorname: string;
+    state: string;
+    rating: number;
+    profileImage?: string;
+}
+
+interface VendorListProps {
+    vendors: Vendor[];
+}
+const VendorsPage: React.FC<VendorListProps> = ({ vendors }:any) => {
+
+// const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
     const router = useRouter();
-    const [vendor, setVendor] = useState<Dishes[]>([]);
+    const [vendor, setVendor] = useState<Dishes[]>(vendors || []);
     const [loading, setLoading] = useState<boolean>(true);
-    const [filteredVendors, setFilteredVendors] = useState<Dishes[]>(vendor); // For filtered results
-    const [ratingFilter, setRatingFilter] = useState<number | null>(null); // Rating filter state
-    const [filterLoading, setFilterLoading] = useState<boolean>(false); // Add a separate filter loading state
+    const [filteredVendors, setFilteredVendors] = useState<Dishes[]>(vendor);
+    const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+    const [filterLoading, setFilterLoading] = useState<boolean>(false);
+    
+    // Pagination States
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const vendorsPerPage = 8;
 
     useEffect(() => {
-        const fetchVendor = async () => {
-            try {
-                const response = await allVendorAPI();
-                console.log("API Response:", response);
+        if (vendors?.length) {
+            setFilteredVendors(vendors);
+        } else {
+            fetchVendor();
+        }
+    }, [vendors]);
 
-                if (Array.isArray(response)) {
-                    setVendor(response);
-                    setFilteredVendors(response);
-                } else {
-                    console.error("Unexpected response format:", response);
-                    toast.error("Failed to load vendors. Please try again later.");
-                }
-            } catch (error) {
-                router.push('/login');
-                console.error("Failed to fetch vendors:", error);
-            } finally {
-                setLoading(false);
+    const fetchVendor = async () => {
+        try {
+            const response = await allVendorAPI();
+            console.log('API Response:', response);
+
+            if (Array.isArray(response)) {
+                setVendor(response);
+                setFilteredVendors(response);
+            } else {
+                console.error('Unexpected response format:', response);
+                toast.error('Failed to load vendors. Please try again later.');
             }
-        };
+        } catch (error) {
+            router.push('/login');
+            console.error('Failed to fetch vendors:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    useEffect(() => {
         fetchVendor();
-    }, [router]);
+    }, []);
 
     // Handle rating filter change
     const handleRatingFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedRating = parseFloat(event.target.value);
         setRatingFilter(selectedRating);
-        setFilterLoading(true); // Set filter loading to true when filtering starts
+        setFilterLoading(true);
 
         setTimeout(() => {
             if (selectedRating) {
                 const filtered = vendor.filter((v) => v.rating >= selectedRating);
                 setFilteredVendors(filtered);
             } else {
-                setFilteredVendors(vendor); // Reset to all vendors if no rating filter is selected
+                setFilteredVendors(vendor);
             }
-            setFilterLoading(false); // Set filter loading to false after filtering is done
-        }, 500); // Simulate a delay for filtering
+            setFilterLoading(false);
+        }, 500);
     };
 
-    // Render spinner while loading
+    // Pagination Logic
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    const indexOfLastVendor = currentPage * vendorsPerPage;
+    const indexOfFirstVendor = indexOfLastVendor - vendorsPerPage;
+    const currentVendors = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
+
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -83,7 +115,6 @@ const VendorsPage: React.FC = () => {
             <div className="my-8">
                 <div className="flex justify-end space-x-4 mb-6">
                     <div>Filter by</div>
-
                     <select className="border rounded px-2 py-1">
                         <option>Location</option>
                         <option>Location 1</option>
@@ -92,7 +123,7 @@ const VendorsPage: React.FC = () => {
                     {/* Rating Filter */}
                     <select
                         className="border rounded px-2 py-1"
-                        value={ratingFilter || ""}
+                        value={ratingFilter || ''}
                         onChange={handleRatingFilterChange}
                     >
                         <option value="">Rating</option>
@@ -109,14 +140,14 @@ const VendorsPage: React.FC = () => {
                     <div className="flex justify-center items-center w-full h-64">
                         <Spinner size="lg" color="muted" />
                     </div>
-                ) : filteredVendors.length > 0 ? (
-                    filteredVendors.map((vendor, index) => (
+                ) : currentVendors.length > 0 ? (
+                    currentVendors.map((vendor, index) => (
                         <div
                             key={index}
                             className="bg-white shadow-lg hover:shadow-2xl rounded-lg p-4 transform hover:scale-105 transition-transform duration-300"
                         >
                             <img
-                                src={vendor.profileImage || vendor.profileimage || "/placeholder.png"}
+                                src={vendor.profileImage || vendor.profileimage || '/placeholder.png'}
                                 alt={vendor.vendorname}
                                 className="w-full h-40 object-cover rounded-t-md"
                             />
@@ -145,9 +176,15 @@ const VendorsPage: React.FC = () => {
 
             {/* Pagination */}
             <div className="flex justify-center mt-8">
-                <button className="w-10 h-10 flex items-center justify-center bg-pink-500 text-white rounded-full">
-                    1
-                </button>
+                {Array.from({ length: Math.ceil(filteredVendors.length / vendorsPerPage) }, (_, index) => (
+                    <button
+                        key={index}
+                        className={`w-10 h-10 flex items-center justify-center rounded-full ${currentPage === index + 1 ? 'bg-pink-500' : 'bg-gray-300'} text-white`}
+                        onClick={() => handlePageChange(index + 1)}
+                    >
+                        {index + 1}
+                    </button>
+                ))}
             </div>
         </div>
     );

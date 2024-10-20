@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FaEdit } from 'react-icons/fa'; // Edit icon
 import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI'; // API for editing vendor
 import { toast } from 'react-toastify'; // Notifications for user feedback
+import Spinner from '../skeletons/spinner';
 
 interface Vendor {
   profileImage?: string;
@@ -115,8 +116,12 @@ const EditVendor: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
-  }
+    return (
+        <div className="flex justify-center items-center min-h-screen">
+            <Spinner size="xl" color="gray" />
+        </div>
+    );
+}
 
   if (!vendorDetails) {
     return <div>No vendor details available</div>;

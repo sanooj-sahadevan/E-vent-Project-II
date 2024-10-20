@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { fetchauditorium } from "@/services/userApi";
+import Spinner from "../skeletons/spinner";
 
 interface Auditorium {
   images?: string;
@@ -57,9 +58,12 @@ const FoodItemPage: React.FC = () => {
   }, [auditoriumId]);
 
   if (loading) {
-    return <p>Loading...</p>; // Optional: Add a loading spinner or placeholder
-  }
-
+    return (
+        <div className="flex justify-center items-center min-h-screen">
+            <Spinner size="xl" color="gray" />
+        </div>
+    );
+}   
   if (!auditoriumData) {
     return <p>No auditorium data available.</p>; // Handle cases where no auditorium data is available
   }

@@ -10,8 +10,6 @@ const api = axios.create({
   },
 });
 type RequestHeaders = Record<string, string>;
-
-// SignUp API
 export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
   console.log('signup api');
 
@@ -25,25 +23,30 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 
 // Login API
 export const LoginAPI = async (reqBody: any) => {
-  console.log('logggg');
+  try {
+    const response = await axios.post(`${SERVER_URL}/login`, reqBody, { withCredentials: true });
+    console.log(response.data);
 
-  const response = await axios.post(`${SERVER_URL}/login`, reqBody, { withCredentials: true });
-  console.log(response.data);
+    return response.data;
+  } catch (error) {
+    throw error
+  }
 
-  return response.data;
 };
 
 // verfy otp Api
 export const verifyOtp = async (data: any) => {
-  console.log('poi');
+  try {
+    let otp = await api.post("/verifyOtp", data);
+    console.log(otp);
+    return otp
+  } catch (error) {
+    throw error
 
-  let otp = await api.post("/verifyOtp", data);
-  console.log(otp);
-  return otp
+  }
 
 };
 
-// Google Api
 export const GoogleLoginAPI = async (reqBody: any) => {
   console.log(reqBody);
 
@@ -171,9 +174,9 @@ export const fetchvendor = async (vendorId: string, userId: string) => {
 export const fetchReview = async (vendorId: string, userId: string) => {
   try {
     console.log('pokun');
-    
+
     const res = await axios.get(`${SERVER_URL}/fetchReview?vendorId=${vendorId}&userId=${userId}`)
-   
+
 
     return res.data;
   } catch (error) {
@@ -185,9 +188,9 @@ export const fetchReview = async (vendorId: string, userId: string) => {
 
 export const saveRatings = async (vendorId: string,) => {
   try {
-    
+
     const res = await axios.post(`${SERVER_URL}/saveRatings`)
-   
+
 
     return res.data;
   } catch (error) {
@@ -201,11 +204,8 @@ export const saveRatings = async (vendorId: string,) => {
 
 export const FetchDishes = async (vendorId: string) => {
   try {
-
-    console.log('pokunnu food');
-
     const res = await axios.get(`${SERVER_URL}/fetchFoodDetails/${vendorId}`);
-    return res.data; // Return data directly for easier usage in the component
+    return res.data;
   } catch (error) {
     console.error('Error fetching vendor details:', error);
     throw new Error('Failed to fetch vendor details');
@@ -355,12 +355,12 @@ export const userGetUnreadMessagesCountAPI = async (userId: string) => {
 
 
 export const saveReview = async (review: string, rating: number, userId: string, vendorId: string) => {
-  try {    
-    console.log(   review,
-       rating,
+  try {
+    console.log(review,
+      rating,
       userId,
-      vendorId,'---------------------------');
-    
+      vendorId, '---------------------------');
+
     const response = await axios.post(`${SERVER_URL}/review`, {
       reviews: review,
       stars: rating,
@@ -381,8 +381,8 @@ export const saveReview = async (review: string, rating: number, userId: string,
 
 export const fetchNotification = async (userId: string) => {
   try {
-    const response = await axios.get(`${SERVER_URL}/fetchNotifications`, { 
-      params: { userId }, 
+    const response = await axios.get(`${SERVER_URL}/fetchNotifications`, {
+      params: { userId },
       withCredentials: true,
     });
     console.log('Unread messages response:', response);
@@ -405,4 +405,18 @@ export const fetchSlots = async (vendorId: string) => {
     console.error('Error fetching slots:', error);
     throw error; // Re-throw the error for further handling if needed
   }
+};
+
+
+export const searchUsers = async (term: string) => {
+  try {
+
+    const response = await axios.get(`${SERVER_URL}/searchUsers?term=${term}`); 
+    console.log(response)
+    return response.data;
+  } catch (error) {
+    console.error(error);
+
+  }
+
 };

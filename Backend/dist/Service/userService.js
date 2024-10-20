@@ -456,5 +456,19 @@ class UserService {
             }
         });
     }
+    searchVendors(term) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!term) {
+                throw new Error("Search term is required");
+            }
+            try {
+                const vendors = yield this.userRepository.searchVendorsByName(term);
+                return vendors;
+            }
+            catch (error) {
+                throw new Error(`Service error: ${error}`);
+            }
+        });
+    }
 }
 exports.UserService = UserService;

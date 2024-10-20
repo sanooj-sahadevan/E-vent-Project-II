@@ -135,7 +135,6 @@ class UserController {
     }
     fetchReview(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log('kokokokokokkokokokokokokokokokok');
             try {
                 const { vendorId, userId } = req.query;
                 const result = yield this.userService.fetchReviewById(vendorId, userId);
@@ -150,7 +149,6 @@ class UserController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { userId } = req.query;
-                console.log('sanooj', userId);
                 const result = yield this.userService.fetchNotificationsById(userId);
                 res.status(httpStatus_1.HttpStatus.OK).json(result);
             }
@@ -224,7 +222,6 @@ class UserController {
     payment(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('23232');
                 const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6, udf7 } = req.body;
                 if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6 || !udf7) {
                     console.log('poi');
@@ -305,7 +302,6 @@ class UserController {
                     eventType,
                     EndingDate
                 });
-                console.log('Booking Updated:', updatedBooking);
                 if (updatedBooking) {
                     res.status(httpStatus_1.HttpStatus.OK).json({ success: true, updatedBookingId: updatedBooking._id });
                 }
@@ -391,6 +387,18 @@ class UserController {
             catch (error) {
                 console.error("Error fetching slots:", error);
                 res.status(500).json({ message: "Error fetching slots", error: error.message });
+            }
+        });
+    }
+    searchVendors(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const searchTerm = req.query.term;
+            try {
+                const vendors = yield this.userService.searchVendors(searchTerm);
+                return res.status(200).json({ data: vendors });
+            }
+            catch (error) {
+                return res.status(500).json({ message: error });
             }
         });
     }

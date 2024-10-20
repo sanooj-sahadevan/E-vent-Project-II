@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorController = void 0;
-// import userService from "../Service/vendorService"
 const httpStatus_1 = require("../utils/httpStatus");
 const otpGenerator_1 = require("../utils/otpGenerator");
 const sendEmail_1 = require("../utils/sendEmail");
@@ -376,7 +375,6 @@ class VendorController {
                 if (!startDate || !endDate) {
                     return res.status(400).json({ message: "Start and End dates are required" });
                 }
-                // Parse dates from strings to Date objects
                 const start = new Date(startDate);
                 const end = new Date(endDate);
                 if (isNaN(start.getTime()) || isNaN(end.getTime())) {
@@ -385,7 +383,6 @@ class VendorController {
                 if (!vendorId) {
                     return res.status(400).json({ message: "Vendor ID is required" });
                 }
-                // Pass data to the service
                 const slots = yield this.vendorService.createWorkerSlots(vendorId, start, end);
                 res.status(201).json(slots);
             }
@@ -410,8 +407,6 @@ class VendorController {
     }
     uploadVendorImages(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
-            // Log the full request body
-            console.log(req.body, 'Received in Controller');
             const { vendorId, photoUrls } = req.body.body;
             try {
                 console.log({ vendorId, photoUrls });
