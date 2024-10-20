@@ -28,8 +28,7 @@ export class AdminService implements IAdminService {
 
       return { adminToken, admin: email };
     } catch (error) {
-      console.error(error);
-    }
+      throw new Error    }
   }
 
   async getAllVendorsService() {
@@ -43,8 +42,7 @@ export class AdminService implements IAdminService {
     try {
       return await this.adminRepository.getAllBookingsFromDB();
     } catch (error) {
-      console.error(error);
-    }
+      throw new Error    }
   }
 
   async blockVendor(

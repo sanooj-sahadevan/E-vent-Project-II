@@ -1,16 +1,18 @@
 import { NextFunction, Request, Response } from "express";
-// import userService from "../Service/vendorService"
-
 import { HttpStatus } from "../utils/httpStatus";
+import { IVendorService } from "../interfaces/service/vendorService";
+
 import { otpGenerator } from "../utils/otpGenerator";
 import { sendEmail } from "../utils/sendEmail";
-import { IVendorService } from "../interfaces/service/vendorService";
-import mongoose from "mongoose";
+
+
 export class VendorController {
   private vendorService: IVendorService
   constructor(vendorService: IVendorService) {
     this.vendorService = vendorService
   }
+
+
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { vendorname, email, phone, password } = req.body;
@@ -85,6 +87,7 @@ export class VendorController {
       next(error);
     }
   }
+
 
   async editVendorDetails(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -363,7 +366,6 @@ export class VendorController {
         return res.status(400).json({ message: "Start and End dates are required" });
       }
 
-      // Parse dates from strings to Date objects
       const start = new Date(startDate);
       const end = new Date(endDate);
 
@@ -375,7 +377,6 @@ export class VendorController {
         return res.status(400).json({ message: "Vendor ID is required" });
       }
 
-      // Pass data to the service
       const slots = await this.vendorService.createWorkerSlots(vendorId, start, end);
       res.status(201).json(slots);
     } catch (error: any) {
@@ -401,12 +402,7 @@ export class VendorController {
 
 
   async uploadVendorImages(req: Request, res: Response) {
-    // Log the full request body
-    console.log(req.body, 'Received in Controller');
-
     const { vendorId, photoUrls } = req.body.body
-
-
     try {
       console.log({ vendorId, photoUrls })
       const updatedVendor = await this.vendorService.saveVendorServiceImages(vendorId, photoUrls);

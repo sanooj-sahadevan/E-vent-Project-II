@@ -29,7 +29,6 @@ const PayUComponent = ({ BookedData }: Props) => {
 
     const key = PayU.merchantKey;
 
-    // Prevent multiple requests using a ref for tracking the request state
     const requestSentRef = useRef(false);
 
     useEffect(() => {
@@ -42,22 +41,20 @@ const PayUComponent = ({ BookedData }: Props) => {
                 console.log('Sending Payment Request:', data);
                 const res = await PayUApiCalls.paymentReq(data);
                 setHash(res.hash);
-                requestSentRef.current = true;  // Mark request as sent
+                requestSentRef.current = true; 
             } catch (error: any) {
                 console.error("Payment Error: " + error.message);
             }
         };
 
-        // Only make the request if it hasn't been sent already
         if (!requestSentRef.current) {
             makePaymentRequest();
         }
-    }, []);  // Only run once when component mounts
+    }, []);  
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        // Only submit if the hash has been generated
         if (hash) {
             event.currentTarget.submit();
         } else {

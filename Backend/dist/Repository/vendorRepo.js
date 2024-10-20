@@ -53,13 +53,18 @@ class VendorRepository {
                 return vendorModel_1.VendorModel.findOneAndUpdate({ email }, update, { new: true });
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database query failed');
             }
         });
     }
     findVendorByEmailAndPassword(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
-            return vendorModel_1.VendorModel.findOne({ email, password });
+            try {
+                return vendorModel_1.VendorModel.findOne({ email, password });
+            }
+            catch (error) {
+                throw new Error('Database query failed');
+            }
         });
     }
     vendorAddressFromDB() {
@@ -111,13 +116,23 @@ class VendorRepository {
     }
     findVendorByIdInDb(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield vendorModel_1.VendorModel.findById(vendorId);
+            try {
+                return yield vendorModel_1.VendorModel.findById(vendorId);
+            }
+            catch (error) {
+                throw new Error('Database operation failed');
+            }
         });
     }
     findAuditoriumByIdInDb(auditoriumId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let result = yield auditoriumModel_1.Auditorium.findById(auditoriumId);
-            return result;
+            try {
+                let result = yield auditoriumModel_1.Auditorium.findById(auditoriumId);
+                return result;
+            }
+            catch (error) {
+                throw new Error('Database operation failed');
+            }
         });
     }
     findDishesByIdInDb(dishesId) {
@@ -126,7 +141,7 @@ class VendorRepository {
                 return yield dishesModel_1.Dishes.findById(dishesId);
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -138,7 +153,7 @@ class VendorRepository {
                 return result;
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -146,13 +161,13 @@ class VendorRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const result = yield reviews_1.Reviews
-                    .find({ vendorId: vendorId })
+                    .find({ vendorId: vendorId, })
                     .populate('userId')
                     .exec();
                 return result;
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -163,14 +178,13 @@ class VendorRepository {
                 return res;
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database operation failed');
             }
         });
     }
     createDishes(dishesData) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log("Dishes Data: ", dishesData);
                 const dish = new dishesModel_1.Dishes({
                     vendorId: dishesData.vendorId,
                     dishesName: dishesData.data.dishesName,
@@ -189,7 +203,7 @@ class VendorRepository {
             }
             catch (error) {
                 console.error("Error saving dish: ", error);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -209,7 +223,6 @@ class VendorRepository {
                 });
                 const savedAuditorium = yield auditorium.save();
                 yield savedAuditorium.populate("vendorId");
-                console.log("Saved Auditorium: ", savedAuditorium);
                 return savedAuditorium;
             }
             catch (error) {
@@ -231,7 +244,7 @@ class VendorRepository {
             }
             catch (error) {
                 console.error(`Error soft-deleting dish: ${error}`);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -249,7 +262,7 @@ class VendorRepository {
             }
             catch (error) {
                 console.error(`Error soft-deleting auditorium: ${error}`);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -268,7 +281,7 @@ class VendorRepository {
             }
             catch (error) {
                 console.error(`Error soft-deleting auditorium: ${error}`);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -286,7 +299,7 @@ class VendorRepository {
             }
             catch (error) {
                 console.error(`Error deleting review: ${error}`);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -316,7 +329,7 @@ class VendorRepository {
             }
             catch (error) {
                 console.error("Error fetching chats from the database:", error);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -332,38 +345,51 @@ class VendorRepository {
             }
             catch (error) {
                 console.error("Error fetching unread messages count from the database:", error);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
     findSlotByWorkerAndDate(vendorId, date) {
         return __awaiter(this, void 0, void 0, function* () {
-            return slotModel_1.Slot.findOne({ vendorId, date }).exec();
+            try {
+                return slotModel_1.Slot.findOne({ vendorId, date }).exec();
+            }
+            catch (error) {
+                throw new Error('Database operation failed');
+            }
         });
     }
     createSlot(slotData) {
         return __awaiter(this, void 0, void 0, function* () {
-            const slot = new slotModel_1.Slot(slotData);
-            return yield slot.save();
+            try {
+                const slot = new slotModel_1.Slot(slotData);
+                return yield slot.save();
+            }
+            catch (error) {
+                throw new Error('Database operation failed');
+            }
         });
     }
     getSlotsByWorkerIdFromRepo(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            return slotModel_1.Slot.find({
-                vendorId,
-                date: { $gte: today },
-            }).exec();
+            try {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return slotModel_1.Slot.find({
+                    vendorId,
+                    date: { $gte: today },
+                }).exec();
+            }
+            catch (error) {
+                throw new Error('Database operation failed');
+            }
         });
     }
     notifyDishAdded(vendorId, dishId, dishName) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const message = `New dish "${dishName}" has been added by Vendor ${vendorId}.`;
-                // Retrieve all users
                 const users = yield this.getAllUsers();
-                // Create notifications for all users
                 const notificationPromises = users.map(user => this.createNotificationDishes({
                     userId: user._id,
                     vendorId: vendorId,
@@ -376,7 +402,7 @@ class VendorRepository {
             }
             catch (error) {
                 console.error("Error in notifyDishAdded: ", error);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
@@ -384,9 +410,7 @@ class VendorRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const message = `New Auditorium "${auditoriumName}" has been added by Vendor ${vendorId}.`;
-                // Retrieve all users
                 const users = yield this.getAllUsers();
-                // Create notifications for all users
                 const notificationPromises = users.map(user => this.createNotificationAudi({
                     userId: user._id,
                     vendorId: vendorId,
@@ -399,41 +423,55 @@ class VendorRepository {
             }
             catch (error) {
                 console.error("Error in notifyDishAdded: ", error);
-                throw error;
+                throw new Error('Database operation failed');
             }
         });
     }
     createNotificationAudi(notificationData) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield notificationModel_1.NotificationModel.create(notificationData); // Use NotificationModel here
+            try {
+                return yield notificationModel_1.NotificationModel.create(notificationData);
+            }
+            catch (error) {
+                throw new Error('Database operation failed');
+            }
         });
     }
     createNotificationDishes(notificationData) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield notificationModel_1.NotificationModel.create(notificationData); // Use NotificationModel here
+            try {
+                return yield notificationModel_1.NotificationModel.create(notificationData);
+            }
+            catch (error) {
+                throw new Error('Database operation failed');
+            }
         });
     }
-    // Helper function to get all users
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield userModel_1.default.find();
+            try {
+                return yield userModel_1.default.find();
+            }
+            catch (error) {
+                throw new Error('Database operation failed');
+            }
         });
     }
     updateVendorServiceImages(vendorId, photoUrls) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Vendor ID and Photo URLs in Repository:', vendorId, photoUrls); // Debugging statement
+                console.log('Vendor ID and Photo URLs in Repository:', vendorId, photoUrls);
                 const vendor = yield vendorModel_1.VendorModel.findById(vendorId);
                 if (!vendor) {
                     throw new Error("Vendor not found");
                 }
-                vendor.serviceImages = [...vendor.serviceImages, ...photoUrls]; // Add new images
+                vendor.serviceImages = [...vendor.serviceImages, ...photoUrls];
                 const updatedVendor = yield vendor.save();
-                console.log('Updated Vendor:', updatedVendor); // Log updated vendor
+                console.log('Updated Vendor:', updatedVendor);
                 return updatedVendor;
             }
             catch (error) {
-                throw new Error(`Error updating service images: ${error}`); // Improved error handling
+                throw new Error(`Error updating service images: ${error}`);
             }
         });
     }

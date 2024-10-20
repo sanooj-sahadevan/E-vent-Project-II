@@ -113,11 +113,11 @@ const VendorsPage: React.FC = () => {
     console.log(vendorData, 'html');
 
     const handleCheckAvailability = () => {
-        setIsModalOpen(true); // Open the modal
+        setIsModalOpen(true);
     };
     const closeModal = () => {
         setIsModalOpen(false);
-        setAvailableSlots([]); // Clear slots when closing
+        setAvailableSlots([]);
     };
 
     if (loading) {
@@ -252,7 +252,7 @@ const VendorsPage: React.FC = () => {
             <div className="mt-8">
                 <h2 className="text-xl font-semibold">Photos</h2>
                 {Array.isArray(vendorData.serviceImages) && vendorData.serviceImages.length > 0 ? (
-                    <div className="overflow-y-auto max-h-80">
+                    <div className="overflow-y-auto max-h-[35rem]">
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                             {vendorData.serviceImages.map((photo, index) => (
                                 <img
@@ -283,7 +283,8 @@ const VendorsPage: React.FC = () => {
                     </div>
                 ) : Array.isArray(review) && review.length > 0 ? (
                     <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        {/* Scrollable reviews container */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 max-h-[400px] overflow-y-auto">
                             {review.map((reviewItem, index) => (
                                 <div
                                     key={index}
@@ -317,6 +318,7 @@ const VendorsPage: React.FC = () => {
                 {/* Availability Modal */}
                 <AvailabilityModal open={isModalOpen} onClose={closeModal} vendorId={vendorId!} />
             </div>
+
         </div>
     );
 };

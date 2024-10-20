@@ -86,14 +86,14 @@ const Navbar: React.FC = () => {
       </ul>
 
       {/* Icons and Logout */}
-      <div className="flex space-x-7 items-center"> {/* Reduced spacing between icons */}
+      <div className="flex space-x-7 items-center"> 
         {/* Notification Icon */}
-        <BellRing className="w-5 h-5 text-white" /> {/* Reduced icon size */}
+        <BellRing onClick={() => router.push("/notification")} className="w-5 h-5 text-white" /> {/* Reduced icon size */}
 
         {/* Profile Icon */}
         <UserRoundPen
           onClick={() => router.push("/profile")}
-          className="w-5 h-5 text-white cursor-pointer" 
+          className="w-5 h-5 text-white cursor-pointer"
         />
 
         {/* Logout or Login */}
@@ -104,7 +104,7 @@ const Navbar: React.FC = () => {
           />
         ) : (
           <Link href="/login">
-            <ScanFace className="w-5 h-5 text-white" /> 
+            <ScanFace className="w-5 h-5 text-white" />
           </Link>
         )}
       </div>

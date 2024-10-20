@@ -1,19 +1,22 @@
-import Navbar from '@/components/Navbar'
-import React from 'react'
-import UserMain from '@/components/userMain'
-import VendorList from '@/components/User/vendorlist'
-import Footer from '@/components/footer'
-const page = () => {
+'use client';
+
+import Navbar from '@/components/Navbar';
+import React, { useState } from 'react';
+import UserMain from '@/components/userMain';
+import VendorList from '@/components/User/vendorlist';
+import Footer from '@/components/footer';
+
+const Page = () => {
+  const [vendors, setVendors] = useState<Vendor>([]);
+
   return (
     <div>
       <Navbar />
-      <UserMain />
-      <VendorList />
+      <UserMain setVendors={setVendors} />
+      <VendorList vendors={vendors} />
       <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default page
-
-
+export default Page;

@@ -12,7 +12,7 @@ const ProfilePage: React.FC = () => {
     street: '',
     cityState: '',
     pinCode: '',
-    state: '', 
+    state: '',
   });
   const [isEditing, setIsEditing] = useState(false); // Tracks if the user is editing
 
@@ -31,7 +31,7 @@ const ProfilePage: React.FC = () => {
       setError('No user data found.');
       setLoading(false);
     }
-  }, []); 
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -51,7 +51,7 @@ const ProfilePage: React.FC = () => {
       pincode: address.pinCode,
       state: address.state,
     };
-    
+
     setUserData(updatedUserData);
 
     try {
@@ -155,7 +155,7 @@ const ProfilePage: React.FC = () => {
           <div className="flex justify-end space-x-2">
             <button
               type="button"
-              onClick={() => setIsEditing(false)} 
+              onClick={() => setIsEditing(false)}
               className="p-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
             >
               Cancel

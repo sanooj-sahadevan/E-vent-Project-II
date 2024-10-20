@@ -74,7 +74,7 @@ class UserRepository {
                 return userModel_1.default.findById(userId);
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database Error');
             }
         });
     }
@@ -112,7 +112,7 @@ class UserRepository {
                 return userModel_1.default.findOneAndUpdate({ email }, update, { new: true });
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database Error');
             }
         });
     }
@@ -130,7 +130,7 @@ class UserRepository {
                 return user;
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database Error');
             }
         });
     }
@@ -222,8 +222,7 @@ class UserRepository {
                 return { review };
             }
             catch (error) {
-                console.error("Error in repository:", error);
-                throw error;
+                throw new Error('Database Error');
             }
         });
     }
@@ -236,8 +235,7 @@ class UserRepository {
                 return { notification: notifications };
             }
             catch (error) {
-                console.error("Error in repository:", error);
-                throw new Error(`Error fetching notifications from DB: ${error}`);
+                throw new Error('Database Error');
             }
         });
     }
@@ -245,11 +243,11 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const objectId = new mongoose_1.default.Types.ObjectId(vendorId);
-                const result = yield dishesModel_1.Dishes.find({ vendorId: objectId });
+                const result = yield dishesModel_1.Dishes.find({ vendorId: objectId, isDeleted: false });
                 return result;
             }
             catch (error) {
-                console.error('Error fetching dishes for vendor:', error);
+                console.error('Error fetching dishes:', error);
                 throw new Error(`Error fetching dishes: ${error}`);
             }
         });
@@ -258,11 +256,10 @@ class UserRepository {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const objectId = new mongoose_1.default.Types.ObjectId(vendorId);
-                const result = yield auditoriumModel_1.Auditorium.find({ vendorId: objectId });
+                const result = yield auditoriumModel_1.Auditorium.find({ vendorId: objectId, isDeleted: false });
                 return result;
             }
             catch (error) {
-                console.error('Error fetching dishes for vendor:', error);
                 throw new Error(`Error fetching dishes: ${error}`);
             }
         });
@@ -274,7 +271,7 @@ class UserRepository {
                 return result;
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database Error');
             }
         });
     }
@@ -285,7 +282,7 @@ class UserRepository {
                 return result;
             }
             catch (error) {
-                console.error(error);
+                throw new Error('Database Error');
             }
         });
     }
@@ -298,7 +295,7 @@ class UserRepository {
             }
             catch (error) {
                 console.error("Error fetching booking details:", error);
-                throw error;
+                throw new Error('Database Error');
             }
         });
     }
@@ -335,14 +332,13 @@ class UserRepository {
             }
             catch (error) {
                 console.error('Error updating booking:', error);
-                return null;
+                throw new Error('Database Error');
             }
         });
     }
     updateSlotAvailability(startingDate, endingDate, vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // Convert Date objects to timestamps for comparison
                 const startTimestamp = startingDate.getTime();
                 const endTimestamp = endingDate.getTime();
                 const availableSlots = yield slotModel_1.Slot.find({
@@ -364,14 +360,13 @@ class UserRepository {
                 }
             }
             catch (error) {
-                console.error('Error updating slot availability:', error);
+                throw new Error('Database Error');
             }
         });
     }
     savechatDB(chat) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Saving chat to DB');
                 const newChat = new chatModel_1.chatModel({ message: chat });
                 console.log('save karo--------------------------');
                 return yield newChat.save();
@@ -492,13 +487,18 @@ class UserRepository {
     }
     getSlotsByWorkerIdFromRepo(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            return yield slotModel_1.Slot.find({
-                vendorId,
-                isAvailable: true,
-                date: { $gte: today },
-            }).exec();
+            try {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                return yield slotModel_1.Slot.find({
+                    vendorId,
+                    isAvailable: true,
+                    date: { $gte: today },
+                }).exec();
+            }
+            catch (error) {
+                throw error;
+            }
         });
     }
     saveBooking(bookingData) {
@@ -526,6 +526,19 @@ class UserRepository {
             catch (error) {
                 console.error('Error saving booking:', error);
                 throw new Error('Error saving booking');
+            }
+        });
+    }
+    searchVendorsByName(term) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield vendorModel_1.VendorModel.find({
+                    vendorname: { $regex: term, $options: 'i' },
+                    isBlocked: false,
+                }).exec();
+            }
+            catch (error) {
+                throw new Error(`Error fetching vendors: ${error}`);
             }
         });
     }

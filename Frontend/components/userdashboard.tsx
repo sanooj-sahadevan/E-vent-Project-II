@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-undef */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @next/next/no-img-element */
 "use client";
@@ -9,6 +10,9 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import img1 from '@/public/joinourteam.jpg'
 import img2 from '@/public/samantha-gades-x40Q9jrEVT0-unsplash.jpg'
+import Link from 'next/link';
+import Spinner from './skeletons/spinner';
+
 
 
 interface Vendor {
@@ -16,7 +20,7 @@ interface Vendor {
   profileImage: string;
   _id: string;
   category: string;
-  rating: number; // Assuming the vendor has a rating field
+  rating: number;
 }
 
 const Home: React.FC = () => {
@@ -28,14 +32,14 @@ const Home: React.FC = () => {
     dots: true,
     infinite: true,
     speed: 500,
-    slidesToShow: 4, // Number of vendors to show at once
+    slidesToShow: 4,
     slidesToScroll: 1,
-    autoplay: true, // Enable autoplay
-    autoplaySpeed: 3000, // Slide every 3 seconds
-    pauseOnHover: false, // Keep sliding even when hovered
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: false,
     responsive: [
       {
-        breakpoint: 1024, // Adjusts for different screen sizes
+        breakpoint: 1024,
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
@@ -77,31 +81,46 @@ const Home: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
-  }
+    return (
+        <div className="flex justify-center items-center min-h-screen">
+            <Spinner size="xl" color="gray" />
+        </div>
+    );
+}
 
   return (
     <div className="container mx-auto">
       {/* Vendor Types */}
-      <div className="py-10">
-        <h2 className="text-center text-2xl font-bold">Top Rated Vendors</h2>
-        <div className="flex justify-center space-x-10 mt-10 w-full max-w-4xl mx-auto">
+
+      <div className="w-full">
+        <h2 className="text-center mt-24 text-2xl font-bold">Top Rated Vendors</h2>
+        <div className="flex justify-center flex-wrap space-x-10 mt-10 w-full">
           {vendors.length > 0 ? (
             vendors.map((vendor) => (
               <div
                 key={vendor._id}
-                className="flex flex-col items-center justify-between bg-white border shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4 h-[250px] w-[220px] space-y-2"
+                className="relative group flex flex-col items-center justify-between bg-white border shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4 h-[300px] w-[270px] space-y-2"
               >
-                <div className="relative w-full h-32 mb-4">
+                <div className="relative w-full h-45 mb-4">
+                  {/* Image with hover blur and dark overlay */}
                   <img
                     src={vendor.profileImage}
                     alt={vendor.vendorname}
-                    className="rounded-lg object-cover w-full h-full"
+                    className="rounded-lg object-cover w-full h-full transition-all duration-300 ease-in-out group-hover:blur-sm group-hover:brightness-50"
                   />
+                  {/* Overlay content: Vendor name and link */}
+                  <div className="absolute inset-0 flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <p className="text-white text-xl font-semibold mb-2">
+                      {vendor.vendorname}
+                    </p>
+                    <Link href={`/vendor`} legacyBehavior>
+                      <a className="bg-white text-black px-4 py-2 rounded-lg font-semibold hover:bg-gray-800 hover:text-white transition-colors">
+                        View Vendor
+                      </a>
+                    </Link>
+                  </div>
                 </div>
-                <p className="text-xl font-semibold text-gray-800 text-center">
-                  {vendor.vendorname}
-                </p>
+                {/* Category below the image */}
                 <p className="text-gray-600 text-center">{vendor.category}</p>
               </div>
             ))
@@ -148,8 +167,8 @@ const Home: React.FC = () => {
             {allVendors.length > 0 ? (
               allVendors.map((vendor) => (
                 <div key={vendor._id} className="p-2">
-                  <div className="flex flex-col items-center justify-between bg-white border shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4 h-[250px] w-[220px] space-y-2">
-                    <div className="relative w-full h-32 mb-4">
+                  <div className="flex flex-col items-center justify-between bg-white border shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4 h-[300px] w-[270px] space-y-2">
+                    <div className="relative w-full h-40 mb-4">
                       <img
                         src={vendor.profileImage}
                         alt={vendor.vendorname}
