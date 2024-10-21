@@ -20,7 +20,7 @@ class VendorController {
     register(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { vendorname, email, phone, password } = req.body;
+                const { vendorname, email, phone, password, latitude, longitude } = req.body;
                 const proceedWithRegistration = () => __awaiter(this, void 0, void 0, function* () {
                     try {
                         const otp = (0, otpGenerator_1.otpGenerator)();
@@ -36,7 +36,9 @@ class VendorController {
                             state: "",
                             description: "", rating: 0,
                             reviewsID: null,
-                            serviceImages: []
+                            serviceImages: [],
+                            latitude,
+                            longitude
                         });
                         yield (0, sendEmail_1.sendEmail)(email, otp);
                         res.status(httpStatus_1.HttpStatus.OK).json("OTP sent to email");

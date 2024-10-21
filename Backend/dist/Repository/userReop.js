@@ -31,6 +31,7 @@ class UserRepository {
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log('repo 2');
                 const newUser = new userModel_1.default(user);
                 return yield newUser.save();
             }
@@ -42,6 +43,7 @@ class UserRepository {
     findUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log('repo1');
                 return yield userModel_1.default.findOne({ email, isBlocked: false }).exec();
             }
             catch (error) {
@@ -134,16 +136,13 @@ class UserRepository {
             }
         });
     }
-    getAllVendors() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield vendorModel_1.VendorModel.find().sort({ createdAt: -1 });
-            }
-            catch (error) {
-                throw new Error('Error fetching vendors from the database');
-            }
-        });
-    }
+    // async getAllVendors() {
+    //   try {
+    //     return await VendorModel.find().sort({ createdAt: -1 });
+    //   } catch (error) {
+    //     throw new Error('Error fetching vendors from the database');
+    //   }
+    // }
     fetchfromDBDishes(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

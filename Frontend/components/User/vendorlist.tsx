@@ -29,9 +29,8 @@ interface Vendor {
 interface VendorListProps {
     vendors: Vendor[];
 }
-const VendorsPage: React.FC<VendorListProps> = ({ vendors }:any) => {
 
-// const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
+const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
     const router = useRouter();
     const [vendor, setVendor] = useState<Dishes[]>(vendors || []);
     const [loading, setLoading] = useState<boolean>(true);

@@ -26,6 +26,7 @@ const SignupForm: React.FC = () => {
     formState: { errors },
   } = useForm<Inputs>();
 
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const { vendorname, phone, email, password } = data;
 
@@ -39,19 +40,32 @@ const SignupForm: React.FC = () => {
       "Content-Type": "application/json",
     };
 
-    try {
-      const result = await SignUpAPI(reqBody, reqHeader);
-      console.log("SignUpAPI result:", result); // Debugging line
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
 
-      if (result.error) {
-        toast.error(result.message);
-      } else if (result) {
-        toast.success("OTP sent, please check your mail.");
-        router.push(`/vendorOTP?email=${email}`);
+        reqBody.append("latitude", latitude.toString());
+        reqBody.append("longitude", longitude.toString());
+
+        try {
+          const result = await SignUpAPI(reqBody, reqHeader);
+          console.log("SignUpAPI result:", result);
+
+          if (result.error) {
+            toast.error(result.message);
+          } else if (result) {
+            toast.success("OTP sent, please check your mail.");
+            router.push(`/vendorOTP?email=${email}`);
+          }
+        } catch (err: any) {
+          toast.error("Invalid credentials!");
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error.message);
+        toast.error("Failed to retrieve your location. Please enable location services.");
       }
-    } catch (err: any) {
-      toast.error("Invalid credentials!");
-    }
+    );
   };
 
   return (

@@ -37,10 +37,9 @@ const UserSchema = new mongoose_1.Schema({
     district: { type: String },
     pincode: { type: Number },
     reviews: { type: [String] },
-    isBlocked: {
-        type: Boolean,
-        default: false,
-    },
+    isBlocked: { type: Boolean, default: false },
+    latitude: { type: Number, required: true },
+    longitude: { type: Number, required: true },
 });
 const UserModel = mongoose_1.default.model("User", UserSchema);
 exports.default = UserModel;

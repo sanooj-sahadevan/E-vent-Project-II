@@ -15,7 +15,6 @@ export default function Intro() {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API;
     const mapId = process.env.NEXT_PUBLIC_Map_ID;
 
-    // Check if the environment variables are defined
     if (!apiKey || !mapId) {
         console.error("API key or Map ID is missing!");
         return <div>Error: Google Maps API key or Map ID is not provided.</div>;

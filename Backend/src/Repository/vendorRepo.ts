@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Model } from "mongoose";
 import { DishDocument, Dishes } from '../models/dishesModel';
 import { Auditorium } from "../models/auditoriumModel";
 import { bookedModel } from "../models/bookedEvent";
@@ -156,7 +156,7 @@ export class VendorRepository implements IVendorRepository {
   async findReviewsVendorIdInDb(vendorId: string) {
     try {
       const result = await Reviews
-        .find({ vendorId: vendorId,  })
+        .find({ vendorId: vendorId, })
         .populate('userId')
         .exec();
       return result

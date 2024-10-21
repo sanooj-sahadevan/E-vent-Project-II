@@ -232,7 +232,9 @@ export class UserController {
         state: "",
         pincode: 0,
         reviews: undefined,
-        district: undefined
+        district: undefined,
+        latitude: req.body.latitude,
+        longitude: req.body.longitude,
       });
       await sendEmail(req.body.email, otp);
       res.status(HttpStatus.OK).json("OTP sent to email and saved in the database.");
