@@ -24,3 +24,4 @@ const ChatSchema = new Schema<Ichat>(
 );
 
 export const chatModel = mongoose.model<Ichat>("Chat", ChatSchema);
+export default chatModel

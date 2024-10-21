@@ -253,7 +253,9 @@ class UserController {
                     state: "",
                     pincode: 0,
                     reviews: undefined,
-                    district: undefined
+                    district: undefined,
+                    latitude: req.body.latitude,
+                    longitude: req.body.longitude,
                 });
                 yield (0, sendEmail_1.sendEmail)(req.body.email, otp);
                 res.status(httpStatus_1.HttpStatus.OK).json("OTP sent to email and saved in the database.");

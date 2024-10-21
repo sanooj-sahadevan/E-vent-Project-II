@@ -13,6 +13,9 @@ import { Reviews } from "../models/reviews";
 import { NotificationModel } from "../models/notificationModel";
 import { ISlot } from "../interfaces/slot";
 import { Slot } from '../models/slotModel';
+import { BaseRepository } from "../Base Repository/BaseRepo";
+import { Model } from "mongoose";
+
 
 
 export class UserRepository implements IUserRepository {
@@ -21,6 +24,8 @@ export class UserRepository implements IUserRepository {
 
   async createUser(user: User): Promise<any> {
     try {
+      console.log('repo 2');
+
       const newUser = new UserModel(user);
       return await newUser.save();
     } catch (error) {
@@ -30,6 +35,8 @@ export class UserRepository implements IUserRepository {
 
   async findUserByEmail(email: string) {
     try {
+      console.log('repo1');
+
       return await UserModel.findOne({ email, isBlocked: false }).exec();
     } catch (error) {
       console.error('Error finding user by email:', error);
@@ -114,13 +121,14 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  async getAllVendors() {
-    try {
-      return await VendorModel.find().sort({ createdAt: -1 });
-    } catch (error) {
-      throw new Error('Error fetching vendors from the database');
-    }
-  }
+
+  // async getAllVendors() {
+  //   try {
+  //     return await VendorModel.find().sort({ createdAt: -1 });
+  //   } catch (error) {
+  //     throw new Error('Error fetching vendors from the database');
+  //   }
+  // }
 
 
 
@@ -544,7 +552,7 @@ export class UserRepository implements IUserRepository {
     try {
       return await VendorModel.find({
         vendorname: { $regex: term, $options: 'i' },
-        isBlocked: false,  
+        isBlocked: false,
       }).exec();
     } catch (error) {
       throw new Error(`Error fetching vendors: ${error}`);

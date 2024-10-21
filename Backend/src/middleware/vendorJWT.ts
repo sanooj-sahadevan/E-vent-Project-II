@@ -4,10 +4,10 @@ import jwt from "jsonwebtoken";
 import { HttpStatus } from "../utils/httpStatus";
 
 export function verifyvendor(req: any, res: Response, next: NextFunction) {
-    
+
   const vendorToken = req.cookies?.vendorToken
-    console.log(vendorToken);
-    
+  console.log(vendorToken);
+
   if (!vendorToken) {
     return res.status(HttpStatus.UNAUTHORIZED).send("JWT not found in the cookies");
   }
@@ -20,15 +20,15 @@ export function verifyvendor(req: any, res: Response, next: NextFunction) {
   try {
     const decoded: any = jwt.verify(vendorToken, secret) as { vendorId: string };
     req.vendorId = decoded?.vendorId;
-    
+
     // if (!decoded?.role || decoded.role != "Travelie-company") {
     //   return res.status(401).send("Invalid JWT");
     // }
-    
+
     next();
   } catch (err: any) {
     console.log(err);
-    
+
     return res.status(HttpStatus.UNAUTHORIZED).send("Invalid JWT");
   }
 }

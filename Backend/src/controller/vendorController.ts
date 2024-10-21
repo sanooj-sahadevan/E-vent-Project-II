@@ -15,7 +15,7 @@ export class VendorController {
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { vendorname, email, phone, password } = req.body;
+      const { vendorname, email, phone, password, latitude, longitude } = req.body;
 
       const proceedWithRegistration = async () => {
         try {
@@ -32,7 +32,9 @@ export class VendorController {
             state: "",
             description: "", rating: 0,
             reviewsID: null,
-            serviceImages: []
+            serviceImages: [],
+            latitude,
+            longitude
           });
 
           await sendEmail(email, otp);

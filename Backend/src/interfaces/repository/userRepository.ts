@@ -10,7 +10,12 @@ export interface IUserRepository {
     userEditFromDB(userDetails: User): Promise<any>
     updateUser(email: string, update: Partial<User>): Promise<any>
     findUserByEmailupdate(email: string, password: string): Promise<any>
-    getAllVendors(): Promise<any>
+
+
+    // getAllVendors(): Promise<any>
+
+
+
     fetchfromDBDishes(vendorId: string): Promise<any>
     fetchfromDBAuditorium(vendorId: string): Promise<any>
     findVendor(vendorId: string): Promise<any>

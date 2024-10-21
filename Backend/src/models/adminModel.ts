@@ -9,3 +9,4 @@ const AdminSchema: Schema<Admin> = new Schema({
   });
   
   export const AdminModel = mongoose.model<Admin>("Admin", AdminSchema);
+  export default AdminModel
