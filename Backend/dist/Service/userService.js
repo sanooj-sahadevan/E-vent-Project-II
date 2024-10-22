@@ -23,6 +23,16 @@ class UserService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
+    getAllVendors() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                return yield this.userRepository.getAllVendors();
+            }
+            catch (error) {
+                throw new Error('Error fetching vendors');
+            }
+        });
+    }
     registerUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -98,16 +108,6 @@ class UserService {
             }
             catch (error) {
                 console.error(error);
-            }
-        });
-    }
-    getAllVendors() {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                return yield this.userRepository.getAllVendors();
-            }
-            catch (error) {
-                throw new Error('Error fetching vendors');
             }
         });
     }
