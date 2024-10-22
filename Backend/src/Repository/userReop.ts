@@ -15,12 +15,20 @@ import { ISlot } from "../interfaces/slot";
 import { Slot } from '../models/slotModel';
 import { BaseRepository } from "../Base Repository/BaseRepo";
 import { Model } from "mongoose";
+import AdminModel from "../models/adminModel";
 
 
 
-export class UserRepository implements IUserRepository {
+export class UserRepository extends BaseRepository<User> implements IUserRepository {
   constructor() {
+      super(UserModel, VendorModel, AdminModel, chatModel);
   }
+
+  async getAllVendors() {
+    return await this.getAll();  // Reusing the generic method from BaseRepository
+  }
+
+
 
   async createUser(user: User): Promise<any> {
     try {
@@ -131,6 +139,7 @@ export class UserRepository implements IUserRepository {
   // }
 
 
+ 
 
 
 

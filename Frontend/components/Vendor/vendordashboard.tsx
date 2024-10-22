@@ -2,6 +2,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import {
     fetchDetailsVendor, FetchDishes, FetchAuditorium, deleteDish, deleteAuditorium,
@@ -141,9 +143,12 @@ const Home: React.FC = () => {
         if (!query) return;
         try {
             await deleteDish(dishId);
+            toast.success('Dish deleted successfully!');  // Toast notification
             await fetchDishes(query);
         } catch (error) {
             console.error('Error deleting dish:', error);
+            toast.success('Dish deleted successfully!');  // Toast notification
+
         }
     };
 
@@ -151,9 +156,13 @@ const Home: React.FC = () => {
         if (!query) return;
         try {
             await deleteAuditorium(auditoriumId);
+            toast.success('Auditorium deleted successfully!');  // Toast notification
+
             await fetchAuditorium(query);
         } catch (error) {
             console.error('Error deleting auditorium:', error);
+            toast.error('Failed to delete the auditorium.'); // Toast notification for error
+
         }
     };
 
@@ -170,9 +179,13 @@ const Home: React.FC = () => {
             setReviews((prevReviews) => {
                 if (!prevReviews) return null;
                 return prevReviews.filter((review) => review._id !== reviewId);
+                toast.success('Review rejected successfully!'); // Toast notification
+
             });
         } catch (error) {
             console.error('Error rejecting review:', error);
+            toast.error('Failed to reject the review.'); // Toast notification for error
+
         }
     };
 
@@ -187,8 +200,12 @@ const Home: React.FC = () => {
                         : review
                 );
             });
+            toast.success('Review approved successfully!'); // Toast notification
+
         } catch (error) {
             console.error('Error approving review:', error);
+            toast.error('Failed to approve the review.'); // Toast notification for error
+
         }
     };
 
@@ -270,6 +287,8 @@ const Home: React.FC = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
+            <ToastContainer /> {/* Add this line */}
+
             {/* Vendor Card */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">
                 <div className="flex items-center justify-center mb-6">

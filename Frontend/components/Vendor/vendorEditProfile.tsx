@@ -100,13 +100,13 @@ const EditVendor: React.FC = () => {
 
         if (result.data.vendor && result.data.vendor._id) {
           router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
-          toast.success('Vendor details updated successfully.');
+          toast.success('Vendor details updated successfully.'); // Success toast
         } else {
           toast.error('Vendor details could not be found.');
         }
       }
     } catch (err) {
-      toast.error('An error occurred while saving vendor details. Please try again.');
+      toast.error('An error occurred while saving vendor details. Please try again.'); // Error toast
       console.error('EditVendor API error:', err);
     }
   };
@@ -121,15 +121,13 @@ const EditVendor: React.FC = () => {
             <Spinner size="xl" color="gray" />
         </div>
     );
-}
+  }
 
   if (!vendorDetails) {
     return <div>No vendor details available</div>;
   }
 
   return (
-
-
     <form
       onSubmit={async (e) => {
         e.preventDefault();
@@ -189,64 +187,61 @@ const EditVendor: React.FC = () => {
 
         {/* Inputs for email, phone, etc. */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  <div>
-    <label className="block text-gray-700 font-medium">Email</label>
-    {isEditing ? (
-      <input
-        type="text"
-        value={vendorDetails.email}
-        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-        onChange={(e) =>
-          setVendorDetails((prev) =>
-            prev ? { ...prev, email: e.target.value } : null
-          )
-        }
-      />
-    ) : (
-      <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
-    )}
-  </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Email</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={vendorDetails.email}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, email: e.target.value } : null
+                  )
+                }
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
+            )}
+          </div>
 
-  <div>
-    <label className="block text-gray-700 font-medium">Address</label>
-    {isEditing ? (
-      <input
-        type="text"
-        value={vendorDetails.address}
-        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-        onChange={(e) =>
-          setVendorDetails((prev) =>
-            prev ? { ...prev, address: e.target.value } : null
-          )
-        }
-      />
-    ) : (
-      <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
-    )}
-  </div>
+          <div>
+            <label className="block text-gray-700 font-medium">Address</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={vendorDetails.address}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, address: e.target.value } : null
+                  )
+                }
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
+            )}
+          </div>
 
-  {/* Other fields... */}
-
-  {/* Add a full-width "Description" column */}
-  <div className="col-span-1 md:col-span-2">
-    <label className="block text-gray-700 font-medium">Description</label>
-    {isEditing ? (
-      <textarea
-        value={vendorDetails.Description}
-        rows={4}
-        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-        onChange={(e) =>
-          setVendorDetails((prev) =>
-            prev ? { ...prev, Description: e.target.value } : null
-          )
-        }
-      />
-    ) : (
-      <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
-    )}
-  </div>
-</div>
-
+          {/* Add a full-width "Description" column */}
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-gray-700 font-medium">Description</label>
+            {isEditing ? (
+              <textarea
+                value={vendorDetails.Description}
+                rows={4}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, Description: e.target.value } : null
+                  )
+                }
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
+            )}
+          </div>
+        </div>
 
         <div className="flex justify-between mt-6">
           <button
@@ -268,8 +263,6 @@ const EditVendor: React.FC = () => {
         </div>
       </div>
     </form>
-
-
   );
 };
 

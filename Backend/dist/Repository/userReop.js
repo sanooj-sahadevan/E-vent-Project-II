@@ -25,8 +25,16 @@ const messageModal_1 = require("../models/messageModal");
 const reviews_1 = require("../models/reviews");
 const notificationModel_1 = require("../models/notificationModel");
 const slotModel_1 = require("../models/slotModel");
-class UserRepository {
+const BaseRepo_1 = require("../Base Repository/BaseRepo");
+const adminModel_1 = __importDefault(require("../models/adminModel"));
+class UserRepository extends BaseRepo_1.BaseRepository {
     constructor() {
+        super(userModel_1.default, vendorModel_1.VendorModel, adminModel_1.default, chatModel_1.chatModel);
+    }
+    getAllVendors() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.getAll(); // Reusing the generic method from BaseRepository
+        });
     }
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -1,37 +1,3 @@
-
-// import { Model } from "mongoose";
-// import UserModel from "../models/userModel";
-// import { AdminModel } from "../models/adminModel";
-// import { chatModel } from "../models/chatModel";
-// import VendorModel from "../models/vendorModel";
-// import { Vendor } from "aws-sdk/clients/directconnect";
-
-// export class BaseRepository<T> {
-//     protected UserModel: Model<T>;
-//     protected VendorModel: Model<Vendor>;
-//     protected AdminModel: Model<T>;
-//     protected chatModel: Model<T>;
-
-//     constructor(
-//         userModel: Model<T>,
-//         vendorModel: Model<Vendor>,
-//         adminModel: Model<T>,
-//         chatModel: Model<T>
-//     ) {
-//         this.UserModel = userModel;
-//         this.VendorModel = vendorModel;
-//         this.AdminModel = adminModel;
-//         this.chatModel = chatModel;
-//     }
-
-// }
-
-// const BaseRepo = new BaseRepository(UserModel, VendorModel, AdminModel, chatModel)
-
-// export default BaseRepository
-
-
-
 import { Model } from "mongoose";
 import UserModel from "../models/userModel";
 import AdminModel from "../models/adminModel";
@@ -42,7 +8,7 @@ import { Admin } from "../interfaces/admin";
 import { Ichat } from "../interfaces/chat";
 import { User } from "../interfaces/user";
 
-export class BaseRepository<T> {
+export class BaseRepository<T > {
     protected userModel: Model<User>;
     protected vendorModel: Model<Vendor>;
     protected adminModel: Model<Admin>;
@@ -60,16 +26,17 @@ export class BaseRepository<T> {
         this.chatModel = chatModel;
     }
 
+ 
 
-    async getAllVendors() {
+   
+
+    async getAll(){
         try {
-            return await this.vendorModel.find().sort({ createdAt: -1 });
+            return await this.vendorModel.find().sort({ createdAt: -1 }).exec();
         } catch (error) {
-            throw new Error('Error fetching vendors from the database');
+            throw new Error(`Error fetching records from the database: ${error}`);
         }
     }
-
-
 
 }
 
@@ -79,5 +46,3 @@ export const baseRepo = new BaseRepository(
     AdminModel,
     chatModel
 );
-
-export default BaseRepository;

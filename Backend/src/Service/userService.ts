@@ -16,7 +16,13 @@ export class UserService {
   constructor(userRepository: IUserRepository) {
     this.userRepository = userRepository
   }
-
+  async getAllVendors(): Promise<any[]> {
+    try {
+      return await this.userRepository.getAllVendors();
+    } catch (error) {
+      throw new Error('Error fetching vendors');
+    }
+  }
   async registerUser(user: any) {
     try {
       const existingUser = await this.userRepository.findUserByEmail(user.email);
@@ -98,13 +104,7 @@ export class UserService {
 
 
 
-  async getAllVendors(): Promise<any[]> {
-    try {
-      return await this.userRepository.getAllVendors();
-    } catch (error) {
-      throw new Error('Error fetching vendors');
-    }
-  }
+  
 
 
 
