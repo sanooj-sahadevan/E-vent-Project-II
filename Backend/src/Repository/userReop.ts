@@ -14,28 +14,24 @@ import { NotificationModel } from "../models/notificationModel";
 import { ISlot } from "../interfaces/slot";
 import { Slot } from '../models/slotModel';
 import { BaseRepository } from "../Base Repository/BaseRepo";
-import { Model } from "mongoose";
 import AdminModel from "../models/adminModel";
 
 
 
 export class UserRepository extends BaseRepository<User> implements IUserRepository {
   constructor() {
-      super(UserModel, VendorModel, AdminModel, chatModel);
+    super(UserModel, VendorModel, AdminModel, chatModel);
   }
 
   async getAllVendors() {
-    return await this.getAll();  // Reusing the generic method from BaseRepository
+    return await this.getAll();
   }
 
 
 
   async createUser(user: User): Promise<any> {
     try {
-      console.log('repo 2');
-
-      const newUser = new UserModel(user);
-      return await newUser.save();
+      return await this.create(user)
     } catch (error) {
       throw new Error('Database Error');
     }
@@ -43,10 +39,10 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async findUserByEmail(email: string) {
     try {
-      console.log('repo1');
-
-      return await UserModel.findOne({ email, isBlocked: false }).exec();
-    } catch (error) {
+      
+      const user = await this.userByEmail(email);
+      return user;   
+     } catch (error) {
       console.error('Error finding user by email:', error);
       throw new Error('Database Error');
     }
@@ -70,7 +66,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async findUserById(userId: string) {
     try {
-      return UserModel.findById(userId);
+      return await this.userById(userId)
     } catch (error) {
       throw new Error('Database Error');
 
@@ -105,7 +101,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async updateUser(email: string, update: Partial<User>) {
     try {
-      return UserModel.findOneAndUpdate({ email }, update, { new: true });
+      return this.updateUserBase(email,update)
     } catch (error) {
       throw new Error('Database Error');
     }
@@ -129,20 +125,6 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
     }
   }
 
-
-  // async getAllVendors() {
-  //   try {
-  //     return await VendorModel.find().sort({ createdAt: -1 });
-  //   } catch (error) {
-  //     throw new Error('Error fetching vendors from the database');
-  //   }
-  // }
-
-
- 
-
-
-
   async fetchfromDBDishes(vendorId: string): Promise<any | null> {
     try {
       const objectId = new mongoose.Types.ObjectId(vendorId);
@@ -155,31 +137,30 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   }
 
+
+  // async updateUser(email: string, update: Partial<User>) {
+  //   try {
+  //     return this.updateUserBase
+  //   } catch (error) {
+  //     throw new Error('Database Error');
+  //   }
+  // }
+
+
   async fetchfromDBAuditorium(vendorId: string): Promise<any | null> {
     try {
-      console.log('Fetching auditorium for vendor ID:', vendorId);
-
-      const objectId = new mongoose.Types.ObjectId(vendorId);
-      console.log(objectId);
-
-      const result = await Auditorium.findById(objectId);
-
-      console.log('Fetched auditorium:', result);
-
-      return result;
+      return this.fetchAuditorium(vendorId)
     } catch (error) {
       console.error('Error fetching auditorium from the database:', error);
       throw new Error('Error fetching auditorium from the database');
     }
   }
 
+
+
   async findVendor(vendorId: string) {
     try {
-      const vendor = await VendorModel.findById(vendorId);
-      if (!vendor) {
-        throw new Error("Vendor not found");
-      }
-      return vendor;
+      return this.findVendorBase(vendorId)
     } catch (error) {
       console.error("Error in repository:", error);
       throw error;
@@ -189,6 +170,8 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async findVendorByIdInDb(vendorId: string, userId: string) {
     try {
+      console.log('1234323');
+      
       let chat = await chatModel.findOne({ userId, vendorId });
       if (!chat) {
         chat = new chatModel({
@@ -279,7 +262,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async finddishesByIdInDb(dishesId: string) {
     try {
-      let result = await Dishes.findById(dishesId);
+      let result =  this.dishesById
       return result
     } catch (error) {
       throw new Error('Database Error');
@@ -355,8 +338,8 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
       const availableSlots = await Slot.find({
         vendorId: vendorId,
         date: {
-          $gte: new Date(Math.min(startTimestamp, endTimestamp)), // Use the earlier date
-          $lte: new Date(Math.max(startTimestamp, endTimestamp))  // Use the later date
+          $gte: new Date(Math.min(startTimestamp, endTimestamp)),
+          $lte: new Date(Math.max(startTimestamp, endTimestamp))
         },
         isAvailable: true,
       });
