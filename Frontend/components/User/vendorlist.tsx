@@ -1,14 +1,16 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
-'use client';
 import React, { useEffect, useState } from 'react';
 import { allVendorAPI } from '@/services/userApi';
 import { useRouter } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Spinner from '../skeletons/spinner';
+import { calculateDistance } from '@/utils/geographicLocation/calculateDistance';
 
 interface Dishes {
+    distance?: number; 
+    longitude: number;
+    latitude: number;
     profileImage: string | undefined;
     profileimage: string | undefined;
     _id: string;
@@ -19,11 +21,14 @@ interface Dishes {
 }
 
 interface Vendor {
+    longitude: number;
+    latitude: number;
     _id: string;
     vendorname: string;
     state: string;
     rating: number;
     profileImage?: string;
+    distance?: number;
 }
 
 interface VendorListProps {
@@ -36,64 +41,95 @@ const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [filteredVendors, setFilteredVendors] = useState<Dishes[]>(vendor);
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+    const [locationFilter, setLocationFilter] = useState<string>(''); 
     const [filterLoading, setFilterLoading] = useState<boolean>(false);
-    
-    // Pagination States
+    const [userData, setUserData] = useState<any>(null); 
+
     const [currentPage, setCurrentPage] = useState<number>(1);
     const vendorsPerPage = 8;
 
     useEffect(() => {
-        if (vendors?.length) {
-            setFilteredVendors(vendors);
-        } else {
-            fetchVendor();
-        }
-    }, [vendors]);
+        const fetchVendor = async () => {
+            try {
+                const response = await allVendorAPI();
+                console.log('API Response:', response);
 
-    const fetchVendor = async () => {
-        try {
-            const response = await allVendorAPI();
-            console.log('API Response:', response);
-
-            if (Array.isArray(response)) {
-                setVendor(response);
-                setFilteredVendors(response);
-            } else {
-                console.error('Unexpected response format:', response);
-                toast.error('Failed to load vendors. Please try again later.');
+                if (Array.isArray(response)) {
+                    setVendor(response);
+                    setFilteredVendors(response);
+                } else {
+                    console.error('Unexpected response format:', response);
+                    toast.error('Failed to load vendors. Please try again later.');
+                }
+            } catch (error) {
+                router.push('/login');
+                console.error('Failed to fetch vendors:', error);
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            router.push('/login');
-            console.error('Failed to fetch vendors:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
+
+        fetchVendor();
+    }, [router]);
 
     useEffect(() => {
-        fetchVendor();
+        const storedUserProfile = localStorage.getItem('user');
+        if (storedUserProfile) {
+            try {
+                const user = JSON.parse(storedUserProfile);
+                setUserData(user);
+            } catch (error) {
+                console.error('Failed to parse user data:', error);
+            }
+        }
+
+        setLoading(false);
     }, []);
 
-    // Handle rating filter change
+    const updateFilteredVendors = () => {
+        filterVendors(locationFilter, ratingFilter);
+    };
+
     const handleRatingFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedRating = parseFloat(event.target.value);
         setRatingFilter(selectedRating);
-        setFilterLoading(true);
-
-        setTimeout(() => {
-            if (selectedRating) {
-                const filtered = vendor.filter((v) => v.rating >= selectedRating);
-                setFilteredVendors(filtered);
-            } else {
-                setFilteredVendors(vendor);
-            }
-            setFilterLoading(false);
-        }, 500);
+        setCurrentPage(1); // Reset to page 1 on filter change
+        updateFilteredVendors();
     };
 
-    // Pagination Logic
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
+    const handleLocationFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedLocation = event.target.value;
+        setLocationFilter(selectedLocation);
+        setCurrentPage(1); 
+        updateFilteredVendors();
+    };
+
+    const filterVendors = (location: string, rating: number | null) => {
+        let filtered = vendor;
+
+        // Apply rating filter if selected
+        if (rating) {
+            filtered = filtered.filter((v) => v.rating >= rating);
+        }
+
+        // Calculate distances for the filtered vendors
+        const filteredWithDistances = filtered.map((v) => {
+            const distance = calculateDistance(
+                userData?.latitude,
+                userData?.longitude,
+                v.latitude,
+                v.longitude
+            );
+            return { ...v, distance };
+        });
+
+        if (location && userData) {
+            filteredWithDistances.sort((a, b) => {
+                return location === 'asc' ? a.distance! - b.distance! : b.distance! - a.distance!;
+            });
+        }
+
+        setFilteredVendors(filteredWithDistances);
     };
 
     const indexOfLastVendor = currentPage * vendorsPerPage;
@@ -114,12 +150,15 @@ const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
             <div className="my-8">
                 <div className="flex justify-end space-x-4 mb-6">
                     <div>Filter by</div>
-                    <select className="border rounded px-2 py-1">
-                        <option>Location</option>
-                        <option>Location 1</option>
-                        <option>Location 2</option>
+                    <select
+                        className="border rounded px-2 py-1"
+                        value={locationFilter}
+                        onChange={handleLocationFilterChange}
+                    >
+                        <option value="">Location</option>
+                        <option value="asc">Nearest</option>
+                        <option value="desc">Farthest</option>
                     </select>
-                    {/* Rating Filter */}
                     <select
                         className="border rounded px-2 py-1"
                         value={ratingFilter || ''}
@@ -157,6 +196,11 @@ const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
                                     <span className="text-red-500 text-lg">★</span>
                                     <span className="ml-1 text-sm text-gray-600">{vendor.rating}</span>
                                 </div>
+                                {vendor.distance !== undefined && (
+                                    <p className="text-sm text-gray-500">
+                                        Distance: {vendor.distance.toFixed(2)} km
+                                    </p>
+                                )}
                                 <button
                                     onClick={() => router.push(`/vendorProfile?vendorId=${vendor._id}`)}
                                     className="mt-4 w-full bg-black text-white py-2 rounded-md hover:bg-gray-800"
@@ -178,13 +222,15 @@ const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
                 {Array.from({ length: Math.ceil(filteredVendors.length / vendorsPerPage) }, (_, index) => (
                     <button
                         key={index}
-                        className={`w-10 h-10 flex items-center justify-center rounded-full ${currentPage === index + 1 ? 'bg-pink-500' : 'bg-gray-300'} text-white`}
-                        onClick={() => handlePageChange(index + 1)}
+                        className={`w-10 h-10 flex items-center justify-center rounded-full ${currentPage === index + 1 ? 'bg-pink-500 text-white' : 'bg-gray-200 text-black'}`}
+                        onClick={() => setCurrentPage(index + 1)}
                     >
                         {index + 1}
                     </button>
                 ))}
             </div>
+
+            <ToastContainer />
         </div>
     );
 };

@@ -33,15 +33,13 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     }
     getAllVendors() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.getAll(); // Reusing the generic method from BaseRepository
+            return yield this.getAll();
         });
     }
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('repo 2');
-                const newUser = new userModel_1.default(user);
-                return yield newUser.save();
+                return yield this.create(user);
             }
             catch (error) {
                 throw new Error('Database Error');
@@ -51,8 +49,8 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     findUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('repo1');
-                return yield userModel_1.default.findOne({ email, isBlocked: false }).exec();
+                const user = yield this.userByEmail(email);
+                return user;
             }
             catch (error) {
                 console.error('Error finding user by email:', error);
@@ -81,7 +79,7 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     findUserById(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return userModel_1.default.findById(userId);
+                return yield this.userById(userId);
             }
             catch (error) {
                 throw new Error('Database Error');
@@ -119,7 +117,7 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     updateUser(email, update) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return userModel_1.default.findOneAndUpdate({ email }, update, { new: true });
+                return this.updateUserBase(email, update);
             }
             catch (error) {
                 throw new Error('Database Error');
@@ -144,13 +142,6 @@ class UserRepository extends BaseRepo_1.BaseRepository {
             }
         });
     }
-    // async getAllVendors() {
-    //   try {
-    //     return await VendorModel.find().sort({ createdAt: -1 });
-    //   } catch (error) {
-    //     throw new Error('Error fetching vendors from the database');
-    //   }
-    // }
     fetchfromDBDishes(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
@@ -164,15 +155,17 @@ class UserRepository extends BaseRepo_1.BaseRepository {
             }
         });
     }
+    // async updateUser(email: string, update: Partial<User>) {
+    //   try {
+    //     return this.updateUserBase
+    //   } catch (error) {
+    //     throw new Error('Database Error');
+    //   }
+    // }
     fetchfromDBAuditorium(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log('Fetching auditorium for vendor ID:', vendorId);
-                const objectId = new mongoose_1.default.Types.ObjectId(vendorId);
-                console.log(objectId);
-                const result = yield auditoriumModel_1.Auditorium.findById(objectId);
-                console.log('Fetched auditorium:', result);
-                return result;
+                return this.fetchAuditorium(vendorId);
             }
             catch (error) {
                 console.error('Error fetching auditorium from the database:', error);
@@ -183,11 +176,7 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     findVendor(vendorId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const vendor = yield vendorModel_1.VendorModel.findById(vendorId);
-                if (!vendor) {
-                    throw new Error("Vendor not found");
-                }
-                return vendor;
+                return this.findVendorBase(vendorId);
             }
             catch (error) {
                 console.error("Error in repository:", error);
@@ -198,6 +187,7 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     findVendorByIdInDb(vendorId, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log('1234323');
                 let chat = yield chatModel_1.chatModel.findOne({ userId, vendorId });
                 if (!chat) {
                     chat = new chatModel_1.chatModel({
@@ -351,8 +341,8 @@ class UserRepository extends BaseRepo_1.BaseRepository {
                 const availableSlots = yield slotModel_1.Slot.find({
                     vendorId: vendorId,
                     date: {
-                        $gte: new Date(Math.min(startTimestamp, endTimestamp)), // Use the earlier date
-                        $lte: new Date(Math.max(startTimestamp, endTimestamp)) // Use the later date
+                        $gte: new Date(Math.min(startTimestamp, endTimestamp)),
+                        $lte: new Date(Math.max(startTimestamp, endTimestamp))
                     },
                     isAvailable: true,
                 });
