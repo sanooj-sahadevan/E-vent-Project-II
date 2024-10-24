@@ -26,12 +26,10 @@ export const LoginAPI = async (reqBody: any) => {
   try {
     const response = await axios.post(`${SERVER_URL}/login`, reqBody, { withCredentials: true });
     console.log(response.data);
-
     return response.data;
   } catch (error) {
     throw error
   }
-
 };
 
 // verfy otp Api
