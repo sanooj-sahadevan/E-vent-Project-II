@@ -275,7 +275,7 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     finddishesByIdInDb(dishesId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let result = yield dishesModel_1.Dishes.findById(dishesId);
+                let result = this.dishesById;
                 return result;
             }
             catch (error) {
