@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
-import { addAuditoriumAPI,getPresignedUrl } from '@/services/vendorAPI'; // Ensure this API function is defined correctly
+import { addAuditoriumAPI, getPresignedUrl } from '@/services/vendorAPI'; // Ensure this API function is defined correctly
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -27,10 +27,10 @@ const AddAuditorium: React.FC = () => {
     const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            setPhoto(file); 
+            setPhoto(file);
 
             try {
-                const data = await getPresignedUrl(file.name, file.type); 
+                const data = await getPresignedUrl(file.name, file.type);
 
                 if (data.url) {
                     const uploadResult = await fetch(data.url, {
@@ -42,8 +42,8 @@ const AddAuditorium: React.FC = () => {
                     });
 
                     if (uploadResult.ok) {
-                        const s3Url = data.url.split('?')[0]; 
-                        setPhotoUrl(s3Url); 
+                        const s3Url = data.url.split('?')[0];
+                        setPhotoUrl(s3Url);
                         console.log("Image uploaded successfully:", s3Url);
                     } else {
                         console.error("Error uploading image to S3");
@@ -77,7 +77,7 @@ const AddAuditorium: React.FC = () => {
                 toast.success("Auditorium added successfully");
                 setTimeout(() => {
                     router.push(`/vendordashboard?vendorId=${vendorId}`);
-                }, 3000);
+                }, 2000);
             } else {
                 toast.error("Something went wrong!");
             }
