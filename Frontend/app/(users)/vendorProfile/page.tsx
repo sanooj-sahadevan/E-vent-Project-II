@@ -1,18 +1,20 @@
-import Navbar from '@/components/Navbar'
-import React from 'react'
-import UserMain from '@/components/userMain'
-import VendorList from '@/components/User/vendorlist'
-import VendorProfile from '@/components/User/vendorProfile'
-import Footer from '@/components/footer'
-const page = () => {
-  return (
-    <div>
-      <Navbar/>
-      <UserMain/>
-      <VendorProfile/>
-      <Footer/>
-    </div>
-  )
-}
+import React, { Suspense } from 'react';
+import Navbar from '@/components/Navbar';
+import UserMain from '@/components/userMain';
+import VendorProfile from '@/components/User/vendorProfile';
+import Footer from '@/components/footer';
 
-export default page
+const Page = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <div>
+        <Navbar />
+        <UserMain />
+        <VendorProfile />
+        <Footer />
+      </div>
+    </Suspense>
+  );
+};
+
+export default Page;

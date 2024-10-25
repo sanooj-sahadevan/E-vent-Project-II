@@ -1,17 +1,18 @@
 import Navbar from '@/components/Navbar'
-import React from 'react'
-import UserMain from '@/components/userMain'
-import VendorList from '@/components/User/vendorlist'
-import Booknow from '@/components/User/booknow'
+import React, { Suspense } from 'react'
 import Footer from '@/components/footer'
+const Booknow = React.lazy(() => import('@/components/User/booknow'));
+
 const page = () => {
   return (
     <div>
-      <Navbar/>
-      <Booknow/>
-      <Footer/>
+      <Navbar />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Booknow />
+      </Suspense>
+      <Footer />
     </div>
   )
 }
 
-export default page
+export default page;

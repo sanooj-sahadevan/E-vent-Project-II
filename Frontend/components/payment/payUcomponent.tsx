@@ -50,7 +50,7 @@ const PayUComponent = ({ BookedData }: Props) => {
         if (!requestSentRef.current) {
             makePaymentRequest();
         }
-    }, []);  
+    }, [ txnid, amount, productinfo, username, email, phone, udf1, udf2, udf3, udf4, udf5, udf6, udf7]);  
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

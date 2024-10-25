@@ -16,7 +16,9 @@ interface UserMainProps {
     setVendors: React.Dispatch<React.SetStateAction<Vendor[]>>;
 }
 
-const UserMain: React.FC<{ setVendors: (vendors: Vendor[]) => void }> = ({ setVendors }) => {
+// const UserMain: React.FC<{ setVendors: (vendors: Vendor[]) => void }> = ({ setVendors }) => {
+    const UserMain: React.FC<UserMainProps> = ({ setVendors }) => {
+
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
     const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -30,7 +32,7 @@ const UserMain: React.FC<{ setVendors: (vendors: Vendor[]) => void }> = ({ setVe
             if (searchTerm.trim()) {
                 searchVendors(searchTerm);
             } else {
-                setVendors([]); // Clear vendors if the search term is empty
+                // setVendors([]); // Clear vendors if the search term is empty
             }
         }, 300);
 

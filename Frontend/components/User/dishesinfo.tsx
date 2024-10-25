@@ -34,7 +34,7 @@ const FoodItemPage: React.FC = () => {
       if (dishesId) {
         try {
           const response = await fetchdishes(dishesId);
-          console.log(response);
+          console.log(response, 'okoko');
 
           if (response && response.data) {
             setDishesData(response.data);
@@ -68,11 +68,11 @@ const FoodItemPage: React.FC = () => {
 
   if (loading) {
     return (
-        <div className="flex justify-center items-center min-h-screen">
-            <Spinner size="xl" color="gray" />
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner size="xl" color="gray" />
+      </div>
     );
-}   
+  }
 
   if (!dishesData) {
     return <p>No dishes data available.</p>;

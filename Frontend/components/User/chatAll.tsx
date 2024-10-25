@@ -1,8 +1,8 @@
 "use client";
 import {
     UserVendorChats,
-    UsergetMessages, 
-    UsermessageSend 
+    UsergetMessages,
+    UsermessageSend
 } from "@/services/chatApi";
 import ChatSidebar from "@/components/User/chatSideBar";
 import { useEffect, useState } from "react";
@@ -66,43 +66,43 @@ const ChatApp = () => {
 
     useEffect(() => {
         const userData = localStorage.getItem("user");
-      
+
         if (userData) {
-          try {
-            const parsedUser = JSON.parse(userData); // Parse the string into an object
-            setUser(parsedUser); // Set the user state
-          } catch (error) {
-            console.error('Error parsing user data from localStorage:', error);
-          }
-        }
-      }, []); // Run only once on component mount
-      
-      useEffect(() => {
-        const getChats = async () => {
-          if (user && user._id) {  
             try {
-                console.log(user._id);
-                
-              const response = await UserVendorChats(user._id); 
-              const data = response?.data;
-              if (data) {
-                setChatId(data);
-              } else {
-                setError("No data found.");
-              }
+                const parsedUser = JSON.parse(userData); // Parse the string into an object
+                setUser(parsedUser); // Set the user state
             } catch (error) {
-              console.error(error);
-              setError("Failed to load chats.");
-            } finally {
-              setLoading(false);
+                console.error('Error parsing user data from localStorage:', error);
             }
-          }
+        }
+    }, []); // Run only once on component mount
+
+    useEffect(() => {
+        const getChats = async () => {
+            if (user && user._id) {
+                try {
+                    console.log(user._id);
+
+                    const response = await UserVendorChats(user._id);
+                    const data = response?.data;
+                    if (data) {
+                        setChatId(data);
+                    } else {
+                        setError("No data found.");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    setError("Failed to load chats.");
+                } finally {
+                    setLoading(false);
+                }
+            }
         };
-        
+
         getChats();
-      }, [user]);  // Depend on user state
-      
-      
+    }, [user]);  // Depend on user state
+
+
 
 
     useEffect(() => {
@@ -112,7 +112,7 @@ const ChatApp = () => {
         }
     }, [currChatId, socket]);
 
- 
+
 
     useEffect(() => {
         const fetchChatDetails = async () => {
@@ -121,8 +121,8 @@ const ChatApp = () => {
                 const selectedChat = validChats.find(
                     (chat) => chat?.vendorId?.vendorname === selectedVendor
                 );
-                console.log(selectedChat,'plplpl');
-                
+                console.log(selectedChat, 'plplpl');
+
                 setCurrChatId(selectedChat?._id);
 
                 if (selectedChat) {
@@ -198,10 +198,19 @@ const ChatApp = () => {
 
     return (
         <div className="h-screen flex mt">
-            <ChatSidebar
+            {/* <ChatSidebar
                 vendors={uniqueVendors.map((vendor) => vendor.vendorname)}
                 selectedVendor={selectedVendor || ""}
-                setSelectedVendor={setSelectedVendor} // Fix this: pass the setter function
+                setSelectedVendor={setSelectedVendor} 
+            /> */}
+
+            <ChatSidebar
+                vendors={uniqueVendors
+                    .map((vendor) => vendor.vendorname)
+                    .filter((vendorname): vendorname is string => vendorname !== undefined)
+                }
+                selectedVendor={selectedVendor || ""}
+                setSelectedVendor={setSelectedVendor}
             />
 
             <div className="flex-1 flex flex-col h-full p-6 bg-white">
@@ -215,8 +224,8 @@ const ChatApp = () => {
                             >
                                 <div
                                     className={`${msg.senderModel === "User"
-                                            ? "bg-pink-400 text-white"
-                                            : "bg-gray-600 text-white"
+                                        ? "bg-pink-400 text-white"
+                                        : "bg-gray-600 text-white"
                                         } rounded-lg p-3 max-w-xs break-words`}
                                 >
                                     <p>{msg.text}</p>
