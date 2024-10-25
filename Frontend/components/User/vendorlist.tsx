@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+"use client"
 import React, { useEffect, useState } from 'react';
 import { allVendorAPI } from '@/services/userApi';
 import { useRouter } from 'next/navigation';
@@ -8,7 +9,7 @@ import Spinner from '../skeletons/spinner';
 import { calculateDistance } from '@/utils/geographicLocation/calculateDistance';
 
 interface Dishes {
-    distance?: number; 
+    distance?: number;
     longitude: number;
     latitude: number;
     profileImage: string | undefined;
@@ -20,16 +21,16 @@ interface Dishes {
     rating: number;
 }
 
-interface Vendor {
-    longitude: number;
-    latitude: number;
+export interface Vendor {
     _id: string;
     vendorname: string;
     state: string;
     rating: number;
     profileImage?: string;
-    distance?: number;
+    longitude?: number; // Assuming these are also part of your Vendor type
+    latitude?: number;
 }
+
 
 interface VendorListProps {
     vendors: Vendor[];
@@ -41,9 +42,9 @@ const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [filteredVendors, setFilteredVendors] = useState<Dishes[]>(vendor);
     const [ratingFilter, setRatingFilter] = useState<number | null>(null);
-    const [locationFilter, setLocationFilter] = useState<string>(''); 
+    const [locationFilter, setLocationFilter] = useState<string>('');
     const [filterLoading, setFilterLoading] = useState<boolean>(false);
-    const [userData, setUserData] = useState<any>(null); 
+    const [userData, setUserData] = useState<any>(null);
 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const vendorsPerPage = 8;
@@ -100,7 +101,7 @@ const VendorsPage: React.FC<VendorListProps> = ({ vendors }: any) => {
     const handleLocationFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedLocation = event.target.value;
         setLocationFilter(selectedLocation);
-        setCurrentPage(1); 
+        setCurrentPage(1);
         updateFilteredVendors();
     };
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import UserProfile from '@/components/User/userprofile'
-import UserMain from '@/components/userMain'
+import UserMain from '@/components/userMainII'
 import Footer from "@/components/footer";
 
 

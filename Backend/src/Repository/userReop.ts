@@ -39,10 +39,10 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async findUserByEmail(email: string) {
     try {
-      
+
       const user = await this.userByEmail(email);
-      return user;   
-     } catch (error) {
+      return user;
+    } catch (error) {
       console.error('Error finding user by email:', error);
       throw new Error('Database Error');
     }
@@ -101,7 +101,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async updateUser(email: string, update: Partial<User>) {
     try {
-      return this.updateUserBase(email,update)
+      return this.updateUserBase(email, update)
     } catch (error) {
       throw new Error('Database Error');
     }
@@ -171,7 +171,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
   async findVendorByIdInDb(vendorId: string, userId: string) {
     try {
       console.log('1234323');
-      
+
       let chat = await chatModel.findOne({ userId, vendorId });
       if (!chat) {
         chat = new chatModel({
@@ -262,7 +262,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async finddishesByIdInDb(dishesId: string) {
     try {
-      let result =  this.dishesById
+      let result = this.dishesById
       return result
     } catch (error) {
       throw new Error('Database Error');

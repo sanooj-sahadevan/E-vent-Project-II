@@ -1,12 +1,13 @@
 import React from 'react';
 
 interface ChatSidebarProps {
-    vendors: string[];
-  selectedUser: string;
-  setSelectedVendor: (user: string) => void;
+  vendors: string[];
+  selectedVendor: string;
+  setSelectedVendor: (vendor: string) => void;
 }
 
-const ChatSidebar: React.FC<ChatSidebarProps> = ({ vendors, selectedUser, setSelectedVendor }) => {
+
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ vendors, selectedVendor, setSelectedVendor }) => {
   return (
     <div className="w-1/4 h-full bg-gray-200 p-4">
       {vendors.length > 0 ? (
@@ -16,7 +17,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ vendors, selectedUser, setSel
               key={index}
               onClick={() => setSelectedVendor(name)}
               className={`mb-4 cursor-pointer text-lg p-2 rounded-lg hover:bg-pink-100 
-              ${selectedUser === name ? 'bg-pink-400 text-white' : 'bg-gray-100 text-black'}`}
+              ${selectedVendor === name ? 'bg-pink-400 text-white' : 'bg-gray-100 text-black'}`}
             >
               {name}
             </li>
@@ -30,3 +31,5 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ vendors, selectedUser, setSel
 };
 
 export default ChatSidebar;
+
+

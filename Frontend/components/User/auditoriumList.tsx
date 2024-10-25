@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { FetchAuditorium } from "@/services/userApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
@@ -16,19 +16,27 @@ interface Auditorium {
 }
 
 const AuditoriumPage: React.FC = () => {
+    return (
+        <Suspense fallback={<div>Loading vendor info...</div>}>
+            <SearchParamsWrapper />
+        </Suspense>
+    );
+};
+
+const SearchParamsWrapper: React.FC = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const vendorId = searchParams.get("vendorId");  
-    
-    const [auditorium, setAuditorium] = useState<Auditorium[]>([]); 
+    const vendorId = searchParams.get("vendorId");
+
+    const [auditorium, setAuditorium] = useState<Auditorium[]>([]);
 
     useEffect(() => {
         const fetchAuditorium = async () => {
             if (!vendorId) {
                 toast.error("Vendor ID is missing. Please try again.");
-                return; 
+                return;
             }
-    
+
             try {
                 const response = await FetchAuditorium(vendorId);
                 console.log("API Response:", response);
@@ -44,10 +52,10 @@ const AuditoriumPage: React.FC = () => {
                 // router.push('/login');  // Ensure correct redirection
             }
         };
-    
+
         fetchAuditorium();
-    }, [vendorId, router]);
-    
+    }, [vendorId]);
+
     return (
         <div className="container mx-auto px-8 py-8 bg-white m-[100px] mt-[100px]">
             {/* Auditorium Cards */}
@@ -68,8 +76,6 @@ const AuditoriumPage: React.FC = () => {
                                     <span className="ml-1 text-sm text-gray-600">{aud.types}</span>
                                 </div>
                                 <button
-                                //    onClick={() => router.push(`/dishesinfo?dishesId=${dish._id}&vendorId=${vendorId}`)}  // Pass vendorId along with dishesId
-
                                     onClick={() => router.push(`/auditoriumInfo?auditoriumId=${aud._id}&vendorId=${vendorId}`)}  
                                     className="mt-4 w-full bg-black text-white py-2 rounded-md"
                                 >

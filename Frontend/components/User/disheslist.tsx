@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client'
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { FetchDishes } from "@/services/userApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast, ToastContainer } from "react-toastify";
@@ -56,6 +56,8 @@ const DishesPage: React.FC = () => {
 
 
     return (
+        <Suspense fallback={<div>Loading...</div>}>
+
         <div className="container mx-auto px-8 py-8 bg-white m-[100px] mt-[100px]">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {dishes.length > 0 ? (
@@ -96,6 +98,8 @@ const DishesPage: React.FC = () => {
 
             <ToastContainer />
         </div>
+        </Suspense>
+
     );
 };
 
