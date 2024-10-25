@@ -1,3 +1,23 @@
+// /**
+//  *  @type {import('next').NextConfig}
+//  */
+// const nextConfig = {
+//   swcMinify: true,
+//   productionBrowserSourceMaps: true,
+//   images: {
+//     domains: ['sanooj123.s3.eu-north-1.amazonaws.com'],
+//     remotePatterns: [
+//             {
+//               protocol: 'https',
+//               hostname: 'your-image-host.com', 
+//               pathname: 'public',
+//             },
+//           ],
+//   },
+// };
+
+// export default nextConfig;
+
 /**
  *  @type {import('next').NextConfig}
  */
@@ -5,8 +25,15 @@ const nextConfig = {
   swcMinify: true,
   productionBrowserSourceMaps: true,
   images: {
-    domains: ['sanooj123.s3.eu-north-1.amazonaws.com'], // Add your domain here
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'sanooj123.s3.eu-north-1.amazonaws.com',
+        pathname: '/**', // Matches all paths under this domain
+      },
+    ],
   },
 };
 
 export default nextConfig;
+
