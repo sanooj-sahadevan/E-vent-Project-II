@@ -1,4 +1,0 @@
-{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"200\",\"responseTime\":\"4421.573\"}","timestamp":"2024-10-09T08:45:13.182Z"}
-{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"200\",\"responseTime\":\"264.924\"}","timestamp":"2024-10-09T08:45:22.956Z"}
-{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"56.265\"}","timestamp":"2024-10-09T08:45:23.016Z"}
-{"level":"\u001b[32minfo\u001b[39m","message":"{\"method\":\"GET\",\"url\":\"/user/fetchVendorDetails?vendorId=66e3f158ebbcf3a47b4e768e&userId=66e8faf93f0f85665af00be9\",\"status\":\"200\",\"responseTime\":\"229.740\"}","timestamp":"2024-10-09T08:45:33.811Z"}
