@@ -21,7 +21,7 @@ const Page: React.FC = () => {
     <div>
       <Navbar />
       <UserMain />
-      <VendorList vendors={[]} />
+      <VendorList  />
       <Footer />
     </div>
   );
