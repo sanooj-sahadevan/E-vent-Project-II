@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@react-google-maps/api": "^2.20.3",
-    "date-fns": "^4.1.0",
-    "i": "^0.3.7",
-    "npm": "^10.9.0"
-  }
-}
