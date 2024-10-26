@@ -130,8 +130,6 @@ const Home: React.FC = () => {
           )}
         </div>
       </div>
-
-
       <div className="py-10 relative">
         {/* Background Image */}
         <div className="relative w-full h-[40vh]">

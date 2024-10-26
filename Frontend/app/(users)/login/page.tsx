@@ -1,6 +1,6 @@
 import React from 'react'
-import LogInForm from '@/components/login'
 import Navbar from '@/components/Navbar'
+import LogInForm from '@/components/login'
 
 const page = () => {
   return (
