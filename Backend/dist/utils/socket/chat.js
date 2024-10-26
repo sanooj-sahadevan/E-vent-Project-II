@@ -1,0 +1,45 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.socketHandler = void 0;
+const socketHandler = (io) => {
+    io.on("connection", (socket) => {
+        console.log("New client connected");
+        socket.on("joinRoom", (id) => {
+            console.log(`User joined room: ${id}`);
+            socket.join(id);
+        });
+        socket.on("message", (messageData) => {
+            if (!messageData.chatId || !messageData.text) {
+                console.error("Invalid message data:", messageData);
+                return;
+            }
+            console.log('gointg to emit');
+            io.to(messageData.chatId).emit("message", messageData);
+        });
+        socket.on("disconnect", () => {
+            console.log("Client disconnected");
+        });
+    });
+};
+exports.socketHandler = socketHandler;
+// const socketHandler = (io) => {
+//   io.on("connection", (socket) => {
+//     console.log("A user connected with socket ID:", socket.id);
+//     socket.on("joinRoom", (chatId) => {
+//       console.log(`Socket ${socket.id} joining room ${chatId}`);
+//       socket.join(chatId);
+//     });
+//     socket.on("message", (messageData) => {
+//       console.log("Message received:", messageData);
+//       if (!messageData.chatId || !messageData.text) {
+//         console.error("Invalid message data:", messageData);
+//         return;
+//       }
+//       io.to(messageData.chatId).emit("message", messageData);
+//     });
+//     socket.on("disconnect", () => {
+//       console.log("A user disconnected");
+//     });
+//   });
+// };
+// module.exports = socketHandler;

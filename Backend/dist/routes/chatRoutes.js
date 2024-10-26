@@ -1,0 +1,21 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const chatRepo_1 = require("../Repository/chatRepo");
+const chatController_1 = require("../controller/chatController");
+const chatService_1 = require("../Service/chatService");
+const router = express_1.default.Router();
+const chatRepository = new chatRepo_1.ChatRepository();
+const chatService = new chatService_1.ChatService(chatRepository);
+const chatController = new chatController_1.ChatController(chatService);
+router.post('/savechat', chatController.savechat.bind(chatController));
+router.get('/message/:chatId', chatController.getMessage.bind(chatController));
+router.get("/company/:companyId", chatController.companyChat.bind(chatController));
+router.get("/usercompany/:companyId", chatController.usercompanyChat.bind(chatController));
+router.post("/message", chatController.companyAddMessage.bind(chatController));
+router.post("/usermessage", chatController.userCompanyAddMessage.bind(chatController));
+router.get('/message/:chatId', chatController.userGetMessage.bind(chatController));
+exports.default = router;
