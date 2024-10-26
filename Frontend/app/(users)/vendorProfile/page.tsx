@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import Navbar from '@/components/Navbar';
-import UserMain from '@/components/userMain';
+import UserMain from '@/components/userMainII';
 import VendorProfile from '@/components/User/vendorProfile';
 import Footer from '@/components/footer';
 
