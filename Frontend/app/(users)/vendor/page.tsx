@@ -2,7 +2,7 @@
 
 import Navbar from '@/components/Navbar';
 import React, { useState } from 'react';
-import UserMain from '@/components/userMain';
+import UserMain from '@/components/userMainII';
 import VendorList from '@/components/User/vendorlist';
 import Footer from '@/components/footer';
 
@@ -21,7 +21,7 @@ const Page: React.FC = () => {
     <div>
       <Navbar />
       <UserMain />
-      <VendorList vendors={[]} />
+      <VendorList  />
       <Footer />
     </div>
   );
