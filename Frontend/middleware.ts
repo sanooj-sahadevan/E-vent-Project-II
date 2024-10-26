@@ -4,6 +4,7 @@ import { jwtVerify } from "jose";
 import {
   isProtectedAdminRoute,
   isProtectedVendorRoute,
+  isProtectedUserRoute,
   toBeRedirectedAdminRoutes,
   toBeRedirectedVendorRoutes,
   toBeRedirectedRoutes,
@@ -17,31 +18,37 @@ export async function middleware(req: NextRequest) {
   }
 
   const adminTokenVerified = await verifyToken("adminToken", req);
+  const vendorTokenVerified = await verifyToken("vendorToken", req);
+  const userTokenVerified = await verifyToken("token", req);
+
+  // Admin Routes
   const isProtectedAdmin = isProtectedAdminRoute(pathname);
   if (isProtectedAdmin && !adminTokenVerified) {
     return NextResponse.redirect(new URL("/admin", req.url));
   }
-
   const toBeRedirectedAdmin = toBeRedirectedAdminRoutes(pathname);
   if (toBeRedirectedAdmin && adminTokenVerified) {
     return NextResponse.redirect(new URL("/admin/dashboard", req.url));
   }
 
-  const vendorTokenVerified = await verifyToken("vendorToken", req);
+  // Vendor Routes
   const isProtectedVendor = isProtectedVendorRoute(pathname);
   if (isProtectedVendor && !vendorTokenVerified) {
     return NextResponse.redirect(new URL("/vendorLogin", req.url));
   }
-
   const toBeRedirectedVendor = toBeRedirectedVendorRoutes(pathname);
   if (toBeRedirectedVendor && vendorTokenVerified) {
     return NextResponse.redirect(new URL("/vendordashboard", req.url));
   }
 
-  const tokenVerified = await verifyToken("token", req);
-  const toBeRedirected = toBeRedirectedRoutes(pathname);
-  if (toBeRedirected && tokenVerified) {
-    return NextResponse.redirect(new URL("/", req.url));
+  // User Routes
+  const isProtectedUser = isProtectedUserRoute(pathname);
+  if (isProtectedUser && !userTokenVerified) {
+    return NextResponse.redirect(new URL("/login", req.url));  // Redirect to login if user token is missing
+  }
+  const toBeRedirectedUser = toBeRedirectedRoutes(pathname);
+  if (toBeRedirectedUser && userTokenVerified) {
+    return NextResponse.redirect(new URL("/", req.url));  // Redirect to home if already logged in
   }
 
   return NextResponse.next();
@@ -57,13 +64,13 @@ async function verifyToken(tokenName: string, req: NextRequest): Promise<boolean
     return false;
   }
 
-  const secret = process.env.JWT_SECRET || 'sanoojsanooj';
+  const secret = process.env.JWT_SECRET || "sanoojsanooj";
 
   try {
     const { payload } = await jwtVerify(token.value, new TextEncoder().encode(secret));
     return Boolean(payload);
   } catch (err: any) {
-    console.log(`Failed to verify ${tokenName}`, err.message);
+    console.log(`Failed to verify ${tokenName}:`, err.message);
     return false;
   }
 }

@@ -1,6 +1,7 @@
 import React from 'react'
-import LogInForm from '@/components/Login'
 import Navbar from '@/components/Navbar'
+import LogInForm from '@/components/login'
+
 const page = () => {
   return (
     <div>

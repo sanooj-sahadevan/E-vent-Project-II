@@ -31,7 +31,7 @@ const OTPPage: React.FC = () => {
   
     // Handle OTP submission
     const handleOtpSubmit: SubmitHandler<OTPFormInputs> = async (data) => {
-      console.log(data, email);
+      console.log(data, email,'----------------------------');
   
       try {
         await verifyOtp({ otp: data.otp, email });

@@ -36,7 +36,7 @@ const Home: React.FC = () => {
                             placeholder="Search..."
                             className="flex-grow p-3 rounded-l-lg border-2 border-white text-black bg-white shadow-lg"
                         />
-                        <button className="bg-blue-500 text-white p-3 rounded-r-lg shadow-lg">
+                        <button className="bg-pink-500 text-white p-3 rounded-r-lg shadow-lg">
                             Find Services
                         </button>
                     </div>

@@ -124,7 +124,7 @@ const OTPPage: React.FC = () => {
             ) : (
               <button
                 onClick={handleResendOtp}
-                className="text-blue-600 hover:text-blue-500 font-medium text-sm"
+                className="text-pink-600 hover:text-blue-500 font-medium text-sm"
               >
                 Resend OTP
               </button>
