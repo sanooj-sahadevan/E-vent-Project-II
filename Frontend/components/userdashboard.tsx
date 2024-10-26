@@ -82,11 +82,11 @@ const Home: React.FC = () => {
 
   if (loading) {
     return (
-        <div className="flex justify-center items-center min-h-screen">
-            <Spinner size="xl" color="gray" />
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner size="xl" color="gray" />
+      </div>
     );
-}
+  }
 
   return (
     <div className="container mx-auto">
@@ -103,6 +103,7 @@ const Home: React.FC = () => {
               >
                 <div className="relative w-full h-45 mb-4">
                   {/* Image with hover blur and dark overlay */}
+
                   <img
                     src={vendor.profileImage}
                     alt={vendor.vendorname}
@@ -138,7 +139,7 @@ const Home: React.FC = () => {
             src={img2}
             alt="Join Our Community"
             fill
-            objectFit="cover"
+            style={{ objectFit: "cover" }}
             className="w-full h-full"
           />
         </div>
@@ -198,7 +199,7 @@ const Home: React.FC = () => {
             src={img1}
             alt="Join Our Community"
             fill
-            objectFit="cover"
+            style={{ objectFit: "cover" }}
             className="w-full h-full"
           />
         </div>
