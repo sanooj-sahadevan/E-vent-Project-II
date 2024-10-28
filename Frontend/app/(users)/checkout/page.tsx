@@ -1,5 +1,5 @@
 import Navbar from '@/components/Navbar'
-import React from 'react'
+import React, { Suspense } from 'react'
 import UserMain from '@/components/userMain'
 import VendorList from '@/components/User/vendorlist'
 import Checkout from '@/components/User/checkout'
@@ -8,7 +8,11 @@ const page = () => {
   return (
     <div>
       <Navbar />
-      <Checkout />
+      <Suspense fallback={<div>Loading...</div>}>
+
+        <Checkout />
+      </Suspense>
+
       <Footer />
     </div>
   )
