@@ -1,10 +1,11 @@
+
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import { useSearchParams, useRouter } from 'next/navigation';
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState } from 'react';
 import PayUComponent from "@/components/payment/payUcomponent";
 
-const CheckoutPageContent: React.FC = () => {
+const CheckoutPage: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -27,6 +28,7 @@ const CheckoutPageContent: React.FC = () => {
 
   const [isPaymentEnabled, setIsPaymentEnabled] = useState(false);
 
+  // Separate useEffect for fetching user data only once
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -42,8 +44,9 @@ const CheckoutPageContent: React.FC = () => {
         },
       }));
     }
-  }, []);
+  }, []);  // Empty dependency array to ensure this runs only once
 
+  // Fetch booking details from search params
   useEffect(() => {
     const params = {
       category: searchParams.get("category") || '',
@@ -71,6 +74,7 @@ const CheckoutPageContent: React.FC = () => {
     }));
   }, [searchParams]);
 
+  // Ensure bookingDetails are updated properly but without triggering redundant renders
   useEffect(() => {
     console.log(bookingDetails, 'Booking Details ---');
   }, [bookingDetails]);
@@ -81,6 +85,7 @@ const CheckoutPageContent: React.FC = () => {
       <p className="text-center mb-12 text-lg text-gray-600">Confirm your event details and proceed with the payment</p>
 
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start justify-center gap-8">
+        {/* Left: Price Details */}
         <div className="w-full lg:w-1/3 bg-white shadow-lg rounded-lg p-8">
           <h2 className="text-2xl font-bold text-gray-700 mb-6">Price Details</h2>
           {bookingDetails.userId.username && <p className="text-lg text-gray-600 mb-2">User: <span className="font-semibold">{bookingDetails.userId.username}</span></p>}
@@ -106,9 +111,11 @@ const CheckoutPageContent: React.FC = () => {
           </div>
         </div>
 
+        {/* Right: Payment Method */}
         <div className="w-full lg:w-1/3 bg-white shadow-lg rounded-lg p-8">
           <h2 className="text-2xl font-bold text-gray-700 mb-6">Enable Payment</h2>
 
+          {/* Toggle for Payment Method */}
           <div className="flex items-center mb-4">
             <input
               type="checkbox"
@@ -122,20 +129,13 @@ const CheckoutPageContent: React.FC = () => {
             </label>
           </div>
 
+          {/* Conditionally render the PayUComponent */}
           {isPaymentEnabled && (
             <PayUComponent BookedData={bookingDetails} />
           )}
         </div>
       </div>
     </div>
-  );
-};
-
-const CheckoutPage: React.FC = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <CheckoutPageContent />
-    </Suspense>
   );
 };
 
