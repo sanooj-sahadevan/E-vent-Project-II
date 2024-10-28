@@ -5,16 +5,16 @@ import { toast } from 'react-toastify';
 import { UserEdit } from "@/services/userApi";
 
 const ProfilePage: React.FC = () => {
-  const [userData, setUserData] = useState<any>(null); // Holds user profile data
-  const [loading, setLoading] = useState(true); // Tracks loading state
-  const [error, setError] = useState<string | null>(null); // Tracks errors
+  const [userData, setUserData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [address, setAddress] = useState({
     street: '',
     cityState: '',
     pinCode: '',
     state: '',
   });
-  const [isEditing, setIsEditing] = useState(false); // Tracks if the user is editing
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const storedUserProfile = localStorage.getItem('user');
