@@ -29,38 +29,57 @@ const SignupForm: React.FC = () => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const { username, phone, email, password } = data;
-    console.log(data.username + 'dataaaaaa');
 
-
-    const reqBody = {
+    const reqBody: {
+      username: string;
+      phone: number;
+      email: string;
+      password: string;
+      latitude: number | null;
+      longitude: number | null;
+    } = {
       username,
-      phone,
+      phone: Number(phone),
       email,
       password,
+      latitude: null,
+      longitude: null,
     };
-
     const reqHeader = {
       "Content-Type": "application/json",
     };
 
-    try {
-      const result = await SignUpAPI(reqBody, reqHeader);
-      console.log("SignUpAPI result:" + result);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
 
-      if (result.error) {
-        toast.error(result.message);
-      } else if (result) {
-        toast.success("OTP sent, please check your mail.");
-        router.push(`/otp?email=${email}`);
+        // Add the latitude and longitude to reqBody
+        reqBody.latitude = latitude;
+        reqBody.longitude = longitude;
+
+        try {
+          const result = await SignUpAPI(reqBody, reqHeader);
+          console.log("SignUpAPI result:" + result);
+
+          if (result.error) {
+            toast.error(result.message);
+          } else if (result) {
+            toast.success("OTP sent, please check your mail.");
+            router.push(`/otp?email=${email}`);
+          }
+        } catch (err) {
+          toast.error("An error occurred during signup. Please try again.");
+          console.error('SignUpAPI error:', err);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error.message);
+        toast.error("Failed to retrieve your location. Please enable location services.");
       }
-    } catch (err) {
-      toast.error("An error occurred during signup. Please try again.");
-      console.error('SignUpAPI error:', err);
-    }
+    );
   };
 
   return (
-
     <>
       <ToastContainer
         position="top-center"
@@ -74,24 +93,18 @@ const SignupForm: React.FC = () => {
         pauseOnHover
       />
 
-<div className="flex min-h-screen bg-white-100 p-8">
-        {/* <div className="w-1/2">
-          <img
-            src="https://media.istockphoto.com/id/1495018397/photo/splendid-view-of-an-outdoor-wedding-premises.jpg?s=2048x2048&w=is&k=20&c=WgMmtbGBe6ZEPoUpJQhdjJmX4QR1sBfqsc9bAXRSMo0="
-            alt="Sign up"
-            className="object-cover w-full h-full"
-          />
-        </div> */}
-        <div className="w-1/2">
+      <div className="flex min-h-screen bg-white-100 p-6">
+        <div className="flex-1 flex items-center justify-center bg-white-500">
           <Image
             src={img}
             alt="Sign up"
-            className="object-cover w-full h-full"
+            className="object-cover max-w-full max-h-full"
+            style={{ width: '95%', height: '85%' }}
           />
         </div>
-        <div className="flex flex-col items-center justify-center w-1/2 px-10 space-y-8 bg-white">
-          <h2 className="text-4xl font-bold text-gray-800">Sign Up</h2>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-3/4">
+        <div className="flex flex-col items-center justify-center w-2/5 px-6 space-y-6 bg-white">
+          <h2 className="text-3xl font-bold text-gray-800">Sign Up</h2>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-4/5">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
                 Name
@@ -128,13 +141,13 @@ const SignupForm: React.FC = () => {
                 Phone Number
               </label>
               <input
-                type="tel"
+                type="number"
                 id="phone"
                 className="block w-full mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 {...register("phone", {
                   required: "Phone number is required",
                   pattern: {
-                    value: /^[0-9]{10}$/, // This pattern validates a 10-digit phone number
+                    value: /^[0-9]{10}$/,
                     message: "Phone number must be 10 digits",
                   },
                 })}
@@ -151,7 +164,8 @@ const SignupForm: React.FC = () => {
                 id="password"
                 className="block w-full mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 {...register("password", {
-                  required: "Password is required", pattern: {
+                  required: "Password is required",
+                  pattern: {
                     value:
                       /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&*()_+~`|}{[\]:;?><,./-]).{8,}$/,
                     message: "Password must be at least 6 characters",
@@ -197,8 +211,6 @@ const SignupForm: React.FC = () => {
         </div>
       </div>
     </>
-
-
   );
 };
 

@@ -102,27 +102,21 @@ const LoginForm: React.FC = () => {
       />
 
 
-<div className="flex min-h-screen bg-white-100 p-8">
-        {/* <div className="w-1/2">
-          <img
-            src="https://media.istockphoto.com/id/1495018397/photo/splendid-view-of-an-outdoor-wedding-premises.jpg?s=2048x2048&w=is&k=20&c=WgMmtbGBe6ZEPoUpJQhdjJmX4QR1sBfqsc9bAXRSMo0="
-            alt="Log in"
-            className="object-cover w-full h-full"
-          />
-        </div> */}
-        <div className="w-1/2">
+      <div className="flex min-h-screen bg-white-100 p-8">
+
+        <div className="flex-1 flex items-center justify-center bg-white-500">
           <Image
             src={img}
             alt="Sign up"
-            className="object-cover w-full h-full"
-          />
+            className="object-cover max-w-full max-h-full"
+            style={{ width: '95%', height: '85%' }} />
         </div>
 
 
-        <div className="flex flex-col items-center justify-center w-3/5 px-10 space-y-8 bg-white">
-          <h2 className="text-4xl font-bold text-gray-800">Log In</h2>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 w-3/4">
-            <div>
+        <div className="flex flex-col items-center justify-center w-2/5 px-6 space-y-6 bg-white"> {/* Reduced width and padding */}
+        <h2 className="text-4xl font-bold text-gray-800">Log In</h2>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-4/5"> {/* Reduced form spacing and width */}
+          <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
               </label>

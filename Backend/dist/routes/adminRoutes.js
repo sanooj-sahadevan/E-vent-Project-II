@@ -1,7 +1,20 @@
-import express from 'express';
-import { AdminController } from '../controller/adminController.js';
-const router = express.Router();
-const adminController = new AdminController();
-// Login route for admin
-router.post('/login', (req, res, next) => adminController.adminLogin(req, res, next));
-export default router;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const adminRepo_1 = require("../Repository/adminRepo");
+const adminService_1 = require("../Service/adminService");
+const adminController_1 = require("../controller/adminController");
+const router = (0, express_1.Router)();
+const adminRepository = new adminRepo_1.AdminRepository();
+const adminService = new adminService_1.AdminService(adminRepository);
+const adminController = new adminController_1.AdminController(adminService);
+router.post("/login", adminController.adminlogin.bind(adminController));
+router.get("/getAllVendors", adminController.getAllVendors.bind(adminController));
+router.put("/vendor/blockUser/:id", adminController.blockVendorController.bind(adminController));
+router.put("/vendor/unblockUser/:id", adminController.unblockVendorController.bind(adminController));
+router.get("/getAllUsers", adminController.getUsersList.bind(adminController));
+router.put("/blockUser/:id", adminController.blockUserController.bind(adminController));
+router.put("/unblockUser/:id", adminController.unblockUserController.bind(adminController));
+router.get("/getAllBookings", adminController.getAllBookings.bind(adminController));
+router.get("/dashboard", adminController.DashboardController.bind(adminController));
+exports.default = router;

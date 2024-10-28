@@ -11,7 +11,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        buttonBg: "#ec4899", // Custom button color
+        buttonBg: "#ec4899",
         // Other custom colors
       },
       // Other theme extensions
