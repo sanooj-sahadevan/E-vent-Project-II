@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 
 export async function POST(req: Request) {
   console.log("API payment success");
-  
+
   const contentType = req.headers.get("content-type") || "";
   console.log({ contentType });
 
@@ -20,10 +20,10 @@ export async function POST(req: Request) {
     const PayUOrderId = await PayUApiCalls.saveData(data);
     console.log(PayUOrderId, "PayUOrderId");
 
-    
+
   } catch (error) {
     console.error("Error:", error);
   }
-  
+
   return redirect("/bookingSuccess");
 }
