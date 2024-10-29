@@ -24,16 +24,18 @@
 const nextConfig = {
   swcMinify: true,
   productionBrowserSourceMaps: true,
+  outputFileTracing: true,
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'sanooj123.s3.eu-north-1.amazonaws.com',
-        pathname: '/**', // Matches all paths under this domain
+        pathname: '/**',
       },
     ],
   },
 };
 
 export default nextConfig;
+
 
