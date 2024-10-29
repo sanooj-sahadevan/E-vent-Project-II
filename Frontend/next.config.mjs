@@ -18,13 +18,12 @@
 
 // export default nextConfig;
 
+
 /**
- *  @type {import('next').NextConfig}
+ * @type {import('next').NextConfig}
  */
 const nextConfig = {
-  swcMinify: true,
   productionBrowserSourceMaps: true,
-  outputFileTracing: true,
   images: {
     remotePatterns: [
       {
@@ -37,5 +36,3 @@ const nextConfig = {
 };
 
 export default nextConfig;
-
-
