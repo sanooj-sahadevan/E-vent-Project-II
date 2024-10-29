@@ -19,7 +19,7 @@ import logger from "./utils/logger";
 dotenv.config();
 
 const app = express();
-const PORT = 5001;
+const PORT = 5000;
 const morganFormat = ":method :url :status :response-time ms";
 
 
