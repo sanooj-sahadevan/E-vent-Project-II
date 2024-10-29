@@ -69,6 +69,7 @@ class UserService {
                 return { user, token };
             }
             catch (error) {
+                console.error('Error during login:', error);
                 throw new Error(error.message);
             }
         });

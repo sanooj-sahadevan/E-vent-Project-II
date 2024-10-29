@@ -42,6 +42,7 @@ export class UserService {
 
 
 
+
   async loginUser(email: string, password: string) {
     try {
       const user = await this.userRepository.findUserByEmail(email);
@@ -49,18 +50,23 @@ export class UserService {
       if (!user) {
         throw new Error("Invalid Email/Password");
       }
+
       const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) {
         throw new Error("Invalid Email/Password");
       }
+
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
         expiresIn: "1h",
       });
+
       return { user, token };
     } catch (error: any) {
-      throw new Error(error.message)
+      console.error('Error during login:', error);
+      throw new Error(error.message);
     }
   }
+
 
 
 
@@ -104,7 +110,7 @@ export class UserService {
 
 
 
-  
+
 
 
 

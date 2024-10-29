@@ -39,6 +39,7 @@ export class UserRepository extends BaseRepository<User> implements IUserReposit
 
   async findUserByEmail(email: string) {
     try {
+console.log('ziyavudeheen');
 
       const user = await this.userByEmail(email);
       return user;

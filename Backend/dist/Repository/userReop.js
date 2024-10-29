@@ -49,6 +49,7 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     findUserByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log('ziyavudeheen');
                 const user = yield this.userByEmail(email);
                 return user;
             }

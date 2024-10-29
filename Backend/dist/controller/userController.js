@@ -20,6 +20,7 @@ class UserController {
     login(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log('234567');
                 const { email, password } = req.body;
                 const { user, token } = yield this.userService.loginUser(email, password);
                 res.cookie("token", token, {

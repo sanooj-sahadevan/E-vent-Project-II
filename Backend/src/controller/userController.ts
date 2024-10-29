@@ -12,6 +12,8 @@ export class UserController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log('234567');
+      
       const { email, password } = req.body;
       const { user, token } = await this.userService.loginUser(email, password);
       res.cookie("token", token, {
