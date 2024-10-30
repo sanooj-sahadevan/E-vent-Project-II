@@ -1355,3 +1355,4 @@
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"750.288\"}","timestamp":"2024-10-29T05:01:21.008Z"}
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"122.188\"}","timestamp":"2024-10-29T05:45:07.217Z"}
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"50.212\"}","timestamp":"2024-10-29T05:45:07.283Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/\",\"status\":\"404\",\"responseTime\":\"6.601\"}","timestamp":"2024-10-30T05:07:53.293Z"}
