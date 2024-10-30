@@ -1,10 +1,4 @@
-{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"5515.851\"}","timestamp":"2024-10-25T18:19:36.688Z"}
-{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"134.130\"}","timestamp":"2024-10-25T18:19:36.860Z"}
-{"level":"info","message":"{\"method\":\"POST\",\"url\":\"/user/login\",\"status\":\"200\",\"responseTime\":\"522.312\"}","timestamp":"2024-10-25T18:19:54.204Z"}
-{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"111.078\"}","timestamp":"2024-10-25T18:19:56.183Z"}
-{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"121.020\"}","timestamp":"2024-10-25T18:19:56.308Z"}
-{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"389.837\"}","timestamp":"2024-10-25T18:20:01.564Z"}
-{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"299.770\"}","timestamp":"2024-10-25T18:20:01.869Z"}
+
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/fetchVendorDetails?vendorId=66e3f158ebbcf3a47b4e768e&userId=67169bd88848b78cf8031e7c\",\"status\":\"304\",\"responseTime\":\"1085.143\"}","timestamp":"2024-10-25T18:24:06.972Z"}
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/fetchReview?vendorId=66e3f158ebbcf3a47b4e768e&userId=67169bd88848b78cf8031e7c\",\"status\":\"304\",\"responseTime\":\"1596.577\"}","timestamp":"2024-10-25T18:24:07.602Z"}
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"304\",\"responseTime\":\"198.281\"}","timestamp":"2024-10-29T04:47:45.850Z"}
