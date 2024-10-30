@@ -515,8 +515,9 @@ class UserRepository extends BaseRepo_1.BaseRepository {
                     eventType: bookingData.udf6,
                     category: bookingData.udf5,
                     occupancy: bookingData.occupancy,
-                    dishesId: bookingData.udf3 || null,
-                    auditoriumId: bookingData.udf2 || null
+                    // Check for "nil" or any invalid ObjectId string
+                    dishesId: bookingData.udf3 !== "nil" ? bookingData.udf3 : null,
+                    auditoriumId: bookingData.udf2 !== "nil" ? bookingData.udf2 : null,
                 });
                 const savedBooking = yield newBooking.save();
                 return savedBooking;

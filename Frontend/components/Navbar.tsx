@@ -1,3 +1,4 @@
+
 "use client";
 
 import { deleteCookie } from "@/utils/deleteCookie";
@@ -14,11 +15,11 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setActivePath(window.location.pathname);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (typeof window !== "undefined") {
+  //     setActivePath(window.location.pathname);
+  //   }
+  // }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -86,7 +87,7 @@ const Navbar: React.FC = () => {
       </ul>
 
       {/* Icons and Logout */}
-      <div className="flex space-x-7 items-center"> 
+      <div className="flex space-x-7 items-center">
         {/* Notification Icon */}
         <BellRing onClick={() => router.push("/notification")} className="w-5 h-5 text-white" /> {/* Reduced icon size */}
 

@@ -1,3 +1,4 @@
+"use client"
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { useEffect } from "react";
@@ -12,10 +13,6 @@ const firebaseConfig = {
   appId: "1:583260155328:web:f016abcbef3aa09a5eec25",
   measurementId: "G-MM9Y0ZN7LT"
 };
-
-// Initialize Firebase
-// export const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
 
 export const app = initializeApp(firebaseConfig);
 

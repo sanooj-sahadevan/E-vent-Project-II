@@ -2,7 +2,7 @@
 "use client";
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import headerImage from '../public/1.jpg.jpg'; 
+import headerImage from '../public/1.jpg';
 import { searchUsers } from '@/services/userApi';
 
 interface Vendor {
@@ -16,9 +16,7 @@ interface UserMainProps {
     setVendors: React.Dispatch<React.SetStateAction<Vendor[]>>;
 }
 
-// const UserMain: React.FC<{ setVendors: (vendors: Vendor[]) => void }> = ({ setVendors }) => {
-    const UserMain: React.FC<UserMainProps> = ({ setVendors }) => {
-
+const UserMain: React.FC<UserMainProps> = ({ setVendors }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(false);
     const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -32,7 +30,7 @@ interface UserMainProps {
             if (searchTerm.trim()) {
                 searchVendors(searchTerm);
             } else {
-                // setVendors([]); // Clear vendors if the search term is empty
+                setVendors([]); // Clear vendors if the search term is empty
             }
         }, 300);
 
@@ -41,7 +39,7 @@ interface UserMainProps {
                 clearTimeout(debounceTimeoutRef.current);
             }
         };
-    }, [searchTerm]);
+    }, [searchTerm, setVendors]); // Add setVendors to the dependency array
 
     const searchVendors = async (term: string) => {
         try {

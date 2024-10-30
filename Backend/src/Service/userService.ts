@@ -397,8 +397,8 @@ export class UserService {
         udf5,
         udf6,
         udf7,
-        paymentStatus: 'pending',  // You can adjust this according to your logic
-        paymentHash: hash          // Save the generated hash
+        paymentStatus: 'pending',
+        paymentHash: hash
       };
 
       const savedBooking = await this.userRepository.saveBooking(bookingData);

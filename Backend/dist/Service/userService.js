@@ -375,8 +375,8 @@ class UserService {
                     udf5,
                     udf6,
                     udf7,
-                    paymentStatus: 'pending', // You can adjust this according to your logic
-                    paymentHash: hash // Save the generated hash
+                    paymentStatus: 'pending',
+                    paymentHash: hash
                 };
                 const savedBooking = yield this.userRepository.saveBooking(bookingData);
                 // return savedBooking;
