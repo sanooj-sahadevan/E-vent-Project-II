@@ -5,10 +5,10 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "qswderfEventopia",
+  title: "Eventopia",
   description: "Event Management Company",
   icons: {
-    icon: "/icon.jpg", 
+    icon: "/icon.jpg", // path to your favicon in the public folder
   },
 };
 
