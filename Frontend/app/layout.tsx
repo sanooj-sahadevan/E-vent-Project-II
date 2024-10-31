@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Eventopia",
   description: "Event Management Company",
   icons: {
-    icon: "/icon.jpg", // path to your favicon in the public folder
+    icon: "/icon.jpg", 
   },
 };
 

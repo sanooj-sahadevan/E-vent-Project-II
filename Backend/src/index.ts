@@ -30,7 +30,7 @@ const httpServer = createServer(app);
 
 export const io = new serverSocket(httpServer, {
   cors: {
-    origin: "https://www.eventopia.shop/",
+    origin: "https://www.eventopia.shop",
     methods: ['GET', 'POST'],
     credentials: true,
   },
@@ -43,6 +43,8 @@ app.use(cors({
   // origin: 'https://www.eventopia.shop/',
   credentials: true,
 }));
+
+
 app.use(express.json());
 app.use(cookieParser());
 app.use(
