@@ -275,12 +275,14 @@ class UserRepository extends BaseRepo_1.BaseRepository {
     }
     finddishesByIdInDb(dishesId) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log('thenkasi');
             try {
-                let result = this.dishesById;
+                console.log('Entering Repository Layer');
+                const result = yield this.dishesById(dishesId);
                 return result;
             }
             catch (error) {
-                throw new Error('Database Error');
+                throw new Error(`Repository Error - Fetching by ID: ${error}`);
             }
         });
     }

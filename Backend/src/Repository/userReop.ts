@@ -262,13 +262,17 @@ console.log('ziyavudeheen');
   }
 
   async finddishesByIdInDb(dishesId: string) {
+    console.log('thenkasi');
+    
     try {
-      let result = this.dishesById
-      return result
+      console.log('Entering Repository Layer');
+      const result = await this.dishesById(dishesId);
+      return result;
     } catch (error) {
-      throw new Error('Database Error');
+      throw new Error(`Repository Error - Fetching by ID: ${error}`);
     }
   }
+  
 
   async getBookingDetail(id: string) {
     try {

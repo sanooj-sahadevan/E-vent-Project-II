@@ -97,14 +97,19 @@ async userByEmail(email: string) {
     //     const newBooking = await bookedModel.create({ ...bookingData });
     //     return newBooking;
     // }
+
+
     async dishesById(dishesId: string) {
-        try {
-          let result = await Dishes.findById(dishesId);
-          return result
-        } catch (error) {
-          throw new Error('Database Error');
-        }
-      }
+  try {
+    console.log("Entering Base Repository Layer");
+    const result = await Dishes.findById(dishesId);
+    console.log('Result:', result);
+    return result;
+  } catch (error) {
+    throw new Error(`Database Error - Fetching dish: ${error}`);
+  }
+}
+
 
 
 }

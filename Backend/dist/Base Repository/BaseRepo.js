@@ -99,11 +99,13 @@ class BaseRepository {
     dishesById(dishesId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                let result = yield dishesModel_1.Dishes.findById(dishesId);
+                console.log("Entering Base Repository Layer");
+                const result = yield dishesModel_1.Dishes.findById(dishesId);
+                console.log('Result:', result);
                 return result;
             }
             catch (error) {
-                throw new Error('Database Error');
+                throw new Error(`Database Error - Fetching dish: ${error}`);
             }
         });
     }

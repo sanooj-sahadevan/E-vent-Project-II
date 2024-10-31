@@ -1,4 +1,3 @@
-
 "use client";
 
 import { deleteCookie } from "@/utils/deleteCookie";
@@ -15,11 +14,11 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   if (typeof window !== "undefined") {
-  //     setActivePath(window.location.pathname);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setActivePath(window.location.pathname);
+    }
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -46,12 +45,12 @@ const Navbar: React.FC = () => {
   return (
     <nav className="bg-black py-4 px-8 flex justify-between items-center fixed top-0 w-full z-10">
       {/* Logo Section */}
-      <div className="text-white font-bold">
-        <Link href="/">E-vent</Link>
+      <div className="text-white custom-font">
+        <Link href="/">EVENTOPIA</Link>
       </div>
 
       {/* Navigation Links */}
-      <ul className="flex space-x-6 text-white"> {/* Reduced space between links */}
+      <ul className="flex space-x-6 text-white">
         <li>
           <Link
             href="/"
@@ -89,7 +88,7 @@ const Navbar: React.FC = () => {
       {/* Icons and Logout */}
       <div className="flex space-x-7 items-center">
         {/* Notification Icon */}
-        <BellRing onClick={() => router.push("/notification")} className="w-5 h-5 text-white" /> {/* Reduced icon size */}
+        <BellRing onClick={() => router.push("/notification")} className="w-5 h-5 text-white" />
 
         {/* Profile Icon */}
         <UserRoundPen

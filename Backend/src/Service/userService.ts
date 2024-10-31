@@ -243,13 +243,14 @@ export class UserService {
     try {
       const vendor = await this.userRepository.finddishesByIdInDb(dishesId);
       if (!vendor) {
-        throw new Error(`Error finding vendor`);
+        throw new Error(`Vendor with ID ${dishesId} not found`);
       }
-      return vendor
+      return vendor;
     } catch (error) {
-      throw new Error(`Error finding vendor: ${error}`);
+      throw new Error(`Service Error - Finding vendor: ${error}`);
     }
   }
+  
 
 
   async findEvent(bookingId: string) {
