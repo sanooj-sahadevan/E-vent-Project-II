@@ -39,8 +39,8 @@ export const io = new serverSocket(httpServer, {
 socketHandler(io);
 
 app.use(cors({
-  origin: 'https://www.eventopia.shop',
-  // origin: 'https://www.eventopia.shop/',
+  // origin: 'https://www.eventopia.shop',
+ origin: ['https://www.eventopia.shop', 'https://eventopia.shop'],
   credentials: true,
 }));
 
