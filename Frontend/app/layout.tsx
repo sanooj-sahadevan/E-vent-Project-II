@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "E-vent",
-  description: "E-vent Event Management Company",
+  title: "EVentopia",
+  description: "Event Management Company",
   icons: {
     icon: "/icon.jpg", // path to your favicon in the public folder
   },
