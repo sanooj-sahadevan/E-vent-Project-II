@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Eventopia",
+  title: "qswderfEventopia",
   description: "Event Management Company",
   icons: {
     icon: "/icon.jpg", 
