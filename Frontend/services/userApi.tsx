@@ -25,6 +25,9 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 export const LoginAPI = async (reqBody: any) => {
   try {
     const response = await axios.post(`${SERVER_URL}/login`, reqBody, { withCredentials: true });
+    //   if (!response.ok) {
+    //     throw new Error(`HTTP error! status: ${response.status}`);
+    // }
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -32,7 +35,7 @@ export const LoginAPI = async (reqBody: any) => {
   }
 };
 
-// verfy otp Api
+
 export const verifyOtp = async (data: any) => {
   try {
     let otp = await api.post("/verifyOtp", data);
@@ -409,7 +412,7 @@ export const fetchSlots = async (vendorId: string) => {
 export const searchUsers = async (term: string) => {
   try {
 
-    const response = await axios.get(`${SERVER_URL}/searchUsers?term=${term}`); 
+    const response = await axios.get(`${SERVER_URL}/searchUsers?term=${term}`);
     console.log(response)
     return response.data;
   } catch (error) {
