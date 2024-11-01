@@ -14,7 +14,7 @@
 // export const SERVER_URL_vendor = "https://eventopia.shop/vendor";
 // export const server_URL_admin = "https://eventopia.shop/admin";
 // export const server_URL_chat = "https://eventopia.shop/chat";
-export const SERVER_URL = "https://www.eventopia.shop/api/user";
+export const SERVER_URL = "https://eventopia.shop/api/user";
 export const SERVER_URL_vendor = "https://eventopia.shop/api/vendor";
 export const server_URL_admin = "https://eventopia.shop/api/admin";
 export const server_URL_chat = "https://eventopia.shop/api/chat";
