@@ -22,7 +22,6 @@
     "@types/morgan": "^1.9.9",
     "@types/nodemailer": "^6.4.15",
     "aws-sdk": "^2.1691.0",
-    "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.0.0",
     "cors": "^2.8.5",
