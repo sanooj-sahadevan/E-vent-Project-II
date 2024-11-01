@@ -40,7 +40,7 @@ socketHandler(io);
 
 app.use(cors({
   // origin: 'https://www.eventopia.shop',
- origin: ['https://www.eventopia.shop', 'https://eventopia.shop'],
+  origin: ['https://www.eventopia.shop', 'https://eventopia.shop'],
   credentials: true,
 }));
 

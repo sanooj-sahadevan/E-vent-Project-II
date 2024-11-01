@@ -27,14 +27,15 @@ const morganFormat = ":method :url :status :response-time ms";
 const httpServer = (0, http_1.createServer)(app);
 exports.io = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: "https://www.eventopia.shop/",
+        origin: "https://www.eventopia.shop",
         methods: ['GET', 'POST'],
         credentials: true,
     },
 });
 (0, chat_1.socketHandler)(exports.io);
 app.use((0, cors_1.default)({
-    origin: 'https://www.eventopia.shop/',
+    // origin: 'https://www.eventopia.shop',
+    origin: ['https://www.eventopia.shop', 'https://eventopia.shop'],
     credentials: true,
 }));
 app.use(express_1.default.json());
