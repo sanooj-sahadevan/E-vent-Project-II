@@ -25,7 +25,7 @@ const ChatContent = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const socketConnection = io('', {
+        const socketConnection = io('https://e-vent-project-ii.onrender.com"', {
             withCredentials: true,
         });
 
