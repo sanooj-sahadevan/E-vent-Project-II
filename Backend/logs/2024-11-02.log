@@ -19,3 +19,6 @@
 {"level":"info","message":"{\"method\":\"POST\",\"url\":\"/chat/savechat\",\"status\":\"200\",\"responseTime\":\"693.931\"}","timestamp":"2024-11-02T05:00:39.257Z"}
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/fetchReview?vendorId=66e3f158ebbcf3a47b4e768e&userId=67169bd88848b78cf8031e7c\",\"status\":\"304\",\"responseTime\":\"70.239\"}","timestamp":"2024-11-02T05:00:45.928Z"}
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/fetchVendorDetails?vendorId=66e3f158ebbcf3a47b4e768e&userId=67169bd88848b78cf8031e7c\",\"status\":\"304\",\"responseTime\":\"504.761\"}","timestamp":"2024-11-02T05:00:46.367Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/\",\"status\":\"404\",\"responseTime\":\"135.859\"}","timestamp":"2024-11-02T13:16:25.391Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/\",\"status\":\"404\",\"responseTime\":\"6.060\"}","timestamp":"2024-11-02T13:16:27.025Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/\",\"status\":\"404\",\"responseTime\":\"1.581\"}","timestamp":"2024-11-02T13:16:28.197Z"}
