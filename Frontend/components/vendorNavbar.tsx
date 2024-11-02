@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:5000");
+    const newSocket = io("https://e-vent-project-ii.onrender.com")
     setSocket(newSocket);
 
     newSocket.on("unreadCount", (response: any) => {

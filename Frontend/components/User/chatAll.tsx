@@ -42,7 +42,7 @@ const ChatApp = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const socketInstance = io("http://localhost:5000", {
+        const socketInstance = io("https://e-vent-project-ii.onrender.com", {
             transports: ["websocket"],
             withCredentials: true,
         });

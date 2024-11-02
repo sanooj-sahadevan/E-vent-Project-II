@@ -21,21 +21,33 @@ const errorHandling_1 = require("./middleware/errorHandling");
 const logger_1 = __importDefault(require("./utils/logger"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const PORT = 5000;
+const PORT = 8080;
 const morganFormat = ":method :url :status :response-time ms";
 (0, config_1.connectToMongoDB)();
 const httpServer = (0, http_1.createServer)(app);
+// export const io = new serverSocket(httpServer, {
+//   cors: {
+//     origin: "https://www.eventopia.shop",
+//     methods: ['GET', 'POST'],
+//     credentials: true,
+//   },
+// });
+// socketHandler(io);
+// app.use(cors({
+//   // origin: 'https://www.eventopia.shop',
+//   origin: ['https://www.eventopia.shop', 'https://eventopia.shop'],
+//   credentials: true,
+// }));
 exports.io = new socket_io_1.Server(httpServer, {
     cors: {
-        origin: "https://www.eventopia.shop",
+        origin: "http://localhost:3000",
         methods: ['GET', 'POST'],
         credentials: true,
     },
 });
 (0, chat_1.socketHandler)(exports.io);
 app.use((0, cors_1.default)({
-    // origin: 'https://www.eventopia.shop',
-    origin: ['https://www.eventopia.shop', 'https://eventopia.shop'],
+    origin: 'http://localhost:3000',
     credentials: true,
 }));
 app.use(express_1.default.json());

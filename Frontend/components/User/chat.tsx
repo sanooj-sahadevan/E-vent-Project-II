@@ -25,7 +25,7 @@ const ChatContent = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const socketConnection = io('http://localhost:5000', {
+        const socketConnection = io('', {
             withCredentials: true,
         });
 
