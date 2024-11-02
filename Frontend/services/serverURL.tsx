@@ -10,14 +10,14 @@
 // export const server_URL_admin = "https://www.eventopia.shop/admin";
 // export const server_URL_chat = "https://www.eventopia.shop/chat";
 
-// export const SERVER_URL = "https://eventopia.shop/user";
-// export const SERVER_URL_vendor = "https://eventopia.shop/vendor";
-// export const server_URL_admin = "https://eventopia.shop/admin";
-// export const server_URL_chat = "https://eventopia.shop/chat";
+export const SERVER_URL = "https://eventopia.shop/user";
+export const SERVER_URL_vendor = "https://eventopia.shop/vendor";
+export const server_URL_admin = "https://eventopia.shop/admin";
+export const server_URL_chat = "https://eventopia.shop/chat";
 
-export const SERVER_URL = "https://e-vent-project-ii.onrender.com/user";
-export const SERVER_URL_vendor = "https://e-vent-project-ii.onrender.com/vendor";
-export const server_URL_admin = "https://e-vent-project-ii.onrender.com/admin";
-export const server_URL_chat = "https://e-vent-project-ii.onrender.com/chat";
+// export const SERVER_URL = "https://e-vent-project-ii.onrender.com/user";
+// export const SERVER_URL_vendor = "https://e-vent-project-ii.onrender.com/vendor";
+// export const server_URL_admin = "https://e-vent-project-ii.onrender.com/admin";
+// export const server_URL_chat = "https://e-vent-project-ii.onrender.com/chat";
 
 
