@@ -343,3 +343,5 @@
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"200\",\"responseTime\":\"694.092\"}","timestamp":"2024-10-31T15:21:37.004Z"}
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"200\",\"responseTime\":\"120.906\"}","timestamp":"2024-10-31T15:21:44.665Z"}
 {"level":"info","message":"{\"method\":\"GET\",\"url\":\"/user/vendors\",\"status\":\"200\",\"responseTime\":\"94.144\"}","timestamp":"2024-10-31T15:27:15.418Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/\",\"status\":\"404\",\"responseTime\":\"6.590\"}","timestamp":"2024-11-01T09:56:58.557Z"}
+{"level":"info","message":"{\"method\":\"GET\",\"url\":\"/\",\"status\":\"404\",\"responseTime\":\"26.547\"}","timestamp":"2024-11-01T12:18:02.687Z"}
