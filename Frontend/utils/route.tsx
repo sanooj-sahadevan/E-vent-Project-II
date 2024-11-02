@@ -2,7 +2,8 @@
 const protectedUserRoutes = new Set([
   "/profilee", "/auditoriumInfo", "/auditoriumList",
  , "/booknow", "/chat", "/checkout",
-  "/dishesinfo",  "/googlemap",  '/vendorProfile'
+  "/dishesinfo",  "/googlemap", 
+  //  '/vendorProfile'
 ]);
 
 export function isProtectedUserRoute(pathname: string): boolean {
