@@ -43,7 +43,7 @@ export async function middleware(req: NextRequest) {
 
   // User Routes
   const isProtectedUser = isProtectedUserRoute(pathname);
-  if (isProtectedUser && !userTokenVerified) {
+  if (isProtectedUser && !userTokenVerified ) {
     return NextResponse.redirect(new URL("/login", req.url));  // Redirect to login if user token is missing
   }
   const toBeRedirectedUser = toBeRedirectedRoutes(pathname);
