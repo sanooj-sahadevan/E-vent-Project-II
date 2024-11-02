@@ -25,8 +25,8 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/v1/api/:path*",
-        destination: "https://eventopia.shop/v1/api/:path*",
+        source: '/v1/api/:path*',
+        destination: 'https://eventopia.shop/v1/api/:path*',
       },
     ];
   },
@@ -34,15 +34,16 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "sanooj123.s3.eu-north-1.amazonaws.com",
-        pathname: "/**",
+        protocol: 'https',
+        hostname: 'sanooj123.s3.eu-north-1.amazonaws.com',
+        pathname: '/**',
       },
     ],
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;
+
 
 // module.exports = {
 //   async rewrites() {
