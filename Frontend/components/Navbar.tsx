@@ -60,12 +60,12 @@ const Navbar: React.FC = () => {
           </Link>
         </li>
         <li>
-          {/* <Link
+          <Link
             href="/vendor"
             className={`${isActive("/vendor") ? "text-pink-500" : "text-white"}`}
           >
             Vendor
-          </Link> */}
+          </Link>
         </li>
         <li>
           <Link
