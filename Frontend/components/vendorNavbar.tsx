@@ -105,7 +105,7 @@ const Navbar: React.FC = () => {
         <li>
           <Link href="/vendordashboard" >Home</Link>
         </li>
-        <li>
+        {/* <li>
           <Link href="/vendordashboard">Vendor</Link>
         </li>
         <li>
@@ -113,7 +113,7 @@ const Navbar: React.FC = () => {
         </li>
         <li>
           <Link href="/">Contact</Link>
-        </li>
+        </li> */}
       </ul>
 
       {/* Icons and Logout */}
