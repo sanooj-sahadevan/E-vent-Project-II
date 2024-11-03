@@ -15,7 +15,7 @@
 // export const SERVER_URL = "https://eventopia.shop/v1/api/users";
 export const SERVER_URL = "https://eventopia.shop/v1/api/users";
 
-export const SERVER_URL_vendor = "https://e-vent-project-ii.vercel.app/vendor";
+export const SERVER_URL_vendor = "https://eventopia.shop/vendor";
 export const server_URL_admin = "https://eventopia.shop/admin";
 export const server_URL_chat = "https://eventopia.shop/chat";
 
