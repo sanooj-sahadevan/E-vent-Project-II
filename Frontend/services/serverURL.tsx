@@ -16,7 +16,8 @@
 // export const SERVER_URL = "https://eventopia.shop/v1/api/users";
 
 
-export const SERVER_URL = "https://13.61.23.144:8080/v1/api/users";
+export const SERVER_URL = "https://13.61.23.144:8080/v1/api/user";
+//                         http://13.61.23.144:8080/v1/api/user/vendors
 export const SERVER_URL_vendor = "https://eventopia.shop/v1/api/vendor";
 export const server_URL_admin = "https://eventopia.shop/admin";
 export const server_URL_chat = "https://eventopia.shop/chat";
