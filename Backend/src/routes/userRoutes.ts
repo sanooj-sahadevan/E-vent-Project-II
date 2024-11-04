@@ -10,6 +10,7 @@ const userRepository = new UserRepository()
 const userService = new UserService(userRepository)
 const userController = new UserController(userService)
 
+console.log('step2');
 
 // Auth
 router.post("/signup", userController.register.bind(userController));

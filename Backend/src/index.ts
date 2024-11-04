@@ -78,6 +78,7 @@ app.use(
     },
   })
 );
+console.log('step 1');
 
 app.use('/user', userRoutes);
 app.use('/vendor', vendorRoutes);

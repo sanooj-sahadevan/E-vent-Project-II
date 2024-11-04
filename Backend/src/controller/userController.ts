@@ -42,7 +42,11 @@ export class UserController {
 
   async vendorList(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
+      console.log('step 3 controller');
+      
       const vendors = await this.userService.getAllVendors();
+      console.log(vendors,'final stage');
+      
       res.status(HttpStatus.OK).json(vendors);
     } catch (error) {
       next(error);
