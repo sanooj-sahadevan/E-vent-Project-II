@@ -101,20 +101,19 @@ export const allVendorAPI = async () => {
 
 };
 
-
 export const UserEdit = async (vendorData: any) => {
   try {
-    console.log('Editing user details -------------------------------', vendorData);
-
-    // Make the API call to update the user
-    return await axios.patch(`${SERVER_URL}/edituserDetails`, vendorData, {
+    console.log('Sending user edit request:', vendorData);
+    const response = await axios.patch(`${SERVER_URL}/edituserDetails`, vendorData, {
       headers: {
-        'Content-Type': 'application/json', // Ensure JSON data is being sent
+        'Content-Type': 'application/json',
       },
-      withCredentials: true, // If you're using cookies or authentication
+      withCredentials: true,
     });
+    console.log('User edit successful:', response.data);
+    return response;
   } catch (error) {
-    console.error('Error updating user details:', error);
+    console.error('Error in UserEdit function:', error);
     throw error;
   }
 };
@@ -325,17 +324,30 @@ export const fetchBookingDetilsProfile = async (userId: string) => {
 
 
 
-export const changePassword = async (userId: string, newPassword: string) => {
-  try {
-    console.log('ijjijijijij');
 
-    const response = await axios.patch(`${SERVER_URL}/changePassword/${userId}`, { newPassword });
+
+export const changePassword = async (email: string, newPassword: string | undefined) => {
+  try {
+    console.log('Changing password for:', email);
+    const response = await axios.patch(`${SERVER_URL}/changePassword/${email}`, { newPassword });
     return response.data;
   } catch (error) {
     console.error('Error updating password:', error);
     throw error;
   }
 };
+
+export const savePassword = async (email: string, newPassword: string | undefined) => {
+  try {
+    console.log('Saving password for:', email,newPassword);
+    const response = await axios.patch(`${SERVER_URL}/savePassword/${email}`, { newPassword });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating password:', error);
+    throw error;
+  }
+};
+
 
 
 export const userGetUnreadMessagesCountAPI = async (userId: string) => {

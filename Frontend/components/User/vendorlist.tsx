@@ -5,7 +5,6 @@ import { allVendorAPI } from '@/services/userApi';
 import { useRouter } from 'next/navigation';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// import Spinner from '../skeletons/spinner';
 import Spinner from '@/components/skeletons/spinner';
 import { calculateDistance } from '@/utils/geographicLocation/calculateDistance';
 
@@ -42,7 +41,7 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
   const [vendor, setVendor] = useState<Dishes[]>(vendors || []);
   const [loading, setLoading] = useState<boolean>(true);
   const [filteredVendors, setFilteredVendors] = useState<Dishes[]>(vendor);
-  const [ratingFilter, setRatingFilter] = useState<number | null>(null);
+  const [ratingFilter, setRatingFilter] = useState<string | null>(null);
   const [locationFilter, setLocationFilter] = useState<string>('');
   const [filterLoading, setFilterLoading] = useState<boolean>(false);
   const [userData, setUserData] = useState<any>(null);
@@ -54,8 +53,6 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
     const fetchVendor = async () => {
       try {
         const response = await allVendorAPI();
-        console.log('API Response:', response);
-
         if (Array.isArray(response)) {
           setVendor(response);
           setFilteredVendors(response);
@@ -93,9 +90,9 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
   };
 
   const handleRatingFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedRating = parseFloat(event.target.value);
+    const selectedRating = event.target.value;
     setRatingFilter(selectedRating);
-    setCurrentPage(1); // Reset to page 1 on filter change
+    setCurrentPage(1); 
     updateFilteredVendors();
   };
 
@@ -106,12 +103,14 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
     updateFilteredVendors();
   };
 
-  const filterVendors = (location: string, rating: number | null) => {
+  const filterVendors = (location: string, rating: string | null) => {
     let filtered = vendor;
 
-    // Apply rating filter if selected
+    // Apply rating filter based on the selected option
     if (rating) {
-      filtered = filtered.filter((v) => v.rating >= rating);
+      filtered = filtered.sort((a, b) => 
+        rating === 'low' ? b.rating - a.rating : a.rating - b.rating
+      );
     }
 
     // Calculate distances for the filtered vendors
@@ -126,9 +125,9 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
     });
 
     if (location && userData) {
-      filteredWithDistances.sort((a, b) => {
-        return location === 'asc' ? a.distance! - b.distance! : b.distance! - a.distance!;
-      });
+      filteredWithDistances.sort((a, b) => 
+        location === 'asc' ? a.distance! - b.distance! : b.distance! - a.distance!
+      );
     }
 
     setFilteredVendors(filteredWithDistances);
@@ -159,7 +158,7 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
           >
             <option value="">Location</option>
             <option value="asc">Farthest</option>
-            <option value="desc">  Nearest</option>
+            <option value="desc">Nearest</option>
           </select>
           <select
             className="border rounded px-2 py-1"
@@ -167,9 +166,8 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
             onChange={handleRatingFilterChange}
           >
             <option value="">Rating</option>
-            <option value="4.5">4.5 and above</option>
-            <option value="4">4.0 and above</option>
-            <option value="2.5">2.5 and above</option>
+            <option value="high">High Rating</option>
+            <option value="low">Low Rating</option>
           </select>
         </div>
       </div>

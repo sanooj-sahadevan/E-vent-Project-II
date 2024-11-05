@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { FRONTEND_DOMAIN, PayU } from "@/utils/constansts";
 import { generateTxnId } from "@/utils/generateTxnld";
@@ -25,8 +24,6 @@ const PayUComponent = ({ BookedData }: Props) => {
     const udf3 = BookedData.dishesId || 'nil';
     const udf4 = BookedData.StartingDate || 'nil';
     const udf5 = BookedData.category || 'nil';
-    const udf6 = BookedData.eventType || 'nil';
-    const udf7 = BookedData.EndingDate || 'nil';
 
     const key = PayU.merchantKey;
 
@@ -34,7 +31,17 @@ const PayUComponent = ({ BookedData }: Props) => {
 
     useEffect(() => {
         const data = {
-            txnid, amount, productinfo, username, email, phone, udf1, udf2, udf3, udf4, udf5, udf6, udf7
+            txnid,
+            amount,
+            productinfo,
+            firstname: username,  // Renaming username to firstname here
+            email,
+            phone,
+            udf1,
+            udf2,
+            udf3,
+            udf4,
+            udf5,
         };
 
         const makePaymentRequest = async () => {
@@ -42,7 +49,7 @@ const PayUComponent = ({ BookedData }: Props) => {
                 console.log('Sending Payment Request:', data);
                 const res = await PayUApiCalls.paymentReq(data);
                 setHash(res.hash);
-                requestSentRef.current = true; 
+                requestSentRef.current = true;
             } catch (error: any) {
                 console.error("Payment Error: " + error.message);
             }
@@ -51,7 +58,7 @@ const PayUComponent = ({ BookedData }: Props) => {
         if (!requestSentRef.current) {
             makePaymentRequest();
         }
-    }, [ txnid, amount, productinfo, username, email, phone, udf1, udf2, udf3, udf4, udf5, udf6, udf7]);  
+    }, [amount, email, phone, productinfo, txnid, udf1, udf2, udf3, udf4, udf5, username]);
 
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -77,8 +84,6 @@ const PayUComponent = ({ BookedData }: Props) => {
             <input type="hidden" name="udf3" value={udf3} />
             <input type="hidden" name="udf4" value={udf4} />
             <input type="hidden" name="udf5" value={udf5} />
-            <input type="hidden" name="udf6" value={udf6} />
-            <input type="hidden" name="udf7" value={udf7} />
             <input type="hidden" name="surl" value={surl} />
             <input type="hidden" name="furl" value={furl} />
             <input type="hidden" name="hash" value={hash || ""} />

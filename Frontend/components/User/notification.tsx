@@ -67,37 +67,44 @@ const NotificationsPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto w-full h-[500px] bg-white rounded-lg shadow-md p-4">
-      <div className="flex justify-between items-center mb-4">
-        <button 
-          className="text-blue-500 text-sm"
-          onClick={handleMarkAllAsRead} // Add the click handler here
-        >
-          Mark all as read
-        </button>
-      </div>
-      <div className="h-[400px] overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : notifications.length > 0 ? (
-          notifications.map((notification) => (
-            <div key={notification._id} className="flex items-center space-x-3 p-2 border rounded-lg">
-              <div>
-                <p className="text-sm">
-                  <span className="font-semibold">{notification.post}</span>
-                </p>
-                <p className="text-xs text-gray-500">{formatDate(notification.createdAt)}</p>
-                {notification.notificationMessage && <p className="text-sm">{notification.notificationMessage}</p>}
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>No notifications</p>
-        )}
-      </div>
-    </div>
+ 
+    <div className="max-w-lg mx-auto w-full h-[600px] bg-white rounded-lg shadow-md p-4 mt-12 mb-12 border border-black">
+  <h2 className="text-2xl font-bold mb-4 text-center">Notifications</h2>
+
+  <div className="flex justify-between items-center mb-4">
+    <button 
+      className="text-blue-500 text-sm"
+      onClick={handleMarkAllAsRead} // Add the click handler here
+    >
+      Mark all as read
+    </button>
+  </div>
+  
+  <div className="h-[500px] overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+    {loading ? (
+      <p>Loading...</p>
+    ) : error ? (
+      <p>{error}</p>
+    ) : notifications.length > 0 ? (
+      notifications.map((notification) => (
+        <div key={notification._id} className="flex items-center space-x-3 p-2 border rounded-lg">
+          <div>
+            <p className="text-sm">
+              <span className="font-semibold">{notification.post}</span>
+            </p>
+            <p className="text-xs text-gray-500">{formatDate(notification.createdAt)}</p>
+            {notification.notificationMessage && <p className="text-sm">{notification.notificationMessage}</p>}
+          </div>
+        </div>
+      ))
+    ) : (
+      <p>No notifications</p>
+    )}
+  </div>
+</div>
+
+
+ 
   );
 };
 

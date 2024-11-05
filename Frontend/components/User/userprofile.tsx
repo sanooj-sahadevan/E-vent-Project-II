@@ -27,7 +27,7 @@ const TopNavBar = () => {
   }, []);
 
   useEffect(() => {
-    const newSocket = io("https://e-vent-project-ii.onrender.com");
+    const newSocket = io("http://localhost:8080/v1/api");
     setSocket(newSocket);
 
     newSocket.on("unreadCount", (response: any) => {
