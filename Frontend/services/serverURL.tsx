@@ -19,8 +19,8 @@
 export const SERVER_URL = "https://api.eventopia.shop/v1/api/user";
 //                         http://13.61.23.144:8080/v1/api/user/vendors
 export const SERVER_URL_vendor = "https://eventopia.shop/v1/api/vendor";
-export const server_URL_admin = "https://eventopia.shop/admin";
-export const server_URL_chat = "https://eventopia.shop/chat";
+export const server_URL_admin = "https://api.eventopia.shop/v1/api/admin";
+export const server_URL_chat = "https://api.eventopia.shop/v1/api/chat";
 
 // export const SERVER_URL = "https://e-vent-project-ii.onrender.com/user";
 // export const SERVER_URL_vendor = "https://e-vent-project-ii.onrender.com/vendor";
