@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import {
     fetchDetailsVendor, FetchDishes, FetchAuditorium, deleteDish, deleteAuditorium,
-    fetchReviews, approveReviewAPI, rejectReviewAPI, getPresignedUrl,savePhotoUrlsToDB
+    fetchReviews, approveReviewAPI, rejectReviewAPI, getPresignedUrl, savePhotoUrlsToDB
 } from '@/services/vendorAPI';
 import 'react-toastify/dist/ReactToastify.css';
 import { Plus } from 'lucide-react';
@@ -30,7 +30,7 @@ interface VendorData {
     phone: number;
     rating: string;
     profileImage?: string;
-    district:string
+    district: string
 }
 
 interface FoodItem {
@@ -88,7 +88,7 @@ const Home: React.FC = () => {
                     phone: 0,
                     state: 'N/A',
                     rating: 'N/A',
-                    profileImage: '',district: 'N/A'
+                    profileImage: '', district: 'N/A'
                 });
             } finally {
                 setLoading(false);
@@ -110,8 +110,8 @@ const Home: React.FC = () => {
     const fetchReview = async (vendorId: string) => {
         try {
             const Reviews = await fetchReviews(vendorId);
-            console.log(Reviews,'okokokkkkkkkkkkkkkkkkkkkkkkkkkkkk');
-            
+            console.log(Reviews, 'okokokkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+
             setReviews(Reviews);
         } catch (error) {
             console.error('Error fetching reviews:', error);
@@ -125,7 +125,7 @@ const Home: React.FC = () => {
             setDishError(null);
         } catch (error) {
             console.error('Error fetching dishes:', error);
-            setDishError('Failed to load dishes.');
+            // setDishError('Failed to load dishes.');
             setFoodItems([]);
         }
     };
@@ -137,7 +137,7 @@ const Home: React.FC = () => {
             setDishError(null);
         } catch (error) {
             console.error('Error fetching auditoriums:', error);
-            setDishError('Failed to load auditoriums.');
+            // setDishError('Failed to load auditoriums.');
             setAuditoriums([]);
         }
     };
@@ -217,24 +217,24 @@ const Home: React.FC = () => {
         if (e.target.files && e.target.files.length > 0) {
             const filesArray = Array.from(e.target.files);
             const uploadedUrls: string[] = [];
-    
+
             const storedVendor = localStorage.getItem("vendor");
             let vendorId = '';
-    
+
             if (storedVendor) {
                 const parsedVendor = JSON.parse(storedVendor);
                 vendorId = parsedVendor._id;
-                console.log(vendorId,'vendoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiid');
-            }    
+                console.log(vendorId, 'vendoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiid');
+            }
             if (!vendorId) {
                 console.error("No vendorId found in localStorage.");
                 return;
             }
-    
+
             for (const file of filesArray) {
                 try {
                     const data = await getPresignedUrl(file.name, file.type);
-    
+
                     if (data.url) {
                         const uploadResult = await fetch(data.url, {
                             method: "PUT",
@@ -243,7 +243,7 @@ const Home: React.FC = () => {
                                 "Content-Type": file.type,
                             },
                         });
-    
+
                         if (uploadResult.ok) {
                             const s3Url = data.url.split('?')[0];
                             uploadedUrls.push(s3Url);
@@ -258,22 +258,22 @@ const Home: React.FC = () => {
                     console.error("Error during file upload:", error);
                 }
             }
-    
+
             setPhotoUrls(uploadedUrls);
-    console.log(uploadedUrls,vendorId,'okokokokokkkkkkkkkkkkk');
-    
+            console.log(uploadedUrls, vendorId, 'okokokokokkkkkkkkkkkkk');
+
             try {
                 const response = await savePhotoUrlsToDB(uploadedUrls, vendorId);
                 console.log(response);
-                
+
             } catch (error) {
                 console.error("Error during saving to DB:", error);
             }
         }
     };
-  
 
-   
+
+
 
 
 
@@ -284,8 +284,8 @@ const Home: React.FC = () => {
                 <Spinner size="xl" color="gray" />
             </div>
         );
-    }   
-    
+    }
+
     if (error) return <p className="text-red-600">{error}</p>;
 
     return (
@@ -398,9 +398,9 @@ const Home: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex">
-                                    <a href={`/vendorEditDish?dishId=${food._id}`} className="text-gray-500 mr-2">
+                                    {/* <a href={`/vendorEditDish?dishId=${food._id}`} className="text-gray-500 mr-2">
                                         <FaEdit />
-                                    </a>
+                                    </a> */}
                                     <button onClick={() => handleDelete(food._id)} className="text-gray-500">
                                         <FaTrashAlt />
                                     </button>
@@ -408,7 +408,7 @@ const Home: React.FC = () => {
                             </div>
                         ))
                     ) : (
-                        <p>No dishes found</p>
+                        <p>🍽️ No dishes uploaded yet! Add some tasty options! ➕🍛</p>
                     )}
                 </div>
             </div>
@@ -437,9 +437,9 @@ const Home: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex">
-                                    <a href={`/vendorEditAuditorium?auditoriumId=${auditorium._id}`} className="text-gray-500 mr-2">
+                                    {/* <a href={`/vendorEditAuditorium?auditoriumId=${auditorium._id}`} className="text-gray-500 mr-2">
                                         <FaEdit />
-                                    </a>
+                                    </a> */}
                                     <button onClick={() => handleDeleteAuditorium(auditorium._id)} className="text-gray-500">
                                         <FaTrashAlt />
                                     </button>
@@ -447,7 +447,7 @@ const Home: React.FC = () => {
                             </div>
                         ))
                     ) : (
-                        <p>No auditoriums found</p>
+                        <p>🚫🏢 No auditoriums uploaded yet! Time to add some! ➕📂</p>
                     )}
                 </div>
             </div>

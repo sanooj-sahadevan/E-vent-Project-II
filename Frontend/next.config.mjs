@@ -32,13 +32,14 @@ const nextConfig = {
   },
   productionBrowserSourceMaps: true,
   images: {
+    domains: ['sanooj123.s3.eu-north-1.amazonaws.com'],
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'sanooj123.s3.eu-north-1.amazonaws.com',
-        pathname: '/**',
-      },
-    ],
+            {
+              protocol: 'https',
+              hostname: 'your-image-host.com',
+              pathname: 'public',
+            },
+          ],
   },
 };
 

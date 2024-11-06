@@ -13,8 +13,6 @@ import img2 from '@/public/samantha-gades-x40Q9jrEVT0-unsplash.jpg'
 import Link from 'next/link';
 import Spinner from './skeletons/spinner';
 
-
-
 interface Vendor {
   vendorname: string;
   profileImage: string;
@@ -63,7 +61,6 @@ const Home: React.FC = () => {
     ],
   };
 
-
   useEffect(() => {
     const fetchVendors = async () => {
       try {
@@ -89,29 +86,25 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto">
-      {/* Vendor Types */}
-
+    <div className="container mx-auto px-4">
+      {/* Top Rated Vendors */}
       <div className="w-full">
-        <h2 className="text-center mt-24 text-2xl font-bold">Top Rated Vendors</h2>
-        <div className="flex justify-center flex-wrap space-x-10 mt-10 w-full">
+        <h2 className="text-center mt-12 lg:mt-24 text-xl lg:text-2xl font-bold">Top Rated Vendors</h2>
+        <div className="flex flex-wrap justify-center space-x-4 lg:space-x-10 mt-8 lg:mt-10">
           {vendors.length > 0 ? (
             vendors.map((vendor) => (
               <div
                 key={vendor._id}
-                className="relative group flex flex-col items-center justify-between bg-white border shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4 h-[300px] w-[270px] space-y-2"
+                className="relative group flex flex-col items-center justify-between bg-white border shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4 h-[260px] lg:h-[300px] w-[200px] lg:w-[270px] space-y-2"
               >
-                <div className="relative w-full h-45 mb-4">
-                  {/* Image with hover blur and dark overlay */}
-
+                <div className="relative w-full h-32 lg:h-45 mb-4">
                   <img
                     src={vendor.profileImage}
                     alt={vendor.vendorname}
                     className="rounded-lg object-cover w-full h-full transition-all duration-300 ease-in-out group-hover:blur-sm group-hover:brightness-50"
                   />
-                  {/* Overlay content: Vendor name and link */}
                   <div className="absolute inset-0 flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <p className="text-white text-xl font-semibold mb-2">
+                    <p className="text-white text-lg lg:text-xl font-semibold mb-2">
                       {vendor.vendorname}
                     </p>
                     <Link href={`/vendor`} legacyBehavior>
@@ -121,17 +114,17 @@ const Home: React.FC = () => {
                     </Link>
                   </div>
                 </div>
-                {/* Category below the image */}
-                <p className="text-gray-600 text-center">{vendor.category}</p>
+                <p className="text-gray-600 text-center text-sm lg:text-base">{vendor.category}</p>
               </div>
             ))
           ) : (
-            <p>No vendors found.</p>
+            <p className="text-center">No vendors found.</p>
           )}
         </div>
       </div>
+
+      {/* Professional Event Planning Section */}
       <div className="py-10 relative">
-        {/* Background Image */}
         <div className="relative w-full h-[40vh]">
           <Image
             src={img2}
@@ -141,57 +134,49 @@ const Home: React.FC = () => {
             className="w-full h-full"
           />
         </div>
-
-        {/* Overlay Text and Form */}
         <div className="absolute inset-0 flex flex-col justify-center items-center">
-          <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-6 max-w-lg mx-auto">
+          <div className="bg-white bg-opacity-80 rounded-lg shadow-lg p-6 max-w-md lg:max-w-lg mx-auto text-center">
             <h3 className="text-gray-500 text-sm font-semibold mb-2">Events</h3>
-            <h2 className="text-gray-800 text-2xl font-bold mb-4">Professional Event Planning</h2>
-            <p className="text-gray-600">
+            <h2 className="text-gray-800 text-xl lg:text-2xl font-bold mb-4">Professional Event Planning</h2>
+            <p className="text-gray-600 text-sm lg:text-base">
               Experience the convenience of personalized service, tailored to meet your company's unique needs. Our experts handle everything from venue selection to logistics, so you can focus on your business.
             </p>
           </div>
         </div>
       </div>
 
-
-
-
-
-      {/* All Vendors as a Slider */}
+      {/* All Vendors Slider */}
       <div className="py-10 bg-gray-100">
-        <h2 className="text-center text-2xl font-bold">Top Brand Vendors</h2>
+        <h2 className="text-center text-xl lg:text-2xl font-bold">Top Brand Vendors</h2>
         <div className="mt-6">
           <Slider {...sliderSettings}>
             {allVendors.length > 0 ? (
               allVendors.map((vendor) => (
                 <div key={vendor._id} className="p-2">
-                  <div className="flex flex-col items-center justify-between bg-white border shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4 h-[300px] w-[270px] space-y-2">
-                    <div className="relative w-full h-40 mb-4">
+                  <div className="flex flex-col items-center justify-between bg-white border shadow-md rounded-lg transition-transform transform hover:scale-105 hover:shadow-lg p-4 h-[260px] lg:h-[300px] w-[200px] lg:w-[270px] space-y-2">
+                    <div className="relative w-full h-32 lg:h-40 mb-4">
                       <img
                         src={vendor.profileImage}
                         alt={vendor.vendorname}
                         className="object-cover w-full h-full rounded-lg"
                       />
                     </div>
-                    <p className="text-xl font-semibold text-gray-800 text-center">
+                    <p className="text-lg lg:text-xl font-semibold text-gray-800 text-center">
                       {vendor.vendorname}
                     </p>
-                    <p className="text-white text-center">{vendor.category}</p>
+                    <p className="text-gray-600 text-center">{vendor.category}</p>
                   </div>
                 </div>
               ))
             ) : (
-              <p>No vendors found.</p>
+              <p className="text-center">No vendors found.</p>
             )}
           </Slider>
         </div>
       </div>
 
-      {/*join room item */}
-
+      {/* Join Our Community Section */}
       <div className="py-10 relative">
-        {/* Background Image */}
         <div className="relative w-full h-[40vh]">
           <Image
             src={img1}
@@ -201,26 +186,20 @@ const Home: React.FC = () => {
             className="w-full h-full"
           />
         </div>
-
-        {/* Overlay Text and Form */}
         <div className="absolute inset-0 flex flex-col justify-center items-center bg-white bg-opacity-10">
-          <h2 className="text-white text-3xl font-bold mb-6">Join our Community</h2>
+          <h2 className="text-white text-2xl lg:text-3xl font-bold mb-4 lg:mb-6">Join our Community</h2>
           <div className="flex items-center space-x-2">
             <input
               type="email"
               placeholder="Enter your Email ID"
-              className="w-80 lg:w-96 px-4 py-3 rounded-l-md border border-white text-white placeholder-white bg-transparent focus:outline-none focus:ring-2 focus:ring-white transition duration-300 ease-in-out"
+              className="w-64 lg:w-80 px-4 py-2 lg:py-3 rounded-l-md border border-white text-white placeholder-white bg-transparent focus:outline-none focus:ring-2 focus:ring-white transition duration-300"
             />
-            <button className="px-6 py-3 bg-transparent text-white border border-white font-semibold rounded-r-md hover:bg-white hover:text-gray-800 transition duration-300 ease-in-out">
+            <button className="px-4 lg:px-6 py-2 lg:py-3 bg-transparent text-white border border-white font-semibold rounded-r-md hover:bg-white hover:text-gray-800 transition duration-300">
               Subscribe
             </button>
           </div>
         </div>
-
       </div>
-
-
-
     </div>
   );
 };
