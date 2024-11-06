@@ -30,10 +30,10 @@ export function toBeRedirectedAdminRoutes(pathname: string): boolean {
 
 // Vendor Routes
 const protectedVendorRoutes = new Set([
-  "/vendorChat",
-  "/vendordashboard", "/vendorAddAuditoriums", "/vendorAddDishes",
-  "/vendorBookingDetails", "/vendorEditProfile"
-  // '/lo'
+  // "/vendorChat",
+  // "/vendordashboard", "/vendorAddAuditoriums", "/vendorAddDishes",
+  // "/vendorBookingDetails", "/vendorEditProfile"
+  '/lo'
 ]);
 
 export function isProtectedVendorRoute(pathname: string): boolean {
