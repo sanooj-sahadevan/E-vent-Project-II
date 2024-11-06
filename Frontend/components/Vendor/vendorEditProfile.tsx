@@ -26,8 +26,8 @@ const EditVendor: React.FC = () => {
   const [vendorDetails, setVendorDetails] = useState<Vendor | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null); // Image file
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // Preview URL for the image
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
 
   useEffect(() => {
@@ -89,24 +89,24 @@ const EditVendor: React.FC = () => {
 
     const formData = {
       ...vendorDetails,
-      profileImage: photoUrl || vendorDetails.profileImage, // Save photo URL if a new one was uploaded
+      profileImage: photoUrl || vendorDetails.profileImage,
     };
 
     try {
       const result = await VendorEdit(formData);
 
       if (result && result.data) {
-        localStorage.setItem('vendor', JSON.stringify(result.data)); // Update local storage
+        localStorage.setItem('vendor', JSON.stringify(result.data));
 
         if (result.data.vendor && result.data.vendor._id) {
           router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
-          toast.success('Vendor details updated successfully.'); // Success toast
+          toast.success('Vendor details updated successfully.');
         } else {
           toast.error('Vendor details could not be found.');
         }
       }
     } catch (err) {
-      toast.error('An error occurred while saving vendor details. Please try again.'); // Error toast
+      toast.error('An error occurred while saving vendor details. Please try again.');
       console.error('EditVendor API error:', err);
     }
   };
@@ -117,9 +117,9 @@ const EditVendor: React.FC = () => {
 
   if (isLoading) {
     return (
-        <div className="flex justify-center items-center min-h-screen">
-            <Spinner size="xl" color="gray" />
-        </div>
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner size="xl" color="gray" />
+      </div>
     );
   }
 
@@ -223,8 +223,65 @@ const EditVendor: React.FC = () => {
             )}
           </div>
 
+
+          <div>
+            <label className="block text-gray-700 font-medium">Phone Number</label>
+            {isEditing ? (
+              <input
+                type="number"
+                value={vendorDetails.phone}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, phone: Number(e.target.value) } : null
+                  )
+                }
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
+            )}
+          </div>
+
+
+          <div>
+            <label className="block text-gray-700 font-medium">District</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={vendorDetails.district}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, district: e.target.value } : null
+                  )
+                }
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
+            )}
+          </div>
+
+
+          <div>
+            <label className="block text-gray-700 font-medium">State</label>
+            {isEditing ? (
+              <input
+                type="text"
+                value={vendorDetails.state}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, state: e.target.value } : null
+                  )
+                }
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
+            )}
+          </div>
+
           {/* Add a full-width "Description" column */}
-          <div className="col-span-1 md:col-span-2">
+          {/* <div className="col-span-1 md:col-span-2">
             <label className="block text-gray-700 font-medium">Description</label>
             {isEditing ? (
               <textarea
@@ -240,7 +297,7 @@ const EditVendor: React.FC = () => {
             ) : (
               <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
             )}
-          </div>
+          </div> */}
         </div>
 
         <div className="flex justify-between mt-6">

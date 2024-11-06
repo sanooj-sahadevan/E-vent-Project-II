@@ -175,18 +175,19 @@ export const FetchDishes = async (vendorId: string) => {
 
 export const fetchReviews = async (vendorId: string) => {
   try {
-
-    console.log('pokunnu review');
+    console.log('Fetching review');
 
     const res = await axios.get(`${SERVER_URL_vendor}/fetchReviews/${vendorId}`);
+                            // (`${SERVER_URL_vendor}/fetchFoodDetails/${vendorId}
     console.log(res, '0---------k');
 
     return res.data;
   } catch (error) {
-    console.error('Error fetching vendor details:', error);
     throw new Error('Failed to fetch vendor details');
   }
 };
+
+
 
 
 export const FetchAuditorium = async (vendorId: string) => {

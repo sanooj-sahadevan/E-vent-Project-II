@@ -30,6 +30,7 @@ interface VendorData {
     phone: number;
     rating: string;
     profileImage?: string;
+    district:string
 }
 
 interface FoodItem {
@@ -87,7 +88,7 @@ const Home: React.FC = () => {
                     phone: 0,
                     state: 'N/A',
                     rating: 'N/A',
-                    profileImage: '',
+                    profileImage: '',district: 'N/A'
                 });
             } finally {
                 setLoading(false);
@@ -109,6 +110,8 @@ const Home: React.FC = () => {
     const fetchReview = async (vendorId: string) => {
         try {
             const Reviews = await fetchReviews(vendorId);
+            console.log(Reviews,'okokokkkkkkkkkkkkkkkkkkkkkkkkkkkk');
+            
             setReviews(Reviews);
         } catch (error) {
             console.error('Error fetching reviews:', error);
@@ -315,6 +318,8 @@ const Home: React.FC = () => {
                             {vendorData?.email || 'N/A'}
                             <br />
                             {vendorData?.phone || 'N/A'}
+                            <br />
+                            {vendorData?.district || 'N/A'}
                             <br />
                             {vendorData?.state || 'N/A'}
                         </p>
