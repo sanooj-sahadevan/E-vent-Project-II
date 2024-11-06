@@ -25,7 +25,7 @@ const ChatContent = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const socketConnection = io('http://localhost:8080/v1/api', {
+        const socketConnection = io('https://api.eventopia.shop/v1/api', {
             withCredentials: true,
         });
 

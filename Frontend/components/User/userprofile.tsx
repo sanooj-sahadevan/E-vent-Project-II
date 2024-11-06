@@ -27,7 +27,7 @@ const TopNavBar = () => {
   }, []);
 
   useEffect(() => {
-    const newSocket = io("http://localhost:8080/v1/api");
+    const newSocket = io("https://api.eventopia.shop/v1/api");
     setSocket(newSocket);
 
     newSocket.on("unreadCount", (response: any) => {
