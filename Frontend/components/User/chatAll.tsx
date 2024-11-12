@@ -42,7 +42,7 @@ const ChatApp = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const socketInstance = io("https://api.eventopia.shop/v1/api", {
+        const socketInstance = io("https://api.eventopia.shop", {
             transports: ["websocket"],
             withCredentials: true,
         });
