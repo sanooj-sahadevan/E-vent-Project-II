@@ -516,7 +516,6 @@ console.log('ziyavudeheen');
   }
 
 
-
   async saveBooking(bookingData: any): Promise<any> {
     try {
       console.log('sanooj');

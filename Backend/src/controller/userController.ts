@@ -205,6 +205,8 @@ export class UserController {
 
   async payment(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log('23232');
+      
       const { txnid, amount, productinfo, username, email, udf1, udf2, udf3, udf4, udf5, udf6, udf7 } = req.body;
       if (!txnid || !amount || !productinfo || !username || !email || !udf1 || !udf2 || !udf3 || !udf4 || !udf5 || !udf6 || !udf7) {
         console.log('poi');
@@ -221,6 +223,7 @@ export class UserController {
       next(error);
     }
   }
+
 
 
 
