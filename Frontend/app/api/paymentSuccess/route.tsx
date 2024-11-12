@@ -59,6 +59,6 @@ export async function POST(req: Request) {
   }
 
   // Construct absolute URL for redirection
-  const redirectUrl = `${new URL(req.url).origin}/bookingSuccess`;
+  const redirectUrl = `/bookingSucess`;
   return NextResponse.redirect(redirectUrl);
 }
