@@ -113,7 +113,10 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
       );
     }
 
-    // Calculate distances for the filtered vendors
+
+    console.log(userData?.latitude, userData);
+    
+    
     const filteredWithDistances = filtered.map((v) => {
       const distance = calculateDistance(
         userData?.latitude,

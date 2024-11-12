@@ -5,12 +5,10 @@ import { BellRing, LogOut, ScanFace, UserRoundPen } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "sonner"; // Import sonner for notifications
 
 const Navbar: React.FC = () => {
   const [activePath, setActivePath] = useState<string | null>(null);
-
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
 
@@ -32,7 +30,9 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleLogoutClick = () => {
-    toast.success("Logout Successfully");
+    toast.success("Logout Successfully", {
+      duration: 3000, // Set the toast duration to 3 seconds
+    });
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     deleteCookie("token");

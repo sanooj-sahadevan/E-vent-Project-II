@@ -1,16 +1,12 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/no-unescaped-entities */
-'use client'
+'use client';
 import { GoogleLoginAPI, LoginAPI } from "@/services/userApi";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { Toaster, toast } from "sonner";
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "@/components/firebase/firebase";
 import Image from "next/image";
-import img from '../public/4.jpg.jpg'
-
+import img from '../public/4.jpg.jpg';
 import { useRouter } from "next/navigation";
 
 type Inputs = {
@@ -26,28 +22,19 @@ const LoginForm: React.FC = () => {
     formState: { errors },
   } = useForm<Inputs>();
 
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    const { email, password } = data;
-    console.log(data.email, data.password); // Debugging line
-
     try {
       const result = await LoginAPI(data);
-      console.log("LoginAPI result:", result); // Debugging line
-      console.log('suk');
-
       if (result && result.user && result.token) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("user", JSON.stringify(result.user));
-        toast.success("Login Successful!");
-
-        // Perform a full page reload
-        window.location.href = "/"; // Replace "/" with your desired path
+        toast.success("Login Successful!", { duration: 8000 });
+        window.location.href = "/"; // Navigate to desired page
       } else {
-        toast.error("Invalid login credentials. Please try again.");
+        toast.error("Invalid login credentials. Please try again.", { duration: 5000 });
       }
     } catch (err) {
-      toast.error("An error occurred during login. Please try again.");
+      toast.error("An error occurred during login. Please try again.", { duration: 5000 });
     }
   };
 
@@ -56,8 +43,6 @@ const LoginForm: React.FC = () => {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
-      console.log(result);
-
       const googleLoginResult = await GoogleLoginAPI({
         email: result.user.email!,
         username: result.user.displayName!,
@@ -65,56 +50,34 @@ const LoginForm: React.FC = () => {
         password: "",
         phone: result.user.phoneNumber || "",
       });
-      console.log(googleLoginResult);
-      if (
-        googleLoginResult &&
-        googleLoginResult.user &&
-        googleLoginResult.token
-      ) {
+      if (googleLoginResult && googleLoginResult.user && googleLoginResult.token) {
         localStorage.setItem("token", googleLoginResult.token);
         localStorage.setItem("user", JSON.stringify(googleLoginResult.user));
-        toast.success("Login Successful!");
-
-        // router.push("/");
+        toast.success("Login Successful!", { duration: 2000 });
       } else {
-        toast.error("Google authentication failed. Please try again.");
+        toast.error("Google authentication failed. Please try again.", { duration: 2000 });
       }
     } catch (error) {
-      console.log("could not loggin with google: ", error);
+      toast.error("Could not log in with Google. Please try again.", { duration: 2000 });
     }
   };
 
   return (
-
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-
-
+      <Toaster position="top-center" />
       <div className="flex min-h-screen bg-white-100 p-8">
-
         <div className="flex-1 flex items-center justify-center bg-white-500">
           <Image
             src={img}
             alt="Sign up"
             className="object-cover max-w-full max-h-full"
-            style={{ width: '95%', height: '85%' }} />
+            style={{ width: '95%', height: '85%' }}
+          />
         </div>
-
-
-        <div className="flex flex-col items-center justify-center w-2/5 px-6 space-y-6 bg-white"> {/* Reduced width and padding */}
-        <h2 className="text-4xl font-bold text-gray-800">Log In</h2>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-4/5"> {/* Reduced form spacing and width */}
-          <div>
+        <div className="flex flex-col items-center justify-center w-2/5 px-6 space-y-6 bg-white">
+          <h2 className="text-4xl font-bold text-gray-800">Log In</h2>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-4/5">
+            <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
               </label>
@@ -127,7 +90,7 @@ const LoginForm: React.FC = () => {
                     value: /\S+@\S+\.\S+/,
                     message: "Email address is invalid",
                   },
-                })} // Register the input
+                })}
                 className="block w-full mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
               {errors.email && <p className="text-red-500 text-xs">Email is error</p>}
@@ -142,11 +105,10 @@ const LoginForm: React.FC = () => {
                 {...register("password", {
                   required: true,
                   pattern: {
-                    value:
-                      /^(?=(?:.*[a-zA-Z]){3,})(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*()_+~`|}{[\]:;?><,./-]).{8,}$/,
+                    value: /^(?=(?:.*[a-zA-Z]){3,})(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*()_+~`|}{[\]:;?><,./-]).{8,}$/,
                     message: "Password must be at least 6 characters",
                   },
-                })} // Register the input
+                })}
                 className="block w-full mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               />
               {errors.password && <p className="text-red-500 text-xs">Password is error</p>}
@@ -159,18 +121,11 @@ const LoginForm: React.FC = () => {
             </button>
           </form>
           <div className="text-gray-500">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <a href="/signup" className="font-medium text-blue-500 hover:text-blue-700">
               Sign Up
             </a>
           </div>
-
-          {/* <div className="text-gray-500">
-            Forgot your password?{" "}
-            <a href="#" className="font-medium text-blue-500 hover:text-blue-700">
-              Reset Password
-            </a>
-          </div> */}
           <div className="text-gray-500">
             Are you a vendor?{" "}
             <a href="/vendorLogin" className="font-medium text-blue-500 hover:text-blue-700">
@@ -178,9 +133,9 @@ const LoginForm: React.FC = () => {
             </a>
           </div>
           <div className="text-gray-500">
-            forgot your passowrd?{" "}
+            Forgot your password?{" "}
             <a href="/forgottenPassword" className="font-medium text-blue-500 hover:text-blue-700">
-              click here
+              Click here
             </a>
           </div>
           <div>
@@ -204,10 +159,8 @@ const LoginForm: React.FC = () => {
           </div>
         </div>
       </div>
-
     </>
-
   );
-}
+};
 
 export default LoginForm;
