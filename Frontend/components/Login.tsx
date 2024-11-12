@@ -45,11 +45,9 @@ const LoginForm: React.FC = () => {
         window.location.href = "/"; // Replace "/" with your desired path
       } else {
         toast.error("Invalid login credentials. Please try again.");
-        // Handle invalid login credentials
       }
     } catch (err) {
       toast.error("An error occurred during login. Please try again.");
-      // Handle error
     }
   };
 

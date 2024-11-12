@@ -1,13 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { changePassword, savePassword } from '@/services/userApi';
 import { useForm } from 'react-hook-form';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
-const SERVER_URL = 'http://your-server-url';
 
 type Inputs = {
   currentPassword: string;
