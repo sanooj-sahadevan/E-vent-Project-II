@@ -39,7 +39,7 @@ export const PayU = {
 
 console.log('hjcbefhvbhufbvhubfhuvbrfhvbhurfbvhrbvhuvb');
 
-export const FRONTEND_DOMAIN = "https://www.eventopia.shop";
+export const FRONTEND_DOMAIN = "https://api.eventopia.shop";
 
 const DOMAIN = "https://api.eventopia.shop";
 

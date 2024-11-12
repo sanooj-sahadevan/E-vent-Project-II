@@ -32,7 +32,8 @@
 
 import paymentService from "@/utils/apiCalls/paymentService";
 import PayUApiCalls from "@/utils/apiCalls/PayUApiCalls";
-import { NextResponse } from "next/server"; // Import NextResponse for API responses
+import { NextResponse } from "next/server"; 
+
 
 export async function POST(req: Request) {
   console.log('api payment success');
@@ -55,34 +56,6 @@ export async function POST(req: Request) {
     console.log(error.message);
   }
 
-  return NextResponse.redirect('/bookingSuccess'); // Use NextResponse for redirection
+  return NextResponse.redirect('/bookingSuccess');
 }
 
-
-// import paymentService from "@/utils/apiCalls/paymentService";
-// import PayUApiCalls from "@/utils/apiCalls/PayUApiCalls";
-// import { NextApiResponse } from "next";
-// import { NextResponse } from "next/server"; // Import NextResponse for API responses
-
-// export async function POST(req: any, res: NextApiResponse) {
-//   const contentType = req.headers.get("content-type") || "";
-//   console.log({ contentType });
-
-//   const formData = await req.formData();
-
-//   const data: { [key: string]: any } = {};
-//   formData.forEach((value: any, key: string) => {
-//     data[key] = value;
-//   });
-//   console.log(data)
-//   console.log('sanooj');
-  
-//   let PayUOrderId
-//   try {
-//      PayUOrderId = await PayUApiCalls.saveData(data);
-//     // await paymentService.addTransaction(PayUOrderId, data.email, "success");
-//   } catch (error: any) {
-//     console.log(error);
-//   }
-//   return NextResponse.redirect('/bookingSuccess'); // Use NextResponse for redirection
-// }
