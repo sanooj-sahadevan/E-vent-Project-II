@@ -62,7 +62,7 @@
 import paymentService from "@/utils/apiCalls/paymentService";
 import PayUApiCalls from "@/utils/apiCalls/PayUApiCalls";
 import { NextApiResponse } from "next";
-import { redirect } from "next/navigation";
+import { NextResponse } from "next/server"; // Import NextResponse for API responses
 
 export async function POST(req: any, res: NextApiResponse) {
   const contentType = req.headers.get("content-type") || "";
@@ -84,5 +84,5 @@ export async function POST(req: any, res: NextApiResponse) {
   } catch (error: any) {
     console.log(error);
   }
-  redirect('/bookingSuccess')
+  return NextResponse.redirect('/bookingSuccess'); // Use NextResponse for redirection
 }
