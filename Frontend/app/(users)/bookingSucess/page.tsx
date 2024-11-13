@@ -28,12 +28,14 @@ const BookingSuccess: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
   
+  
   useEffect(() => {
     const fetchBookingDetails = async () => {
       const userString = localStorage.getItem("user");
       const user = userString ? JSON.parse(userString) : null;
       const userId = user ? user._id : null;
 
+      
       if (userId) {
         try {
           const data: BookingDetail[] = await fetchBookingDetilsProfile(userId);
