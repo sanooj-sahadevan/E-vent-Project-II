@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 
 
-export async function POST(req: any, res: NextApiResponse) {
+export async function POST(req: any) {
   const contentType = req.headers.get("content-type") || "";
   console.log({ contentType });
 console.log('api payment sucesss');
