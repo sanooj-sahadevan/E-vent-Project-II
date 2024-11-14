@@ -173,17 +173,14 @@ export const fetchvendor = async (vendorId: string, userId: string) => {
 
 export const fetchReview = async (vendorId: string, userId: string) => {
   try {
-    console.log('pokun');
-
-    const res = await axios.get(`${SERVER_URL}/fetchReview?vendorId=${vendorId}&userId=${userId}`)
-
-
+    const res = await axios.get(`${SERVER_URL}/fetchReview?vendorId=${vendorId}&userId=${userId}`);
     return res.data;
   } catch (error) {
     console.error("Error fetching review:", error);
     throw error;
   }
 };
+
 
 
 export const saveRatings = async (vendorId: string,) => {

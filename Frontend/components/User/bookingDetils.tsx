@@ -1,8 +1,10 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { fetchBookingDetilsProfile } from "@/services/userApi";
-import { differenceInDays, startOfDay } from "date-fns";
+import { differenceInDays } from "date-fns";
 import ReviewModal from "@/components/User/review";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Event {
   EndingDate: string;
@@ -45,12 +47,10 @@ const EventsPage: React.FC = () => {
 
     try {
       const data = await fetchBookingDetilsProfile(userId);
-      console.log({ data }, "frontend");
-
       setBookingDetails(data);
       setTotalPages(Math.ceil(data.length / itemsPerPage));
       setLoading(false);
-    } catch (err: any) {
+    } catch {
       setError("Error fetching booking details");
       setLoading(false);
     }
@@ -68,7 +68,7 @@ const EventsPage: React.FC = () => {
           return;
         }
         fetchDetails(userId);
-      } catch (err) {
+      } catch {
         setError("Failed to parse user data from localStorage");
         setLoading(false);
       }
@@ -93,21 +93,17 @@ const EventsPage: React.FC = () => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  // Updated function to handle different event statuses
   const getEventStatus = (startingDate: string, endingDate: string) => {
     const currentDate = new Date();
     const eventStartDate = new Date(startingDate);
     const eventEndDate = new Date(endingDate);
 
     if (currentDate > eventEndDate) {
-      // Event has passed
       return { status: "Add Review", canReview: true };
     } else if (currentDate < eventStartDate) {
-      // Event is upcoming
       const daysUntilStart = differenceInDays(eventStartDate, currentDate);
       return { status: `Upcoming in ${daysUntilStart} days`, canReview: false };
     } else {
-      // Event is ongoing
       return { status: "Keep Rocking!", canReview: false };
     }
   };
@@ -120,10 +116,13 @@ const EventsPage: React.FC = () => {
   const handleModalSubmit = (review: string, rating: number) => {
     console.log("Review submitted", { review, rating, event: selectedEvent });
     setIsModalOpen(false);
+    // Show success toast notification
+    toast.success("Review submitted successfully!");
   };
 
   return (
     <div className="container mx-auto p-12">
+      <ToastContainer />
       <h2 className="text-2xl font-bold mb-4 text-center">Booking Details</h2>
 
       {error && <p className="text-red-500">{error}</p>}
@@ -149,24 +148,14 @@ const EventsPage: React.FC = () => {
               <tbody>
                 {getPaginatedEvents().length > 0 ? (
                   getPaginatedEvents().map((event, index) => {
-                    const { status, canReview } = getEventStatus(event.StartingDate, event.EndingDate); // Updated call with StartingDate and EndingDate
+                    const { status, canReview } = getEventStatus(event.StartingDate, event.EndingDate);
                     return (
                       <tr key={index} className="border-b border-black">
-                        <td className="p-4 border-black">
-                          {formatDate(event.StartingDate)}
-                        </td>
-                        <td className="p-4 border-black">
-                          {formatDate(event.EndingDate)}
-                        </td>
-                        <td className="p-4 border-black">
-                          {event.vendorId?.vendorname || "N/A"}
-                        </td>
-                        <td className="p-4 border-black">
-                          {event.auditoriumId?.auditoriumName || "N/A"}
-                        </td>
-                        <td className="p-4 border-black">
-                          {event.dishesId?.dishesName || "N/A"}
-                        </td>
+                        <td className="p-4 border-black">{formatDate(event.StartingDate)}</td>
+                        <td className="p-4 border-black">{formatDate(event.EndingDate)}</td>
+                        <td className="p-4 border-black">{event.vendorId?.vendorname || "N/A"}</td>
+                        <td className="p-4 border-black">{event.auditoriumId?.auditoriumName || "N/A"}</td>
+                        <td className="p-4 border-black">{event.dishesId?.dishesName || "N/A"}</td>
                         <td className="p-4 border-black">{event.txnId}</td>
                         <td className="p-4 border-black">{event.paymentStatus}</td>
                         <td className="p-4 border-black">{event.totalAmount}</td>
@@ -197,7 +186,6 @@ const EventsPage: React.FC = () => {
           </div>
 
           <div className="flex justify-center mt-4">
-            {/* Render numbered page buttons */}
             {Array.from({ length: totalPages }, (_, index) => (
               <button
                 key={index}
@@ -215,7 +203,6 @@ const EventsPage: React.FC = () => {
         </>
       )}
 
-      {/* Render the modal */}
       <ReviewModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

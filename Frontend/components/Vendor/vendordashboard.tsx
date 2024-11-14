@@ -203,12 +203,10 @@ const Home: React.FC = () => {
                         : review
                 );
             });
-            toast.success('Review approved successfully!'); // Toast notification
-
+            toast.success('Review approved successfully!');
         } catch (error) {
             console.error('Error approving review:', error);
-            toast.error('Failed to approve the review.'); // Toast notification for error
-
+            toast.error('Failed to approve the review.');
         }
     };
 
@@ -289,8 +287,9 @@ const Home: React.FC = () => {
     if (error) return <p className="text-red-600">{error}</p>;
 
     return (
+
         <div className="container mx-auto px-4 py-8">
-            <ToastContainer /> {/* Add this line */}
+            <ToastContainer />
 
             {/* Vendor Card */}
             <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-12">
@@ -328,9 +327,6 @@ const Home: React.FC = () => {
                         <div className="bg-green-500 text-white rounded-full px-4 py-1 text-sm">
                             {vendorData?.rating || 'N/A'}
                         </div>
-                        {/* <a href="#" className="text-sm text-green-600 mt-2">
-                            View Reviews
-                        </a> */}
                     </div>
                 </div>
                 <div className="flex justify-between p-6 bg-gray-50">
@@ -345,17 +341,19 @@ const Home: React.FC = () => {
                         onClick={() => router.push('/slotBooking')}
                         className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
                     >
-                        Create slot
+                        Create Slot
                     </button>
+
                     <button
                         onClick={handleEditProfile}
                         className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
                     >
                         Edit Profile
                     </button>
+
                     <button
-                        className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
                         onClick={() => document.getElementById('photoInput')?.click()}
+                        className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-pink-600"
                     >
                         Upload Photos
                     </button>
@@ -363,165 +361,129 @@ const Home: React.FC = () => {
                         type="file"
                         id="photoInput"
                         accept="image/*"
-                        multiple  // Allows multiple image selection
+                        multiple
                         style={{ display: 'none' }}
                         onChange={handlePhotoChange}
                     />
-
-
                 </div>
             </div>
 
-            {/* Food Items Section */}
-            <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
-                <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
-                    <span className="flex items-center"><span className="mr-2">🍲</span> Food Items</span>
-                    <a href="/vendorAddDishes" className="text-black-500">
-                        <Plus size={30} color="#000000" />                   </a>
-                </h2>
-                <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
-                    {dishError ? (
-                        <p className="text-red-600 text-center">{dishError}</p>
-                    ) : foodItems.length
-                        > 0 ? (
-                        foodItems.map((food) => (
-                            <div key={food._id} className="flex items-center justify-between border-b border-gray-200 py-4">
-                                <div className="flex items-center">
-                                    <img
-                                        src={food.images || '/placeholder.jpg'}
-                                        alt={food.dishesName || 'Food Image'}
-                                        className="w-16 h-16 rounded-full object-cover"
-                                    />
-                                    <div className="ml-4">
-                                        <h3 className="font-semibold">{food.dishesName}</h3>
-                                        <p className="text-gray-500 text-sm">{food.description}</p>
-                                    </div>
-                                </div>
-                                <div className="flex">
-                                    {/* <a href={`/vendorEditDish?dishId=${food._id}`} className="text-gray-500 mr-2">
-                                        <FaEdit />
-                                    </a> */}
-                                    <button onClick={() => handleDelete(food._id)} className="text-gray-500">
-                                        <FaTrashAlt />
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>🍽️ No dishes uploaded yet! Add some tasty options! ➕🍛</p>
-                    )}
-                </div>
-            </div>
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
 
-            {/* Auditorium Section */}
-            <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
-                <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
-                    <span className="flex items-center"><span className="mr-2">🎭</span> Auditoriums</span>
-                    <a href="/vendorAddAuditoriums" className="text-black-500">  <Plus size={30} color="#000000" /> </a>
-                </h2>
-                <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
-                    {dishError ? (
-                        <p className="text-red-600 text-center">{dishError}</p>
-                    ) : auditoriums.length > 0 ? (
-                        auditoriums.map((auditorium) => (
-                            <div key={auditorium._id} className="flex items-center justify-between border-b border-gray-200 py-4">
-                                <div className="flex items-center">
-                                    <img
-                                        src={auditorium.images || '/placeholder.jpg'}
-                                        alt={auditorium.auditoriumName || 'Auditorium Image'}
-                                        className="w-16 h-16 rounded-full object-cover"
-                                    />
-                                    <div className="ml-4">
-                                        <h3 className="font-semibold">{auditorium.auditoriumName}</h3>
-                                        <p className="text-gray-500 text-sm">{auditorium.description}</p>
-                                    </div>
-                                </div>
-                                <div className="flex">
-                                    {/* <a href={`/vendorEditAuditorium?auditoriumId=${auditorium._id}`} className="text-gray-500 mr-2">
-                                        <FaEdit />
-                                    </a> */}
-                                    <button onClick={() => handleDeleteAuditorium(auditorium._id)} className="text-gray-500">
-                                        <FaTrashAlt />
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>🚫🏢 No auditoriums uploaded yet! Time to add some! ➕📂</p>
-                    )}
-                </div>
-            </div>
-
-            {/* Reviews Section */}
-            <div className="max-w-md mx-auto bg-white rounded-xl shadow-md md:max-w-2xl mt-12">
-                <h2 className="text-2xl font-bold mb-6 flex items-center justify-between">
-                    <span className="flex items-center"><span className="mr-2">⭐</span> Reviews</span>
-                </h2>
-                {/* <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
-                    {reviews?.map((review) => (
-                        <div key={review._id} className="flex items-center justify-between border-b border-gray-200 py-4">
-                            <div>
-                                <h3 className="font-semibold">{review.userId.username}</h3>
-                                <p className="text-gray-500 text-sm">{review.reviews}</p>
-                                <div className="flex items-center text-yellow-400">
-                                    {Array.from({ length: review.stars }, (_, i) => (
-                                        <span key={i}>⭐</span>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="flex">
-                                {!review.verified ? (
-                                    <>
-                                        <button
-                                            onClick={() => approveReview(review._id)}
-                                            className="text-sm text-green-500 mr-2"
-                                        >
-                                            Approve
+                {/* Left Column */}
+                <div className="space-y-8">
+                    {/* Food Items Section */}
+                    <div className="bg-white rounded-xl shadow-md p-6">
+                        <h2 className="text-2xl font-bold mb-4 flex items-center justify-between">
+                            <span className="flex items-center"><span className="mr-2">🍲</span> Food Items</span>
+                            <a href="/vendorAddDishes" className="text-black">
+                                <Plus size={30} color="#000000" />
+                            </a>
+                        </h2>
+                        <div className="h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
+                            {dishError ? (
+                                <p className="text-red-600 text-center">{dishError}</p>
+                            ) : foodItems.length > 0 ? (
+                                foodItems.map((food) => (
+                                    <div key={food._id} className="flex items-center justify-between border-b border-gray-200 py-4">
+                                        <div className="flex items-center">
+                                            <img
+                                                src={food.images || '/placeholder.jpg'}
+                                                alt={food.dishesName || 'Food Image'}
+                                                className="w-16 h-16 rounded-full object-cover"
+                                            />
+                                            <div className="ml-4">
+                                                <h3 className="font-semibold">{food.dishesName}</h3>
+                                                <p className="text-gray-500 text-sm">{food.description}</p>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => handleDelete(food._id)} className="text-gray-500">
+                                            <FaTrashAlt />
                                         </button>
-                                        <button
-                                            onClick={() => rejectReview(review._id)}
-                                            className="text-sm text-red-500"
-                                        >
-                                            Reject
-                                        </button>
-                                    </>
-                                ) : (
-                                    <span className="text-green-500">✔</span>
-                                )}
-                            </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>🍽️ No dishes uploaded yet! Add some tasty options! ➕🍛</p>
+                            )}
                         </div>
-                    ))}
+                    </div>
 
-                </div> */}
-
-
-                <div className="bg-white shadow-lg rounded-lg p-6 h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
-                    {reviews?.length ? (
-                        reviews.map((review) => (
-                            <div key={review._id} className="flex items-center justify-between border-b border-gray-200 py-4">
-                                <div>
-                                    <h3 className="font-semibold">{review.username}</h3>
-                                    <p className="text-gray-500 text-sm">{review.reviews}</p>
-                                    <span className="text-yellow-500">{'★'.repeat(review.stars)}</span>
-                                </div>
-                                <div>
-                                    <button onClick={() => rejectReview(review._id)} className="text-red-500">
-                                        Reject
-                                    </button>
-                                    <button onClick={() => approveReview(review._id)} className="text-green-500 ml-2">
-                                        Approve
-                                    </button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p>No reviews yet.</p>
-                    )}
+                    {/* Reviews Section */}
+                    <div className="bg-white rounded-xl shadow-md p-6">
+                        <h2 className="text-2xl font-bold mb-4 flex items-center justify-between">
+                            <span className="flex items-center"><span className="mr-2">⭐</span> Reviews</span>
+                        </h2>
+                        <div className="h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
+                            {reviews?.length ? (
+                                reviews.map((review) => (
+                                    <div key={review._id} className="flex items-center justify-between border-b border-gray-200 py-4">
+                                        <div>
+                                            <h3 className="font-semibold">{review.username}</h3>
+                                            <p className="text-gray-500 text-sm">{review.reviews}</p>
+                                            <span className="text-yellow-500">{'★'.repeat(review.stars)}</span>
+                                        </div>
+                                        <div>
+                                            <button onClick={() => rejectReview(review._id)} className="text-red-500">
+                                                Reject
+                                            </button>
+                                            {!review.verified && (
+                                                <button onClick={() => approveReview(review._id)} className="text-green-500 ml-2">
+                                                    Approve
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No reviews yet.</p>
+                            )}
+                        </div>
+                    </div>
                 </div>
 
-
+                {/* Right Column */}
+                <div className="space-y-8">
+                    {/* Auditoriums Section */}
+                    <div className="bg-white rounded-xl shadow-md p-6">
+                        <h2 className="text-2xl font-bold mb-4 flex items-center justify-between">
+                            <span className="flex items-center"><span className="mr-2">🎭</span> Auditoriums</span>
+                            <a href="/vendorAddAuditoriums" className="text-black">
+                                <Plus size={30} color="#000000" />
+                            </a>
+                        </h2>
+                        <div className="h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 scrollbar-thumb-rounded-lg">
+                            {dishError ? (
+                                <p className="text-red-600 text-center">{dishError}</p>
+                            ) : auditoriums.length > 0 ? (
+                                auditoriums.map((auditorium) => (
+                                    <div key={auditorium._id} className="flex items-center justify-between border-b border-gray-200 py-4">
+                                        <div className="flex items-center">
+                                            <img
+                                                src={auditorium.images || '/placeholder.jpg'}
+                                                alt={auditorium.auditoriumName || 'Auditorium Image'}
+                                                className="w-16 h-16 rounded-full object-cover"
+                                            />
+                                            <div className="ml-4">
+                                                <h3 className="font-semibold">{auditorium.auditoriumName}</h3>
+                                                <p className="text-gray-500 text-sm">{auditorium.description}</p>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => handleDeleteAuditorium(auditorium._id)} className="text-gray-500">
+                                            <FaTrashAlt />
+                                        </button>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>🚫🏢 No auditoriums uploaded yet! Time to add some! ➕📂</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
+
     );
 };
 

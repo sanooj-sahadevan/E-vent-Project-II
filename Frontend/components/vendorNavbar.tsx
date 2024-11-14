@@ -97,22 +97,22 @@ const Navbar: React.FC = () => {
     <nav className="bg-black py-4 px-8 flex justify-between items-center">
       {/* Logo Section */}
       <div className="text-white font-bold">
-        <Link href="/">E-vent</Link>
+        <Link href="">E-vent</Link>
       </div>
 
       {/* Navigation Links */}
       <ul className="flex space-x-8 text-white">
         <li>
-          <Link href="/" >Home</Link>
+          <Link href="" >Home</Link>
         </li>
         <li>
-          <Link href="/">Vendor</Link>
+          <Link href="">Vendor</Link>
         </li>
         <li>
-          <Link href="/">About</Link>
+          <Link href="">About</Link>
         </li>
         <li>
-          <Link href="/">Contact</Link>
+          <Link href="">Contact</Link>
         </li>
       </ul>
 
