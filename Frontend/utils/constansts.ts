@@ -42,6 +42,9 @@ console.log('hjcbefhvbhufbvhubfhuvbrfhvbhurfbvhrbvhuvb');
 export const FRONTEND_DOMAIN = "https://eventopia.shop/";
 
 const DOMAIN = "https://eventopia.shop/";
+// export const FRONTEND_DOMAIN = "http://localhost:3000";
+  
+// const DOMAIN = "http://localhost:3000";
 
 const USER_SERVICE_DOMAIN = DOMAIN;
 const POSTS_SERVICE_DOMAIN = DOMAIN;
@@ -57,6 +60,8 @@ export const NOTIFICATION_SERVICE_URL = `${NOTIFICATION_SERVICE_DOMAIN}/api/noti
 export const ADS_SERVICE_URL = `${PAYMENT_SERVICE_DOMAIN}/api/ads-service`;
 
 export const SOCKET_URI = "https://eventopia.shop/";
+// export const SOCKET_URI = "http://localhost:3000";
+
 
 
 // export const JWT_SECRET =process.env.JWT_SECRET

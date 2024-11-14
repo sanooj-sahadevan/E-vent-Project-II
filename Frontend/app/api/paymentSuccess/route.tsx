@@ -29,38 +29,3 @@ let PayUOrderId
  redirect(`/bookingSucess`);
 
 }
-
-// import PayUApiCalls from '@/utils/apiCalls/PayUApiCalls';
-// import { NextResponse } from 'next/server';
-
-// export async function POST(req: Request) {
-//   try {
-//     // Retrieve and log form data
-//     const formData = await req.formData();
-//     const data: { [key: string]: any } = {};
-
-//     formData.forEach((value, key) => {
-//       data[key] = value;
-//     });
-
-//     console.log(data, 'Form data received');
-
-//     // Process payment
-//     let PayUOrderId;
-//     try {
-//       PayUOrderId = await PayUApiCalls.saveData(data);
-//     } catch (error: any) {
-//       console.log(error);
-//     }
-
-//     console.log('Payment processed successfully');
-
-//     // Redirect to /bookingSucess with the correct absolute URL
-//     const redirectUrl = 'http://localhost:3000/bookingSucess'; // Replace this with your actual domain if needed
-//     return NextResponse.redirect(redirectUrl);  // Full URL for redirection
-
-//   } catch (error: any) {
-//     console.error('Error processing payment:', error.message || error);
-//     return NextResponse.json({ error: 'Payment processing failed' }, { status: 500 });
-//   }
-// }

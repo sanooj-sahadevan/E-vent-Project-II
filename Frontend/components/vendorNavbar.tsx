@@ -103,17 +103,17 @@ const Navbar: React.FC = () => {
       {/* Navigation Links */}
       <ul className="flex space-x-8 text-white">
         <li>
-          <Link href="/vendordashboard" >Home</Link>
+          <Link href="/" >Home</Link>
         </li>
-        {/* <li>
-          <Link href="/vendordashboard">Vendor</Link>
+        <li>
+          <Link href="/">Vendor</Link>
         </li>
         <li>
           <Link href="/">About</Link>
         </li>
         <li>
           <Link href="/">Contact</Link>
-        </li> */}
+        </li>
       </ul>
 
       {/* Icons and Logout */}
