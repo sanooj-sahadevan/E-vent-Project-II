@@ -5,10 +5,10 @@
 // export const server_URL_chat ='http://localhost:8080/v1/api/chat'
 // // https://www.eventopia.shop/?__vercel_draft=1
 
-// export const SERVER_URL = "https://www.eventopia.shop/user";
-// export const SERVER_URL_vendor = "https://www.eventopia.shop/vendor";
-// export const server_URL_admin = "https://www.eventopia.shop/admin";
-// export const server_URL_chat = "https://www.eventopia.shop/chat";
+export const SERVER_URL = "https://www.eventopia.shop/user";
+export const SERVER_URL_vendor = "https://www.eventopia.shop/vendor";
+export const server_URL_admin = "https://www.eventopia.shop/admin";
+export const server_URL_chat = "https://www.eventopia.shop/chat";
 
 // export const SERVER_URL = "https://e-vent-project-ii.vercel.app/v1/api/users";
 // export const SERVER_URL = "https://eventopia.shop/user";
