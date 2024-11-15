@@ -90,7 +90,7 @@ const VendorsPage: React.FC = () => {
             if (vendorId && userId) {
                 try {
                     const response = await fetchReview(vendorId, userId);
-                    console.log(response);
+                    console.log('revirwnull');
 
                     if (response && response.review) {
                         setReview(response.review.review);
