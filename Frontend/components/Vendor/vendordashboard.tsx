@@ -215,24 +215,24 @@ const Home: React.FC = () => {
         if (e.target.files && e.target.files.length > 0) {
             const filesArray = Array.from(e.target.files);
             const uploadedUrls: string[] = [];
-
+    
             const storedVendor = localStorage.getItem("vendor");
             let vendorId = '';
-
+    
             if (storedVendor) {
                 const parsedVendor = JSON.parse(storedVendor);
                 vendorId = parsedVendor._id;
-                console.log(vendorId, 'vendoiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiid');
             }
             if (!vendorId) {
+                toast.error("No vendor information found. Please log in again.");
                 console.error("No vendorId found in localStorage.");
                 return;
             }
-
+    
             for (const file of filesArray) {
                 try {
                     const data = await getPresignedUrl(file.name, file.type);
-
+    
                     if (data.url) {
                         const uploadResult = await fetch(data.url, {
                             method: "PUT",
@@ -241,34 +241,44 @@ const Home: React.FC = () => {
                                 "Content-Type": file.type,
                             },
                         });
-
+    
                         if (uploadResult.ok) {
                             const s3Url = data.url.split('?')[0];
                             uploadedUrls.push(s3Url);
+                            toast.success(`${file.name} uploaded successfully.`);
                             console.log("Image uploaded successfully:", s3Url);
                         } else {
-                            console.error("Error uploading image to S3");
+                            console.error(`Failed to upload ${file.name} to S3.`);
+                            toast.error(`Failed to upload ${file.name}. Please try again.`);
                         }
                     } else {
-                        console.error("Error fetching pre-signed URL");
+                        console.error(`Error fetching pre-signed URL for ${file.name}.`);
+                        toast.error(`Unable to prepare upload for ${file.name}.`);
                     }
                 } catch (error) {
-                    console.error("Error during file upload:", error);
+                    console.error(`Error during file upload for ${file.name}:`, error);
+                    toast.error(`An error occurred while uploading ${file.name}.`);
                 }
             }
-
-            setPhotoUrls(uploadedUrls);
-            console.log(uploadedUrls, vendorId, 'okokokokokkkkkkkkkkkkk');
-
-            try {
-                const response = await savePhotoUrlsToDB(uploadedUrls, vendorId);
-                console.log(response);
-
-            } catch (error) {
-                console.error("Error during saving to DB:", error);
+    
+            if (uploadedUrls.length > 0) {
+                setPhotoUrls(uploadedUrls);
+                console.log(uploadedUrls, vendorId, "Photos uploaded successfully.");
+    
+                try {
+                    const response = await savePhotoUrlsToDB(uploadedUrls, vendorId);
+                    console.log("Photos saved to the database:", response);
+                    toast.success("All photos uploaded and saved successfully!");
+                } catch (error) {
+                    console.error("Error during saving to DB:", error);
+                    toast.error("Photos uploaded but failed to save to the database.");
+                }
+            } else {
+                toast.warning("No photos were uploaded. Please try again.");
             }
         }
     };
+    
 
 
 
