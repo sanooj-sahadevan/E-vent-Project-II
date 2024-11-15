@@ -17,7 +17,8 @@ export function toBeRedirectedRoutes(pathname: string): boolean {
 }
 
 // Admin Routes
-const protectedAdminRoutes = /^\/admin\/.*$/;
+const protectedAdminRoutes =
+ /^\/adminn\/.*$/;
 const changeToAdminRoutes = new Set(["/admin"]);
 
 export function isProtectedAdminRoute(pathname: string): boolean {
