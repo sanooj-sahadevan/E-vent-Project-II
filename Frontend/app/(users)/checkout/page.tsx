@@ -4,11 +4,18 @@ import UserMain from '@/components/userMain'
 import VendorList from '@/components/User/vendorlist'
 import Checkout from '@/components/User/checkout'
 import Footer from '@/components/footer'
+import { Spinner } from '@nextui-org/spinner'
 const page = () => {
   return (
     <div>
       <Navbar />
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense 
+        fallback={
+          <div className="flex justify-center items-center h-screen">
+      <Spinner  color="danger" size="lg"  label="Loading..." labelColor="foreground"/>
+      </div>
+        }
+      >
 
         <Checkout />
       </Suspense>

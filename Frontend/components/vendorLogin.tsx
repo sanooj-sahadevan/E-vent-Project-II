@@ -5,9 +5,7 @@
 
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-// import Head from "next/head";
-// import Link from "next/link";
-// import Navbar from "@/components/NavBar";
+
 import { LoginAPI } from "@/services/vendorAPI";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -41,7 +39,6 @@ const VendorLoginForm: React.FC = () => {
         localStorage.setItem("vendorToken", result.vendorToken);
         localStorage.setItem("vendor", JSON.stringify(result.vendor));
 
-        // Redirecting with vendor.id as a query parameter
         router.push(`/vendordashboard?vendorId=${result.vendor._id}`);
         toast.success("Login Successful!");
       } else {

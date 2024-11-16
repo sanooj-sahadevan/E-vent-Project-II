@@ -27,7 +27,6 @@ const OTPPage: React.FC = () => {
 
   const email = searchParams.get("email");
 
-  // Handle OTP submission
   const handleOtpSubmit: SubmitHandler<OTPFormInputs> = async (data) => {
     console.log(data, email);
 
@@ -37,20 +36,16 @@ const OTPPage: React.FC = () => {
       toast.success("please login");
       router.push("/vendorLogin");
     } catch (error) {
-      // console.error(error);
       toast.error("Invalid otp.");
     }
   };
 
-  // Handle Resend OTP click
   const handleResendOtp = () => {
     console.log("Resend OTP");
     setTimeLeft(60);
     setIsResendDisabled(true);
-    // Logic to resend OTP (e.g., call an API)
   };
 
-  // Countdown timer logic
   useEffect(() => {
     if (timeLeft === 0) {
       setIsResendDisabled(false);

@@ -13,6 +13,8 @@
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.5",
     "@mui/system": "^6.1.5",
+    "@nextui-org/react": "^2.4.8",
+    "@nextui-org/spinner": "^2.0.34",
     "@react-oauth/google": "^0.12.1",
     "@types/axios": "^0.14.0",
     "@types/bcryptjs": "^2.4.6",

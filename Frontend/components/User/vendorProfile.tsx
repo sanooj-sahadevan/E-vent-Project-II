@@ -234,19 +234,43 @@ const VendorsPage: React.FC = () => {
 
             {/* Categories */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-[70px] mt-[71px]">
+                {/* Platinum Category */}
                 <div className="bg-gray-100 p-4 rounded-md shadow">
                     <h3 className="text-lg font-semibold">Platinum</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat eros non urna fermentum.</p>
+                    <p>
+                        - Luxury floral and themed decorations. <br />
+                        - Gourmet menu with international cuisine. <br />
+                        - Professional band or celebrity DJ. <br />
+                        - Drone videography and LED screen setup. <br />
+                        - Dedicated event manager and VIP services.
+                    </p>
                 </div>
+
+                {/* Gold Category */}
                 <div className="bg-yellow-100 p-4 rounded-md shadow">
                     <h3 className="text-lg font-semibold">Gold</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat eros non urna fermentum.</p>
+                    <p>
+                        - Standard floral and balloon decorations. <br />
+                        - Basic seating with chair covers. <br />
+                        - Limited menu with 1-2 desserts. <br />
+                        - Background music and microphone. <br />
+                        - Basic photography for the event.
+                    </p>
                 </div>
+
+                {/* Silver Category */}
                 <div className="bg-gray-200 p-4 rounded-md shadow">
                     <h3 className="text-lg font-semibold">Silver</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam volutpat eros non urna fermentum.</p>
+                    <p>
+                        - Minimalist decorations with balloons. <br />
+                        - Budget-friendly seating arrangements. <br />
+                        - Simple buffet menu. <br />
+                        - Recorded background music. <br />
+                        - DIY photo booth area.
+                    </p>
                 </div>
             </div>
+
 
             {/* Photos */}
             <div className="mt-8">

@@ -14,9 +14,7 @@ import headerImage6 from "../public/Header/12.jpg";
 import headerImage7 from "../public/Header/13.jpg";
 import headerImage8 from "../public/Header/14.jpeg";
 import headerImage9 from "../public/Header/15.png";
-// import headerImage10 from "../public/Header/16.jpg";
 
-// Array of image imports
 const images = [
   headerImage,
   headerImage1,
@@ -43,12 +41,11 @@ const UserMain: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    // Change image index every 3 seconds
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 3000);
 
-    return () => clearInterval(interval); // Cleanup interval on unmount
+    return () => clearInterval(interval); 
   }, []);
 
   return (
@@ -59,7 +56,7 @@ const UserMain: React.FC = () => {
           alt={`Slideshow Image ${currentIndex + 1}`}
           fill
           style={{ objectFit: "cover" }}
-          priority // Ensures the first image loads quickly
+          priority
         />
         <div className="absolute bottom-[-5%] left-1/2 transform -translate-x-1/2 w-full max-w-3xl">
           <div className="flex">
