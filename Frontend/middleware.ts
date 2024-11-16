@@ -134,10 +134,12 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: "/((?!api|_next/static|_next/image|favicon.ico).*)",
-};
+}; 
 
 async function verifyToken(tokenName: string, req: NextRequest): Promise<boolean> {
   const token = req.cookies.get(tokenName);
+  console.log(req.cookies,'123457');
+  
   if (!token?.value) {
     console.warn(`Token ${tokenName} not found.`);
     return false;
