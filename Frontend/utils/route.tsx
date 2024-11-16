@@ -1,10 +1,14 @@
 // User Routes
 const protectedUserRoutes = new Set([
-  "/profilee", "/auditoriumInfo", "/auditoriumList",
- , "/booknow", "/chat", "/checkout",
-  "/dishesinfo",  "/googlemap", 
-   '/vendorProfile',
-"/googlemap"
+  "/profilee",
+  "/auditoriumInfo",
+  "/auditoriumList",
+  "/booknow",
+  "/chat",
+  "/checkout",
+  "/dishesinfo",
+  "/googlemap",
+  "/vendorProfile",
 ]);
 
 export function isProtectedUserRoute(pathname: string): boolean {
@@ -17,8 +21,7 @@ export function toBeRedirectedRoutes(pathname: string): boolean {
 }
 
 // Admin Routes
-const protectedAdminRoutes =
- /^\/adminn\/.*$/;
+const protectedAdminRoutes = /^\/admin\/.*$/;
 const changeToAdminRoutes = new Set(["/admin"]);
 
 export function isProtectedAdminRoute(pathname: string): boolean {
@@ -31,10 +34,12 @@ export function toBeRedirectedAdminRoutes(pathname: string): boolean {
 
 // Vendor Routes
 const protectedVendorRoutes = new Set([
-  // "/vendorChat",
-  // "/vendordashboard", "/vendorAddAuditoriums", "/vendorAddDishes",
-  // "/vendorBookingDetails", "/vendorEditProfile"
-  '/lo'
+  "/vendorChat",
+  "/vendordashboard",
+  "/vendorAddAuditoriums",
+  "/vendorAddDishes",
+  "/vendorBookingDetails",
+  "/vendorEditProfile",
 ]);
 
 export function isProtectedVendorRoute(pathname: string): boolean {
