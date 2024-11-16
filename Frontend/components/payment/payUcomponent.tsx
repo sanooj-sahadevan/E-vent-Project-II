@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from "react";
 import { FRONTEND_DOMAIN, PayU } from "@/utils/constansts";
 import { generateTxnId } from "@/utils/generateTxnld";
@@ -86,7 +87,7 @@ const PayUComponent = ({ BookedData }: Props) => {
                 <button
                     type="submit"
                     value="submit"
-                    className="w-full bg-black-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-pink-600 transition"
+                    className="w-full bg-pink-500 text-white px-4 py-3 rounded-lg font-medium hover:bg-pink-600 transition"
                 >
                     Pay with PayU
                 </button>

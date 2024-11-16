@@ -138,8 +138,8 @@ const VendorDashboard = () => {
                     <tr key={index}>
                       <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">{formatDate(event.createdAt)}</td>
                       <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">{event.vendorId.vendorname}</td>
-                      <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">{event.auditoriumId.auditoriumName}</td>
-                      <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">{event.dishesId.dishesName}</td>
+                      <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">  {event.auditoriumId ? event.auditoriumId.auditoriumName : 'N/A'}</td>
+                      <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200"> {event.dishesId?.dishesName || 'N/A'}</td>
                       <td className="px-6 py-4 whitespace-no-wrap border-b border-gray-200">
                         <span className={event.status === 'Pending' ? 'text-blue-500' : 'text-green-500'}>{event.paymentStatus}</span>
                       </td>

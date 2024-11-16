@@ -139,7 +139,7 @@ const LoginForm: React.FC = () => {
             </a>
           </div>
           <div>
-            <button
+            {/* <button
               type="button"
               onClick={handleGoogleClick}
               className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
@@ -155,7 +155,7 @@ const LoginForm: React.FC = () => {
                 <path d="M12.75 7.35c1.45 0 2.75.5 3.75 1.35l2.8-2.8c-1.8-1.7-4.5-2.75-7.55-2.75-4.82 0-8.97 2.77-10.95 6.65l4.3 3.3c1-3.05 3.8-5.25 7.1-5.25z" />
               </svg>
               Continue with Google
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
