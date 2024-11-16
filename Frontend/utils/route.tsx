@@ -1,9 +1,9 @@
 // User Routes
 const protectedUserRoutes = new Set([
-//   "/profilee", "/auditoriumInfo", "/auditoriumList",
-//  , "/booknow", "/chat", "/checkout",
-//   "/dishesinfo",  "/googlemap", 
-//    '/vendorProfile'
+  "/profilee", "/auditoriumInfo", "/auditoriumList",
+ , "/booknow", "/chat", "/checkout",
+  "/dishesinfo",  "/googlemap", 
+   '/vendorProfile',
 "/googlemap"
 ]);
 
