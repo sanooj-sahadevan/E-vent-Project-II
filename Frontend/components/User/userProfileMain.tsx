@@ -155,75 +155,88 @@ const ProfilePage: React.FC = () => {
 
 
           <form onSubmit={handleSubmit(handleSubmitForm)} className="mt-6 w-full">
-          <h2 className="text-lg font-semibold text-gray-700 mb-3">Edit Profile</h2>
-        
-          <div className="mb-3">
-            <label className="block text-gray-600 text-sm">Username:</label>
-            <input
-              type="text"
-              {...register("username", {
-                required: "Username is required",
-                pattern: {
-                  value: /\S+/,
-                  message: "Username cannot be empty or just whitespace"
-                }
-              })}
-              className={`w-full p-2 border ${errors.username ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
-            />
-            {errors.username && <span className="text-red-500 text-sm">{errors.username?.message || 'Error'}</span>}
-          </div>
-        
-          <div className="mb-3">
-            <label className="block text-gray-600 text-sm">Email:</label>
-            <input
-              type="email"
-              {...register("email", {
-                required: "Email is required",
-                pattern: {
-                  value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-                  message: "Invalid email address"
-                }
-              })}
-              className={`w-full p-2 border ${errors.email ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
-            />
-            {errors.email && <span className="text-red-500 text-sm">{errors.email?.message || 'Error'}</span>}
-          </div>
-        
-          <div className="mb-3">
-            <label className="block text-gray-600 text-sm">Mobile:</label>
-            <input
-              type="text"
-              {...register("phone", {
-                required: "Phone number is required",
-                pattern: {
-                  value: /^\d+$/,
-                  message: "Phone number must be digits only"
-                }
-              })}
-              className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
-            />
-            {errors.phone && <span className="text-red-500 text-sm">{errors.phone?.message || 'Error'}</span>}
-          </div>
-        
-          {/* Add the rest of the form fields similarly */}
-        
-          <div className="flex justify-end space-x-3 mt-4">
-            <button
-              type="button"
-              onClick={() => setIsEditing(false)}
-              className="p-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 border border-black text-sm"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="p-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 border border-black text-sm"
-            >
-              Save
-            </button>
-          </div>
-        </form>
-        
+            <h2 className="text-lg font-semibold text-gray-700 mb-3">Edit Profile</h2>
+
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">Username:</label>
+              <input
+                type="text"
+                {...register("username", {
+                  required: "Username is required",
+                  pattern: {
+                    value: /\S+/,
+                    message: "Username cannot be empty or just whitespace"
+                  }
+                })}
+                className={`w-full p-2 border ${errors.username ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
+              />
+              {errors.username && (
+                <span className="text-red-500 text-sm">
+                  {typeof errors.username?.message === "string"
+                    ? errors.username.message
+                    : 'Error'}
+                </span>
+              )}
+            </div>
+
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">Email:</label>
+              <input
+                type="email"
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+                    message: "Invalid email address"
+                  }
+                })}
+                className={`w-full p-2 border ${errors.email ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
+              />
+              {errors.email && (
+                <span className="text-red-500 text-sm">
+                  {String(errors.email?.message) || 'Error'}
+                </span>
+              )}          </div>
+
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">Mobile:</label>
+              <input
+                type="text"
+                {...register("phone", {
+                  required: "Phone number is required",
+                  pattern: {
+                    value: /^\d+$/,
+                    message: "Phone number must be digits only"
+                  }
+                })}
+                className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
+              />
+
+              {errors.phone && (
+                <span className="text-red-500 text-sm">
+                  {String(errors.phone?.message) || 'Error'}
+                </span>
+              )}          </div>
+
+            {/* Add the rest of the form fields similarly */}
+
+            <div className="flex justify-end space-x-3 mt-4">
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="p-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 border border-black text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="p-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 border border-black text-sm"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+
 
         )}
       </div>
