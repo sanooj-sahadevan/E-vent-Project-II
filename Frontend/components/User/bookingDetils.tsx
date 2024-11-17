@@ -58,10 +58,14 @@ const EventsPage: React.FC = () => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
+    console.log(storedUser,'------------------------------');
+    
     if (storedUser) {
       try {
         const user = JSON.parse(storedUser);
         const userId = user?._id;
+        console.log('ok0',userId);
+        
         if (!userId) {
           setError("User ID not found");
           setLoading(false);

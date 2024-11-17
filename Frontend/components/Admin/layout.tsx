@@ -35,7 +35,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <div className="w-64 bg-white shadow-lg fixed h-full">
         <div className="p-6">
-          <h2 className="text-2xl font-semibold">E-vent</h2>
+          <h2 className="text-2xl font-semibold">Eventopia</h2>
         </div>
         <nav className="mt-10">
           <ul>
