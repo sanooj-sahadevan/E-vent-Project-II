@@ -1,10 +1,9 @@
-'use client'
 import React, { useState, useEffect } from 'react';
 import { UserEdit } from "@/services/userApi";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Skeleton from '@mui/material/Skeleton';
-import { useForm } from 'react-hook-form';
+import { FieldError, useForm } from 'react-hook-form';
 
 const ProfilePage: React.FC = () => {
   const {
@@ -170,13 +169,8 @@ const ProfilePage: React.FC = () => {
                 })}
                 className={`w-full p-2 border ${errors.username ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
               />
-              {errors.username && (
-                <span className="text-red-500 text-sm">
-                  {typeof errors.username?.message === "string"
-                    ? errors.username.message
-                    : 'Error'}
-                </span>
-              )}
+              {errors.username && <span className="text-red-500 text-sm">{(errors.username as FieldError)?.message}</span>}
+
             </div>
 
             <div className="mb-3">
@@ -192,11 +186,8 @@ const ProfilePage: React.FC = () => {
                 })}
                 className={`w-full p-2 border ${errors.email ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
               />
-              {errors.email && (
-                <span className="text-red-500 text-sm">
-                  {String(errors.email?.message) || 'Error'}
-                </span>
-              )}          </div>
+{errors.email && <span className="text-red-500 text-sm">{(errors.email as FieldError)?.message}</span>}
+</div>
 
             <div className="mb-3">
               <label className="block text-gray-600 text-sm">Mobile:</label>
@@ -211,14 +202,78 @@ const ProfilePage: React.FC = () => {
                 })}
                 className={`w-full p-2 border ${errors.phone ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
               />
+{errors.phone && <span className="text-red-500 text-sm">{(errors.phone as FieldError)?.message}</span>}
+</div>
 
-              {errors.phone && (
-                <span className="text-red-500 text-sm">
-                  {String(errors.phone?.message) || 'Error'}
-                </span>
-              )}          </div>
+            <h2 className="text-lg font-semibold text-gray-700 mt-5 mb-3">Edit Address</h2>
 
-            {/* Add the rest of the form fields similarly */}
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">Street:</label>
+              <input
+                type="text"
+                // name="street"
+                {...register("street", {
+                  required: "Street is required",
+                  pattern: {
+                    value: /\S+/,
+                    message: "Street cannot be empty or just whitespace"
+                  }
+                })}
+                className={`w-full p-2 border ${errors.street ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
+              />
+{errors.street && <span className="text-red-500 text-sm">{(errors.street as FieldError)?.message}</span>}
+</div>
+
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">City, State:</label>
+              <input
+                type="text"
+                // name="cityState"
+                {...register("cityState", {
+                  required: "City, State is required",
+                  pattern: {
+                    value: /\S+/,
+                    message: "City, State cannot be empty or just whitespace"
+                  }
+                })}
+                className={`w-full p-2 border ${errors.cityState ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
+              />
+{errors.cityState && <span className="text-red-500 text-sm">{(errors.cityState as FieldError)?.message}</span>}
+</div>
+
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">Pin Code:</label>
+              <input
+                type="text"
+                // name="pinCode"
+                {...register("pinCode", {
+                  required: "Pin Code is required",
+                  pattern: {
+                    value: /^\d{6}$/,
+                    message: "Pin code must be exactly 6 digits"
+                  }
+                })}
+                className={`w-full p-2 border ${errors.pinCode ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
+              />
+{errors.pinCode && <span className="text-red-500 text-sm">{(errors.pinCode as FieldError)?.message}</span>}
+</div>
+
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">State:</label>
+              <input
+                type="text"
+                // name="state"
+                {...register("state", {
+                  required: "State is required",
+                  pattern: {
+                    value: /\S+/,
+                    message: "State cannot be empty or just whitespace"
+                  }
+                })}
+                className={`w-full p-2 border ${errors.state ? 'border-red-500' : 'border-black'} rounded-lg focus:outline-none focus:border-pink-500 text-sm`}
+              />
+{errors.state && <span className="text-red-500 text-sm">{(errors.state as FieldError)?.message}</span>}
+</div>
 
             <div className="flex justify-end space-x-3 mt-4">
               <button
@@ -236,8 +291,6 @@ const ProfilePage: React.FC = () => {
               </button>
             </div>
           </form>
-
-
         )}
       </div>
     </div>
