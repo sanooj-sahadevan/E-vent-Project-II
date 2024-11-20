@@ -1,11 +1,14 @@
+/* eslint-disable react/jsx-no-undef */
 "use client";
 
+import { logoutApi } from "@/services/userApi";
 import { deleteCookie } from "@/utils/deleteCookie";
-import { BellRing, LogOut, ScanFace, UserRoundPen } from "lucide-react";
+import { BellRing,  LogOut,  ScanFace, UserRoundPen } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner"; // Import sonner for notifications
+
 
 const Navbar: React.FC = () => {
   const [activePath, setActivePath] = useState<string | null>(null);
@@ -29,16 +32,56 @@ const Navbar: React.FC = () => {
     }
   }, []);
 
-  const handleLogoutClick = () => {
+  // const handleLogoutClick = () => {
+  //   toast.success("Logout Successfully", {
+  //     duration: 3000, 
+  //   });
+  //   localStorage.removeItem("user");
+  //   localStorage.removeItem("token");
+  //   localStorage.removeItem("refreshToken");
+  //   deleteCookie("token");
+  //   deleteCookie("refreshToken");
+  //   let result   = await LogOut()
+  //   console.log(result);
+    
+
+  //   setIsAuthorized(false);
+  //   router.push("/");
+  // };
+
+
+const handleLogoutClick = async () => {
+  try {
     toast.success("Logout Successfully", {
-      duration: 3000, // Set the toast duration to 3 seconds
+      duration: 3000,
     });
+
+    // API Call for logout
+    const result = await logoutApi();
+    console.log(result);
+
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
     deleteCookie("token");
+    deleteCookie("refreshToken");
+
+    // Update state and redirect
     setIsAuthorized(false);
     router.push("/");
-  };
+  } catch (error) {
+    console.error("Logout error:", error);
+    toast.error("Failed to logout. Please try again.", {
+      duration: 3000,
+    });
+  }
+};
+
+
+
+  
+
+
 
   const isActive = (path: string) => activePath === path;
 
@@ -98,10 +141,11 @@ const Navbar: React.FC = () => {
 
         {/* Logout or Login */}
         {isAuthorized ? (
-          <LogOut
-            onClick={handleLogoutClick}
-            className="w-5 h-5 text-white cursor-pointer"
-          />
+        <LogOut
+        onClick={handleLogoutClick}
+        className="w-5 h-5 text-white cursor-pointer"
+      />
+      
         ) : (
           <Link href="/login">
             <ScanFace className="w-5 h-5 text-white" />

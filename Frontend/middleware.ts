@@ -21,6 +21,7 @@ export async function middleware(req: NextRequest) {
   const adminTokenVerified = await verifyToken("adminToken", req);
   const vendorTokenVerified = await verifyToken("vendorToken", req);
   const userTokenVerified = await verifyToken("token", req);
+console.log(userTokenVerified,'pop');
 
   // Admin Routes
   const isProtectedAdmin = isProtectedAdminRoute(pathname);
@@ -68,9 +69,7 @@ async function verifyToken(tokenName: string, req: NextRequest): Promise<boolean
   const secret = process.env.JWT_SECRET || "sanoojsanooj";
 
   try {
-    const { payload } = await jwtVerify(token.value, new TextEncoder().encode(secret));
-    console.log('okoko',{ payload });
-    
+    const { payload } = await jwtVerify(token.value, new TextEncoder().encode(secret)); 
     return Boolean(payload);
   } catch (err: any) {
     console.log(`Failed to verify ${tokenName}:`, err.message);

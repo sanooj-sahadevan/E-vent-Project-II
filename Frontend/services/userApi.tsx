@@ -435,3 +435,18 @@ export const searchUsers = async (term: string) => {
 
 
 
+export const logoutApi = async () => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/logout`, {
+      withCredentials: true,
+    });
+    console.log("response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching logout API:", error);
+    throw error;
+  }
+};
+
+
+

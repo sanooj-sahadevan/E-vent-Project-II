@@ -25,8 +25,9 @@ const LoginForm: React.FC = () => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       const result = await LoginAPI(data);
-      if (result && result.user && result.token) {
-        localStorage.setItem("token", result.token);
+      if (result?.user && result?.accessToken) {
+        localStorage.setItem("token", result.accessToken);
+        localStorage.setItem("refreshToken", result.refreshToken); 
         localStorage.setItem("user", JSON.stringify(result.user));
         toast.success("Login Successful!", { duration: 8000 });
         window.location.href = "/"; 
@@ -36,6 +37,7 @@ const LoginForm: React.FC = () => {
     } catch (err) {
       toast.error("An error occurred during login. Please try again.", { duration: 5000 });
     }
+    
   };
 
   // const handleGoogleClick = async () => {

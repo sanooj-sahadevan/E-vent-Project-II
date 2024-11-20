@@ -22,10 +22,15 @@ export const SignUpAPI = async (
 };
 
 export const LoginAPI = async (reqBody: any) => {
-  console.log('vendor login');
-  const response = await axios.post(`${SERVER_URL_vendor}/login`, reqBody, { withCredentials: true });
-  return response.data
+  try {
+    const response = await axios.post(`${SERVER_URL_vendor}/login`, reqBody, { withCredentials: true });
+    return response.data;
+  } catch (error:any) {
+    console.error("API call error:");
+    throw new Error(error);
+  }
 };
+
 
 export const verifyOtp = async (data: any) => {
   console.log("comming: " + data);

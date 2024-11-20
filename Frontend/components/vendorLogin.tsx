@@ -28,26 +28,47 @@ const VendorLoginForm: React.FC = () => {
     formState: { errors },
   } = useForm<LoginFormInputs>();
 
+  // const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+  //   try {
+  //     const result = await LoginAPI(data);
+  //     console.log("LoginAPI result:", result); // Debugging line
+  //     if (result && result.vendor && result.vendorToken) {
+  //       localStorage.setItem("vendorToken", result.accessToken);
+  //       localStorage.setItem("refreshToken", result.refreshToken);
+  //       localStorage.setItem("vendor", JSON.stringify(result.vendor));
+  //       router.push(`/vendordashboard?vendorId=${result.vendor._id}`);
+  //       toast.success("Login Successful!");
+  //     } else {
+  //       toast.error("Invalid login credentials. Please try again.");
+  //     }
+  //   } catch (err) {
+  //     toast.error("An error occurred during login. Please try again.");
+  //   }
+  // };
+
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
       const result = await LoginAPI(data);
       console.log("LoginAPI result:", result); // Debugging line
-
-      if (result && result.vendor && result.vendorToken) {
-        console.log(result.vendor.adminVerified);
-
-        localStorage.setItem("vendorToken", result.vendorToken);
+      if (result && result.vendor && result.accessToken && result.refreshToken) {
+        localStorage.setItem("vendorToken", result.accessToken);
+        localStorage.setItem("refreshToken", result.refreshToken);
         localStorage.setItem("vendor", JSON.stringify(result.vendor));
-
         router.push(`/vendordashboard?vendorId=${result.vendor._id}`);
         toast.success("Login Successful!");
       } else {
         toast.error("Invalid login credentials. Please try again.");
       }
     } catch (err) {
+      console.error("Login error:", err); // Log the error for debugging
       toast.error("An error occurred during login. Please try again.");
     }
   };
+  
+
+
+
+
   return (
 
     <>
