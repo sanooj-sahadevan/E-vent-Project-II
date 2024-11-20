@@ -19,7 +19,7 @@ type FormValues = {
 };
 
 const AddDishes: React.FC = () => {
-    const { handleSubmit, formState: { errors }, register } = useForm<FormValues>({
+    const { handleSubmit, formState: { errors }, register, setValue, getValues } = useForm<FormValues>({
         defaultValues: {
             dishesName: "",
             description: "",
@@ -32,16 +32,15 @@ const AddDishes: React.FC = () => {
     });
 
     const router = useRouter();
-    const [photoFile, setPhotoFile] = useState<File | null>(null); // For the actual file
-    const [photoUrl, setPhotoUrl] = useState<string | null>(null); // For the S3 URL
+    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    const [photoUrl, setPhotoUrl] = useState<string | null>(null);
 
     const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             const fileType = file.type;
 
-            setPhotoFile(file); // Save the file object
-
+            setPhotoFile(file);
             try {
                 const data = await getPresignedUrl(file.name, fileType);
 
@@ -55,8 +54,8 @@ const AddDishes: React.FC = () => {
                     });
 
                     if (uploadResult.ok) {
-                        const s3Url = data.url.split('?')[0]; 
-                        setPhotoUrl(s3Url); 
+                        const s3Url = data.url.split('?')[0];
+                        setPhotoUrl(s3Url);
                         console.log("Image uploaded successfully:", s3Url);
                     } else {
                         console.error("Error uploading image to S3");
@@ -72,14 +71,17 @@ const AddDishes: React.FC = () => {
 
     const removePhoto = () => {
         setPhotoFile(null);
-        setPhotoUrl(null); 
+        setPhotoUrl(null);
     };
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
         const formData = {
             ...data,
+            dishesName: data.dishesName.trim(),
+            menu: data.menu.trim(),
             image: photoUrl,
         };
+
         const storedVendor = localStorage.getItem("vendor");
         let vendorId = '';
 
@@ -106,6 +108,11 @@ const AddDishes: React.FC = () => {
         }
     };
 
+    const handlePriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/[^0-9]/g, ""); // Allow only numbers
+        setValue("price", parseInt(value) || 0); // Update form value
+    };
+
     return (
         <div className="container mx-auto p-8">
             <h1 className="text-3xl font-bold mb-8 text-center">Add Dishes</h1>
@@ -117,7 +124,7 @@ const AddDishes: React.FC = () => {
                             {photoFile ? (
                                 <div className="mb-4">
                                     <img
-                                        src={URL.createObjectURL(photoFile)} // Use the file object here
+                                        src={URL.createObjectURL(photoFile)}
                                         alt="Dish"
                                         className="w-full h-40 object-cover rounded-lg mb-4"
                                     />
@@ -154,51 +161,58 @@ const AddDishes: React.FC = () => {
                                 <label className="block text-gray-700">Dish Name</label>
                                 <input
                                     type="text"
-                                    {...register("dishesName", { required: true })}
+                                    {...register("dishesName", {
+                                        required: "Dish name is required.",
+                                        validate: (value) => value.trim() !== "" || "Whitespace-only values are not allowed.",
+                                    })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter dish name"
                                 />
-                                {errors.dishesName && <p className="text-red-500">Dish name is required.</p>}
+                                {errors.dishesName && <p className="text-red-500">{errors.dishesName.message}</p>}
                             </div>
 
                             <div>
                                 <label className="block text-gray-700">Price</label>
                                 <input
                                     type="number"
-                                    {...register("price", { required: true })}
+                                    {...register("price", { required: "Price is required." })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter price"
+                                    onInput={handlePriceInput}
                                 />
-                                {errors.price && <p className="text-red-500">Price is required.</p>}
+                                {errors.price && <p className="text-red-500">{errors.price.message}</p>}
                             </div>
 
                             <div>
                                 <label className="block text-gray-700">Menu</label>
                                 <textarea
-                                    {...register("menu", { required: true })}
+                                    {...register("menu", {
+                                        required: "Menu is required.",
+                                        validate: (value) => value.trim() !== "" || "Whitespace-only values are not allowed.",
+                                    })}
                                     className="w-full p-2 border border-gray-300 rounded-lg mt-2"
                                     placeholder="Enter Menu"
                                 />
-                                {errors.menu && <p className="text-red-500">Menu is required.</p>}
+                                {errors.menu && <p className="text-red-500">{errors.menu.message}</p>}
                             </div>
 
                             <div>
                                 <label className="block text-gray-700">Type of Food</label>
                                 <select
-                                    {...register("types", { required: true })}
+                                    {...register("types", { required: "Type is required." })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                 >
                                     <option value="">Select type</option>
                                     <option value="Veg">Veg</option>
                                     <option value="Non-Veg">Non-Veg</option>
                                 </select>
-                                {errors.types && <p className="text-red-500">Type is required.</p>}
+                                {errors.types && <p className="text-red-500">{errors.types.message}</p>}
                             </div>
 
                             <div>
                                 <label className="block text-gray-700">Category</label>
                                 <select
-                                    {...register("category", { required: true })}
+                                    {...register("category", { required: "Category is required." })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                 >
                                     <option value="">Select category</option>
@@ -206,7 +220,7 @@ const AddDishes: React.FC = () => {
                                     <option value="Platinum">Platinum</option>
                                     <option value="Silver">Silver</option>
                                 </select>
-                                {errors.category && <p className="text-red-500">Category is required.</p>}
+                                {errors.category && <p className="text-red-500">{errors.category.message}</p>}
                             </div>
 
                             <div>

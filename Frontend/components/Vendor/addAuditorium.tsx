@@ -58,8 +58,12 @@ const AddAuditorium: React.FC = () => {
     };
 
     const onSubmit: SubmitHandler<FormValues> = async (data) => {
-        const formData = {
+        const trimmedData = {
             ...data,
+            auditoriumName: data.auditoriumName.trim(),
+            description: data.description.trim(),
+            types: data.types.trim(),
+            status: data.status.trim(),
             image: photoUrl,
         };
 
@@ -72,7 +76,7 @@ const AddAuditorium: React.FC = () => {
         }
 
         try {
-            const result = await addAuditoriumAPI(formData);
+            const result = await addAuditoriumAPI(trimmedData);
             if (result) {
                 toast.success("Auditorium added successfully");
                 setTimeout(() => {
@@ -125,7 +129,10 @@ const AddAuditorium: React.FC = () => {
                                 <label className="block text-gray-700">Auditorium Name</label>
                                 <input
                                     type="text"
-                                    {...register('auditoriumName', { required: 'Auditorium Name is required' })}
+                                    {...register('auditoriumName', { 
+                                        required: 'Auditorium Name is required', 
+                                        validate: value => value.trim() !== '' || 'No white spaces allowed' 
+                                    })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter auditorium name"
                                 />
@@ -135,7 +142,10 @@ const AddAuditorium: React.FC = () => {
                                 <label className="block text-gray-700">Capacity</label>
                                 <input
                                     type="number"
-                                    {...register('capacity', { required: 'Capacity is required', min: 1 })}
+                                    {...register('capacity', { 
+                                        required: 'Capacity is required', 
+                                        min: { value: 1, message: 'Capacity must be at least 1' } 
+                                    })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter capacity"
                                 />
@@ -144,7 +154,10 @@ const AddAuditorium: React.FC = () => {
                             <div>
                                 <label className="block text-gray-700">Description</label>
                                 <textarea
-                                    {...register('description', { required: 'Description is required' })}
+                                    {...register('description', { 
+                                        required: 'Description is required', 
+                                        validate: value => value.trim() !== '' || 'No white spaces allowed' 
+                                    })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter description"
                                 />
@@ -154,7 +167,10 @@ const AddAuditorium: React.FC = () => {
                                 <label className="block text-gray-700">Price</label>
                                 <input
                                     type="number"
-                                    {...register('price', { required: 'Price is required', min: 0 })}
+                                    {...register('price', { 
+                                        required: 'Price is required', 
+                                        min: { value: 0, message: 'Price cannot be negative' } 
+                                    })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter price"
                                 />
@@ -164,7 +180,10 @@ const AddAuditorium: React.FC = () => {
                                 <label className="block text-gray-700">Types</label>
                                 <input
                                     type="text"
-                                    {...register('types', { required: 'Types are required' })}
+                                    {...register('types', { 
+                                        required: 'Types are required', 
+                                        validate: value => value.trim() !== '' || 'No white spaces allowed' 
+                                    })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter types"
                                 />
@@ -172,19 +191,25 @@ const AddAuditorium: React.FC = () => {
                             </div>
                             <div>
                                 <label className="block text-gray-700">Category</label>
-                                <input
-                                    type="text"
+                                <select
                                     {...register('category', { required: 'Category is required' })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
-                                    placeholder="Enter category"
-                                />
+                                >
+                                    <option value="">Select category</option>
+                                    <option value="gold">Gold</option>
+                                    <option value="silver">Silver</option>
+                                    <option value="platinum">Platinum</option>
+                                </select>
                                 {errors.category && <p className="text-red-500">{errors.category.message}</p>}
                             </div>
                             <div>
                                 <label className="block text-gray-700">Status</label>
                                 <input
                                     type="text"
-                                    {...register('status', { required: 'Status is required' })}
+                                    {...register('status', { 
+                                        required: 'Status is required', 
+                                        validate: value => value.trim() !== '' || 'No white spaces allowed' 
+                                    })}
                                     className="w-full p-2 border border-gray-300 rounded-lg"
                                     placeholder="Enter status"
                                 />
@@ -205,12 +230,5 @@ const AddAuditorium: React.FC = () => {
         </div>
     );
 };
-
-// Mock function for getting a presigned URL (replace with your actual implementation)
-// async function getPresignedUrl(fileName: string, fileType: string) {
-//     return {
-//         url: `https://example.com/presigned-url?fileName=${fileName}&fileType=${fileType}`
-//     };
-// }
 
 export default AddAuditorium;

@@ -18,6 +18,8 @@ type Inputs = {
   confirmPassword: string;
 };
 
+
+
 const SignupForm: React.FC = () => {
   const router = useRouter();
   const {

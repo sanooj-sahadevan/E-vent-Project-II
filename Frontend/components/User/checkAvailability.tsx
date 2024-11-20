@@ -23,11 +23,10 @@ const AvailabilityModal: React.FC<{ open: boolean; onClose: () => void; vendorId
     const [selectedDates, setSelectedDates] = useState<Date | Range | null>(null); // Updated to include Range type
     const router = useRouter();
 
-    // Fetch available slots from the database
     const fetchAvailableSlots = async () => {
         try {
             const response = await fetchSlots(vendorId);
-            console.log('Fetched slots:', response); // Debug log
+            console.log('Fetched slots:', response); 
 
             if (response) {
                 setAvailableSlots(response);

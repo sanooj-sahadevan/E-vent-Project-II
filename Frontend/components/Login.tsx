@@ -29,7 +29,7 @@ const LoginForm: React.FC = () => {
         localStorage.setItem("token", result.token);
         localStorage.setItem("user", JSON.stringify(result.user));
         toast.success("Login Successful!", { duration: 8000 });
-        window.location.href = "/"; // Navigate to desired page
+        window.location.href = "/"; 
       } else {
         toast.error("Invalid login credentials. Please try again.", { duration: 5000 });
       }
@@ -38,29 +38,29 @@ const LoginForm: React.FC = () => {
     }
   };
 
-  const handleGoogleClick = async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const auth = getAuth(app);
-      const result = await signInWithPopup(auth, provider);
-      const googleLoginResult = await GoogleLoginAPI({
-        email: result.user.email!,
-        username: result.user.displayName!,
-        profileImage: result.user.photoURL!,
-        password: "",
-        phone: result.user.phoneNumber || "",
-      });
-      if (googleLoginResult && googleLoginResult.user && googleLoginResult.token) {
-        localStorage.setItem("token", googleLoginResult.token);
-        localStorage.setItem("user", JSON.stringify(googleLoginResult.user));
-        toast.success("Login Successful!", { duration: 2000 });
-      } else {
-        toast.error("Google authentication failed. Please try again.", { duration: 2000 });
-      }
-    } catch (error) {
-      toast.error("Could not log in with Google. Please try again.", { duration: 2000 });
-    }
-  };
+  // const handleGoogleClick = async () => {
+  //   try {
+  //     const provider = new GoogleAuthProvider();
+  //     const auth = getAuth(app);
+  //     const result = await signInWithPopup(auth, provider);
+  //     const googleLoginResult = await GoogleLoginAPI({
+  //       email: result.user.email!,
+  //       username: result.user.displayName!,
+  //       profileImage: result.user.photoURL!,
+  //       password: "",
+  //       phone: result.user.phoneNumber || "",
+  //     });
+  //     if (googleLoginResult && googleLoginResult.user && googleLoginResult.token) {
+  //       localStorage.setItem("token", googleLoginResult.token);
+  //       localStorage.setItem("user", JSON.stringify(googleLoginResult.user));
+  //       toast.success("Login Successful!", { duration: 2000 });
+  //     } else {
+  //       toast.error("Google authentication failed. Please try again.", { duration: 2000 });
+  //     }
+  //   } catch (error) {
+  //     toast.error("Could not log in with Google. Please try again.", { duration: 2000 });
+  //   }
+  // };
 
   return (
     <>

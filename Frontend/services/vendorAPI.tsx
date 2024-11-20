@@ -414,3 +414,16 @@ export const savePhotoUrlsToDB = async (photoUrls: string[], vendorId: string) =
     throw error;
   }
 };
+
+
+
+export const dateAvailability = async (vendorId: string, startingDate: string, endingDate: string): Promise<any> => {
+  try {
+      const response = await api.post("/dateAvailability", { vendorId, startingDate, endingDate });
+      console.log('API response:', response);
+      return response;
+  } catch (error) {
+      console.error("Error while calling dateAvailability API:", error);
+      throw error;
+  }
+};

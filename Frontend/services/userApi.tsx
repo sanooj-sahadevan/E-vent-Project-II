@@ -415,7 +415,7 @@ export const fetchSlots = async (vendorId: string) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching slots:', error);
-    throw error; // Re-throw the error for further handling if needed
+    throw error;
   }
 };
 
@@ -432,3 +432,6 @@ export const searchUsers = async (term: string) => {
   }
 
 };
+
+
+
