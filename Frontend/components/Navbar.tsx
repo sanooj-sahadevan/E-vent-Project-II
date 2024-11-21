@@ -56,7 +56,6 @@ const Navbar: React.FC = () => {
         duration: 3000,
       });
 
-      // API Call for logout
       const result = await logoutApi();
       console.log(result);
 
@@ -74,7 +73,6 @@ const Navbar: React.FC = () => {
       });
     }
   };
-
 
 
 
