@@ -1,8 +1,8 @@
 
-// export const SERVER_URL = "http://localhost:8080/v1/api/user";
-// export const SERVER_URL_vendor = "http://localhost:8080/v1/api/vendor";
-// export const server_URL_admin ='http://localhost:8080/v1/api/admin'
-// export const server_URL_chat ='http://localhost:8080/v1/api/chat'
+export const SERVER_URL = "http://localhost:8080/v1/api/user";
+export const SERVER_URL_vendor = "http://localhost:8080/v1/api/vendor";
+export const server_URL_admin ='http://localhost:8080/v1/api/admin'
+export const server_URL_chat ='http://localhost:8080/v1/api/chat'
 // // https://www.eventopia.shop/?__vercel_draft=1
 
 // export const SERVER_URL = "https://www.eventopia.shop/user";
@@ -18,10 +18,10 @@
 // http://api.eventopia.shop/v1/api/user/vendors
 //                         http://13.61.23.144:8080/v1/api/user/vendors
 
-export const SERVER_URL = "https://api.eventopia.shop/v1/api/user";
-export const SERVER_URL_vendor = "https://api.eventopia.shop/v1/api/vendor";
-export const server_URL_admin = "https://api.eventopia.shop/v1/api/admin";
-export const server_URL_chat = "https://api.eventopia.shop/v1/api/chat";
+// export const SERVER_URL = "https://api.eventopia.shop/v1/api/user";
+// export const SERVER_URL_vendor = "https://api.eventopia.shop/v1/api/vendor";
+// export const server_URL_admin = "https://api.eventopia.shop/v1/api/admin";
+// export const server_URL_chat = "https://api.eventopia.shop/v1/api/chat";
 
 // export const SERVER_URL = "https://e-vent-project-ii.onrender.com/user";
 // export const SERVER_URL_vendor = "https://e-vent-project-ii.onrender.com/vendor";

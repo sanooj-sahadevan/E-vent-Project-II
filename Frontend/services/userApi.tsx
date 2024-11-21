@@ -3,11 +3,12 @@ import { SERVER_URL } from "./serverURL";
 
 import axios from "axios";
 
-const api = axios.create({
+const Axios = axios.create({
   baseURL: `${SERVER_URL}`,
   headers: {
     "Content-Type": "application/json",
-  }, withCredentials: true 
+  }, withCredentials: true
+
 });
 type RequestHeaders = Record<string, string>;
 export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
@@ -24,7 +25,7 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 // Login API
 export const LoginAPI = async (reqBody: any) => {
   try {
-    const response = await axios.post(`${SERVER_URL}/login`, reqBody);
+    const response = await Axios.post(`${SERVER_URL}/login`, reqBody,);
     //   if (!response.ok) {
     //     throw new Error(`HTTP error! status: ${response.status}`);
     // }
@@ -38,7 +39,7 @@ export const LoginAPI = async (reqBody: any) => {
 
 export const verifyOtp = async (data: any) => {
   try {
-    let otp = await api.post("/verifyOtp", data);
+    let otp = await Axios.post("/verifyOtp", data);
     console.log(otp);
     return otp
   } catch (error) {
@@ -51,14 +52,14 @@ export const verifyOtp = async (data: any) => {
 export const GoogleLoginAPI = async (reqBody: any) => {
   console.log(reqBody);
 
-  const response = await axios.post(`${SERVER_URL}/googleLogin`, reqBody, { withCredentials: true });
+  const response = await Axios.post(`${SERVER_URL}/googleLogin`, reqBody,);
   return response.data
 };
 
 export const ForgotenAPI = async (reqBody: any) => {
   console.log('logggg');
 
-  const response = await axios.post(`${SERVER_URL}/forgottenpassword`, reqBody, { withCredentials: true });
+  const response = await Axios.post(`${SERVER_URL}/forgottenpassword`, reqBody,);
   console.log('vann');
 
   console.log(response.data, 'dataaaaa');
@@ -70,7 +71,7 @@ export const ForgotenAPI = async (reqBody: any) => {
 export const forgottenverifyOtp = async (data: any) => {
   console.log('poi');
 
-  let otp = await api.post("/forgottenverifyOtp", data);
+  let otp = await Axios.post("/forgottenverifyOtp", data);
   console.log(otp);
   return otp
 
@@ -80,7 +81,7 @@ export const forgottenverifyOtp = async (data: any) => {
 export const updatePassword = async (data: any) => {
   console.log('poi');
 
-  let response = await api.post("/updatePassword", data);
+  let response = await Axios.post("/updatePassword", data);
   console.log(response);
   return response
 
@@ -91,7 +92,7 @@ export const allVendorAPI = async () => {
   try {
     console.log('sucess front end ');
 
-    const response = await axios.get(`${SERVER_URL}/vendors`);
+    const response = await Axios.get(`${SERVER_URL}/vendors`);
     console.log(response.data, 'basdhbqhbd')
     return response.data;
   } catch (error) {
@@ -104,11 +105,11 @@ export const allVendorAPI = async () => {
 export const UserEdit = async (vendorData: any) => {
   try {
     console.log('Sending user edit request:', vendorData);
-    const response = await axios.patch(`${SERVER_URL}/edituserDetails`, vendorData, {
+    const response = await Axios.patch(`${SERVER_URL}/edituserDetails`, vendorData, {
       headers: {
         'Content-Type': 'application/json',
       },
-      withCredentials: true,
+
     });
     console.log('User edit successful:', response.data);
     return response;
@@ -128,7 +129,7 @@ export const allDishesAPI = async (vendorId: string) => {
   try {
     console.log('sucess front end ');
 
-    const response = await axios.get(`${SERVER_URL}/dishlist?vendorId=${vendorId}`); // Send vendorId as a query parameter
+    const response = await Axios.get(`${SERVER_URL}/dishlist?vendorId=${vendorId}`); // Send vendorId as a query parameter
     console.log(response.data, 'basdhbqhbd')
     return response.data;
   } catch (error) {
@@ -142,7 +143,7 @@ export const allAuditoriumAPI = async (vendorId: string) => {
   try {
     console.log('Success front end');
 
-    const response = await axios.get(`${SERVER_URL}/auditoriumlist?vendorId=${vendorId}`);
+    const response = await Axios.get(`${SERVER_URL}/auditoriumlist?vendorId=${vendorId}`);
     console.log(response.data, 'basdhbqhbd');
     return response.data;
   } catch (error) {
@@ -156,7 +157,7 @@ export const allAuditoriumAPI = async (vendorId: string) => {
 
 export const fetchvendor = async (vendorId: string, userId: string) => {
   try {
-    const res = await axios.get(`${SERVER_URL}/fetchVendorDetails?vendorId=${vendorId}&userId=${userId}`);
+    const res = await Axios.get(`${SERVER_URL}/fetchVendorDetails?vendorId=${vendorId}&userId=${userId}`);
 
     const { vendor, chatId } = res.data;
 
@@ -173,9 +174,9 @@ export const fetchvendor = async (vendorId: string, userId: string) => {
 
 export const fetchReview = async (vendorId: string, userId: string) => {
   try {
-    const res = await axios.get(`${SERVER_URL}/fetchReview?vendorId=${vendorId}&userId=${userId}`);
+    const res = await Axios.get(`${SERVER_URL}/fetchReview?vendorId=${vendorId}&userId=${userId}`);
     console.log(res.data);
-  
+
     return res.data;
   } catch (error) {
     console.error("Error fetching review:", error);
@@ -188,7 +189,7 @@ export const fetchReview = async (vendorId: string, userId: string) => {
 export const saveRatings = async (vendorId: string,) => {
   try {
 
-    const res = await axios.post(`${SERVER_URL}/saveRatings`)
+    const res = await Axios.post(`${SERVER_URL}/saveRatings`)
 
 
     return res.data;
@@ -203,7 +204,7 @@ export const saveRatings = async (vendorId: string,) => {
 
 export const FetchDishes = async (vendorId: string) => {
   try {
-    const res = await axios.get(`${SERVER_URL}/fetchFoodDetails/${vendorId}`);
+    const res = await Axios.get(`${SERVER_URL}/fetchFoodDetails/${vendorId}`);
     return res.data;
   } catch (error) {
     console.error('Error fetching vendor details:', error);
@@ -217,7 +218,7 @@ export const FetchAuditorium = async (vendorId: string) => {
 
     console.log('pokunnu Ausittttttttttttttttttt');
 
-    const res = await axios.get(`${SERVER_URL}/fetchAuditoriumDetails/${vendorId}`);
+    const res = await Axios.get(`${SERVER_URL}/fetchAuditoriumDetails/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
     console.error('Error fetching vendor details:', error);
@@ -233,7 +234,7 @@ export const Payment = async (username: string) => {
 
     console.log('payment on');
 
-    const res = await axios.get(`${SERVER_URL}/Payment/${username}`);
+    const res = await Axios.get(`${SERVER_URL}/Payment/${username}`);
     return res.data;
   } catch (error) {
     console.error('Error processing payment:', error);
@@ -248,7 +249,7 @@ export const fetchdishes = async (auditoriumId: string) => {
   try {
     console.log('rdyyyy auditirum profie');
 
-    const res = await axios.get(`${SERVER_URL}/fetchdishes/${auditoriumId}`);
+    const res = await Axios.get(`${SERVER_URL}/fetchdishes/${auditoriumId}`);
     console.log(res);
     return res;
   } catch (error) {
@@ -262,7 +263,7 @@ export const fetchauditorium = async (auditoriumId: string) => {
   try {
     console.log('rdyyyy auditirum profie');
 
-    const res = await axios.get(`${SERVER_URL}/fetchauditorium/${auditoriumId}`);
+    const res = await Axios.get(`${SERVER_URL}/fetchauditorium/${auditoriumId}`);
     console.log(res);
     return res;
   } catch (error) {
@@ -278,7 +279,7 @@ export const saveDB = async (bookingDetails: Object) => {
   try {
     console.log('Saving to database...');
 
-    const res = await axios.post(`${SERVER_URL}/saveDB`, bookingDetails); // Use POST and send the object in the body
+    const res = await Axios.post(`${SERVER_URL}/saveDB`, bookingDetails); // Use POST and send the object in the body
     console.log(res.data);
     return res.data; // Return the response data
   } catch (error) {
@@ -293,7 +294,7 @@ export const fetchBookedData = async (bookingId: any) => {
 
     console.log('32423453525');
 
-    const response = await axios.get(`${SERVER_URL}/bookEvent/${bookingId}`, { withCredentials: true }); // Adjust the API endpoint
+    const response = await Axios.get(`${SERVER_URL}/bookEvent/${bookingId}`); // Adjust the API endpoint
     return response.data; // Return the data from the response
   } catch (error) {
     console.error("Error fetching booking data:", error);
@@ -307,7 +308,7 @@ export const fetchBookedData = async (bookingId: any) => {
 // Fetch booking details by userId
 export const fetchBookingDetilsProfile = async (userId: string) => {
   try {
-    const response = await axios.get(`${SERVER_URL}/fetchBookingDetails/${userId}`);
+    const response = await Axios.get(`${SERVER_URL}/fetchBookingDetails/${userId}`);
     console.log(response.data, 'api call retuen');
 
     return response.data;
@@ -328,7 +329,7 @@ export const fetchBookingDetilsProfile = async (userId: string) => {
 export const changePassword = async (email: string, newPassword: string | undefined) => {
   try {
     console.log('Changing password for:', email);
-    const response = await axios.patch(`${SERVER_URL}/changePassword/${email}`, { newPassword });
+    const response = await Axios.patch(`${SERVER_URL}/changePassword/${email}`, { newPassword });
     return response.data;
   } catch (error) {
     console.error('Error updating password:', error);
@@ -338,8 +339,8 @@ export const changePassword = async (email: string, newPassword: string | undefi
 
 export const savePassword = async (email: string, newPassword: string | undefined) => {
   try {
-    console.log('Saving password for:', email,newPassword);
-    const response = await axios.patch(`${SERVER_URL}/savePassword/${email}`, { newPassword });
+    console.log('Saving password for:', email, newPassword);
+    const response = await Axios.patch(`${SERVER_URL}/savePassword/${email}`, { newPassword });
     return response.data;
   } catch (error) {
     console.error('Error updating password:', error);
@@ -353,9 +354,10 @@ export const userGetUnreadMessagesCountAPI = async (userId: string) => {
   try {
     console.log('Fetching unread messages count for user:', userId);
 
-    const response = await axios.get(`${SERVER_URL}/userunread-count`, {
+    const response = await Axios.get(`${SERVER_URL}/userunread-count`, {
       params: { userId }, // pass the userId as a query parameter
-      withCredentials: true
+
+
     });
 
     console.log('Unread messages response:', response);
@@ -373,13 +375,11 @@ export const saveReview = async (review: string, rating: number, userId: string,
       userId,
       vendorId, '---------------------------');
 
-    const response = await axios.post(`${SERVER_URL}/review`, {
+    const response = await Axios.post(`${SERVER_URL}/review`, {
       reviews: review,
       stars: rating,
       userId,
       vendorId,
-    }, {
-      withCredentials: true
     });
 
     return response.data;
@@ -393,9 +393,9 @@ export const saveReview = async (review: string, rating: number, userId: string,
 
 export const fetchNotification = async (userId: string) => {
   try {
-    const response = await axios.get(`${SERVER_URL}/fetchNotifications`, {
+    const response = await Axios.get(`${SERVER_URL}/fetchNotifications`, {
       params: { userId },
-      withCredentials: true,
+
     });
     console.log('Unread messages response:', response);
     return response.data;
@@ -408,9 +408,7 @@ export const fetchNotification = async (userId: string) => {
 
 export const fetchSlots = async (vendorId: string) => {
   try {
-    const response = await axios.get(`${SERVER_URL}/slots/${vendorId}`, {
-      withCredentials: true,
-    });
+    const response = await Axios.get(`${SERVER_URL}/slots/${vendorId}`,);
     console.log('Slot response:', response.data);
     return response.data;
   } catch (error) {
@@ -423,7 +421,7 @@ export const fetchSlots = async (vendorId: string) => {
 export const searchUsers = async (term: string) => {
   try {
 
-    const response = await axios.get(`${SERVER_URL}/searchUsers?term=${term}`);
+    const response = await Axios.get(`${SERVER_URL}/searchUsers?term=${term}`);
     console.log(response)
     return response.data;
   } catch (error) {
@@ -437,9 +435,7 @@ export const searchUsers = async (term: string) => {
 
 export const logoutApi = async () => {
   try {
-    const response = await axios.post(`${SERVER_URL}/logout`, {
-      withCredentials: true,
-    });
+    const response = await Axios.post(`${SERVER_URL}/logout`,);
     console.log("response:", response.data);
     return response.data;
   } catch (error) {
