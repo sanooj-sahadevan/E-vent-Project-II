@@ -51,7 +51,7 @@ router.get('/fetchBookingDetails/:userId', userController.fetchBookingDetails.bi
 router.patch('/changePassword/:id', userController.changePassword.bind(userController));
 router.get('/userunread-count', userController.getUnreadMessagesCount.bind(userController));
 //review
-router.post('/review', userController.review.bind(userController));
+router.get('/fetchReview', userController.fetchReview.bind(userController));
 router.get("/slots/:vendorId", userController.getSlotsByWorkerController.bind(userController));
 router.get('/searchUsers', userController.searchVendors.bind(userController));
 
