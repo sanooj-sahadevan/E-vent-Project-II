@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { io, Socket } from "socket.io-client";
 import { BellRing, LogIn, LogOut, Send } from "lucide-react";
+import { logoutApi } from "@/services/userApi";
 
 const Navbar: React.FC = () => {
   const router = useRouter();
@@ -84,14 +85,35 @@ const Navbar: React.FC = () => {
     }
   }, []);
 
-  const handleLogoutClick = () => {
-    toast.success("Logout Successfully");
-    localStorage.removeItem("vendor");
-    localStorage.removeItem("vendorToken");
-    deleteCookie("vendorToken");
-    setIsAuthorized(false);
-    router.push("/");
+
+
+  const handleLogoutClick = async () => {
+
+    try {
+      toast.success("Logout Successfully");
+
+      // const result = await logoutApi();
+      // console.log(result);
+
+      localStorage.removeItem("vendor");
+      localStorage.removeItem("vendorToken");
+      localStorage.removeItem("refreshToken");
+      deleteCookie("refreshToken");
+      deleteCookie("vendorToken");
+      setIsAuthorized(false);
+      router.push("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Failed to logout. Please try again.", {
+        autoClose: 3000,
+      });
+    }
+
   };
+
+
+
+
 
   return (
     <nav className="bg-black py-4 px-8 flex justify-between items-center">
@@ -117,7 +139,7 @@ const Navbar: React.FC = () => {
       </ul>
 
       {/* Icons and Logout */}
-      <div className="flex space-x-7 items-center"> 
+      <div className="flex space-x-7 items-center">
         {/* Notification Icon */}
         <BellRing color="#ffffff" />
 
