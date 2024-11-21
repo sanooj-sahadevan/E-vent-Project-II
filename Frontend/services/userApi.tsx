@@ -7,7 +7,7 @@ const api = axios.create({
   baseURL: `${SERVER_URL}`,
   headers: {
     "Content-Type": "application/json",
-  },
+  }, withCredentials: true 
 });
 type RequestHeaders = Record<string, string>;
 export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
@@ -24,7 +24,7 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 // Login API
 export const LoginAPI = async (reqBody: any) => {
   try {
-    const response = await axios.post(`${SERVER_URL}/login`, reqBody, { withCredentials: true });
+    const response = await axios.post(`${SERVER_URL}/login`, reqBody);
     //   if (!response.ok) {
     //     throw new Error(`HTTP error! status: ${response.status}`);
     // }
