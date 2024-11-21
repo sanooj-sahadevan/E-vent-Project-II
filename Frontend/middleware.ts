@@ -62,7 +62,11 @@ export const config = {
 
 async function verifyToken(tokenName: string, req: NextRequest): Promise<boolean> {
   const token = req.cookies.get(tokenName);
+  console.log(token,'ellam token',token?.value);
+  
   if (!token?.value) {
+    console.log('ellam poi');
+    
     return false;
   }
 
