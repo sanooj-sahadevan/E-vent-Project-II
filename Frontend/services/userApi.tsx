@@ -7,8 +7,8 @@ const Axios = axios.create({
   baseURL: `${SERVER_URL}`,
   headers: {
     "Content-Type": "application/json",
-  }, withCredentials: true
-
+  },
+  withCredentials: true, 
 });
 type RequestHeaders = Record<string, string>;
 export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
