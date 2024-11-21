@@ -9,7 +9,8 @@ const api = axios.create({
   baseURL: `${SERVER_URL_vendor}`,
   headers: {
     "Content-Type": "application/json",
-  },
+  },  withCredentials: true, 
+
 });
 
 export const SignUpAPI = async (
@@ -23,7 +24,7 @@ export const SignUpAPI = async (
 
 export const LoginAPI = async (reqBody: any) => {
   try {
-    const response = await axios.post(`${SERVER_URL_vendor}/login`, reqBody, { withCredentials: true });
+    const response = await axios.post(`${SERVER_URL_vendor}/login`, reqBody, );
     return response.data;
   } catch (error:any) {
     console.error("API call error:");
@@ -48,7 +49,7 @@ export const addDishAPI = async (data: any) => {
     }
     const res = await axios.post(`${SERVER_URL_vendor}/addDishes`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
-      withCredentials: true,
+     
     });
     return res;
   } catch (error) {
@@ -63,7 +64,7 @@ export const getPresignedUrl = async (fileName: string, fileType: string) => {
     console.log("Fetching pre-signed URL");
     const response = await axios.get(`${SERVER_URL_vendor}/getPresignedUrl`, {
       params: { fileName, fileType },
-      withCredentials: true,
+    
     });
     return response.data;
   } catch (error) {
@@ -77,7 +78,7 @@ export const getPresignedUrl = async (fileName: string, fileType: string) => {
 export const addAuditoriumAPI = async (data: any) => {
   try {
     console.log('addAuditorium');
-    return await axios.post(`${SERVER_URL_vendor}/addAuditorium`, data, { withCredentials: true });
+    return await axios.post(`${SERVER_URL_vendor}/addAuditorium`, data, );
   } catch (error) {
     console.error('error');
 
@@ -109,7 +110,7 @@ export const editDetails = async (vendorData: any) => {
 export const VendorEdit = async (data: any) => {
 
   try {
-    return await axios.patch(`${SERVER_URL_vendor}/editVendorDetails`, data, { withCredentials: true });
+    return await axios.patch(`${SERVER_URL_vendor}/editVendorDetails`, data,    );
   } catch (error) {
     console.error('Error updating vendor details:', error);
     throw error;
@@ -300,9 +301,7 @@ export const vendorChats = (id: string) => {
 export const SaveChat = async (reqBody: { text: string; senderId: string | null; vendorId: string | null }) => {
   try {
     console.log('Sending request to save chat:', reqBody); // Debugging line
-    const response = await axios.post(`${server_URL_chat}/savechat`, reqBody, {
-      withCredentials: true,
-    });
+    const response = await axios.post(`${server_URL_chat}/savechat`, reqBody, );
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -327,7 +326,7 @@ export const getMessages = (id: string) => {
 
 export const getUnreadMessagesCountAPI = async () => {
   try {
-    const response = await axios.get(`${SERVER_URL_vendor}/unread-count`, { withCredentials: true });
+    const response = await axios.get(`${SERVER_URL_vendor}/unread-count`, );
     console.log(response.data);
 
     return response.data;
@@ -344,9 +343,7 @@ export const getUnreadMessagesCountAPI = async () => {
 
 export const messageSend = async (reqBody: { text: string; senderId: string | null; userId: string | null }) => {
   try {
-    const response = await axios.post(`${server_URL_chat}/message`, reqBody, {
-      withCredentials: true,
-    });
+    const response = await axios.post(`${server_URL_chat}/message`, reqBody, );
 
     return response.data;
   } catch (error: any) {
@@ -430,5 +427,17 @@ export const dateAvailability = async (vendorId: string, startingDate: string, e
   } catch (error) {
       console.error("Error while calling dateAvailability API:", error);
       throw error;
+  }
+};
+
+
+export const logoutApiVendor = async () => {
+  try {
+    const response = await api.post(`${SERVER_URL_vendor}/logout`,);
+    console.log("response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching logout API:", error);
+    throw error;
   }
 };

@@ -55,7 +55,6 @@ const Navbar: React.FC = () => {
       toast.success("Logout Successfully", {
         duration: 3000,
       });
-
       const result = await logoutApi();
       console.log(result);
 

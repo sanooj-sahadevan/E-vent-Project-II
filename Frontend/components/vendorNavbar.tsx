@@ -2,7 +2,7 @@
 "use client";
 
 import { deleteCookie } from "@/utils/deleteCookie";
-import { getUnreadMessagesCountAPI } from "@/services/vendorAPI";
+import { getUnreadMessagesCountAPI, logoutApiVendor } from "@/services/vendorAPI";
 import { Badge } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -87,19 +87,46 @@ const Navbar: React.FC = () => {
 
 
 
+  // const handleLogoutClick = async () => {
+
+  //   try {
+  //     toast.success("Logout Successfully");
+
+  //     // const result = await logoutApi();
+  //     // console.log(result);
+
+  //     localStorage.removeItem("vendor");
+  //     localStorage.removeItem("vendorToken");
+  //     localStorage.removeItem("refreshToken");
+  //     deleteCookie("refreshToken");
+  //     deleteCookie("vendorToken");
+  //     setIsAuthorized(false);
+  //     router.push("/");
+  //   } catch (error) {
+  //     console.error("Logout error:", error);
+  //     toast.error("Failed to logout. Please try again.", {
+  //       autoClose: 3000,
+  //     });
+  //   }
+
+  // };
+
+
+
+
   const handleLogoutClick = async () => {
-
     try {
-      toast.success("Logout Successfully");
-
-      // const result = await logoutApi();
-      // console.log(result);
+      toast.success("Logout Successfully", {
+        autoClose: 3000,
+      });
+      const result = await logoutApiVendor();
+      console.log(result);
 
       localStorage.removeItem("vendor");
       localStorage.removeItem("vendorToken");
-      localStorage.removeItem("refreshToken");
-      deleteCookie("refreshToken");
-      deleteCookie("vendorToken");
+      localStorage.removeItem("vendorRefreshToken");
+      deleteCookie("vendor");
+      deleteCookie("vendorRefreshToken");
       setIsAuthorized(false);
       router.push("/");
     } catch (error) {
@@ -108,10 +135,7 @@ const Navbar: React.FC = () => {
         autoClose: 3000,
       });
     }
-
   };
-
-
 
 
 
