@@ -46,13 +46,34 @@ const VendorLoginForm: React.FC = () => {
   //   }
   // };
 
+  // const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
+  //   try {
+  //     const result = await LoginAPI(data);
+  //     console.log("LoginAPI result:", result); 
+  //     if (result && result.vendor && result.accessToken && result.refreshToken) {
+  //       console.log('create result');
+        
+  //       localStorage.setItem("vendorToken", result.accessToken);
+  //       localStorage.setItem("RefreshToken", result.refreshToken);
+  //       localStorage.setItem("vendor", JSON.stringify(result.vendor));
+  //       router.push(`/vendordashboard?vendorId=${result.vendor._id}`);
+  //       toast.success("Login Successful!");
+  //     } else {
+  //       toast.error("Invalid login credentials. Please try again.");
+  //     }
+  //   } catch (err:any) {
+  //     console.error("Login error:", err); 
+  //     toast.error(err.message); 
+  //   }
+  // };
+  
+
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
       const result = await LoginAPI(data);
-      console.log("LoginAPI result:", result); 
+      console.log("LoginAPI result:", result);
+  
       if (result && result.vendor && result.accessToken && result.refreshToken) {
-        console.log('create result');
-        
         localStorage.setItem("vendorToken", result.accessToken);
         localStorage.setItem("RefreshToken", result.refreshToken);
         localStorage.setItem("vendor", JSON.stringify(result.vendor));
@@ -61,14 +82,11 @@ const VendorLoginForm: React.FC = () => {
       } else {
         toast.error("Invalid login credentials. Please try again.");
       }
-    } catch (err:any) {
-      console.error("Login error:", err); 
+    } catch (err: any) {
+      console.error("Login error:", err);
       toast.error(err.message); 
-    }
   };
   
-
-
 
 
   return (
