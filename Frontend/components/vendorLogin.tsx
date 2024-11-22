@@ -85,6 +85,7 @@ const VendorLoginForm: React.FC = () => {
     } catch (err: any) {
       console.error("Login error:", err);
       toast.error(err.message); 
+    }
   };
   
 
