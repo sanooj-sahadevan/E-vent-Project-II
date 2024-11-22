@@ -22,15 +22,31 @@ export const SignUpAPI = async (
   return await commonAPI("POST", `${SERVER_URL_vendor}/signup`, reqBody, reqHeader);
 };
 
+// export const LoginAPI = async (reqBody: any) => {
+//   try {
+//     const response = await Axios.post(`${SERVER_URL_vendor}/login`, reqBody, );
+//     return response.data;
+//   } catch (error:any) {
+//     console.error("API call error:");
+//     throw new Error(error);
+//   }
+// };
+
+
 export const LoginAPI = async (reqBody: any) => {
   try {
-    const response = await Axios.post(`${SERVER_URL_vendor}/login`, reqBody, );
+    const response = await Axios.post(`${SERVER_URL_vendor}/login`, reqBody);
     return response.data;
-  } catch (error:any) {
-    console.error("API call error:");
-    throw new Error(error);
+  } catch (error: any) {
+    console.error("API call error:", error);
+    if (error.response && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
   }
 };
+
 
 
 export const verifyOtp = async (data: any) => {

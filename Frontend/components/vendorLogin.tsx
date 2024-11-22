@@ -61,9 +61,9 @@ const VendorLoginForm: React.FC = () => {
       } else {
         toast.error("Invalid login credentials. Please try again.");
       }
-    } catch (err) {
+    } catch (err:any) {
       console.error("Login error:", err); 
-      toast.error("An error occurred during login. Please try again.");
+      toast.error(err.message); 
     }
   };
   
