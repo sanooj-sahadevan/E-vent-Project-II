@@ -2,11 +2,23 @@ import { server_URL_admin } from "./serverURL";
 import { commonAPI } from "./commonAPI";
 
 
-import axios from 'axios'
+import axios, { AxiosResponse } from "axios";
+
+
+const Axios = axios.create({
+  baseURL: `${server_URL_admin}`,
+  headers: {
+    "Content-Type": "application/json",
+  },  withCredentials: true, 
+
+});
+
+
+
 
 export const LoginAPI = async (reqBody: any) => {
   console.log('admin logg');
-  const response = await axios.post(`${server_URL_admin}/login`, reqBody, { withCredentials: true })
+  const response = await Axios.post(`${server_URL_admin}/login`, reqBody,)
   console.log(response.data);
   return response.data
 }
@@ -32,7 +44,7 @@ export const getAllUsersAPI = async (token: string) => {
 
 
 export const unblockUserAPI = async (userId: string, token: string) => {
-  return await axios.put(
+  return await Axios.put(
     `${server_URL_admin}/unblockUser/${userId}`,
     {},
     {
@@ -45,7 +57,7 @@ export const unblockUserAPI = async (userId: string, token: string) => {
 
 
 export const blockUserAPI = async (userId: any, token: string) => {
-  return await axios.put(
+  return await Axios.put(
     `${server_URL_admin}/blockUser/${userId}`,
     {},
     {
@@ -57,7 +69,7 @@ export const blockUserAPI = async (userId: any, token: string) => {
 };
 
 export const blockVendorAPI = async (userId: any, token: string) => {
-  return await axios.put(
+  return await Axios.put(
     `${server_URL_admin}/vendor/blockUser/${userId}`,
     {},
     {
@@ -89,7 +101,7 @@ export const getAllVendorAPI = async (token: string) => {
 
 
 export const unblockVendorAPI = async (userId: any, token: string) => {
-  return await axios.put(
+  return await Axios.put(
     `${server_URL_admin}/vendor/unblockUser/${userId}`,
     {},
     {
@@ -102,7 +114,7 @@ export const unblockVendorAPI = async (userId: any, token: string) => {
 
 export const getAllBookingsAPI = async (token: string) => {
   try {
-    const response = await axios.get(`${server_URL_admin}/getAllBookings`, {
+    const response = await Axios.get(`${server_URL_admin}/getAllBookings`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -119,7 +131,7 @@ export const getAllBookingsAPI = async (token: string) => {
 
 
 export const fetchingAllData = async (token: string) => {
-  const response = await axios.get(`${server_URL_admin}/dashboard`, {
+  const response = await Axios.get(`${server_URL_admin}/dashboard`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
