@@ -5,7 +5,7 @@ import { server_URL_chat } from "./serverURL";
 
 import axios, { AxiosResponse } from "axios";
 
-const api = axios.create({
+const Axios = axios.create({
   baseURL: `${SERVER_URL_vendor}`,
   headers: {
     "Content-Type": "application/json",
@@ -24,7 +24,7 @@ export const SignUpAPI = async (
 
 export const LoginAPI = async (reqBody: any) => {
   try {
-    const response = await axios.post(`${SERVER_URL_vendor}/login`, reqBody, );
+    const response = await Axios.post(`${SERVER_URL_vendor}/login`, reqBody, );
     return response.data;
   } catch (error:any) {
     console.error("API call error:");
@@ -35,7 +35,7 @@ export const LoginAPI = async (reqBody: any) => {
 
 export const verifyOtp = async (data: any) => {
   console.log("comming: " + data);
-  return api.post("/verifyOtp", data);
+  return Axios.post("/verifyOtp", data);
 };
 
 
@@ -47,7 +47,7 @@ export const addDishAPI = async (data: any) => {
     for (const key in data) {
       formData.append(key, data[key]);
     }
-    const res = await axios.post(`${SERVER_URL_vendor}/addDishes`, formData, {
+    const res = await Axios.post(`${SERVER_URL_vendor}/addDishes`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
      
     });
@@ -62,7 +62,7 @@ export const addDishAPI = async (data: any) => {
 export const getPresignedUrl = async (fileName: string, fileType: string) => {
   try {
     console.log("Fetching pre-signed URL");
-    const response = await axios.get(`${SERVER_URL_vendor}/getPresignedUrl`, {
+    const response = await Axios.get(`${SERVER_URL_vendor}/getPresignedUrl`, {
       params: { fileName, fileType },
     
     });
@@ -78,7 +78,7 @@ export const getPresignedUrl = async (fileName: string, fileType: string) => {
 export const addAuditoriumAPI = async (data: any) => {
   try {
     console.log('addAuditorium');
-    return await axios.post(`${SERVER_URL_vendor}/addAuditorium`, data, );
+    return await Axios.post(`${SERVER_URL_vendor}/addAuditorium`, data, );
   } catch (error) {
     console.error('error');
 
@@ -88,7 +88,7 @@ export const addAuditoriumAPI = async (data: any) => {
 export const vendorDetails = async (): Promise<AxiosResponse<any>> => {
   try {
     console.log('Fetching vendor details');
-    return await axios.get(`${SERVER_URL_vendor}/getAddress`);
+    return await Axios.get(`${SERVER_URL_vendor}/getAddress`);
   } catch (error) {
     console.error('Error fetching vendor details:', error);
     throw error;
@@ -100,7 +100,7 @@ export const vendorDetails = async (): Promise<AxiosResponse<any>> => {
 export const editDetails = async (vendorData: any) => {
   try {
     console.log('Editing vendor details');
-    return await axios.put(`${SERVER_URL_vendor}/editVendor`, vendorData);
+    return await Axios.put(`${SERVER_URL_vendor}/editVendor`, vendorData);
   } catch (error) {
     console.error('Error updating vendor details:', error);
     throw error;
@@ -110,7 +110,7 @@ export const editDetails = async (vendorData: any) => {
 export const VendorEdit = async (data: any) => {
 
   try {
-    return await axios.patch(`${SERVER_URL_vendor}/editVendorDetails`, data,    );
+    return await Axios.patch(`${SERVER_URL_vendor}/editVendorDetails`, data,    );
   } catch (error) {
     console.error('Error updating vendor details:', error);
     throw error;
@@ -123,7 +123,7 @@ export const fetchvendor = async (vendorId: string) => {
   try {
     console.log('rdyyyyy');
 
-    const res = await axios.get(`${SERVER_URL_vendor}/fetchVendorDetails/${vendorId}`);
+    const res = await Axios.get(`${SERVER_URL_vendor}/fetchVendorDetails/${vendorId}`);
     console.log(res);
     return res;
   } catch (error) {
@@ -139,7 +139,7 @@ export const fetchdishes = async (dishesId: string) => {
   try {
     console.log('rdyyyyy');
 
-    const res = await axios.get(`${SERVER_URL_vendor}/fetchdishes/${dishesId}`);
+    const res = await Axios.get(`${SERVER_URL_vendor}/fetchdishes/${dishesId}`);
     console.log(res);
     return res;
   } catch (error) {
@@ -154,7 +154,7 @@ export const fetchDetailsVendor = async (vendorId: string) => {
 
     console.log('pokunnu  detils ');
 
-    const res = await axios.get(`${SERVER_URL_vendor}/fetchDetailsVendor/${vendorId}`);
+    const res = await Axios.get(`${SERVER_URL_vendor}/fetchDetailsVendor/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
     console.error('Error fetching vendor details:', error);
@@ -170,7 +170,7 @@ export const FetchDishes = async (vendorId: string) => {
 
     console.log('pokunnu food');
 
-    const res = await axios.get(`${SERVER_URL_vendor}/fetchFoodDetails/${vendorId}`);
+    const res = await Axios.get(`${SERVER_URL_vendor}/fetchFoodDetails/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
     console.error('Error fetching vendor details:', error);
@@ -183,7 +183,7 @@ export const fetchReviews = async (vendorId: string) => {
   try {
     console.log('Fetching review');
 
-    const res = await axios.get(`${SERVER_URL_vendor}/fetchReviews/${vendorId}`);
+    const res = await Axios.get(`${SERVER_URL_vendor}/fetchReviews/${vendorId}`);
                             // (`${SERVER_URL_vendor}/fetchFoodDetails/${vendorId}
     console.log(res, '0---------k');
 
@@ -201,7 +201,7 @@ export const FetchAuditorium = async (vendorId: string) => {
 
     console.log('pokunnu hall');
 
-    const res = await axios.get(`${SERVER_URL_vendor}/fetchAuditoriumDetails/${vendorId}`);
+    const res = await Axios.get(`${SERVER_URL_vendor}/fetchAuditoriumDetails/${vendorId}`);
     return res.data; // Return data directly for easier usage in the component
   } catch (error) {
     console.error('Error fetching vendor details:', error);
@@ -215,7 +215,7 @@ export const fetchauditorium = async (auditoriumId: string) => {
   try {
     console.log('rdyyyy auditirum profie');
 
-    const res = await axios.get(`${SERVER_URL_vendor}/fetchauditorium/${auditoriumId}`);
+    const res = await Axios.get(`${SERVER_URL_vendor}/fetchauditorium/${auditoriumId}`);
     console.log(res);
     return res;
   } catch (error) {
@@ -229,7 +229,7 @@ export const fetchauditorium = async (auditoriumId: string) => {
 export const deleteDish = async (dishId: string,) => {
   try {
     console.log('Attempting to delete dish');
-    const response = await axios.patch(`${SERVER_URL_vendor}/dishes/${dishId}`, {
+    const response = await Axios.patch(`${SERVER_URL_vendor}/dishes/${dishId}`, {
       isDeleted: true,
     });
     return response.data;
@@ -243,7 +243,7 @@ export const deleteDish = async (dishId: string,) => {
 export const deleteAuditorium = async (aditoriumId: string,) => {
   try {
     console.log('Attempting to delete dish');
-    const response = await axios.patch(`${SERVER_URL_vendor}/auditorium/${aditoriumId}`, {
+    const response = await Axios.patch(`${SERVER_URL_vendor}/auditorium/${aditoriumId}`, {
       isDeleted: true,
     });
     return response.data;
@@ -256,7 +256,7 @@ export const deleteAuditorium = async (aditoriumId: string,) => {
 
 export const approveReviewAPI = async (reviewId: string,) => {
   try {
-    const response = await axios.patch(`${SERVER_URL_vendor}/approveReview/${reviewId}`, {
+    const response = await Axios.patch(`${SERVER_URL_vendor}/approveReview/${reviewId}`, {
       vendorVerified: true,
     });
     return response.data;
@@ -269,7 +269,7 @@ export const approveReviewAPI = async (reviewId: string,) => {
 export const rejectReviewAPI = async (reviewId: string,) => {
   try {
     console.log('Attempting to delete dish');
-    const response = await axios.delete(`${SERVER_URL_vendor}/rejectReview/${reviewId}`,);
+    const response = await Axios.delete(`${SERVER_URL_vendor}/rejectReview/${reviewId}`,);
     return response.data;
   } catch (error) {
     console.error('Error deleting dish:', error);
@@ -292,7 +292,7 @@ export const rejectReviewAPI = async (reviewId: string,) => {
 
 
 export const vendorChats = (id: string) => {
-  return axios.get(`${server_URL_chat}/company/${id}`);
+  return Axios.get(`${server_URL_chat}/company/${id}`);
 };
 
 
@@ -301,7 +301,7 @@ export const vendorChats = (id: string) => {
 export const SaveChat = async (reqBody: { text: string; senderId: string | null; vendorId: string | null }) => {
   try {
     console.log('Sending request to save chat:', reqBody); // Debugging line
-    const response = await axios.post(`${server_URL_chat}/savechat`, reqBody, );
+    const response = await Axios.post(`${server_URL_chat}/savechat`, reqBody, );
     console.log(response.data);
     return response.data;
   } catch (error) {
@@ -317,7 +317,7 @@ export const getMessages = (id: string) => {
 
     console.log('okkkkkkkkkkkkkkkkkkkkokkkkkkkkkkkkkkkkkkkk');
 
-    return axios.get(`${server_URL_chat}/message/${id}`);
+    return Axios.get(`${server_URL_chat}/message/${id}`);
   } catch (error: any) {
     console.log(error);
   }
@@ -326,7 +326,7 @@ export const getMessages = (id: string) => {
 
 export const getUnreadMessagesCountAPI = async () => {
   try {
-    const response = await axios.get(`${SERVER_URL_vendor}/unread-count`, );
+    const response = await Axios.get(`${SERVER_URL_vendor}/unread-count`, );
     console.log(response.data);
 
     return response.data;
@@ -343,7 +343,7 @@ export const getUnreadMessagesCountAPI = async () => {
 
 export const messageSend = async (reqBody: { text: string; senderId: string | null; userId: string | null }) => {
   try {
-    const response = await axios.post(`${server_URL_chat}/message`, reqBody, );
+    const response = await Axios.post(`${server_URL_chat}/message`, reqBody, );
 
     return response.data;
   } catch (error: any) {
@@ -360,7 +360,7 @@ export const messageSend = async (reqBody: { text: string; senderId: string | nu
 
 export const vendorBookingDetils = async (vendorId: string) => {
   try {
-    const response = await axios.get(`${SERVER_URL_vendor}/vendorBookingDetils/${vendorId}`);
+    const response = await Axios.get(`${SERVER_URL_vendor}/vendorBookingDetils/${vendorId}`);
     console.log(response.data, 'api call retuen');
 
     return response.data;
@@ -374,7 +374,7 @@ export const vendorBookingDetils = async (vendorId: string) => {
 
 export const createSlotAPI = async (reqBody: { startDate: Date, endDate: Date }, vendorId: string) => {
   try {
-    const response = await axios.post(`${SERVER_URL_vendor}/create-slot/${vendorId}`, reqBody);
+    const response = await Axios.post(`${SERVER_URL_vendor}/create-slot/${vendorId}`, reqBody);
     return response.data;
   } catch (error) {
     console.error(error);
@@ -385,7 +385,7 @@ export const createSlotAPI = async (reqBody: { startDate: Date, endDate: Date },
 
 export const getSlotsByWorkerAPI = async (vendorId: string) => {
   try {
-    const response = await axios.get(`${SERVER_URL_vendor}/slots/${vendorId}`);
+    const response = await Axios.get(`${SERVER_URL_vendor}/slots/${vendorId}`);
     console.log(response.data, 'API call return');
 
     return response.data;
@@ -399,7 +399,7 @@ export const savePhotoUrlsToDB = async (photoUrls: string[], vendorId: string) =
   try {
     console.log('hyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy');
 
-    const response = await axios.post(`${SERVER_URL_vendor}/serviceImage/`, {
+    const response = await Axios.post(`${SERVER_URL_vendor}/serviceImage/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -421,7 +421,7 @@ export const savePhotoUrlsToDB = async (photoUrls: string[], vendorId: string) =
 
 export const dateAvailability = async (vendorId: string, startingDate: string, endingDate: string): Promise<any> => {
   try {
-      const response = await api.post("/dateAvailability", { vendorId, startingDate, endingDate });
+      const response = await Axios.post("/dateAvailability", { vendorId, startingDate, endingDate });
       console.log('API response:', response);
       return response;
   } catch (error) {
@@ -433,7 +433,7 @@ export const dateAvailability = async (vendorId: string, startingDate: string, e
 
 export const logoutApiVendor = async () => {
   try {
-    const response = await api.post(`${SERVER_URL_vendor}/logout`,);
+    const response = await Axios.post(`${SERVER_URL_vendor}/logout`,);
     console.log("response:", response.data);
     return response.data;
   } catch (error) {

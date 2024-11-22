@@ -49,10 +49,12 @@ const VendorLoginForm: React.FC = () => {
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
       const result = await LoginAPI(data);
-      console.log("LoginAPI result:", result); // Debugging line
+      console.log("LoginAPI result:", result); 
       if (result && result.vendor && result.accessToken && result.refreshToken) {
+        console.log('create result');
+        
         localStorage.setItem("vendorToken", result.accessToken);
-        localStorage.setItem("refreshToken", result.refreshToken);
+        localStorage.setItem("RefreshToken", result.refreshToken);
         localStorage.setItem("vendor", JSON.stringify(result.vendor));
         router.push(`/vendordashboard?vendorId=${result.vendor._id}`);
         toast.success("Login Successful!");
@@ -60,7 +62,7 @@ const VendorLoginForm: React.FC = () => {
         toast.error("Invalid login credentials. Please try again.");
       }
     } catch (err) {
-      console.error("Login error:", err); // Log the error for debugging
+      console.error("Login error:", err); 
       toast.error("An error occurred during login. Please try again.");
     }
   };

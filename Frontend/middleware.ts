@@ -19,7 +19,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const adminTokenVerified = await verifyToken("adminToken", req);
-  const vendorTokenVerified = await verifyToken("vendorToken", req);
+  const vendorTokenVerified = await verifyToken("RefreshToken", req);
   const userTokenVerified = await verifyToken("refreshToken", req);
 console.log(userTokenVerified,'pop');
 
