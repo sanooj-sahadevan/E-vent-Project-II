@@ -32,13 +32,12 @@ const EditVendor: React.FC = () => {
 
   useEffect(() => {
     const vendorDetailsString = searchParams.get('query');
-
     if (vendorDetailsString) {
       try {
         const decodedString = decodeURIComponent(vendorDetailsString);
         const parsedVendor = JSON.parse(decodedString) as Vendor;
         setVendorDetails(parsedVendor);
-        setImagePreview(parsedVendor.profileImage || null); // Set initial image preview
+        setImagePreview(parsedVendor.profileImage || null); 
       } catch (error) {
         console.error('Failed to parse vendor details from query:', error);
       }
@@ -46,13 +45,11 @@ const EditVendor: React.FC = () => {
     setIsLoading(false);
   }, [searchParams]);
 
-  // Function to handle image selection
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedImage(file); // Save the file object
+      setSelectedImage(file); 
 
-      // Create a preview URL
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
 
@@ -69,7 +66,7 @@ const EditVendor: React.FC = () => {
 
           if (uploadResult.ok) {
             const s3Url = data.url.split('?')[0];
-            setPhotoUrl(s3Url); // Save the uploaded photo URL
+            setPhotoUrl(s3Url);
             toast.success('Image uploaded successfully.');
           } else {
             toast.error('Error uploading image to S3.');
@@ -101,9 +98,10 @@ const EditVendor: React.FC = () => {
         if (result.data.vendor && result.data.vendor._id) {
           router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
           toast.success('Vendor details updated successfully.');
-        } else {
-          toast.error('Vendor details could not be found.');
         }
+        //  else {
+        //   toast.error('Vendor details could not be found.');
+        // }
       }
     } catch (err) {
       toast.error('An error occurred while saving vendor details. Please try again.');
