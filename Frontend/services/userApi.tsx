@@ -12,9 +12,19 @@ const Axios = axios.create({
 });
 type RequestHeaders = Record<string, string>;
 export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
-  console.log('signup api');
-
+try {
   return await commonAPI("POST", `${SERVER_URL}/signup`, reqBody, reqHeader);
+} catch (error:any) {
+  console.error("API call error:", error);
+    if (error.response && error.response.data?.message) {
+      throw new Error(error.response.data.message); // Pass backend error message to the frontend
+    } else if (error.message) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("An unexpected error occurred. Please try again.");
+    }
+    
+}
 };
 
 
@@ -22,19 +32,24 @@ export const SignUpAPI = async (reqBody: any, reqHeader?: RequestHeaders) => {
 
 
 
-// Login API
 export const LoginAPI = async (reqBody: any) => {
   try {
-    const response = await Axios.post(`${SERVER_URL}/login`, reqBody,);
-    //   if (!response.ok) {
-    //     throw new Error(`HTTP error! status: ${response.status}`);
-    // }
-    console.log(response.data);
+    const response = await Axios.post(`${SERVER_URL}/login`, reqBody);
+    console.log("API Response:", response.data);
     return response.data;
-  } catch (error) {
-    throw error
+  } catch (error: any) {
+    console.error("API call error:", error);
+    if (error.response && error.response.data?.message) {
+      throw new Error(error.response.data.message); 
+    } else if (error.message) {
+      throw new Error(error.message);
+    } else {
+      throw new Error("An unexpected error occurred. Please try again.");
+    }
+    
   }
 };
+
 
 
 export const verifyOtp = async (data: any) => {

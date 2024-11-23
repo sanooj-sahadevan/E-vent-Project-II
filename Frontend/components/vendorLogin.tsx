@@ -7,7 +7,7 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { LoginAPI } from "@/services/vendorAPI";
-import { toast, ToastContainer } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -46,66 +46,35 @@ const VendorLoginForm: React.FC = () => {
   //   }
   // };
 
-  // const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
-  //   try {
-  //     const result = await LoginAPI(data);
-  //     console.log("LoginAPI result:", result); 
-  //     if (result && result.vendor && result.accessToken && result.refreshToken) {
-  //       console.log('create result');
-        
-  //       localStorage.setItem("vendorToken", result.accessToken);
-  //       localStorage.setItem("RefreshToken", result.refreshToken);
-  //       localStorage.setItem("vendor", JSON.stringify(result.vendor));
-  //       router.push(`/vendordashboard?vendorId=${result.vendor._id}`);
-  //       toast.success("Login Successful!");
-  //     } else {
-  //       toast.error("Invalid login credentials. Please try again.");
-  //     }
-  //   } catch (err:any) {
-  //     console.error("Login error:", err); 
-  //     toast.error(err.message); 
-  //   }
-  // };
-  
-
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
       const result = await LoginAPI(data);
-      console.log("LoginAPI result:", result);
-  
+      console.log("LoginAPI result:", result); 
       if (result && result.vendor && result.accessToken && result.refreshToken) {
+        console.log('create result');
+        
         localStorage.setItem("vendorToken", result.accessToken);
         localStorage.setItem("RefreshToken", result.refreshToken);
         localStorage.setItem("vendor", JSON.stringify(result.vendor));
         router.push(`/vendordashboard?vendorId=${result.vendor._id}`);
-        toast.success("Login Successful!");
+        toast.success("Login Successful!", {duration:5000});
       } else {
-        toast.error("Invalid login credentials. Please try again.");
+        toast.error("Invalid login credentials. Please try again.", {duration:5000});
       }
-    } catch (err: any) {
-      console.error("Login error:", err);
-      toast.error(err.message); 
+    } catch (err:any) {
+      console.error("Login error:", err); 
+      toast.error(err.message, {duration:5000}); 
     }
   };
   
 
 
+
+
   return (
 
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-
-
+           <Toaster position="top-center" richColors closeButton />
       <div className="flex min-h-screen bg-white-100 p-8">
         <div className="hidden md:block flex-1">
           <Image

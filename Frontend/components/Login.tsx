@@ -25,20 +25,24 @@ const LoginForm: React.FC = () => {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       const result = await LoginAPI(data);
+    
       if (result?.user && result?.accessToken) {
         localStorage.setItem("token", result.accessToken);
-        localStorage.setItem("refreshToken", result.refreshToken); 
+        localStorage.setItem("refreshToken", result.refreshToken);
         localStorage.setItem("user", JSON.stringify(result.user));
-        toast.success("Login Successful!", { duration: 8000 });
+    
+        toast.success("Login Successful!", );
         window.location.href = "/"; 
       } else {
-        toast.error("Invalid login credentials. Please try again.", { duration: 5000 });
+        toast.error("Invalid login credentials. Please try again.",{duration:5000} );
       }
-    } catch (err) {
-      toast.error("An error occurred during login. Please try again.", { duration: 5000 });
+    } catch (err: any) {
+      console.error("Login error:", err.message);
+      toast.error(err.message || "An error occurred. Please try again.", {duration:5000});
     }
     
   };
+  
 
   // const handleGoogleClick = async () => {
   //   try {
@@ -66,7 +70,8 @@ const LoginForm: React.FC = () => {
 
   return (
     <>
-      <Toaster position="top-center" />
+      <Toaster position="top-center" richColors closeButton
+        />
       <div className="flex min-h-screen bg-white-100 p-8">
         <div className="flex-1 flex items-center justify-center bg-white-500">
           <Image

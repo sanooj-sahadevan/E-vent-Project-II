@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { SignUpAPI } from "@/services/userApi";
 import { useRouter } from "next/navigation";
-import { toast, ToastContainer } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
 import img from '../public/4.jpg.jpg'
@@ -55,7 +55,6 @@ const SignupForm: React.FC = () => {
       async (position) => {
         const { latitude, longitude } = position.coords;
 
-        // Add the latitude and longitude to reqBody
         reqBody.latitude = latitude;
         reqBody.longitude = longitude;
 
@@ -66,34 +65,25 @@ const SignupForm: React.FC = () => {
           if (result.error) {
             toast.error(result.message);
           } else if (result) {
-            toast.success("OTP sent, please check your mail.");
+            toast.success("OTP sent, please check your mail.", {duration:5000});
             router.push(`/otp?email=${email}`);
           }
-        } catch (err) {
-          toast.error("An error occurred during signup. Please try again.");
-          console.error('SignUpAPI error:', err);
+        } catch (error:any) {
+          toast.error(error.message || "An error occurred. Please try again.", {duration:5000});
+          console.error('SignUpAPI error:', error.message);
         }
       },
-      (error) => {
+      (error:any) => {
         console.error("Geolocation error:", error.message);
-        toast.error("Failed to retrieve your location. Please enable location services.");
+        toast.error(error.message || "An error occurred. Please try again.", {duration:5000});
       }
     );
   };
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+      <Toaster position="top-center" richColors closeButton/>
+
 
       <div className="flex min-h-screen bg-white-100 p-6">
         <div className="flex-1 flex items-center justify-center bg-white-500">

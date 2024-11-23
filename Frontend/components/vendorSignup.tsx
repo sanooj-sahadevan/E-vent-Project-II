@@ -5,7 +5,7 @@ import { SignUpAPI } from "@/services/vendorAPI";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { toast, ToastContainer } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import "react-toastify/dist/ReactToastify.css";
 import img from '../public/3.jpg.jpg'
 
@@ -54,11 +54,11 @@ const SignupForm: React.FC = () => {
           if (result.error) {
             toast.error(result.message);
           } else if (result) {
-            toast.success("OTP sent, please check your mail.");
+            toast.success("OTP sent, please check your mail.", {duration:5000});
             router.push(`/vendorOTP?email=${email}`);
           }
         } catch (err: any) {
-          toast.error("Invalid credentials!");
+          toast.error("Invalid credentials!", {duration:5000});
         }
       },
       (error) => {
@@ -70,17 +70,8 @@ const SignupForm: React.FC = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
+               <Toaster position="top-center" richColors closeButton />
+
 
       <div className="flex min-h-screen bg-white-100 p-8">
         <div className="w-1/2">

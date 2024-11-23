@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import Head from "next/head";
-import { toast, ToastContainer } from "react-toastify";
+import { Toaster, toast } from "sonner";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import { verifyOtp } from "../services/vendorAPI";
@@ -19,7 +19,7 @@ const OTPPage: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<OTPFormInputs>();
-  const [timeLeft, setTimeLeft] = useState(60); 
+  const [timeLeft, setTimeLeft] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
 
   const router = useRouter();
@@ -33,10 +33,10 @@ const OTPPage: React.FC = () => {
     try {
       await verifyOtp({ otp: data.otp, email });
 
-      toast.success("please login");
+      toast.success("please login", { duration: 5000 });
       router.push("/vendorLogin");
     } catch (error) {
-      toast.error("Invalid otp.");
+      toast.error("Invalid otp.", { duration: 5000 });
     }
   };
 
@@ -61,19 +61,10 @@ const OTPPage: React.FC = () => {
   return (
 
     <>
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-<div className="flex min-h-screen bg-white-100 p-8">
-<div className="w-1/2">
+      <Toaster position="top-center" richColors closeButton />
+
+      <div className="flex min-h-screen bg-white-100 p-8">
+        <div className="w-1/2">
           <img
             src="https://media.istockphoto.com/id/1495018397/photo/splendid-view-of-an-outdoor-wedding-premises.jpg?s=2048x2048&w=is&k=20&c=WgMmtbGBe6ZEPoUpJQhdjJmX4QR1sBfqsc9bAXRSMo0="
             alt="Log in"
