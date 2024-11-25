@@ -11,7 +11,7 @@ interface Vendor {
   profileImage?: string;
   rating: string;
   vendorname: string;
-  phone: string;
+  phone: number;
   email: string;
   address: string;
   district: string;
@@ -28,7 +28,7 @@ const EditVendor: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [photoUrl, setPhotoUrl] = useState<string>("");
+  const [photoUrl, setPhotoUrl] = useState<string>('');
 
   useEffect(() => {
     const vendorDetailsString = searchParams.get('query');
@@ -37,7 +37,7 @@ const EditVendor: React.FC = () => {
         const decodedString = decodeURIComponent(vendorDetailsString);
         const parsedVendor = JSON.parse(decodedString) as Vendor;
         setVendorDetails(parsedVendor);
-        setImagePreview(parsedVendor.profileImage || null); 
+        setImagePreview(parsedVendor.profileImage || null);
       } catch (error) {
         console.error('Failed to parse vendor details from query:', error);
       }
@@ -48,7 +48,7 @@ const EditVendor: React.FC = () => {
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedImage(file); 
+      setSelectedImage(file);
 
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
@@ -110,17 +110,17 @@ const EditVendor: React.FC = () => {
     setIsEditing(!isEditing);
   };
 
-  const validateForm = () => {
-    const phone = vendorDetails?.phone.trim() || '';
-    if (phone.length !== 10) {
-      alert('Phone number must be 10 digits long.');
-      return false;
+  const validatePhone = (phone: string) => {
+    const phoneNumber = phone.replace(/\D/g, ''); // Remove non-numeric characters
+    return phoneNumber.length === 10;
+  };
+
+  const handleInputChange = (field: keyof Vendor, value: string) => {
+    if (field === 'phone' && !validatePhone(value)) {
+      toast.error('Phone number must be 10 digits');
+      return;
     }
-    if (!/^\d+$/.test(phone)) {
-      alert('Phone number must only contain digits.');
-      return false;
-    }
-    return true;
+    setVendorDetails((prev) => prev ? { ...prev, [field]: value } : null);
   };
 
   if (isLoading) {
@@ -139,10 +139,8 @@ const EditVendor: React.FC = () => {
     <form
       onSubmit={async (e) => {
         e.preventDefault();
-        if (validateForm()) {
-          await saveVendorDetails();
-          setIsEditing(false);
-        }
+        await saveVendorDetails();
+        setIsEditing(false);
       }}
       className="max-w-xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-12"
     >
@@ -150,7 +148,7 @@ const EditVendor: React.FC = () => {
         <div className="flex items-center justify-center mb-6">
           {/* Profile Picture */}
           {imagePreview ? (
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 relative shadow-lg">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4  relative shadow-lg">
               <img
                 src={imagePreview}
                 alt="Vendor"
@@ -185,9 +183,7 @@ const EditVendor: React.FC = () => {
               value={vendorDetails.vendorname}
               className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
               onChange={(e) =>
-                setVendorDetails((prev) =>
-                  prev ? { ...prev, vendorname: e.target.value.trim() } : null
-                )
+                handleInputChange('vendorname', e.target.value)
               }
             />
           ) : (
@@ -201,13 +197,11 @@ const EditVendor: React.FC = () => {
             <label className="block text-gray-700 font-medium">Email</label>
             {isEditing ? (
               <input
-                type="text"
+                type="email"
                 value={vendorDetails.email}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
                 onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, email: e.target.value.trim() } : null
-                  )
+                  handleInputChange('email', e.target.value)
                 }
               />
             ) : (
@@ -223,9 +217,7 @@ const EditVendor: React.FC = () => {
                 value={vendorDetails.address}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
                 onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, address: e.target.value.trim() } : null
-                  )
+                  handleInputChange('address', e.target.value)
                 }
               />
             ) : (
@@ -240,12 +232,9 @@ const EditVendor: React.FC = () => {
                 type="text"
                 value={vendorDetails.phone}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) => {
-                  const phoneValue = e.target.value.trim();
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, phone: phoneValue } : null
-                  );
-                }}
+                onChange={(e) =>
+                  handleInputChange('phone', e.target.value)
+                }
               />
             ) : (
               <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
@@ -260,9 +249,7 @@ const EditVendor: React.FC = () => {
                 value={vendorDetails.district}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
                 onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, district: e.target.value.trim() } : null
-                  )
+                  handleInputChange('district', e.target.value)
                 }
               />
             ) : (
@@ -278,24 +265,47 @@ const EditVendor: React.FC = () => {
                 value={vendorDetails.state}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
                 onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, state: e.target.value.trim() } : null
-                  )
+                  handleInputChange('state', e.target.value)
                 }
               />
             ) : (
               <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
             )}
           </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">Description</label>
+            {isEditing ? (
+              <textarea
+                value={vendorDetails.Description}
+                onChange={(e) =>
+                  handleInputChange('Description', e.target.value)
+                }
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
+            )}
+          </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 flex justify-between">
           <button
-            type="submit"
-            className="bg-pink-500 text-white rounded py-2 px-4 w-full hover:bg-pink-600 transition duration-200"
+            type="button"
+            onClick={handleEditToggle}
+            className="text-white bg-pink-500 p-2 rounded flex items-center"
           >
-            {isEditing ? 'Save Changes' : 'Edit'}
+            <FaEdit className="mr-2" /> {isEditing ? 'Cancel' : 'Edit'}
           </button>
+
+          {isEditing && (
+            <button
+              type="submit"
+              className="text-white bg-pink-500 p-2 rounded"
+            >
+              Save Changes
+            </button>
+          )}
         </div>
       </div>
     </form>
