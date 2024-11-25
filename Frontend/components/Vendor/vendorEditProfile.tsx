@@ -5,14 +5,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FaEdit } from 'react-icons/fa';
 import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI';
 import { toast } from 'react-toastify';
-import { useForm, Controller } from 'react-hook-form';
 import Spinner from '../skeletons/spinner';
+import { useForm, SubmitHandler } from 'react-hook-form';
 
 interface Vendor {
   profileImage?: string;
   rating: string;
   vendorname: string;
-  phone: number;
+  phone: number | string;
   email: string;
   address: string;
   district: string;
@@ -23,20 +23,19 @@ interface Vendor {
 const EditVendor: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-
   const [vendorDetails, setVendorDetails] = useState<Vendor | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [photoUrl, setPhotoUrl] = useState<string>('');
+  const [photoUrl, setPhotoUrl] = useState<string>("");
 
   const {
     register,
     handleSubmit,
-    setValue,
-    control,
     formState: { errors },
+    setValue,
+    watch,
   } = useForm<Vendor>({
     defaultValues: vendorDetails || {},
   });
@@ -49,10 +48,11 @@ const EditVendor: React.FC = () => {
         const parsedVendor = JSON.parse(decodedString) as Vendor;
         setVendorDetails(parsedVendor);
         setImagePreview(parsedVendor.profileImage || null);
-        // Pre-fill form with vendor details
-        Object.entries(parsedVendor).forEach(([key, value]) =>
-          setValue(key as keyof Vendor, value)
-        );
+
+        // Set default values in form
+        Object.entries(parsedVendor).forEach(([key, value]) => {
+          setValue(key as keyof Vendor, value);
+        });
       } catch (error) {
         console.error('Failed to parse vendor details from query:', error);
       }
@@ -64,7 +64,6 @@ const EditVendor: React.FC = () => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedImage(file);
-
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
 
@@ -72,10 +71,10 @@ const EditVendor: React.FC = () => {
         const data = await getPresignedUrl(file.name, file.type);
         if (data.url) {
           const uploadResult = await fetch(data.url, {
-            method: 'PUT',
+            method: "PUT",
             body: file,
             headers: {
-              'Content-Type': file.type,
+              "Content-Type": file.type,
             },
           });
 
@@ -96,7 +95,7 @@ const EditVendor: React.FC = () => {
     }
   };
 
-  const saveVendorDetails = async (formData: Vendor) => {
+  const saveVendorDetails: SubmitHandler<Vendor> = async (formData) => {
     if (!vendorDetails) return;
 
     const updatedData = {
@@ -145,8 +144,12 @@ const EditVendor: React.FC = () => {
       <div className="p-6">
         <div className="flex items-center justify-center mb-6">
           {imagePreview ? (
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 relative shadow-lg">
-              <img src={imagePreview} alt="Vendor" className="w-full h-full object-cover" />
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 shadow-lg">
+              <img
+                src={imagePreview}
+                alt="Vendor"
+                className="w-full h-full object-cover"
+              />
             </div>
           ) : (
             <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 shadow-md">
@@ -157,7 +160,9 @@ const EditVendor: React.FC = () => {
 
         {isEditing && (
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2 font-medium">Upload New Image</label>
+            <label className="block text-gray-700 mb-2 font-medium">
+              Upload New Image
+            </label>
             <input
               type="file"
               accept="image/*"
@@ -167,51 +172,82 @@ const EditVendor: React.FC = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 gap-6">
-          <div>
-            <label className="block text-gray-700 font-medium">Phone Number</label>
-            <input
-              type="text"
-              {...register('phone', {
-                required: 'Phone number is required',
-                pattern: {
-                  value: /^[0-9]{10}$/,
-                  message: 'Phone number must be 10 digits',
-                },
-              })}
-              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-            />
-            {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
-          </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          Vendor Details
+        </h2>
 
-          <div>
-            <label className="block text-gray-700 font-medium">Vendor Name</label>
-            <input
-              type="text"
-              {...register('vendorname', {
-                required: 'Vendor name is required',
-                validate: (value) =>
-                  value.trim() !== '' || 'Vendor name cannot be empty or whitespace only',
-              })}
-              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-            />
-            {errors.vendorname && <p className="text-red-500">{errors.vendorname.message}</p>}
-          </div>
+        {/* Vendor Name */}
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium">Vendor Name</label>
+          <input
+            type="text"
+            {...register("vendorname", { required: "Vendor name is required.", validate: (value) => value.trim() !== "" || "Name cannot be empty." })}
+            className="border border-gray-300 rounded p-2 w-full"
+          />
+          {errors.vendorname && <p className="text-red-500">{errors.vendorname.message}</p>}
         </div>
 
+        {/* Phone */}
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium">Phone Number</label>
+          <input
+            type="tel"
+            {...register("phone", {
+              required: "Phone number is required.",
+              pattern: {
+                value: /^[0-9]{10}$/,
+                message: "Phone number must be 10 digits.",
+              },
+            })}
+            className="border border-gray-300 rounded p-2 w-full"
+          />
+          {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
+        </div>
+
+        {/* Email */}
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium">Email</label>
+          <input
+            type="email"
+            {...register("email", {
+              required: "Email is required.",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Invalid email format.",
+              },
+            })}
+            className="border border-gray-300 rounded p-2 w-full"
+          />
+          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+        </div>
+
+        {/* Address */}
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium">Address</label>
+          <input
+            type="text"
+            {...register("address", {
+              required: "Address is required.",
+              validate: (value) => value.trim() !== "" || "Address cannot be empty.",
+            })}
+            className="border border-gray-300 rounded p-2 w-full"
+          />
+          {errors.address && <p className="text-red-500">{errors.address.message}</p>}
+        </div>
+
+        {/* Buttons */}
         <div className="flex justify-between mt-6">
           <button
             type="button"
-            className="text-pink-600 hover:underline focus:outline-none"
+            className="text-pink-600 hover:underline"
             onClick={handleEditToggle}
           >
             {isEditing ? 'Cancel' : <FaEdit className="inline" />} Edit
           </button>
-
           {isEditing && (
             <button
               type="submit"
-              className="bg-pink-600 text-white rounded px-4 py-2 hover:bg-pink-700 transition duration-200"
+              className="bg-pink-600 text-white rounded px-4 py-2 hover:bg-pink-700 transition"
             >
               Save Changes
             </button>
