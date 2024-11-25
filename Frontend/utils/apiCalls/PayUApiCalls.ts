@@ -53,7 +53,7 @@ export default {
         },
       });
 
-      console.log(response, 'ooooooooooooooooooooooooooooooooooooooo');
+      console.log(response);
 
       return response.data;
     } catch (error: any) {

@@ -22,7 +22,6 @@ console.log(data, 'this and all things')
 let PayUOrderId
   try {
      PayUOrderId = await PayUApiCalls.saveData(data);
-    // await paymentService.addTransaction(PayUOrderId, data.email, "success");
   } catch (error: any) {
     console.log(error);
   }
