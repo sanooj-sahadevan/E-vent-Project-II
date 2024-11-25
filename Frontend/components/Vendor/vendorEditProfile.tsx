@@ -2,9 +2,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaEdit } from 'react-icons/fa'; // Edit icon
-import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI'; // API for editing vendor
-import { toast } from 'react-toastify'; // Notifications for user feedback
+import { FaEdit } from 'react-icons/fa';
+import { useForm, SubmitHandler } from 'react-hook-form'; // React Hook Form
+import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI';
+import { toast } from 'react-toastify';
 import Spinner from '../skeletons/spinner';
 
 interface Vendor {
@@ -30,6 +31,8 @@ const EditVendor: React.FC = () => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>('');
 
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<Vendor>();
+
   useEffect(() => {
     const vendorDetailsString = searchParams.get('query');
     if (vendorDetailsString) {
@@ -38,12 +41,17 @@ const EditVendor: React.FC = () => {
         const parsedVendor = JSON.parse(decodedString) as Vendor;
         setVendorDetails(parsedVendor);
         setImagePreview(parsedVendor.profileImage || null);
+
+        // Pre-fill form fields
+        Object.keys(parsedVendor).forEach((key) => {
+          setValue(key as keyof Vendor, parsedVendor[key as keyof Vendor]);
+        });
       } catch (error) {
         console.error('Failed to parse vendor details from query:', error);
       }
     }
     setIsLoading(false);
-  }, [searchParams]);
+  }, [searchParams, setValue]);
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -81,12 +89,11 @@ const EditVendor: React.FC = () => {
     }
   };
 
-  const saveVendorDetails = async () => {
-    if (!vendorDetails) return;
-
+  const saveVendorDetails: SubmitHandler<Vendor> = async (data) => {
     const formData = {
       ...vendorDetails,
-      profileImage: photoUrl || vendorDetails.profileImage,
+      ...data,
+      profileImage: photoUrl || vendorDetails?.profileImage,
     };
 
     try {
@@ -110,19 +117,6 @@ const EditVendor: React.FC = () => {
     setIsEditing(!isEditing);
   };
 
-  const validatePhone = (phone: string) => {
-    const phoneNumber = phone.replace(/\D/g, ''); // Remove non-numeric characters
-    return phoneNumber.length === 10;
-  };
-
-  const handleInputChange = (field: keyof Vendor, value: string) => {
-    if (field === 'phone' && !validatePhone(value)) {
-      toast.error('Phone number must be 10 digits');
-      return;
-    }
-    setVendorDetails((prev) => prev ? { ...prev, [field]: value } : null);
-  };
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -134,114 +128,108 @@ const EditVendor: React.FC = () => {
   if (!vendorDetails) {
     return <div>No vendor details available</div>;
   }
-  const validateInputs = () => {
-    for (const [key, value] of Object.entries(vendorDetails)) {
-      if (!value.trim()) {
-        console.error(`Invalid input: ${key} cannot be empty or whitespace`);
-        return false;
-      }
-    }
-    return true;
-  };
 
   return (
     <form
-    onSubmit={async (e) => {
-      e.preventDefault();
-      if (!validateInputs()) {
-        alert('Please fill out all fields correctly.');
-        return;
-      }
-      await saveVendorDetails();
-      setIsEditing(false);
-    }}
-    className="max-w-xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-12"
-  >
-    <div className="p-6">
-      <div className="flex items-center justify-center mb-6">
-        {/* Profile Picture */}
-        {imagePreview ? (
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4  relative shadow-lg">
-            <img
-              src={imagePreview}
-              alt="Vendor"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ) : (
-          <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 shadow-md">
-            No Image
-          </div>
-        )}
-      </div>
-  
-      {isEditing && (
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2 font-medium">
-            Upload New Image
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoChange}
-            className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-          />
-        </div>
-      )}
-  
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">
-        {isEditing ? (
-          <input
-            type="text"
-            value={vendorDetails.vendorname}
-            className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-            onChange={(e) => handleInputChange('vendorname', e.target.value)}
-          />
-        ) : (
-          vendorDetails.vendorname || 'N/A'
-        )}
-      </h2>
-  
-      {/* Inputs for email, phone, etc. */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label className="block text-gray-700 font-medium">Email</label>
-          {isEditing ? (
-            <input
-              type="email"
-              value={vendorDetails.email}
-              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              onChange={(e) => handleInputChange('email', e.target.value)}
-            />
+      onSubmit={handleSubmit(saveVendorDetails)}
+      className="max-w-xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-12"
+    >
+      <div className="p-6">
+        <div className="flex items-center justify-center mb-6">
+          {imagePreview ? (
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 relative shadow-lg">
+              <img
+                src={imagePreview}
+                alt="Vendor"
+                className="w-full h-full object-cover"
+              />
+            </div>
           ) : (
-            <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
+            <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 shadow-md">
+              No Image
+            </div>
           )}
         </div>
-  
-        {/* Other fields follow the same pattern */}
-      </div>
-  
-      <div className="mt-6 flex justify-between">
-        <button
-          type="button"
-          onClick={handleEditToggle}
-          className="text-white bg-pink-500 p-2 rounded flex items-center"
-        >
-          <FaEdit className="mr-2" /> {isEditing ? 'Cancel' : 'Edit'}
-        </button>
-  
+
         {isEditing && (
-          <button
-            type="submit"
-            className="text-white bg-pink-500 p-2 rounded"
-          >
-            Save Changes
-          </button>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2 font-medium">
+              Upload New Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoChange}
+              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+            />
+          </div>
         )}
+
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">
+          {isEditing ? (
+            <input
+              {...register('vendorname', { required: 'Vendor name is required' })}
+              type="text"
+              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+            />
+          ) : (
+            vendorDetails.vendorname || 'N/A'
+          )}
+          {errors.vendorname && <p className="text-red-500 text-sm">{errors.vendorname.message}</p>}
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-gray-700 font-medium">Email</label>
+            {isEditing ? (
+              <input
+                {...register('email', { required: 'Email is required', pattern: /^\S+@\S+\.\S+$/ })}
+                type="email"
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
+            )}
+            {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">Phone Number</label>
+            {isEditing ? (
+              <input
+                {...register('phone', { required: 'Phone is required', pattern: /^[0-9]{10}$/ })}
+                type="text"
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
+            )}
+            {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+          </div>
+
+          {/* Other fields here */}
+        </div>
+
+        <div className="mt-6 flex justify-between">
+          <button
+            type="button"
+            onClick={handleEditToggle}
+            className="text-white bg-pink-500 p-2 rounded flex items-center"
+          >
+            <FaEdit className="mr-2" /> {isEditing ? 'Cancel' : 'Edit'}
+          </button>
+
+          {isEditing && (
+            <button
+              type="submit"
+              className="text-white bg-pink-500 p-2 rounded"
+            >
+              Save Changes
+            </button>
+          )}
+        </div>
       </div>
-    </div>
-  </form>
-  
+    </form>
   );
 };
 
