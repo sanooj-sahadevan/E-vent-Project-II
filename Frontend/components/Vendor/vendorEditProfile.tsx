@@ -6,7 +6,6 @@ import { FaEdit } from 'react-icons/fa'; // Edit icon
 import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI'; // API for editing vendor
 import { toast } from 'react-toastify'; // Notifications for user feedback
 import Spinner from '../skeletons/spinner';
-import { useForm } from 'react-hook-form';
 
 interface Vendor {
   profileImage?: string;
@@ -30,16 +29,6 @@ const EditVendor: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [photoUrl, setPhotoUrl] = useState<string>("");
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm<Vendor>({
-    defaultValues: vendorDetails || {},
-  });
 
   useEffect(() => {
     const vendorDetailsString = searchParams.get('query');
@@ -92,10 +81,12 @@ const EditVendor: React.FC = () => {
     }
   };
 
-  const saveVendorDetails = async (data: Vendor) => {
+  const saveVendorDetails = async () => {
+    if (!vendorDetails) return;
+
     const formData = {
-      ...data,
-      profileImage: photoUrl || vendorDetails?.profileImage,
+      ...vendorDetails,
+      profileImage: photoUrl || vendorDetails.profileImage,
     };
 
     try {
@@ -108,6 +99,9 @@ const EditVendor: React.FC = () => {
           router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
           toast.success('Vendor details updated successfully.');
         }
+        //  else {
+        //   toast.error('Vendor details could not be found.');
+        // }
       }
     } catch (err) {
       toast.error('An error occurred while saving vendor details. Please try again.');
@@ -133,14 +127,18 @@ const EditVendor: React.FC = () => {
 
   return (
     <form
-      onSubmit={handleSubmit(saveVendorDetails)}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        await saveVendorDetails();
+        setIsEditing(false);
+      }}
       className="max-w-xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-12"
     >
       <div className="p-6">
         <div className="flex items-center justify-center mb-6">
           {/* Profile Picture */}
           {imagePreview ? (
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 relative shadow-lg">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4  relative shadow-lg">
               <img
                 src={imagePreview}
                 alt="Vendor"
@@ -172,17 +170,16 @@ const EditVendor: React.FC = () => {
           {isEditing ? (
             <input
               type="text"
-              {...register('vendorname', {
-                required: 'Vendor name is required',
-                validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
-              })}
+              value={vendorDetails.vendorname}
               className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              onChange={(e) =>
+                setVendorDetails((prev) =>
+                  prev ? { ...prev, vendorname: e.target.value } : null
+                )
+              }
             />
           ) : (
             vendorDetails.vendorname || 'N/A'
-          )}
-          {errors.vendorname && (
-            <p className="text-red-500 text-sm">{errors.vendorname.message}</p>
           )}
         </h2>
 
@@ -192,41 +189,17 @@ const EditVendor: React.FC = () => {
             <label className="block text-gray-700 font-medium">Email</label>
             {isEditing ? (
               <input
-                type="email"
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: 'Enter a valid email',
-                  },
-                })}
+                type="text"
+                value={vendorDetails.email}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, email: e.target.value } : null
+                  )
+                }
               />
             ) : (
               <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
-            )}
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium">Phone Number</label>
-            {isEditing ? (
-              <input
-                type="number"
-                {...register('phone', {
-                  required: 'Phone number is required',
-                  validate: (value) =>
-                    value.toString().length === 10 || 'Must be 10 digits',
-                })}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
-            )}
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message}</p>
             )}
           </div>
 
@@ -235,93 +208,113 @@ const EditVendor: React.FC = () => {
             {isEditing ? (
               <input
                 type="text"
-                {...register('address', {
-                  required: 'Address is required',
-                  validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
-                })}
+                value={vendorDetails.address}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, address: e.target.value } : null
+                  )
+                }
               />
             ) : (
               <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
             )}
-            {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address.message}</p>
+          </div>
+
+
+          <div>
+            <label className="block text-gray-700 font-medium">Phone Number</label>
+            {isEditing ? (
+              <input
+                type="number"
+                value={vendorDetails.phone}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, phone: Number(e.target.value) } : null
+                  )
+                }
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
             )}
           </div>
+
 
           <div>
             <label className="block text-gray-700 font-medium">District</label>
             {isEditing ? (
               <input
                 type="text"
-                {...register('district', {
-                  required: 'District is required',
-                  validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
-                })}
+                value={vendorDetails.district}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, district: e.target.value } : null
+                  )
+                }
               />
             ) : (
               <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
             )}
-            {errors.district && (
-              <p className="text-red-500 text-sm">{errors.district.message}</p>
-            )}
           </div>
+
 
           <div>
             <label className="block text-gray-700 font-medium">State</label>
             {isEditing ? (
               <input
                 type="text"
-                {...register('state', {
-                  required: 'State is required',
-                  validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
-                })}
+                value={vendorDetails.state}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, state: e.target.value } : null
+                  )
+                }
               />
             ) : (
               <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
             )}
-            {errors.state && (
-              <p className="text-red-500 text-sm">{errors.state.message}</p>
-            )}
           </div>
+
+          {/* Add a full-width "Description" column */}
+          {/* <div className="col-span-1 md:col-span-2">
+            <label className="block text-gray-700 font-medium">Description</label>
+            {isEditing ? (
+              <textarea
+                value={vendorDetails.Description}
+                rows={4}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+                onChange={(e) =>
+                  setVendorDetails((prev) =>
+                    prev ? { ...prev, Description: e.target.value } : null
+                  )
+                }
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
+            )}
+          </div> */}
         </div>
 
-        <div className="mb-6">
-          <label className="block text-gray-700 font-medium">Description</label>
-          {isEditing ? (
-            <textarea
-              {...register('Description', {
-                required: 'Description is required',
-                validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
-              })}
-              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              rows={4}
-            />
-          ) : (
-            <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
-          )}
-          {errors.Description && (
-            <p className="text-red-500 text-sm">{errors.Description.message}</p>
-          )}
-        </div>
-
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between mt-6">
           <button
             type="button"
-            className="text-blue-500"
-            onClick={handleEditToggle}
+            className="text-pink-600 hover:underline focus:outline-none"
+            onClick={handleEditToggle} // Toggle edit mode
           >
-            <FaEdit /> {isEditing ? 'Cancel Edit' : 'Edit Vendor'}
+            {isEditing ? 'Cancel' : <FaEdit className="inline" />} Edit
           </button>
 
-          <button
-            type="submit"
-            className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition duration-200"
-          >
-            {isEditing ? 'Save Changes' : 'View'}
-          </button>
+          {isEditing && (
+            <button
+              type="submit"
+              className="bg-pink-600 text-white rounded px-4 py-2 hover:bg-pink-700 transition duration-200"
+            >
+              Save Changes
+            </button>
+          )}
         </div>
       </div>
     </form>
