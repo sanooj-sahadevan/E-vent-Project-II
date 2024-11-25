@@ -11,7 +11,7 @@ interface Vendor {
   profileImage?: string;
   rating: string;
   vendorname: string;
-  phone: number;
+  phone: string;
   email: string;
   address: string;
   district: string;
@@ -99,9 +99,6 @@ const EditVendor: React.FC = () => {
           router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
           toast.success('Vendor details updated successfully.');
         }
-        //  else {
-        //   toast.error('Vendor details could not be found.');
-        // }
       }
     } catch (err) {
       toast.error('An error occurred while saving vendor details. Please try again.');
@@ -111,6 +108,19 @@ const EditVendor: React.FC = () => {
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
+  };
+
+  const validateForm = () => {
+    const phone = vendorDetails?.phone.trim() || '';
+    if (phone.length !== 10) {
+      alert('Phone number must be 10 digits long.');
+      return false;
+    }
+    if (!/^\d+$/.test(phone)) {
+      alert('Phone number must only contain digits.');
+      return false;
+    }
+    return true;
   };
 
   if (isLoading) {
@@ -129,8 +139,10 @@ const EditVendor: React.FC = () => {
     <form
       onSubmit={async (e) => {
         e.preventDefault();
-        await saveVendorDetails();
-        setIsEditing(false);
+        if (validateForm()) {
+          await saveVendorDetails();
+          setIsEditing(false);
+        }
       }}
       className="max-w-xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-12"
     >
@@ -138,7 +150,7 @@ const EditVendor: React.FC = () => {
         <div className="flex items-center justify-center mb-6">
           {/* Profile Picture */}
           {imagePreview ? (
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4  relative shadow-lg">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 relative shadow-lg">
               <img
                 src={imagePreview}
                 alt="Vendor"
@@ -174,7 +186,7 @@ const EditVendor: React.FC = () => {
               className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
               onChange={(e) =>
                 setVendorDetails((prev) =>
-                  prev ? { ...prev, vendorname: e.target.value } : null
+                  prev ? { ...prev, vendorname: e.target.value.trim() } : null
                 )
               }
             />
@@ -194,7 +206,7 @@ const EditVendor: React.FC = () => {
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
                 onChange={(e) =>
                   setVendorDetails((prev) =>
-                    prev ? { ...prev, email: e.target.value } : null
+                    prev ? { ...prev, email: e.target.value.trim() } : null
                   )
                 }
               />
@@ -212,7 +224,7 @@ const EditVendor: React.FC = () => {
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
                 onChange={(e) =>
                   setVendorDetails((prev) =>
-                    prev ? { ...prev, address: e.target.value } : null
+                    prev ? { ...prev, address: e.target.value.trim() } : null
                   )
                 }
               />
@@ -221,25 +233,24 @@ const EditVendor: React.FC = () => {
             )}
           </div>
 
-
           <div>
             <label className="block text-gray-700 font-medium">Phone Number</label>
             {isEditing ? (
               <input
-                type="number"
+                type="text"
                 value={vendorDetails.phone}
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
+                onChange={(e) => {
+                  const phoneValue = e.target.value.trim();
                   setVendorDetails((prev) =>
-                    prev ? { ...prev, phone: Number(e.target.value) } : null
-                  )
-                }
+                    prev ? { ...prev, phone: phoneValue } : null
+                  );
+                }}
               />
             ) : (
               <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
             )}
           </div>
-
 
           <div>
             <label className="block text-gray-700 font-medium">District</label>
@@ -250,7 +261,7 @@ const EditVendor: React.FC = () => {
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
                 onChange={(e) =>
                   setVendorDetails((prev) =>
-                    prev ? { ...prev, district: e.target.value } : null
+                    prev ? { ...prev, district: e.target.value.trim() } : null
                   )
                 }
               />
@@ -258,7 +269,6 @@ const EditVendor: React.FC = () => {
               <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
             )}
           </div>
-
 
           <div>
             <label className="block text-gray-700 font-medium">State</label>
@@ -269,7 +279,7 @@ const EditVendor: React.FC = () => {
                 className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
                 onChange={(e) =>
                   setVendorDetails((prev) =>
-                    prev ? { ...prev, state: e.target.value } : null
+                    prev ? { ...prev, state: e.target.value.trim() } : null
                   )
                 }
               />
@@ -277,44 +287,15 @@ const EditVendor: React.FC = () => {
               <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
             )}
           </div>
-
-          {/* Add a full-width "Description" column */}
-          {/* <div className="col-span-1 md:col-span-2">
-            <label className="block text-gray-700 font-medium">Description</label>
-            {isEditing ? (
-              <textarea
-                value={vendorDetails.Description}
-                rows={4}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, Description: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
-            )}
-          </div> */}
         </div>
 
-        <div className="flex justify-between mt-6">
+        <div className="mt-6">
           <button
-            type="button"
-            className="text-pink-600 hover:underline focus:outline-none"
-            onClick={handleEditToggle} // Toggle edit mode
+            type="submit"
+            className="bg-pink-500 text-white rounded py-2 px-4 w-full hover:bg-pink-600 transition duration-200"
           >
-            {isEditing ? 'Cancel' : <FaEdit className="inline" />} Edit
+            {isEditing ? 'Save Changes' : 'Edit'}
           </button>
-
-          {isEditing && (
-            <button
-              type="submit"
-              className="bg-pink-600 text-white rounded px-4 py-2 hover:bg-pink-700 transition duration-200"
-            >
-              Save Changes
-            </button>
-          )}
         </div>
       </div>
     </form>
