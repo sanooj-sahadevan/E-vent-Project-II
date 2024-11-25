@@ -2,9 +2,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaEdit } from 'react-icons/fa'; // Edit icon
-import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI'; // API for editing vendor
-import { toast } from 'react-toastify'; // Notifications for user feedback
+import { FaEdit } from 'react-icons/fa';
+import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI';
+import { toast } from 'react-toastify';
+import { useForm, Controller } from 'react-hook-form';
 import Spinner from '../skeletons/spinner';
 
 interface Vendor {
@@ -28,7 +29,17 @@ const EditVendor: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [photoUrl, setPhotoUrl] = useState<string>("");
+  const [photoUrl, setPhotoUrl] = useState<string>('');
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm<Vendor>({
+    defaultValues: vendorDetails || {},
+  });
 
   useEffect(() => {
     const vendorDetailsString = searchParams.get('query');
@@ -37,18 +48,22 @@ const EditVendor: React.FC = () => {
         const decodedString = decodeURIComponent(vendorDetailsString);
         const parsedVendor = JSON.parse(decodedString) as Vendor;
         setVendorDetails(parsedVendor);
-        setImagePreview(parsedVendor.profileImage || null); 
+        setImagePreview(parsedVendor.profileImage || null);
+        // Pre-fill form with vendor details
+        Object.entries(parsedVendor).forEach(([key, value]) =>
+          setValue(key as keyof Vendor, value)
+        );
       } catch (error) {
         console.error('Failed to parse vendor details from query:', error);
       }
     }
     setIsLoading(false);
-  }, [searchParams]);
+  }, [searchParams, setValue]);
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedImage(file); 
+      setSelectedImage(file);
 
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
@@ -57,10 +72,10 @@ const EditVendor: React.FC = () => {
         const data = await getPresignedUrl(file.name, file.type);
         if (data.url) {
           const uploadResult = await fetch(data.url, {
-            method: "PUT",
+            method: 'PUT',
             body: file,
             headers: {
-              "Content-Type": file.type,
+              'Content-Type': file.type,
             },
           });
 
@@ -81,16 +96,16 @@ const EditVendor: React.FC = () => {
     }
   };
 
-  const saveVendorDetails = async () => {
+  const saveVendorDetails = async (formData: Vendor) => {
     if (!vendorDetails) return;
 
-    const formData = {
-      ...vendorDetails,
+    const updatedData = {
+      ...formData,
       profileImage: photoUrl || vendorDetails.profileImage,
     };
 
     try {
-      const result = await VendorEdit(formData);
+      const result = await VendorEdit(updatedData);
 
       if (result && result.data) {
         localStorage.setItem('vendor', JSON.stringify(result.data));
@@ -99,9 +114,6 @@ const EditVendor: React.FC = () => {
           router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
           toast.success('Vendor details updated successfully.');
         }
-        //  else {
-        //   toast.error('Vendor details could not be found.');
-        // }
       }
     } catch (err) {
       toast.error('An error occurred while saving vendor details. Please try again.');
@@ -127,23 +139,14 @@ const EditVendor: React.FC = () => {
 
   return (
     <form
-      onSubmit={async (e) => {
-        e.preventDefault();
-        await saveVendorDetails();
-        setIsEditing(false);
-      }}
+      onSubmit={handleSubmit(saveVendorDetails)}
       className="max-w-xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden mt-12"
     >
       <div className="p-6">
         <div className="flex items-center justify-center mb-6">
-          {/* Profile Picture */}
           {imagePreview ? (
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4  relative shadow-lg">
-              <img
-                src={imagePreview}
-                alt="Vendor"
-                className="w-full h-full object-cover"
-              />
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 relative shadow-lg">
+              <img src={imagePreview} alt="Vendor" className="w-full h-full object-cover" />
             </div>
           ) : (
             <div className="w-32 h-32 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 shadow-md">
@@ -154,9 +157,7 @@ const EditVendor: React.FC = () => {
 
         {isEditing && (
           <div className="mb-4">
-            <label className="block text-gray-700 mb-2 font-medium">
-              Upload New Image
-            </label>
+            <label className="block text-gray-700 mb-2 font-medium">Upload New Image</label>
             <input
               type="file"
               accept="image/*"
@@ -166,143 +167,43 @@ const EditVendor: React.FC = () => {
           </div>
         )}
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          {isEditing ? (
-            <input
-              type="text"
-              value={vendorDetails.vendorname}
-              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              onChange={(e) =>
-                setVendorDetails((prev) =>
-                  prev ? { ...prev, vendorname: e.target.value } : null
-                )
-              }
-            />
-          ) : (
-            vendorDetails.vendorname || 'N/A'
-          )}
-        </h2>
-
-        {/* Inputs for email, phone, etc. */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-gray-700 font-medium">Email</label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={vendorDetails.email}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, email: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-gray-700 font-medium">Address</label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={vendorDetails.address}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, address: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
-            )}
-          </div>
-
-
+        <div className="grid grid-cols-1 gap-6">
           <div>
             <label className="block text-gray-700 font-medium">Phone Number</label>
-            {isEditing ? (
-              <input
-                type="number"
-                value={vendorDetails.phone}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, phone: Number(e.target.value) } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
-            )}
+            <input
+              type="text"
+              {...register('phone', {
+                required: 'Phone number is required',
+                pattern: {
+                  value: /^[0-9]{10}$/,
+                  message: 'Phone number must be 10 digits',
+                },
+              })}
+              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+            />
+            {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
           </div>
-
 
           <div>
-            <label className="block text-gray-700 font-medium">District</label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={vendorDetails.district}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, district: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
-            )}
+            <label className="block text-gray-700 font-medium">Vendor Name</label>
+            <input
+              type="text"
+              {...register('vendorname', {
+                required: 'Vendor name is required',
+                validate: (value) =>
+                  value.trim() !== '' || 'Vendor name cannot be empty or whitespace only',
+              })}
+              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+            />
+            {errors.vendorname && <p className="text-red-500">{errors.vendorname.message}</p>}
           </div>
-
-
-          <div>
-            <label className="block text-gray-700 font-medium">State</label>
-            {isEditing ? (
-              <input
-                type="text"
-                value={vendorDetails.state}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, state: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
-            )}
-          </div>
-
-          {/* Add a full-width "Description" column */}
-          {/* <div className="col-span-1 md:col-span-2">
-            <label className="block text-gray-700 font-medium">Description</label>
-            {isEditing ? (
-              <textarea
-                value={vendorDetails.Description}
-                rows={4}
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-                onChange={(e) =>
-                  setVendorDetails((prev) =>
-                    prev ? { ...prev, Description: e.target.value } : null
-                  )
-                }
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
-            )}
-          </div> */}
         </div>
 
         <div className="flex justify-between mt-6">
           <button
             type="button"
             className="text-pink-600 hover:underline focus:outline-none"
-            onClick={handleEditToggle} // Toggle edit mode
+            onClick={handleEditToggle}
           >
             {isEditing ? 'Cancel' : <FaEdit className="inline" />} Edit
           </button>

@@ -169,7 +169,7 @@ const PayUComponent = ({ BookedData }: Props) => {
                 // toast.success("Payment hash generated successfully!");
             } catch (error: any) {
                 console.error("Payment Error: " + error.message);
-                setError("Failed to generate payment hash. Please try again.");
+                // setError("Failed to generate payment hash. Please try again.");
                 toast.error(error.message);
             }
         };
