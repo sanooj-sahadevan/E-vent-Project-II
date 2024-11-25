@@ -163,7 +163,6 @@ const PayUComponent = ({ BookedData }: Props) => {
                 console.log("Sending Payment Request:", data);
                 const res = await PayUApiCalls.paymentReq(data);
                 console.log(res, "ressss");
-
                 setHash(res.hash);
                 requestSentRef.current = true;
 
@@ -171,7 +170,7 @@ const PayUComponent = ({ BookedData }: Props) => {
             } catch (error: any) {
                 console.error("Payment Error: " + error.message);
                 setError("Failed to generate payment hash. Please try again.");
-                toast.error("Failed to generate payment hash. Please try again.");
+                toast.error(error);
             }
         };
 
