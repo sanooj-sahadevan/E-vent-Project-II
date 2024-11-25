@@ -18,20 +18,39 @@ export const PayUUrl = {
 
 export default {
 
-  paymentReq: async function (data: any) {
-    console.log('routikii');
-    try {
-      const reshash = await apiClient.post("/payment", JSON.stringify(data), {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log({ reshash },'ooooooooooooooooooooooo')
-      return reshash.data;
-    } catch (error: any) {
-      throw new Error(error.message);
-    }
-  },
+  // paymentReq: async function (data: any) {
+  //   console.log('routikii');
+  //   try {
+  //     const reshash = await apiClient.post("/payment", JSON.stringify(data), {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     console.log({ reshash },'ooooooooooooooooooooooo')
+  //     return reshash.data;
+  //   } catch (error: any) {
+  //     throw new Error(error);
+  //   }
+  // },
+
+    paymentReq: async function (data: any) {
+        console.log('routikii');
+        try {
+            const reshash = await apiClient.post("/payment", JSON.stringify(data), {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            console.log({ reshash }, 'ooooooooooooooooooooooo');
+            return reshash.data;
+        } catch (error: any) {
+            throw new Error(error.response?.data?.message || "Something went wrong.");
+        }
+    },
+
+
+
+
   response: async function (pd: any) {
     try {
       const response = await apiClient.post("/response", JSON.stringify(pd), {

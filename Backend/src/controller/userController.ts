@@ -312,10 +312,6 @@ export class UserController {
   }
 
 
-
-
-
-
   async fetchBookingDetails(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.params;
     try {

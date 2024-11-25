@@ -33,7 +33,7 @@
 //     const requestSentRef = useRef(false);
 
 
-    
+
 
 //     useEffect(() => {
 //         const data = {
@@ -45,7 +45,7 @@
 //                 console.log('Sending Payment Request:', data);
 //                 const res = await PayUApiCalls.paymentReq(data);
 //                 console.log(res,'ressss');
-                
+
 //                 setHash(res.hash);
 //                 requestSentRef.current = true; 
 //             } catch (error: any) {
@@ -110,6 +110,8 @@ import { useEffect, useRef, useState } from "react";
 import { FRONTEND_DOMAIN, PayU } from "@/utils/constansts";
 import { generateTxnId } from "@/utils/generateTxnld";
 import PayUApiCalls from "@/utils/apiCalls/PayUApiCalls";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 type Props = {
     BookedData: any;
@@ -139,7 +141,6 @@ const PayUComponent = ({ BookedData }: Props) => {
     const key = PayU.merchantKey;
 
     const requestSentRef = useRef(false);
-
     useEffect(() => {
         const data = {
             txnid,
@@ -165,9 +166,12 @@ const PayUComponent = ({ BookedData }: Props) => {
 
                 setHash(res.hash);
                 requestSentRef.current = true;
+
+                toast.success("Payment hash generated successfully!");
             } catch (error: any) {
                 console.error("Payment Error: " + error.message);
-                setError("Failed to generate payment hash. Please try again."); 
+                setError("Failed to generate payment hash. Please try again.");
+                toast.error("Failed to generate payment hash. Please try again.");
             }
         };
 
@@ -176,13 +180,16 @@ const PayUComponent = ({ BookedData }: Props) => {
         }
     }, [amount, email, phone, productinfo, txnid, udf1, udf2, udf3, udf4, udf5, udf6, udf7, username]);
 
+
+
+
     const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         if (hash) {
             event.currentTarget.submit();
         } else {
-            setError("Hash not generated yet, form submission blocked."); // Set error message
+            setError("Hash not generated yet, form submission blocked.");
             console.error("Hash not generated yet, form submission blocked.");
         }
     };
