@@ -2,17 +2,17 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaEdit } from 'react-icons/fa';
-import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI';
-import { toast } from 'react-toastify';
+import { FaEdit } from 'react-icons/fa'; // Edit icon
+import { VendorEdit, getPresignedUrl } from '@/services/vendorAPI'; // API for editing vendor
+import { toast } from 'react-toastify'; // Notifications for user feedback
 import Spinner from '../skeletons/spinner';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 interface Vendor {
   profileImage?: string;
   rating: string;
   vendorname: string;
-  phone: number | string;
+  phone: number;
   email: string;
   address: string;
   district: string;
@@ -23,6 +23,7 @@ interface Vendor {
 const EditVendor: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
+
   const [vendorDetails, setVendorDetails] = useState<Vendor | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,23 +48,19 @@ const EditVendor: React.FC = () => {
         const decodedString = decodeURIComponent(vendorDetailsString);
         const parsedVendor = JSON.parse(decodedString) as Vendor;
         setVendorDetails(parsedVendor);
-        setImagePreview(parsedVendor.profileImage || null);
-
-        // Set default values in form
-        Object.entries(parsedVendor).forEach(([key, value]) => {
-          setValue(key as keyof Vendor, value);
-        });
+        setImagePreview(parsedVendor.profileImage || null); 
       } catch (error) {
         console.error('Failed to parse vendor details from query:', error);
       }
     }
     setIsLoading(false);
-  }, [searchParams, setValue]);
+  }, [searchParams]);
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      setSelectedImage(file);
+      setSelectedImage(file); 
+
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
 
@@ -95,16 +92,14 @@ const EditVendor: React.FC = () => {
     }
   };
 
-  const saveVendorDetails: SubmitHandler<Vendor> = async (formData) => {
-    if (!vendorDetails) return;
-
-    const updatedData = {
-      ...formData,
-      profileImage: photoUrl || vendorDetails.profileImage,
+  const saveVendorDetails = async (data: Vendor) => {
+    const formData = {
+      ...data,
+      profileImage: photoUrl || vendorDetails?.profileImage,
     };
 
     try {
-      const result = await VendorEdit(updatedData);
+      const result = await VendorEdit(formData);
 
       if (result && result.data) {
         localStorage.setItem('vendor', JSON.stringify(result.data));
@@ -143,8 +138,9 @@ const EditVendor: React.FC = () => {
     >
       <div className="p-6">
         <div className="flex items-center justify-center mb-6">
+          {/* Profile Picture */}
           {imagePreview ? (
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 shadow-lg">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 relative shadow-lg">
               <img
                 src={imagePreview}
                 alt="Vendor"
@@ -173,85 +169,159 @@ const EditVendor: React.FC = () => {
         )}
 
         <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          Vendor Details
+          {isEditing ? (
+            <input
+              type="text"
+              {...register('vendorname', {
+                required: 'Vendor name is required',
+                validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
+              })}
+              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+            />
+          ) : (
+            vendorDetails.vendorname || 'N/A'
+          )}
+          {errors.vendorname && (
+            <p className="text-red-500 text-sm">{errors.vendorname.message}</p>
+          )}
         </h2>
 
-        {/* Vendor Name */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium">Vendor Name</label>
-          <input
-            type="text"
-            {...register("vendorname", { required: "Vendor name is required.", validate: (value) => value.trim() !== "" || "Name cannot be empty." })}
-            className="border border-gray-300 rounded p-2 w-full"
-          />
-          {errors.vendorname && <p className="text-red-500">{errors.vendorname.message}</p>}
+        {/* Inputs for email, phone, etc. */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-gray-700 font-medium">Email</label>
+            {isEditing ? (
+              <input
+                type="email"
+                {...register('email', {
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Enter a valid email',
+                  },
+                })}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
+            )}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">Phone Number</label>
+            {isEditing ? (
+              <input
+                type="number"
+                {...register('phone', {
+                  required: 'Phone number is required',
+                  validate: (value) =>
+                    value.toString().length === 10 || 'Must be 10 digits',
+                })}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
+            )}
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">Address</label>
+            {isEditing ? (
+              <input
+                type="text"
+                {...register('address', {
+                  required: 'Address is required',
+                  validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
+                })}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
+            )}
+            {errors.address && (
+              <p className="text-red-500 text-sm">{errors.address.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">District</label>
+            {isEditing ? (
+              <input
+                type="text"
+                {...register('district', {
+                  required: 'District is required',
+                  validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
+                })}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
+            )}
+            {errors.district && (
+              <p className="text-red-500 text-sm">{errors.district.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">State</label>
+            {isEditing ? (
+              <input
+                type="text"
+                {...register('state', {
+                  required: 'State is required',
+                  validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
+                })}
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
+            )}
+            {errors.state && (
+              <p className="text-red-500 text-sm">{errors.state.message}</p>
+            )}
+          </div>
         </div>
 
-        {/* Phone */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium">Phone Number</label>
-          <input
-            type="tel"
-            {...register("phone", {
-              required: "Phone number is required.",
-              pattern: {
-                value: /^[0-9]{10}$/,
-                message: "Phone number must be 10 digits.",
-              },
-            })}
-            className="border border-gray-300 rounded p-2 w-full"
-          />
-          {errors.phone && <p className="text-red-500">{errors.phone.message}</p>}
+        <div className="mb-6">
+          <label className="block text-gray-700 font-medium">Description</label>
+          {isEditing ? (
+            <textarea
+              {...register('Description', {
+                required: 'Description is required',
+                validate: (value) => value.trim() !== '' || 'Whitespace is not allowed',
+              })}
+              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              rows={4}
+            />
+          ) : (
+            <p className="text-gray-600">{vendorDetails.Description || 'N/A'}</p>
+          )}
+          {errors.Description && (
+            <p className="text-red-500 text-sm">{errors.Description.message}</p>
+          )}
         </div>
 
-        {/* Email */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium">Email</label>
-          <input
-            type="email"
-            {...register("email", {
-              required: "Email is required.",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email format.",
-              },
-            })}
-            className="border border-gray-300 rounded p-2 w-full"
-          />
-          {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-        </div>
-
-        {/* Address */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium">Address</label>
-          <input
-            type="text"
-            {...register("address", {
-              required: "Address is required.",
-              validate: (value) => value.trim() !== "" || "Address cannot be empty.",
-            })}
-            className="border border-gray-300 rounded p-2 w-full"
-          />
-          {errors.address && <p className="text-red-500">{errors.address.message}</p>}
-        </div>
-
-        {/* Buttons */}
-        <div className="flex justify-between mt-6">
+        <div className="flex justify-between items-center">
           <button
             type="button"
-            className="text-pink-600 hover:underline"
+            className="text-blue-500"
             onClick={handleEditToggle}
           >
-            {isEditing ? 'Cancel' : <FaEdit className="inline" />} Edit
+            <FaEdit /> {isEditing ? 'Cancel Edit' : 'Edit Vendor'}
           </button>
-          {isEditing && (
-            <button
-              type="submit"
-              className="bg-pink-600 text-white rounded px-4 py-2 hover:bg-pink-700 transition"
-            >
-              Save Changes
-            </button>
-          )}
+
+          <button
+            type="submit"
+            className="px-4 py-2 bg-pink-500 text-white rounded hover:bg-pink-600 transition duration-200"
+          >
+            {isEditing ? 'Save Changes' : 'View'}
+          </button>
         </div>
       </div>
     </form>
