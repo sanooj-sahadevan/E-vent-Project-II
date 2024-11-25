@@ -29,50 +29,104 @@ const CheckoutPage: React.FC = () => {
 
   const [isPaymentEnabled, setIsPaymentEnabled] = useState(false);
 
-  const checkDateAvailability = async (vendorId: string, startingDate: string, endingDate: string): Promise<boolean> => {
+  // const checkDateAvailability = async (vendorId: string, startingDate: string, endingDate: string): Promise<boolean> => {
+  //   if (!vendorId || !startingDate || !endingDate) {
+  //     console.error("Missing required parameters: vendorId, startingDate, or endingDate.");
+  //     return false;
+  //   }
+
+  //   try {
+  //     const response = await getSlotsByWorkerAPI(vendorId);
+  //     console.log(response);
+  //     console.log(typeof response);
+
+  //     if (!response || !Array.isArray(response.data)) {
+  //       console.error('Invalid response from date availability API.');
+  //       return false;
+  //     }
+
+  //     const isDateRangeAvailable = response.data.some((slot: { date: string; isAvailable: boolean; startDate: string; endDate: string }) => {
+  //       const slotStartDate = new Date(slot.startDate); 
+  //       const slotEndDate = new Date(slot.endDate); 
+  //       const startDate = new Date(startingDate);
+  //       const endDate = new Date(endingDate);
+
+  //       const isOverlapping =
+  //         (startDate >= slotStartDate && startDate <= slotEndDate) ||
+  //         (endDate >= slotStartDate && endDate <= slotEndDate) ||
+  //         (startDate <= slotStartDate && endDate >= slotEndDate);
+
+  //       return isOverlapping && slot.isAvailable;
+  //     });
+
+  //     if (isDateRangeAvailable) {
+  //       console.log("Dates are available.");
+  //       return true;
+  //     } else {
+  //       console.error("Selected date is already taken.");
+  //       return false;
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching slot details:', error);
+  //     return false;
+  //   }
+  // };
+
+
+  const checkDateAvailability = async (
+    vendorId: string,
+    startingDate: string,
+    endingDate: string
+  ): Promise<boolean> => {
     if (!vendorId || !startingDate || !endingDate) {
+      toast.error("Missing required parameters: vendorId, startingDate, or endingDate.");
       console.error("Missing required parameters: vendorId, startingDate, or endingDate.");
       return false;
     }
-
+  
     try {
       const response = await getSlotsByWorkerAPI(vendorId);
       console.log(response);
       console.log(typeof response);
-
+  
       if (!response || !Array.isArray(response.data)) {
-        console.error('Invalid response from date availability API.');
+        toast.error("Invalid response from date availability API.");
+        console.error("Invalid response from date availability API.");
         return false;
       }
-
-      const isDateRangeAvailable = response.data.some((slot: { date: string; isAvailable: boolean; startDate: string; endDate: string }) => {
-        const slotStartDate = new Date(slot.startDate); 
-        const slotEndDate = new Date(slot.endDate); 
-        const startDate = new Date(startingDate);
-        const endDate = new Date(endingDate);
-
-        const isOverlapping =
-          (startDate >= slotStartDate && startDate <= slotEndDate) ||
-          (endDate >= slotStartDate && endDate <= slotEndDate) ||
-          (startDate <= slotStartDate && endDate >= slotEndDate);
-
-        return isOverlapping && slot.isAvailable;
-      });
-
+  
+      const isDateRangeAvailable = response.data.some(
+        (slot: { date: string; isAvailable: boolean; startDate: string; endDate: string }) => {
+          const slotStartDate = new Date(slot.startDate);
+          const slotEndDate = new Date(slot.endDate);
+          const startDate = new Date(startingDate);
+          const endDate = new Date(endingDate);
+  
+          const isOverlapping =
+            (startDate >= slotStartDate && startDate <= slotEndDate) ||
+            (endDate >= slotStartDate && endDate <= slotEndDate) ||
+            (startDate <= slotStartDate && endDate >= slotEndDate);
+  
+          return isOverlapping && slot.isAvailable;
+        }
+      );
+  
       if (isDateRangeAvailable) {
+        toast.success("Dates are available.");
         console.log("Dates are available.");
         return true;
       } else {
+        toast.error("Selected date is already taken.");
         console.error("Selected date is already taken.");
         return false;
       }
     } catch (error) {
-      console.error('Error fetching slot details:', error);
+      toast.error("Error fetching slot details.");
+      console.error("Error fetching slot details:", error);
       return false;
     }
   };
-
-
+  
 
 
   useEffect(() => {

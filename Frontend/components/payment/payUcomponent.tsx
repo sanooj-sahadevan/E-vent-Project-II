@@ -167,7 +167,7 @@ const PayUComponent = ({ BookedData }: Props) => {
                 requestSentRef.current = true;
             } catch (error: any) {
                 console.error("Payment Error: " + error.message);
-                setError("Failed to generate payment hash. Please try again."); // Set error message
+                setError("Failed to generate payment hash. Please try again."); 
             }
         };
 
