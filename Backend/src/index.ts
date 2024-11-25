@@ -15,7 +15,6 @@ import { errorHandler } from "./middleware/errorHandling";
 import logger from "./utils/logger";
 
 
-
 dotenv.config();
 
 const app = express();

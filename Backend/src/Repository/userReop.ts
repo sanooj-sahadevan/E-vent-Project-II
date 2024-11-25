@@ -309,6 +309,7 @@ console.log('ziyavudeheen');
         return firstBooking;
       } else if (bookings.length === 1) {
         const booking = bookings[0];
+
         booking.paymentStatus = 'success';
         await booking.save();
         console.log('Booking updated successfully:', booking);
@@ -327,9 +328,9 @@ console.log('ziyavudeheen');
         await this.updateSlotAvailability(newBooking.StartingDate, newBooking.EndingDate, vendorId);
         return newBooking;
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error('Error updating booking:', error);
-      throw new Error('Database Error');
+      throw new Error(error);
     }
   }
 
@@ -360,8 +361,8 @@ console.log('ziyavudeheen');
       } else {
         console.log('No available slots found for the given dates.');
       }
-    } catch (error) {
-      throw new Error('Database Error');
+    } catch (error:any) {
+      throw new Error(error);
     }
   }
 
@@ -518,7 +519,6 @@ console.log('ziyavudeheen');
 
   async saveBooking(bookingData: any): Promise<any> {
     try {
-      console.log('sanooj');
       const newBooking = new bookedModel({
         vendorId: bookingData.productinfo,
         userId: bookingData.udf1,

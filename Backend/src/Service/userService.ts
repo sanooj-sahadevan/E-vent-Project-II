@@ -330,10 +330,17 @@ export class UserService {
     return bookingDetails;
   }
 
+
   async updateBookingStatus(bookingData: any) {
-    const updatedBooking = await this.userRepository.updateBookingStatus(bookingData);
+    try {
+      const updatedBooking = await this.userRepository.updateBookingStatus(bookingData);
     console.log(updatedBooking, 'Booking Update Service');
     return updatedBooking;
+    } catch (error:any) {
+            throw new Error(error);
+
+    }
+    
   }
 
 

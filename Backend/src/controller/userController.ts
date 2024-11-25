@@ -43,7 +43,6 @@ export class UserController {
   async vendorList(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       console.log('step 3 controller');
-      
       const vendors = await this.userService.getAllVendors();
       console.log(vendors,'final stage');
       
@@ -307,7 +306,7 @@ export class UserController {
         res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ success: false, message: "Booking update failed" });
       }
 
-    } catch (error) {
+    } catch (error:any) {
       next(error);
     }
   }
