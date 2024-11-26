@@ -5,6 +5,7 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import { deleteCookie } from "@/utils/deleteCookie";
 import { useRouter } from "next/navigation";
+import { logoutApi } from "@/services/adminAPI";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -14,14 +15,39 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [activePath, setActivePath] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleLogoutClick = () => {
-    toast.success("Logout Successfully");
-    localStorage.removeItem("admin");
-    localStorage.removeItem("adminToken");
-    deleteCookie("adminToken");
-    router.push("/"); // Redirect to the home page or login page
-  };
+  // const handleLogoutClick = async() => {
 
+  //   const result = await logoutApi();
+  //   console.log(result);
+
+  //   toast.success("Logout Successfully");
+  //   localStorage.removeItem("admin");
+  //   localStorage.removeItem("adminToken");
+  //   deleteCookie("adminToken");
+  //   router.push("/"); 
+  // };
+  const handleLogoutClick = async () => {
+    try {
+      // Call logout API
+      const result = await logoutApi();
+      console.log(result);
+  
+      // Delete the adminToken cookie manually
+      document.cookie = "adminToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.eventopia.shop;";
+      
+      // Clear localStorage and show success message
+      toast.success("Logout Successfully");
+      localStorage.removeItem("admin");
+      localStorage.removeItem("adminToken");
+      
+      // Redirect to home page
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Logout failed. Please try again.");
+    }
+  };
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
       setActivePath(window.location.pathname);

@@ -27,17 +27,17 @@ const LoginForm: React.FC = () => {
   const onSubmit: SubmitHandler<LoginFormInputs> = async (data) => {
     try {
       console.log('1');
-      
       const result = await LoginAPI(data);
-      console.log("LoginAPI result:", result); // Debugging line
-
+      console.log("LoginAPI result:", result); 
       if (result && result.admin && result.adminToken) {
+        console.log('hey');
+        
         localStorage.setItem("adminToken", result.adminToken);
         localStorage.setItem("admin", JSON.stringify(result.admin));
+        console.log('hey2');
 
         toast.success("Login Successful!");
         window.location.href = "/admin/dashboard"; // Replace "/" with your desired path
-
           router.replace("/admin/dashboard");
       } else {
         toast.error("Invalid login credentials. Please try again.");

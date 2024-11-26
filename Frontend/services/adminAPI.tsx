@@ -13,6 +13,16 @@ const Axios = axios.create({
 
 });
 
+export const logoutApi = async () => {
+  try {
+    const response = await Axios.post(`${server_URL_admin}/logout`,);
+    console.log("response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching logout API:", error);
+    throw error;
+  }
+};
 
 
 
