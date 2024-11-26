@@ -95,7 +95,7 @@ const EditVendor: React.FC = () => {
       ...data,
       profileImage: photoUrl || vendorDetails?.profileImage,
     };
-
+    toast.success('Vendor details updated successfully.');
     try {
       const result = await VendorEdit(formData);
 
