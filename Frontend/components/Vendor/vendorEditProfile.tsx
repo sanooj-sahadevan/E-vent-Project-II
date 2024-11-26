@@ -89,69 +89,29 @@ const EditVendor: React.FC = () => {
     }
   };
 
-  // const saveVendorDetails: SubmitHandler<Vendor> = async (data) => {
-  //   const formData = {
-  //     ...vendorDetails,
-  //     ...data,
-  //     profileImage: photoUrl || vendorDetails?.profileImage,
-  //   };
+  const saveVendorDetails: SubmitHandler<Vendor> = async (data) => {
+    const formData = {
+      ...vendorDetails,
+      ...data,
+      profileImage: photoUrl || vendorDetails?.profileImage,
+    };
 
-  //   try {
-  //     const result = await VendorEdit(formData);
+    try {
+      const result = await VendorEdit(formData);
 
-  //     if (result && result.data) {
-  //       localStorage.setItem('vendor', JSON.stringify(result.data));
+      if (result && result.data) {
+        localStorage.setItem('vendor', JSON.stringify(result.data));
 
-  //       if (result.data.vendor && result.data.vendor._id) {
-  //         router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
-  //         toast.success('Vendor details updated successfully.');
-  //       }
-  //     }
-  //   } catch (err) {
-  //     toast.error('An error occurred while saving vendor details. Please try again.');
-  //     console.error('EditVendor API error:', err);
-  //   }
-  // };
-
-
-const saveVendorDetails: SubmitHandler<Vendor> = async (data) => {
-  const formData = {
-    ...vendorDetails,
-    ...data,
-    profileImage: photoUrl || vendorDetails?.profileImage,
-  };
-
-  const savingToastId = toast.loading('Saving vendor details...'); // Show "saving" toast
-
-  try {
-    const result = await VendorEdit(formData);
-
-    if (result && result.data) {
-      localStorage.setItem('vendor', JSON.stringify(result.data));
-
-      if (result.data.vendor && result.data.vendor._id) {
-        toast.update(savingToastId, {
-          render: 'Vendor details updated successfully!',
-          type: 'success',
-          isLoading: false,
-          autoClose: 3000,
-        });
-
-        router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
+        if (result.data.vendor && result.data.vendor._id) {
+          router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
+          toast.success('Vendor details updated successfully.');
+        }
       }
+    } catch (err) {
+      toast.error('An error occurred while saving vendor details. Please try again.');
+      console.error('EditVendor API error:', err);
     }
-  } catch (err) {
-    toast.update(savingToastId, {
-      render: 'Failed to save vendor details. Please try again.',
-      type: 'error',
-      isLoading: false,
-      autoClose: 3000,
-    });
-
-    console.error('EditVendor API error:', err);
-  }
-};
-
+  };
 
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
@@ -166,7 +126,7 @@ const saveVendorDetails: SubmitHandler<Vendor> = async (data) => {
 
 
 
-
+  
 
   if (isLoading) {
     return (
