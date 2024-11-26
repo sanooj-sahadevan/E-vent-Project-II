@@ -207,6 +207,48 @@ const EditVendor: React.FC = () => {
             {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
           </div>
 
+          <div>
+            <label className="block text-gray-700 font-medium">Address</label>
+            {isEditing ? (
+              <input
+                {...register('address', { required: 'Address is required',  pattern: /^\S+@\S+\.\S+$/ })}
+                type="text"
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
+            )}
+            {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">District</label>
+            {isEditing ? (
+              <input
+                {...register('district', { required: 'District is required',  pattern: /^\S+@\S+\.\S+$/ })}
+                type="text"
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
+            )}
+            {errors.district && <p className="text-red-500 text-sm">{errors.district.message}</p>}
+          </div>
+
+          <div>
+            <label className="block text-gray-700 font-medium">State</label>
+            {isEditing ? (
+              <input
+                {...register('state', { required: 'State is required',  pattern: /^\S+@\S+\.\S+$/ })}
+                type="text"
+                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+              />
+            ) : (
+              <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
+            )}
+            {errors.state && <p className="text-red-500 text-sm">{errors.state.message}</p>}
+          </div>
+
           {/* Other fields here */}
         </div>
 
