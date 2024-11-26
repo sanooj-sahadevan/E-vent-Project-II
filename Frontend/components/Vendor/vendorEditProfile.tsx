@@ -262,125 +262,140 @@ const EditVendor: React.FC = () => {
          
         </div> */}
 
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          {isEditing ? (
-            <input
-              {...register('vendorname', { required: 'Vendor name is required' })}
-              type="text"
-              className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-            />
-          ) : (
-            vendorDetails.vendorname || 'N/A'
-          )}
-          {errors.vendorname && (
-            <p className="text-red-500 text-sm">{errors.vendorname.message}</p>
-          )}
-        </h2>
+<h2 className="text-2xl font-bold text-gray-800 mb-4">
+  {isEditing ? (
+    <input
+      {...register('vendorname', {
+        required: 'Vendor name is required',
+        validate: (value) =>
+          value.trim() !== '' || 'Vendor name cannot contain only spaces',
+      })}
+      type="text"
+      className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+    />
+  ) : (
+    vendorDetails.vendorname || 'N/A'
+  )}
+  {errors.vendorname && (
+    <p className="text-red-500 text-sm">{errors.vendorname.message}</p>
+  )}
+</h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Email */}
-          <div>
-            <label className="block text-gray-700 font-medium">Email</label>
-            {isEditing ? (
-              <input
-                {...register('email', {
-                  required: 'Email is required',
-                  pattern: {
-                    value: /^\S+@\S+\.\S+$/,
-                    message: 'Invalid email format',
-                  },
-                })}
-                type="email"
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
-            )}
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {/* Email */}
+  <div>
+    <label className="block text-gray-700 font-medium">Email</label>
+    {isEditing ? (
+      <input
+        {...register('email', {
+          required: 'Email is required',
+          pattern: {
+            value: /^\S+@\S+\.\S+$/,
+            message: 'Invalid email format',
+          },
+          validate: (value) =>
+            value.trim() !== '' || 'Email cannot contain only spaces',
+        })}
+        type="email"
+        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+      />
+    ) : (
+      <p className="text-gray-600">{vendorDetails.email || 'N/A'}</p>
+    )}
+    {errors.email && (
+      <p className="text-red-500 text-sm">{errors.email.message}</p>
+    )}
+  </div>
 
-          {/* Phone */}
-          <div>
-            <label className="block text-gray-700 font-medium">Phone Number</label>
-            {isEditing ? (
-              <input
-                {...register('phone', {
-                  required: 'Phone number is required',
-                  pattern: {
-                    value: /^[0-9]{10}$/,
-                    message: 'Phone number must be 10 digits',
-                  },
-                })}
-                type="text"
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
-            )}
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message}</p>
-            )}
-          </div>
+  {/* Phone */}
+  <div>
+    <label className="block text-gray-700 font-medium">Phone Number</label>
+    {isEditing ? (
+      <input
+        {...register('phone', {
+          required: 'Phone number is required',
+          pattern: {
+            value: /^[0-9]{10}$/,
+            message: 'Phone number must be 10 digits',
+          },
+          validate: (value) =>
+            value.trim() !== '' || 'Phone number cannot contain only spaces',
+        })}
+        type="text"
+        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+      />
+    ) : (
+      <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
+    )}
+    {errors.phone && (
+      <p className="text-red-500 text-sm">{errors.phone.message}</p>
+    )}
+  </div>
 
-          {/* Address */}
-          <div>
-            <label className="block text-gray-700 font-medium">Address</label>
-            {isEditing ? (
-              <input
-                {...register('address', {
-                  required: 'Address is required',
-                })}
-                type="text"
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
-            )}
-            {errors.address && (
-              <p className="text-red-500 text-sm">{errors.address.message}</p>
-            )}
-          </div>
+  {/* Address */}
+  <div>
+    <label className="block text-gray-700 font-medium">Address</label>
+    {isEditing ? (
+      <input
+        {...register('address', {
+          required: 'Address is required',
+          validate: (value) =>
+            value.trim() !== '' || 'Address cannot contain only spaces',
+        })}
+        type="text"
+        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+      />
+    ) : (
+      <p className="text-gray-600">{vendorDetails.address || 'N/A'}</p>
+    )}
+    {errors.address && (
+      <p className="text-red-500 text-sm">{errors.address.message}</p>
+    )}
+  </div>
 
-          {/* District */}
-          <div>
-            <label className="block text-gray-700 font-medium">District</label>
-            {isEditing ? (
-              <input
-                {...register('district', {
-                  required: 'District is required',
-                })}
-                type="text"
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
-            )}
-            {errors.district && (
-              <p className="text-red-500 text-sm">{errors.district.message}</p>
-            )}
-          </div>
+  {/* District */}
+  <div>
+    <label className="block text-gray-700 font-medium">District</label>
+    {isEditing ? (
+      <input
+        {...register('district', {
+          required: 'District is required',
+          validate: (value) =>
+            value.trim() !== '' || 'District cannot contain only spaces',
+        })}
+        type="text"
+        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+      />
+    ) : (
+      <p className="text-gray-600">{vendorDetails.district || 'N/A'}</p>
+    )}
+    {errors.district && (
+      <p className="text-red-500 text-sm">{errors.district.message}</p>
+    )}
+  </div>
 
-          {/* State */}
-          <div>
-            <label className="block text-gray-700 font-medium">State</label>
-            {isEditing ? (
-              <input
-                {...register('state', {
-                  required: 'State is required',
-                })}
-                type="text"
-                className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-              />
-            ) : (
-              <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
-            )}
-            {errors.state && (
-              <p className="text-red-500 text-sm">{errors.state.message}</p>
-            )}
-          </div>
-        </div>
+  {/* State */}
+  <div>
+    <label className="block text-gray-700 font-medium">State</label>
+    {isEditing ? (
+      <input
+        {...register('state', {
+          required: 'State is required',
+          validate: (value) =>
+            value.trim() !== '' || 'State cannot contain only spaces',
+        })}
+        type="text"
+        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
+      />
+    ) : (
+      <p className="text-gray-600">{vendorDetails.state || 'N/A'}</p>
+    )}
+    {errors.state && (
+      <p className="text-red-500 text-sm">{errors.state.message}</p>
+    )}
+  </div>
+</div>
+
 
 
 
