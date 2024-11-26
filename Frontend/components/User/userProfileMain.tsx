@@ -187,6 +187,42 @@ const ProfilePage: React.FC = () => {
               )}
             </div>
 
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">Mobile:</label>
+              <input
+                {...register('phone', {
+                  required: 'Phone number is required',
+                  pattern: {
+                    value: /^[0-9]{10}$/, // Ensures exactly 10 digits
+                    message: 'Phone number must be 10 digits',
+                  },
+                })}
+                className="w-full p-2 border border-black rounded-lg focus:outline-none focus:border-pink-500 text-sm"
+              />
+              {errors.phone && (
+                <p className="text-red-500 text-sm">{errors.phone.message}</p>
+              )}
+            </div>
+
+            <div className="mb-3">
+              <label className="block text-gray-600 text-sm">Pincode:</label>
+              <input
+                {...register('pincode', {
+                  required: 'Pincode is required',
+                  pattern: {
+                    value: /^[0-9]{6}$/, // Ensures exactly 6 digits
+                    message: 'Pincode must be 6 digits',
+                  },
+                })}
+                className="w-full p-2 border border-black rounded-lg focus:outline-none focus:border-pink-500 text-sm"
+              />
+              {errors.pincode && (
+                <p className="text-red-500 text-sm">{errors.pincode.message}</p>
+              )}
+            </div>
+
+
+
             <div className="flex justify-end space-x-3 mt-4">
               <button
                 type="button"
