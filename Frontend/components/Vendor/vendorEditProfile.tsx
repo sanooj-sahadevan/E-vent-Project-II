@@ -89,30 +89,57 @@ const EditVendor: React.FC = () => {
     }
   };
 
+  // const saveVendorDetails: SubmitHandler<Vendor> = async (data) => {
+  //   const formData = {
+  //     ...vendorDetails,
+  //     ...data,
+  //     profileImage: photoUrl || vendorDetails?.profileImage,
+  //   };
+  //   try {
+  //     const result = await VendorEdit(formData);
+
+  //     if (result && result.data) {
+  //       localStorage.setItem('vendor', JSON.stringify(result.data));
+
+  //       if (result.data.vendor && result.data.vendor._id) {
+  //         router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
+  //         toast.success('Vendor details updated successfully.');
+  //       }
+  //     }
+  //   } catch (err) {
+  //     toast.error('An error occurred while saving vendor details. Please try again.');
+  //     console.error('EditVendor API error:', err);
+  //   }
+  // };
+
+
   const saveVendorDetails: SubmitHandler<Vendor> = async (data) => {
     const formData = {
       ...vendorDetails,
       ...data,
       profileImage: photoUrl || vendorDetails?.profileImage,
     };
-    toast.success('Vendor details updated successfully.');
+  
     try {
       const result = await VendorEdit(formData);
-
+  
       if (result && result.data) {
+        // Save to localStorage
         localStorage.setItem('vendor', JSON.stringify(result.data));
-
+  
+        // Redirect and show success toast
         if (result.data.vendor && result.data.vendor._id) {
+          toast.success('Vendor details updated successfully.'); // Show success toast
           router.push(`/vendordashboard?vendorId=${result.data.vendor._id}`);
-          toast.success('Vendor details updated successfully.');
         }
       }
     } catch (err) {
+      // Show error toast
       toast.error('An error occurred while saving vendor details. Please try again.');
       console.error('EditVendor API error:', err);
     }
   };
-
+  
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
