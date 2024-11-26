@@ -119,14 +119,14 @@ const EditVendor: React.FC = () => {
       ...data,
       profileImage: photoUrl || vendorDetails?.profileImage,
     };
-  
+
     try {
       const result = await VendorEdit(formData);
-  
+
       if (result && result.data) {
         // Save to localStorage
         localStorage.setItem('vendor', JSON.stringify(result.data));
-  
+
         // Redirect and show success toast
         if (result.data.vendor && result.data.vendor._id) {
           toast.success('Vendor details updated successfully.'); // Show success toast
@@ -139,7 +139,7 @@ const EditVendor: React.FC = () => {
       console.error('EditVendor API error:', err);
     }
   };
-  
+
   const handleEditToggle = () => {
     setIsEditing(!isEditing);
   };
@@ -153,7 +153,7 @@ const EditVendor: React.FC = () => {
 
 
 
-  
+
 
   if (isLoading) {
     return (
@@ -346,30 +346,7 @@ const EditVendor: React.FC = () => {
             )}
           </div>
 
-          {/* Phone */}
-          {/* <div>
-    <label className="block text-gray-700 font-medium">Phone Number</label>
-    {isEditing ? (
-      <input
-        {...register('phone', {
-          required: 'Phone number is required',
-          pattern: {
-            value: /^[0-9]{10}$/,
-            message: 'Phone number must be 10 digits',
-          },
-          validate: (value: string) =>
-            value.trim() !== '' || 'Phone number cannot contain only spaces',
-        })}
-        type="text"
-        className="border border-gray-300 rounded p-2 w-full hover:border-pink-500 transition duration-200"
-      />
-    ) : (
-      <p className="text-gray-600">{vendorDetails.phone || 'N/A'}</p>
-    )}
-    {errors.phone && (
-      <p className="text-red-500 text-sm">{errors.phone.message}</p>
-    )}
-           </div> */}
+          
           <div>
             <label className="block text-gray-700 font-medium">Phone Number</label>
             {isEditing ? (
