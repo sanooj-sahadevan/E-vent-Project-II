@@ -3,7 +3,7 @@
 const protectedUserRoutes = new Set([
   "/profilee", "/auditoriumInfo", "/auditoriumList", "/profile"
  , "/booknow", "/chat", "/checkout",
-  "/dishesinfo", "/vendor", "/googlemap", , '/vendorProfile',
+  "/dishesinfo", "/vendor", "/googlemap",  '/vendorProfile','/allChat','/bookingSucess','/dishesList','/updatePassword'
 ]);
 
 export function isProtectedUserRoute(pathname: string): boolean {
@@ -30,7 +30,7 @@ export function toBeRedirectedAdminRoutes(pathname: string): boolean {
 // Vendor Routes
 const protectedVendorRoutes = new Set([
   "/vendordashboard", "/vendorAddAuditoriums", "/vendorAddDishes",
-  "/vendorBookingDetails",  "/vendorEditProfile",
+  "/vendorBookingDetails",  "/vendorEditProfile", '/slotBooking','/vendorEditProfile',
 ]);
 
 export function isProtectedVendorRoute(pathname: string): boolean {
