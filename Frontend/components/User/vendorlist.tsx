@@ -106,9 +106,8 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
   const filterVendors = (location: string, rating: string | null) => {
     let filtered = vendor;
 
-    // Apply rating filter based on the selected option
     if (rating) {
-      filtered = filtered.sort((a, b) => 
+      filtered = filtered.sort((a, b) =>
         rating === 'low' ? b.rating - a.rating : a.rating - b.rating
       );
     }
@@ -168,6 +167,10 @@ const VendorsPage: React.FC = ({ vendors }: any) => {
             value={ratingFilter || ''}
             onChange={handleRatingFilterChange}
           >
+
+
+
+            
             <option value="">Rating</option>
             <option value="high">High Rating</option>
             <option value="low">Low Rating</option>
